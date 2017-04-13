@@ -12,11 +12,11 @@ class ProvisionerResourceList(Source):
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
         resource_list = [
-            {"NAME": "AWS1", "CPUS": 1, "MEMORY": 2, "MEMORY_UNIT": "GB"},
-            {"NAME": "AWS2", "CPUS": 2, "MEMORY": 4, "MEMORY_UNIT": "GB"},
-            {"NAME": "AWS3", "CPUS": 2, "MEMORY": 6, "MEMORY_UNIT": "GB"},
-            {"NAME": "AWS4", "CPUS": 1, "MEMORY": 6, "MEMORY_UNIT": "GB"},
-            {"NAME": "AWS5", "CPUS": 2, "MEMORY": 5, "MEMORY_UNIT": "GB"}
+            {"NAME": "AWS1", "CPUS": 1, "MEMORY": 2, "MEMORY_UNITS": "GB"},
+            {"NAME": "AWS2", "CPUS": 2, "MEMORY": 4, "MEMORY_UNITS": "GB"},
+            {"NAME": "AWS3", "CPUS": 2, "MEMORY": 6, "MEMORY_UNITS": "GB"},
+            {"NAME": "AWS4", "CPUS": 1, "MEMORY": 6, "MEMORY_UNITS": "GB"},
+            {"NAME": "AWS5", "CPUS": 2, "MEMORY": 5, "MEMORY_UNITS": "GB"}
         ]
         resource_keys = resource_list[0].keys()
         pandas_data = {}
