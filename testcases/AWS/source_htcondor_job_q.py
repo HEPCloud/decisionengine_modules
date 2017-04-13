@@ -14,15 +14,15 @@ class HTCondorJobQ(Source):
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
         job_manifests = [
-            {"JobId": "1.0", "CPUS": 2, "MEM": 4, "MEM_UNITS": "GB",},
-            {"JobId": "2.0", "CPUS": 2, "MEM": 4, "MEM_UNITS": "GB",},
-            {"JobId": "3.0", "CPUS": 2, "MEM": 4, "MEM_UNITS": "GB",},
-            {"JobId": "3.1", "CPUS": 2, "MEM": 4, "MEM_UNITS": "GB",},
-            {"JobId": "3.2", "CPUS": 2, "MEM": 4, "MEM_UNITS": "GB",},
-            {"JobId": "6.0", "CPUS": 2, "MEM": 4, "MEM_UNITS": "GB",}
+            {"JobId": "1.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
+            {"JobId": "2.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
+            {"JobId": "3.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
+            {"JobId": "3.1", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
+            {"JobId": "3.2", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
+            {"JobId": "6.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"}
         ]
         manifest_keys = job_manifests[0].keys()
         pandas_data = {}
         for key in manifest_keys:
             pandas_data[key] = pd.Series([d[key] for d in job_manifests])
-        DataBlock["job_manifests"] = pandas_data
+        DataBlock["job_manifests"] = pd.DataFrame(pandas_data)
