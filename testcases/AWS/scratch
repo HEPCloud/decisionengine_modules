@@ -1,0 +1,40 @@
+   JOB_CPUS  JOB_MEM JOB_MEM_UNITS JobId
+0         2        4            GB   1.0
+1         2        4            GB   2.0
+2         2        4            GB   3.0
+3         2        4            GB   3.1
+4         2        4            GB   3.2
+5         2        4            GB   6.0
+
+  RESOURCE_NAME  RES_CPUS  RES_MEM RES_MEM_UNITS
+0          AWS1         1        2            GB
+1          AWS2         2        4            GB
+2          AWS3         2        6            GB
+3          AWS4         1        6            GB
+4          AWS5         2        5            GB
+
+
+select jobs_pd.JobId,
+       resources_pd.RESOURCE_NAME
+where (jobs_pd.JOB_CPUS <= resources_pd.RES_CPUS and
+      jobs_pd.JOB_MEM <= resources_pd.RES_MEM)
+
+JobId   RESOURCE_NAME
+1.0     AWS2
+1.0     AWS3
+1.0     AWS5
+2.0     AWS2
+2.0     AWS3
+2.0     AWS5
+3.0     AWS2
+3.0     AWS3
+3.0     AWS5
+3.1     AWS2
+3.1     AWS3
+3.1     AWS5
+3.2     AWS2
+3.3     AWS3
+3.4     AWS5
+6.0     AWS2
+6.0     AWS3
+6.0     AWS5
