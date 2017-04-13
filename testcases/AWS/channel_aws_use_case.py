@@ -6,7 +6,7 @@ Sources = [
     "params":  {
       "schedd_name":   "cmsosgce.fnal.gov",
       "constraint":    "(VO_Name =?= 'CMS')",
-      "desired_attrs": ["ProcId, "ClusterId", "VO_Name"],
+      "desired_attrs": ["ProcId", "ClusterId", "VO_Name"],
     }
     "schedule": "5 minute",
   }, {
