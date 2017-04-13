@@ -31,7 +31,7 @@ common_facts = {
       "cloud_sufficient_budget":   "(db['cloudinfo']['available_budget'] > sum(['jobs']['estimated_cost']))"
     }
 
-common_rules = { 
+common_rules = {
     [
       "(jobs_present & overflow_permitted &  overflow_condition) -> [use_osg, handle_overflow]",
       "(jobs_present & !(overflow_permitted & overflow_condition)) -> [use_local]",
