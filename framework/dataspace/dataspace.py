@@ -26,8 +26,8 @@ class DataSpace(object):
         'header': None,
         'metadata': None,
         'datablock': [
-            'generation_id INT',
             'taskmanager_id INT',
+            'generation_id INT',
             'key TEXT',
             'value BLOB'
         ]
@@ -77,20 +77,24 @@ class DataSpace(object):
             raise DataSpaceError('Error creating table %s' % DataSpace.datablock_table)
 
 
+    def update(self, taskmanager_id, generation_id, key, value): 
+        try:
+            cmd = """UPDATE datablock SET value="%s" WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % value
+            params = (taskmanager_id, generation_id, key)
+            cursor = self.conn.cursor()
+            cursor.execute(cmd, params)
+        except:
+            raise
+            traceback.print_stack()
+            raise DataSpaceError('Error updating table %s' % DataSpace.datablock_table)
+
+
     def get(self, taskmanager_id, generation_id, key): 
         try:
             template = (taskmanager_id, generation_id, key)
             
-            #params = {
-            #    'table': DataSpace.datablock_table,
-            #    'taskmanager_id': taskmanager_id,
-            #    'generation_id': generation_id,
-            #    'key': key
-            #}
-            #cmd = """SELECT value FROM %(table)s WHERE ((taskmanager_id=%(taskmanager_id)s) AND (generation_id=%(generation_id)s) AND (key=%(key)s))""", params)
             #print cmd
             cmd = """SELECT value FROM datablock WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))"""
-            #params = (DataSpace.datablock_table, taskmanager_id, generation_id, key)
             params = (taskmanager_id, generation_id, key)
 
             cursor = self.conn.cursor()
@@ -103,6 +107,16 @@ class DataSpace(object):
             traceback.print_stack()
             raise DataSpaceError('Error creating table %s' % DataSpace.datablock_table)
 
-        return value[-1][0]
+        #return value[-1][0]
+        return value
 
-     
+
+    def duplicate(self, taskmanager_id, generation_id, new_generation_id):
+
+        cursor = self.conn.cursor()
+        
+        cmd = """INSERT INTO datablock (taskmanager_id, generation_id, key, value) SELECT taskmanager_id, %i, key, value FROM datablock WHERE (taskmanager_id=?) AND (generation_id=?)   """ % (new_generation_id)
+        params = (taskmanager_id, generation_id)
+        cursor = self.conn.cursor()
+        cursor.execute(cmd, params)
+        self.conn.commit()

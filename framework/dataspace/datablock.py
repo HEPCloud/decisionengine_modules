@@ -1,8 +1,16 @@
 #!/usr/bin/python
 
 import time
+import copy
+import sqlite3
 
 from UserDict import UserDict
+
+from dataspace import DataSpace
+
+STATE_NEW = 'NEW'
+STATE_STEADY = 'STEADY'
+STATE_ERROR = 'ERROR'
 
 """
 HEADER = {
@@ -23,6 +31,13 @@ METADATA = {
 }
 
 """
+class KeyNotFoundError(Exception):
+    """
+    Errors due to invalid Metadata
+    """
+    pass
+
+
 
 
 class InvalidMetadataError(Exception):
@@ -107,28 +122,70 @@ class Header(UserDict):
 
 class DataBlock(object):
 
-    def __init__(self):
-        self.id = 1111
+    def __init__(self, taskmanager_id, generation_id, dataspace):
+        # taskmanager_id is what we call as datablock_id in the api/document
+        self.taskmanager_id = taskmanager_id
+        self.generation_id = generation_id
+        self.dataspace = dataspace
+        self.keys_inserted = []
 
 
     def put(self, key, value):
-        header = None
-        metadata = None
-        data = None
+        self.__setitem__(key, value)
 
-        # Generate Header
-
-        # Generate Metadata
-
-        # Store data product to the database
-
-        return (data, header, metadata)
 
     def get(self, key):
+        return self.__getitem__(key)
+
+
+    def _insert(self, key, value):
+            # Generate Header
+
+            # Generate Metadata
+
+            # Store data product to the database
+            self.dataspace.insert(self.taskmanager_id, self.generation_id,
+                key, value)
+            self.keys_inserted.append(key)
+
+
+    def _update(self, key, value):
+            # Update Header
+
+            # Update Metadata
+
+            # Update data product to the database
+            self.dataspace.update(self.taskmanager_id, self.generation_id,
+                key, value)
+
+
+    def __setitem__(self, key, value):
+        header = None
+        metadata = None
+
+        if key in self.keys_inserted:
+            # This has been already insterted, so you are working on a copy
+            # that was backedup. You need to update and adjust the update
+            # counter
+            self._update(key, value)
+        else:
+            self._insert(key, value)
+
+
+    def __getitem__(self, key, default=None):
         """
         Return the value associated with the key in the database
         """
-        pass
+
+        try:
+            value = self.dataspace.get(self.taskmanager_id,
+                self.generation_id, key)
+        except KeyNotFoundError, e:
+            value = default
+        except:
+            # TODO: FINSIH with more exceptions, content
+            raise
+        return value
 
 
     def get_header(self, key):
@@ -145,16 +202,16 @@ class DataBlock(object):
         pass
 
 
-def duplicate(datablock_id):
+def duplicate(datablock):
     """
     Duplicate the datablock with the given id and return id of the new
     datablock created. Only information from the sources is backed up.
     """
 
-    dup_db_id = None
-    # Can be handled with subquery
-    # Create a new datablock from the source data of existing datablock
+    new_datablock = copy.copy(datablock)
+    new_datablock.generation_id += 1
+    new_datablock.keys_inserted = copy.deepcopy(datablock.keys_inserted)
+    datablock.dataspace.duplicate(datablock.taskmanager_id,
+        datablock.generation_id, new_datablock.generation_id)
 
-
-    # return the datablock_id of the duplicate created
-    return dup_db_id
+    return new_datablock

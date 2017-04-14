@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from dataspace import DataSpace
-from datablock import DataBlock
+from datablock import DataBlock, duplicate
 import os
 
 filename = '/tmp/test-wdd.db'
@@ -25,6 +25,20 @@ value = { "m1": "v1" }
 datablock[key] = value
 
 print datablock.get(key)
+
+newValue = { "m2": "v2" }
+datablock.put(key, newValue)
+
+print datablock.get(key)
+
+newdatablock = duplicate(datablock)
+
+print newdatablock.get(key)
+
+newValue = { "m3": "v3" }
+newdatablock.put(key, newValue)
+
+print newdatablock.get(key)
 
 dataspace.close()
 
