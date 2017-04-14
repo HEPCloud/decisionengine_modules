@@ -19,7 +19,7 @@ Sources = [
 
 Parameters = ["p_overflow", "p_overflow_threshold", "p_overflow_cloud", "p_overflow_hpc", "p_overflow_osg"]
 
-Transforms: ["osg_requests", "hpc_requests", "cloud_requests"]
+Transforms: ["osg_requests", "hpc_requests", "CloudRequests"]
 
 LogicEngine = {
   "ResourceSelection": {
