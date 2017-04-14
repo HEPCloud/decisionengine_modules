@@ -16,6 +16,7 @@
 
 select jobs_pd.JobId,
        resources_pd.RESOURCE_NAME
+from jobs_pd, resources_pd
 where (jobs_pd.JOB_CPUS <= resources_pd.RES_CPUS and
       jobs_pd.JOB_MEM <= resources_pd.RES_MEM)
 
@@ -38,3 +39,15 @@ JobId   RESOURCE_NAME
 6.0     AWS2
 6.0     AWS3
 6.0     AWS5
+
+
+
+
+
+
+
+
+
+merged_pd = pd.merge(jobs_pd, resources_pd, how='outer', left_on='JOB_CPUS', right_on='RES_CPUS')
+
+merged_pd.assign(Match=merged_pd.JOB_MEM <= merged_pd.RES_MEM)
