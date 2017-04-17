@@ -45,14 +45,41 @@ if __name__ == "__main__":
 
     # merge the spot prices into the resources_pd
     resource_spot_pd = pd.merge(resources_pd, spot_pd, on=["RESOURCE_NAME"])
-    print resource_spot_pd
 
     # merge the two - sort of like:
     #   select *
     #   from jobs_pd, resources_pd
     #   where jobs_pd.JOB_CPUS <= resources_pd.RES_CPUS
-    #merged_pd = pd.merge(jobs_pd, resources_pd, how='outer', left_on='JOB_CPUS', right_on='RES_CPUS')
+    merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='JOB_CPUS', right_on='RES_CPUS')
 
     # create a new column that gives a boolean determining wether or not the row matches memory requirments
-    #new_merged_pd = merged_pd.assign(Match=merged_pd.JOB_MEM <= merged_pd.RES_MEM)
-    #print new_merged_pd
+    merged_pd = merged_pd.assign(Match=merged_pd.JOB_MEM <= merged_pd.RES_MEM)
+
+    # filter for matched entries in the data frame
+    matched_pd = merged_pd[(merged_pd.Match == True)]
+
+    group = matched_pd.groupby(['SPOT_PRICE','RESOURCE_NAME'])
+    res_group = group['RESOURCE_NAME']
+    for i in res_group:
+        print i
+    for key in group.groups:
+        print group.groups[key]
+    # sort by SPOT_PRICE
+    #matched_pd = matched_pd.sort_values('SPOT_PRICE')
+
+"""
+    rows = len(matched_pd.index)
+    req = {}
+    limit = 5
+    for i in matched_pd.iterrows():
+        if rows - limit > 0:
+            print "requesting %i" % limit
+            print i
+            rows -= limit
+        elif rows > 0:
+            print "requesting %i" % rows
+            print i
+            rows = 0
+        else:
+            break
+"""
