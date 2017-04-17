@@ -78,8 +78,11 @@ class TaskManager:
 
 
     def do_backup(self):
+        print "do_backup"
 
-    def run_source(self,
+    def run_source(self) :
+        print "run_source"
+
     def run_sources(self, data_block=None):
         if not data_block:
             return
