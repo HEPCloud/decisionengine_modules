@@ -13,10 +13,10 @@ dataspace = DataSpace(filename)
 
 dataspace.create()
 
-taskmanager_id = 1
+datablock_id = 1
 generation_id = 1
 
-datablock = DataBlock(taskmanager_id, generation_id, dataspace)
+datablock = DataBlock(datablock_id, generation_id, dataspace)
 
 key = 'aKey'
 value = { "m1": "v1" }
