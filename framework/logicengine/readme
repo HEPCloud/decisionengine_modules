@@ -12,6 +12,10 @@
 
   $ ln -s cxx/build/ErrorHandler/RE.so RE.so
 
-2. run the tests for LogicEngine.py
+3. run the tests for LogicEngine.py
+
+  Only once, you have to install pytest. If we get pytest installed
+  directly on the machine, then we don't have to do this bit:
+  $ pip install --user pytest
 
   $ PYTHONPATH=$PWD pytest
