@@ -1,5 +1,5 @@
+from decisionengine.framework.logicengine import RE
 import json
-import RE
 
 class LogicEngine:
     def __init__(self, facts, rules):
@@ -9,6 +9,9 @@ class LogicEngine:
         # updated to take a list of strings.
         self.re = RE.RuleEngine(json.dumps(facts), json.dumps(rules))
 
+    def produces(self):
+        return ["actions", "newfacts"]
+
     def evaluate(self, db):
         """evaluate our facts and rules, in the context of the given data.
 
@@ -17,13 +20,15 @@ class LogicEngine:
         evaluated_facts = { name : eval(expr, {}, db) for name, expr in facts.iteritems()}
         # Process rules
         actions, newfacts = self.re.execute(evaluated_facts)
-        db["actions"] = actions
-        db["newfacts"] = newfacts
+        return {"actions": actions, "newfacts": newfacts}
 
 if __name__ == "__main__":
     import copy
-    facts = { "a": "True", "b": "z>10" }
-    rules = { "r1": { "expression": "a & b", "actions": ["launch_missile", "cook dinner"]} }
+    facts = { "a": "True",
+              "b": "z>10",
+              "c": "match_table[still_good == True]).assign(req_cost=number_to_request * burn_rate)['req_cost'].sum() > 0"
+            }
+    rules = { "r1": { "expression": "a && b && c", "actions": ["launch_missile", "cook dinner"]} }
     l1 = LogicEngine(facts, rules)
 
     db = {"z" : 100 }
