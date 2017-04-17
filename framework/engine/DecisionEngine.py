@@ -16,6 +16,8 @@ import modules.de_logger as de_logger
 import configmanager.ConfigManager as Conf_Manager
 import taskmanager.TaskManager as TaskManager
 
+import dataspace.dataspace as dataspace 
+
 CONFIG_UPDATE_PERIOD = 10 # seconds
 
 class DE:
@@ -78,6 +80,13 @@ if __name__ == '__main__':
     channels = config_manager.get_channels()
     print "GLOBAL CONF", global_config
     print "CHANNELS", channels
+    
+    ds = dataspace.DataSpace("/tmp/test-wdd.db",None)
+    
+
+    sys.exit(0)
+
+
     task_mgrs = {}
     for ch in channels:
         task_mgrs[ch] = TaskManager.TaskManager(channels[ch])
