@@ -41,14 +41,13 @@ common_rules = {
 
 cloud_facts = {
     "good_total_estimated_budget" : "db['ds']['budget'] - ( (db['match_table'][still_good == True]).assign(req_cost=number_to_request * burn_rate)['req_cost'].sum()) > 0",
-
     "good_total_burn_rate" : "db['ds']['targetburn'] <= (db['match_table'][still_good == True]['burn_rate'].sum())"
-    }
+}
 
 cloud_rules = {
     [
-        ]
-    }
+    ]
+}
 
 LogicEngine =
 {
