@@ -26,7 +26,7 @@ class DataSpace(object):
         'header': None,
         'metadata': None,
         'datablock': [
-            'taskmanager_id INT',
+            'datablock_id INT',
             'generation_id INT',
             'key TEXT',
             'value BLOB'
@@ -49,7 +49,7 @@ class DataSpace(object):
         self.conn.close()
 
 
-    def execute(self, cmd):
+    def _execute(self, cmd):
         cursor = self.conn.cursor()
         cursor.execute(cmd)
         self.conn.commit()
@@ -60,27 +60,27 @@ class DataSpace(object):
             if isinstance(cols, list):
                 try:
                     cmd = """CREATE TABLE %s (%s)""" % (table, ', '.join(str(c) for c in cols))
-                    self.execute(cmd)
+                    self._execute(cmd)
                 except:
                     traceback.print_stack()
                     raise DataSpaceError('Error creating table %s' % table)
 
 
-    def insert(self, taskmanager_id, generation_id, key, value): 
+    def insert(self, datablock_id, generation_id, key, value):
         try:
             cmd = """INSERT INTO %s VALUES (%i, %i, "%s", "%s")""" % (
-                DataSpace.datablock_table, taskmanager_id, generation_id,
+                DataSpace.datablock_table, datablock_id, generation_id,
                 key, value)
-            self.execute(cmd)
+            self._execute(cmd)
         except:
             traceback.print_stack()
             raise DataSpaceError('Error creating table %s' % DataSpace.datablock_table)
 
 
-    def update(self, taskmanager_id, generation_id, key, value): 
+    def update(self, datablock_id, generation_id, key, value):
         try:
-            cmd = """UPDATE datablock SET value="%s" WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % value
-            params = (taskmanager_id, generation_id, key)
+            cmd = """UPDATE datablock SET value="%s" WHERE ((datablock_id=?) AND (generation_id=?) AND (key=?))""" % value
+            params = (datablock_id, generation_id, key)
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
         except:
@@ -89,19 +89,19 @@ class DataSpace(object):
             raise DataSpaceError('Error updating table %s' % DataSpace.datablock_table)
 
 
-    def get(self, taskmanager_id, generation_id, key): 
+    def get(self, datablock_id, generation_id, key):
         try:
-            template = (taskmanager_id, generation_id, key)
+            template = (datablock_id, generation_id, key)
             
             #print cmd
-            cmd = """SELECT value FROM datablock WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))"""
-            params = (taskmanager_id, generation_id, key)
+            cmd = """SELECT value FROM datablock WHERE ((datablock_id=?) AND (generation_id=?) AND (key=?))"""
+            params = (datablock_id, generation_id, key)
 
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
             value = cursor.fetchall()
 
-            #self.execute(cmd)
+            #self._execute(cmd)
         except:
             raise
             traceback.print_stack()
@@ -111,12 +111,18 @@ class DataSpace(object):
         return value
 
 
-    def duplicate(self, taskmanager_id, generation_id, new_generation_id):
+    def duplicate(self, datablock_id, generation_id, new_generation_id):
 
         cursor = self.conn.cursor()
         
-        cmd = """INSERT INTO datablock (taskmanager_id, generation_id, key, value) SELECT taskmanager_id, %i, key, value FROM datablock WHERE (taskmanager_id=?) AND (generation_id=?)   """ % (new_generation_id)
-        params = (taskmanager_id, generation_id)
+        cmd = """INSERT INTO datablock (datablock_id, generation_id, key, value) SELECT datablock_id, %i, key, value FROM datablock WHERE (datablock_id=?) AND (generation_id=?)   """ % (new_generation_id)
+        params = (datablock_id, generation_id)
         cursor = self.conn.cursor()
         cursor.execute(cmd, params)
         self.conn.commit()
+
+
+    def delete(self, datablock_id, all_generations=False):
+        # Remove the latest generation of the datablock
+        # If asked, remove all generations of the datablock
+        pass

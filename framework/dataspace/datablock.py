@@ -2,11 +2,18 @@
 
 import time
 import copy
-import sqlite3
 
 from UserDict import UserDict
 
 from dataspace import DataSpace
+
+###############################################################################
+# TODO:
+# 1) Need to make sure there are no race conditions
+# 2) Add mutex/locks/critical sections where ever required
+# 3) Add Header functionality
+# 4) Add Metadata functionality
+###############################################################################
 
 STATE_NEW = 'NEW'
 STATE_STEADY = 'STEADY'
@@ -122,9 +129,9 @@ class Header(UserDict):
 
 class DataBlock(object):
 
-    def __init__(self, taskmanager_id, generation_id, dataspace):
-        # taskmanager_id is what we call as datablock_id in the api/document
-        self.taskmanager_id = taskmanager_id
+    def __init__(self, datablock_id, generation_id, dataspace):
+        # datablock_id is what we call as datablock_id in the api/document
+        self.datablock_id = datablock_id
         self.generation_id = generation_id
         self.dataspace = dataspace
         self.keys_inserted = []
@@ -144,8 +151,8 @@ class DataBlock(object):
             # Generate Metadata
 
             # Store data product to the database
-            self.dataspace.insert(self.taskmanager_id, self.generation_id,
-                key, value)
+            self.dataspace.insert(self.datablock_id, self.generation_id,
+                                  key, value)
             self.keys_inserted.append(key)
 
 
@@ -155,8 +162,8 @@ class DataBlock(object):
             # Update Metadata
 
             # Update data product to the database
-            self.dataspace.update(self.taskmanager_id, self.generation_id,
-                key, value)
+            self.dataspace.update(self.datablock_id, self.generation_id,
+                                  key, value)
 
 
     def __setitem__(self, key, value):
@@ -178,8 +185,8 @@ class DataBlock(object):
         """
 
         try:
-            value = self.dataspace.get(self.taskmanager_id,
-                self.generation_id, key)
+            value = self.dataspace.get(self.datablock_id,
+                                       self.generation_id, key)
         except KeyNotFoundError, e:
             value = default
         except:
@@ -211,7 +218,7 @@ def duplicate(datablock):
     new_datablock = copy.copy(datablock)
     new_datablock.generation_id += 1
     new_datablock.keys_inserted = copy.deepcopy(datablock.keys_inserted)
-    datablock.dataspace.duplicate(datablock.taskmanager_id,
+    datablock.dataspace.duplicate(datablock.datablock_id,
         datablock.generation_id, new_datablock.generation_id)
 
     return new_datablock
