@@ -15,8 +15,7 @@ import os
 import modules.de_logger as de_logger
 import configmanager.ConfigManager as Conf_Manager
 import taskmanager.TaskManager as TaskManager
-
-import dataspace.dataspace as dataspace 
+import dataspace.datablock as datablock
 
 CONFIG_UPDATE_PERIOD = 10 # seconds
 
@@ -80,10 +79,6 @@ if __name__ == '__main__':
     channels = config_manager.get_channels()
     print "GLOBAL CONF", global_config
     print "CHANNELS", channels
-    ds = dataspace.DataSpace("/tmp/test-wdd.db",None)
-    
-
-    sys.exit(0)
 
     try:
         de_logger.set_logging(log_file_name = global_config['logger']['log_file'],
@@ -94,18 +89,16 @@ if __name__ == '__main__':
         sys.exit(1)
 
     de.logger.info("Starting decision engine")
-
     task_mgrs = {}
+    data_space = () # get this from configuration
     for ch in channels:
-        task_mgrs[ch] = TaskManager.TaskManager(channels[ch])
+        task_mgrs[ch] = TaskManager.TaskManager(ch, channels[ch], datablock.DataBlock(ch, 0, data_space))
 
 
     while 1:
         for t_mgr in task_mgrs:
             task_mgrs[t_mgr].run()
         time.sleep(20)
-
-
 
     sys.exit(0)
     try:

@@ -2,9 +2,12 @@
 """
 Task Manager
 """
+import threading
+import logging
 
+import dataspace.datablock as datablock
 
-class Worker:
+class Worker(object):
     def __init__(self, source_dict):
         name = source_dict['module']
         module = __import__('modules.%s'%(name,))
@@ -12,19 +15,15 @@ class Worker:
         self.worker = m_class(source_dict['parameters'], None)
         self.shedule = source_dict.get('shedule')
         self.run_counter = 0
-
+        self.stop_running = threading.Event()
+        self.data_updated = threading.Event()
 
 '''
-class Source:
-    def __init__(self, source_dict):
-        print "INIT SOURCE", source_dict
-        name = source_dict['module']
-        module = __import__('modules.%s'%(name,))
+class Source(Worker):
+    def __init__(self, source_dict, lock):
+        Worker.__init__(source_dict)
+        self.stop = False
 
-        print "MOD", module
-        m_class = getattr(getattr(module, name), name)
-        print "CLASS", m_class
-        self.src = m_class(source_dict['parameters'], None)
 
 class Transform:
     def __init__(self, source_dict):
@@ -46,7 +45,7 @@ class Publisher:
         self.publisher = m_class(source_dict['parameters'], None)
 '''
 
-class Channel:
+class Channel(object):
     def __init__(self, channel_dict):
         self.sources = {}
         self.transforms = {}
@@ -68,26 +67,124 @@ class Channel:
 # states
 BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
 _state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
-class TaskManager:
-    def __init__(self, channel_dict):
+class TaskManager(object):
+    def __init__(self, task_manager_id, channel_dict, data_block):
+        self.data_block_t0 = data_block # my current data block
+        self.id = task_manager_id
         self.channel = Channel(channel_dict)
         print "TM Channel", self.channel
         self.state = BOOT
         self.decision_cycle_active = False
+        self.lock = threading.Lock()
+        self.logger = logging.getLogger("decision_engine")
+        self.logger.info("TM starting %s" % (self.id,))
 
+    def _run_forever(self, args):
+        """
+        Run source in a loop
+        """
+        self.stop_running = args
+        self.running.value = 1
+        self.time_started = time.time()
+        while self.running.value:
+            self.idle = False
+            with self.lock:
+                try:
+                    self.task.main(self.kwargs)
+                except Exception, e:
+                    exc, value, tb = sys.exc_info()
+                    self.logger.error("run_forever:%s %s" % (self.name, str(e)))
+                    for l in traceback.format_exception( exc, value, tb ):
+                        self.logger.error("Traceback: %s"%(l,))
+                    break
+            self.logger.info("checking event %s"%(self.stop_running,))
+            s = self.stop_running.wait(self.sleeptime)
+            #s = stop_running.wait(self.sleeptime)
+            if s:
+                self.logger.info("received stop_running signal")
+                break
+        self.logger.info("stopped %s" % (self.name,))
 
+    def data_block_put(self, data, data_block):
+        """
+        Put data into data block
+
+        :type data: :obj:`dict`
+        :arg data: key, value pairs
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+        """
+
+        with self.lock:
+            for k in data:
+                data_block.put(k, data[k])
 
     def do_backup(self):
-        print "do_backup"
+        """
+        Duplicate current data block and return its copy
+
+        :rtype: :obj:`~datablock.DataBlock`
+
+        """
+        with self.lock:
+            data_block = datablock.duplicate(self.data_block_t0)
+        return data_block
+
+    def decision_cycle(self):
+        """
+        Decision cycle to be run periodically (by trigger)
+        """
+        data_block_t1 = self.do_backup()
+        try:
+            self.run_transforms(data_block_t1)
+            self.run_logic_engine(data_block_t1)
+            self.run_publishers(data_block_t1)
+        except Ecxeption:
+            exc, detail = sys.exc_info()[:2]
+            self.logger.error("error in decision cycle %s %s" % (exc, detail))
+
+
+    def run_source(self, src):
+        """
+        Get the data from source
+        and put it into the data block
+
+        :type src: :obj:`~Worker`
+        :arg src: source Worker
+
+
+        """
+        while 1:
+            try:
+                data = src.acquire()
+                with self.lock:
+                    self.data_block_t0.put(data)
+                    src.run_counter += 1
+                    src.data_updated.set()
+            except Ecxeption:
+                exc, detail = sys.exc_info()[:2]
+                self.logger.error("error running surce %s %s %s" % (src, exc, detail))
+            s = src.stop_running.wait(src.shedule)
+            if s:
+                self.logger.info("received stop_running signal for %s"%(src.name,))
+                break
+        self.logger.info("stopped %s" % (src.name,))
 
     def run_source(self) :
         print "run_source"
 
     def run_sources(self, data_block=None):
-        if not data_block:
-            return
         for s in self.channel.sources:
-            self.channel.sources[s].worker.acquire(data_block)
+            self.logger.info("starting loop for %s" % (s,))
+            thread = treading.Tread(group=None, target=self.run_source,
+                                    name=s.name, args=(), kwargs={})
+            try:
+                thread.start()
+            except:
+                exc, detail = sys.exc_info()[:2]
+                self.logger.error("error starting thread %s: %s" % (name, detail))
+                self.state = OFFLINE
+                break
 
     def run_transforms(self, data_block=None):
         if not data_block:
@@ -110,7 +207,9 @@ class TaskManager:
 
     def boot(self):
         return
-    def run(self):
+
+    def run_forever(self):
+        # start sources
         for s in self.channel.sources:
             print "Calling produces for", s
             self.channel.sources[s].worker.produces(None)
@@ -130,3 +229,20 @@ class TaskManager:
 
 
 
+    def run(self):
+        for s in self.channel.sources:
+            print "Calling produces for", s
+            self.channel.sources[s].worker.produces(None)
+        for s in self.channel.sources:
+            print "Calling  acquire for ", s
+            self.channel.sources[s].worker.acquire()
+        for s in self.channel.transforms:
+            print "Calling  produces for ", s
+            self.channel.transforms[s].worker.produces(None)
+
+        for s in self.channel.le_s:
+            print "Calling produces for", s
+            self.channel.le_s[s].worker.evaluate()
+        for s in self.channel.publishers:
+            print "Calling  acquire for ", s
+            self.channel.publishers[s].worker.publish()
