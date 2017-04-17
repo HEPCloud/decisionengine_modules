@@ -83,8 +83,6 @@ if __name__ == '__main__':
     ds = dataspace.DataSpace("/tmp/test-wdd.db",None)
     
 
-    sys.exit(0)
-
     try:
         de_logger.set_logging(log_file_name = global_config['logger']['log_file'],
                               max_file_size = global_config['logger']['max_file_size'],
