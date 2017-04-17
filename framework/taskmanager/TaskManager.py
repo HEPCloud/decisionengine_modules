@@ -73,6 +73,21 @@ class TaskManager:
         self.channel = Channel(channel_dict)
         print "TM Channel", self.channel
         self.state = BOOT
+        self.decision_cycle_active = False
+
+
+
+    def do_backup(self):
+        print "do_backup"
+
+    def run_source(self) :
+        print "run_source"
+
+    def run_sources(self, data_block=None):
+        if not data_block:
+            return
+        for s in self.channel.sources:
+            self.channel.sources[s].worker.acquire(data_block)
 
     def run_transforms(self, data_block=None):
         if not data_block:
