@@ -5,7 +5,7 @@ import copy
 
 from UserDict import UserDict
 
-from dataspace import DataSpace
+# from dataspace import DataSpace
 
 ###############################################################################
 # TODO:
@@ -38,13 +38,13 @@ METADATA = {
 }
 
 """
+
+
 class KeyNotFoundError(Exception):
     """
     Errors due to invalid Metadata
     """
     pass
-
-
 
 
 class InvalidMetadataError(Exception):
@@ -57,16 +57,18 @@ class InvalidMetadataError(Exception):
 class Metadata(UserDict):
 
     # Minimum information required for the Metadata dict to be valid
-    required_keys = set(['datablock_id', 'state', 'generation_id',
-                         'generation_time', 'missed_update_count'])
+    required_keys = {
+        'datablock_id', 'state', 'generation_id',
+        'generation_time', 'missed_update_count'}
 
     # Valid states
-    valid_states = set(['NEW', 'START_BACKUP', 'METADATA_UPDATE', 'END_CYCLE'])
+    valid_states = {'NEW', 'START_BACKUP', 'METADATA_UPDATE', 'END_CYCLE'}
 
     def __init__(self, datablock_id, state='NEW', generation_id=None,
                  generation_time=None, missed_update_count=0):
 
-        if not state in Metadata.valid_states:
+        UserDict.__init__(self)
+        if state not in Metadata.valid_states:
             raise InvalidMetadataError('Invalid Metadata state "%s"' % state)
         if not generation_time:
             generation_time = time.time()
@@ -85,7 +87,7 @@ class Metadata(UserDict):
         Set the state for the Metadata
         """
 
-        if not state in Metadata.valid_states:
+        if state not in Metadata.valid_states:
             raise InvalidMetadataError('%s is not a valid Metadata state' % state)
         self.data['state'] = state
 
@@ -93,8 +95,10 @@ class Metadata(UserDict):
 class Header(UserDict):
 
     # Minimum information required for the Header dict to be valid
-    required_keys = set(['datablock_id', 'create_time', 'expiration_time',
-                         'scheduled_create_time', 'creator', 'schema_id'])
+    required_keys = {
+        'datablock_id', 'create_time', 'expiration_time',
+        'scheduled_create_time', 'creator', 'schema_id'
+    }
 
     # Default lifetime of the data if the expiration time is not specified
     default_data_lifetime = 1800
@@ -102,6 +106,7 @@ class Header(UserDict):
     def __init__(self, datablock_id, create_time=None, expiration_time=None,
                  scheduled_create_time=None, creator='module', schema_id=None):
 
+        UserDict.__init__(self)
         if not create_time:
             create_time = time.time()
         if not expiration_time:
@@ -137,46 +142,36 @@ class DataBlock(object):
         self.keys_inserted = []
 
 
-    def put(self, key, value):
-        self.__setitem__(key, value)
+    def put(self, key, value, header=None, metadata=None):
+        self.__setitem__(key, value,  header, metadata)
 
 
     def get(self, key):
         return self.__getitem__(key)
 
 
-    def _insert(self, key, value):
-            # Generate Header
-
-            # Generate Metadata
-
-            # Store data product to the database
-            self.dataspace.insert(self.datablock_id, self.generation_id,
-                                  key, value)
-            self.keys_inserted.append(key)
+    def _insert(self, key, value, header, metadata):
+        # Store data product, header and metadata to the database
+        self.dataspace.insert(self.datablock_id, self.generation_id,
+                              key, value, header, metadata)
+        self.keys_inserted.append(key)
 
 
-    def _update(self, key, value):
-            # Update Header
-
-            # Update Metadata
-
-            # Update data product to the database
-            self.dataspace.update(self.datablock_id, self.generation_id,
-                                  key, value)
+    def _update(self, key, value, header, metadata):
+            # Update data product, header and metadata to the database
+        self.dataspace.update(self.datablock_id, self.generation_id,
+                              key, value, header, metadata)
 
 
-    def __setitem__(self, key, value):
-        header = None
-        metadata = None
+    def __setitem__(self, key, value, header=None, metadata=None):
 
         if key in self.keys_inserted:
-            # This has been already insterted, so you are working on a copy
+            # This has been already inserted, so you are working on a copy
             # that was backedup. You need to update and adjust the update
             # counter
-            self._update(key, value)
+            self._update(key, value, header, metadata)
         else:
-            self._insert(key, value)
+            self._insert(key, value, header, metadata)
 
 
     def __getitem__(self, key, default=None):
@@ -199,26 +194,44 @@ class DataBlock(object):
         """
         Return the header associated with the key in the database
         """
-        pass
+        try:
+            value = self.dataspace.get_header(self.datablock_id,
+                                              self.generation_id, key)
+        #except KeyNotFoundError, e:
+        #    value = default
+        except:
+            # TODO: FINSIH with more exceptions, content
+            raise
+        return value
 
 
     def get_metadata(self, key):
         """
         Return the metadata associated with the key in the database
         """
-        pass
+        try:
+            value = self.dataspace.get_metadata(self.datablock_id,
+                                                self.generation_id, key)
+        #except KeyNotFoundError, e:
+        #    value = default
+        except:
+            # TODO: FINSIH with more exceptions, content
+            raise
+        return value
 
 
 def duplicate(datablock):
     """
     Duplicate the datablock with the given id and return id of the new
     datablock created. Only information from the sources is backed up.
+    TODO: Also update the header and the metadata information
     """
 
     new_datablock = copy.copy(datablock)
     new_datablock.generation_id += 1
     new_datablock.keys_inserted = copy.deepcopy(datablock.keys_inserted)
     datablock.dataspace.duplicate(datablock.datablock_id,
-        datablock.generation_id, new_datablock.generation_id)
+                                  datablock.generation_id,
+                                  new_datablock.generation_id)
 
     return new_datablock

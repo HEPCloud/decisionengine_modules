@@ -1,10 +1,11 @@
 #!/usr/bin/python
 
-import time
+#import time
 import sqlite3
 import traceback
 
-from UserDict import UserDict
+#from UserDict import UserDict
+
 
 class DataSpaceConnectionError(Exception):
     """
@@ -35,7 +36,6 @@ class DataSpace(object):
 
     datablock_table = 'datablock'
 
-
     def __init__(self, db_filename, credentials=None):
         self.db_filename = db_filename
         self.credentials = credentials
@@ -56,6 +56,10 @@ class DataSpace(object):
 
 
     def create(self):
+        # Create the necessary tables for the datablocks
+        # Should be called only once
+        # TODO: Need to add functionality to ignore if tables exist
+
         for table, cols in DataSpace.tables.iteritems():
             if isinstance(cols, list):
                 try:
@@ -67,6 +71,7 @@ class DataSpace(object):
 
 
     def insert(self, datablock_id, generation_id, key, value):
+        # Insert the data product, header and metadata to the database
         try:
             cmd = """INSERT INTO %s VALUES (%i, %i, "%s", "%s")""" % (
                 DataSpace.datablock_table, datablock_id, generation_id,
@@ -78,6 +83,7 @@ class DataSpace(object):
 
 
     def update(self, datablock_id, generation_id, key, value):
+        # Update the data product, header and metadata in the database
         try:
             cmd = """UPDATE datablock SET value="%s" WHERE ((datablock_id=?) AND (generation_id=?) AND (key=?))""" % value
             params = (datablock_id, generation_id, key)
@@ -85,11 +91,12 @@ class DataSpace(object):
             cursor.execute(cmd, params)
         except:
             raise
-            traceback.print_stack()
-            raise DataSpaceError('Error updating table %s' % DataSpace.datablock_table)
+            #traceback.print_stack()
+            #raise DataSpaceError('Error updating table %s' % DataSpace.datablock_table)
 
 
     def get(self, datablock_id, generation_id, key):
+        # Get the data product from the database
         try:
             template = (datablock_id, generation_id, key)
             
@@ -104,8 +111,8 @@ class DataSpace(object):
             #self._execute(cmd)
         except:
             raise
-            traceback.print_stack()
-            raise DataSpaceError('Error creating table %s' % DataSpace.datablock_table)
+            #traceback.print_stack()
+            #raise DataSpaceError('Error creating table %s' % DataSpace.datablock_table)
 
         #return value[-1][0]
         return value
