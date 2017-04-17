@@ -5,7 +5,7 @@ import time
 
 CONFIG_FILE_NAME="DE-Config.py"
 
-class ConfigManager:
+class ConfigManager(object):
     def __init__(self):
         self.config_dir = os.getenv("CONFIG_PATH")
         if not self.config_dir or not os.path.isdir(self.config_dir) : 
