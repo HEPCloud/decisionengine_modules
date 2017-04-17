@@ -170,9 +170,6 @@ class TaskManager(object):
                 break
         self.logger.info("stopped %s" % (src.name,))
 
-    def run_source(self) :
-        print "run_source"
-
     def run_sources(self, data_block=None):
         for s in self.channel.sources:
             self.logger.info("starting loop for %s" % (s,))
@@ -185,7 +182,6 @@ class TaskManager(object):
                 self.logger.error("error starting thread %s: %s" % (name, detail))
                 self.state = OFFLINE
                 break
-
     def run_transforms(self, data_block=None):
         if not data_block:
             return

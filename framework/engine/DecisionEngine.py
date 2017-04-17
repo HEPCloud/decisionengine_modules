@@ -79,6 +79,15 @@ if __name__ == '__main__':
     channels = config_manager.get_channels()
     print "GLOBAL CONF", global_config
     print "CHANNELS", channels
+    try:
+        de_logger.set_logging(log_file_name = global_config['logger']['log_file'],
+                              max_file_size = global_config['logger']['max_file_size'],
+                              max_backup_count = global_config['logger']['max_backup_count'])
+    except Exception, e:
+        print e
+        sys.exit(1)
+    ds = dataspace.DataSpace("/tmp/test-wdd.db",None)
+
 
     try:
         de_logger.set_logging(log_file_name = global_config['logger']['log_file'],
