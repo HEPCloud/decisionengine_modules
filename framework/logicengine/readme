@@ -13,6 +13,7 @@
   $ ln -s cxx/build/ErrorHandler/RE.so RE.so
 
 3. run the tests for LogicEngine.py
-   
-  $ PYTHONPATH=$PWD/../../..  py.test
 
+  $ cd ../../   
+  [ you should now be in the 'decisionengine' directory]
+  $ PYTHONPATH=$PWD/..  py.test

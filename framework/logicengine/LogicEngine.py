@@ -1,13 +1,21 @@
-from decisionengine.framework.logicengine import RE
+from decisionengine.framework.logicengine.RE import RuleEngine
+from decisionengine.framework.logicengine.NamedFact import NamedFact
+from decisionengine.framework.modules.Module import Module
 import json
 
-class LogicEngine:
-    def __init__(self, facts, rules):
-        self.facts = facts
+class LogicEngine(Module, object):
+    # Inheritance from object can be dropped if Module is modified to
+    # inherit from object.
+    def __init__(self, cfg):
+        # TODO: remove the second argument to the Module c'tor when
+        # the Module base class is updated.
+        super(LogicEngine, self).__init__(cfg, None)
+        self.facts = [ NamedFact(name, expr) for name, expr in cfg["facts"] ]
         # Only the names of facts are really needed. We pass in the
         # JSON form of the whole facts dictionary until the C++ is
         # updated to take a list of strings.
-        self.re = RE.RuleEngine(json.dumps(facts), json.dumps(rules))
+        self.re = RuleEngine(json.dumps(cfg["facts"]),
+                             json.dumps(cfg["rules"]))
 
     def produces(self):
         return ["actions", "newfacts"]
@@ -17,7 +25,7 @@ class LogicEngine:
 
         db can be any mappable, in particular a DataBlock or dictionary."""
         # Evaluate facts
-        evaluated_facts = { name : eval(expr, {}, db) for name, expr in facts.iteritems()}
+        evaluated_facts = { fact.name : fact.evalute(db) for fact in facts }
         # Process rules
         actions, newfacts = self.re.execute(evaluated_facts)
         return {"actions": actions, "newfacts": newfacts}
