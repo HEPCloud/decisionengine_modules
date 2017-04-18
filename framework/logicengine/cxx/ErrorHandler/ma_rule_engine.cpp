@@ -19,7 +19,7 @@ ma_rule_engine::ma_rule_engine( fhicl::ParameterSet const & pset
 , alarm_fn      ( alarm )
 , cond_match_fn ( cond_match )
 , events ( )                              
-, event_worker_t ( )
+//, event_worker_t ( )
 , EHS    ( false )
 {
   init_engine( pset );
@@ -37,7 +37,7 @@ ma_rule_engine::ma_rule_engine( Json::Value const & conf_facts
 , alarm_fn      ( alarm )
 , cond_match_fn ( cond_match )
 , events ( )                              
-, event_worker_t ( )
+//, event_worker_t ( )
 , EHS    ( false )
 {
   init_minimal_engine( conf_facts, conf_rules );
@@ -145,7 +145,7 @@ void ma_rule_engine::init_engine( fhicl::ParameterSet const & pset )
   for( ; it!=cmap.end(); ++it ) it->second.sort_notify_lists();
 
   // timing event worker thread
-  event_worker_t = boost::thread(&ma_rule_engine::event_worker, this);
+  // event_worker_t = boost::thread(&ma_rule_engine::event_worker, this);
 }
 
 void ma_rule_engine::init_minimal_engine( Json::Value const & facts, Json::Value const & rules )
@@ -222,13 +222,11 @@ void ma_rule_engine::init_minimal_engine( Json::Value const & facts, Json::Value
   // for all conditions sort their notification lists
   cond_map_t::iterator it = cmap.begin();
   for( ; it!=cmap.end(); ++it ) it->second.sort_notify_lists();
-
-  // timing event worker thread
-  // event_worker_t = boost::thread(&ma_rule_engine::event_worker, this);
 }
 
 void ma_rule_engine::event_worker()
 {
+#if 0
   while(true)
   {
     // get current second
@@ -260,6 +258,7 @@ void ma_rule_engine::event_worker()
 
     sleep(1);
   }
+#endif
 }
 
 void ma_rule_engine::feed( msg_t const & msg )

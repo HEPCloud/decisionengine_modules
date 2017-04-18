@@ -179,7 +179,7 @@ private:
   ma_timing_events events;
 
   // event thread
-  boost::thread event_worker_t;
+  // boost::thread event_worker_t;
 
   // whether this engine is an Error Handler Supervisor
   bool EHS;
