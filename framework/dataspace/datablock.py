@@ -2,6 +2,8 @@
 
 import time
 import copy
+import cPickle as pickle
+import ast
 
 from UserDict import UserDict
 
@@ -21,7 +23,7 @@ STATE_ERROR = 'ERROR'
 
 """
 HEADER = {
-    datablock_id: 0,
+    taskmanager_id: 0,
     create_time: 0,
     expiration_time: 0,
     scheduled_create_time: 0,
@@ -30,7 +32,7 @@ HEADER = {
 }
 
 METADATA = {
-    datablock_id: 0,
+    taskmanager_id: 0,
     state: ('NEW', 'START_BACKUP', 'METADATA_UPDATE', 'END_CYCLE'),
     generation_id: 0, # Not sure what this is??
     generation_time: 0,
@@ -58,13 +60,13 @@ class Metadata(UserDict):
 
     # Minimum information required for the Metadata dict to be valid
     required_keys = {
-        'datablock_id', 'state', 'generation_id',
+        'taskmanager_id', 'state', 'generation_id',
         'generation_time', 'missed_update_count'}
 
     # Valid states
     valid_states = {'NEW', 'START_BACKUP', 'METADATA_UPDATE', 'END_CYCLE'}
 
-    def __init__(self, datablock_id, state='NEW', generation_id=None,
+    def __init__(self, taskmanager_id, state='NEW', generation_id=None,
                  generation_time=None, missed_update_count=0):
 
         UserDict.__init__(self)
@@ -74,7 +76,7 @@ class Metadata(UserDict):
             generation_time = time.time()
 
         self.data = {
-            'datablock_id': datablock_id,
+            'taskmanager_id': taskmanager_id,
             'state': state,
             'generation_id': generation_id,
             'generation_time': generation_time,
@@ -96,14 +98,14 @@ class Header(UserDict):
 
     # Minimum information required for the Header dict to be valid
     required_keys = {
-        'datablock_id', 'create_time', 'expiration_time',
+        'taskmanager_id', 'create_time', 'expiration_time',
         'scheduled_create_time', 'creator', 'schema_id'
     }
 
     # Default lifetime of the data if the expiration time is not specified
     default_data_lifetime = 1800
 
-    def __init__(self, datablock_id, create_time=None, expiration_time=None,
+    def __init__(self, taskmanager_id, create_time=None, expiration_time=None,
                  scheduled_create_time=None, creator='module', schema_id=None):
 
         UserDict.__init__(self)
@@ -115,7 +117,7 @@ class Header(UserDict):
             scheduled_create_time = time.time()
 
         self.data = {
-            'datablock_id': datablock_id,
+            'taskmanager_id': taskmanager_id,
             'create_time': create_time,
             'expiration_time': expiration_time,
             'scheduled_create_time': scheduled_create_time,
@@ -134,16 +136,19 @@ class Header(UserDict):
 
 class DataBlock(object):
 
-    def __init__(self, datablock_id, generation_id, dataspace):
-        # datablock_id is what we call as datablock_id in the api/document
-        self.datablock_id = datablock_id
-        self.generation_id = generation_id
+    def __init__(self, dataspace, taskmanager_id=None, generation_id=None):
+        # If taskmanager_id is None create new or 
+        self.taskmanager_id = taskmanager_id
         self.dataspace = dataspace
+        if generation_id:
+            self.generation_id = generation_id
+        else:
+            self.generation_id = self.dataspace.get_last_generation_id(taskmanager_id) + 1
         self.keys_inserted = []
 
 
-    def put(self, key, value, header=None, metadata=None):
-        self.__setitem__(key, value,  header, metadata)
+    def put(self, key, value, header, metadata):
+        self.__setitem__(key, value, header, metadata)
 
 
     def get(self, key):
@@ -152,26 +157,31 @@ class DataBlock(object):
 
     def _insert(self, key, value, header, metadata):
         # Store data product, header and metadata to the database
-        self.dataspace.insert(self.datablock_id, self.generation_id,
+        self.dataspace.insert(self.taskmanager_id, self.generation_id,
                               key, value, header, metadata)
         self.keys_inserted.append(key)
 
 
     def _update(self, key, value, header, metadata):
-            # Update data product, header and metadata to the database
-        self.dataspace.update(self.datablock_id, self.generation_id,
+        # Update data product, header and metadata to the database
+        self.dataspace.update(self.taskmanager_id, self.generation_id,
                               key, value, header, metadata)
 
 
-    def __setitem__(self, key, value, header=None, metadata=None):
+    def __setitem__(self, key, value, header, metadata):
+
+        if isinstance(value, dict):
+            store_value = {'pickled': False, 'value': value}
+        else:
+            store_value = {'pickled': True, 'value': pickle.dumps(value)}
 
         if key in self.keys_inserted:
             # This has been already inserted, so you are working on a copy
             # that was backedup. You need to update and adjust the update
             # counter
-            self._update(key, value, header, metadata)
+            self._update(key, store_value, header, metadata)
         else:
-            self._insert(key, value, header, metadata)
+            self._insert(key, store_value, header, metadata)
 
 
     def __getitem__(self, key, default=None):
@@ -180,14 +190,22 @@ class DataBlock(object):
         """
 
         try:
-            value = self.dataspace.get(self.datablock_id,
-                                       self.generation_id, key)
+            value_row = self.dataspace.get_dataproduct(self.taskmanager_id,
+                                                       self.generation_id, key)
+            value = ast.literal_eval(value_row[0])
         except KeyNotFoundError, e:
             value = default
         except:
             # TODO: FINSIH with more exceptions, content
             raise
-        return value
+
+        #print '-------'
+        #print value
+        if value.get('pickled'):
+            return_value = pickle.loads(value.get('value'))
+        else:
+            return_value = value.get('value')
+        return return_value
 
 
     def get_header(self, key):
@@ -195,14 +213,19 @@ class DataBlock(object):
         Return the header associated with the key in the database
         """
         try:
-            value = self.dataspace.get_header(self.datablock_id,
-                                              self.generation_id, key)
+            header_row = self.dataspace.get_header(self.taskmanager_id,
+                                                   self.generation_id, key)
+            header = Header(header_row[0], create_time=header_row[3],
+                            expiration_time=header_row[4],
+                            scheduled_create_time=header_row[5],
+                            creator=header_row[6],
+                            schema_id=header_row[7])
         #except KeyNotFoundError, e:
         #    value = default
         except:
             # TODO: FINSIH with more exceptions, content
             raise
-        return value
+        return header
 
 
     def get_metadata(self, key):
@@ -210,28 +233,32 @@ class DataBlock(object):
         Return the metadata associated with the key in the database
         """
         try:
-            value = self.dataspace.get_metadata(self.datablock_id,
-                                                self.generation_id, key)
+            metadata_row = self.dataspace.get_metadata(self.taskmanager_id,
+                                                       self.generation_id, key)
+            metadata = Metadata(metadata_row[0], state=metadata_row[3],
+                                generation_id=metadata_row[1],
+                                generation_time=metadata_row[4],
+                                missed_update_count=metadata_row[5])
         #except KeyNotFoundError, e:
         #    value = default
         except:
             # TODO: FINSIH with more exceptions, content
             raise
-        return value
+        return metadata
 
 
-def duplicate(datablock):
-    """
-    Duplicate the datablock with the given id and return id of the new
-    datablock created. Only information from the sources is backed up.
-    TODO: Also update the header and the metadata information
-    """
+    def duplicate(self):
+        """
+        Duplicate the datablock with the given id and return id of the new
+        datablock created. Only information from the sources is backed up.
+        TODO: Also update the header and the metadata information
+        TODO: Make this threadsafe
+        """
 
-    new_datablock = copy.copy(datablock)
-    new_datablock.generation_id += 1
-    new_datablock.keys_inserted = copy.deepcopy(datablock.keys_inserted)
-    datablock.dataspace.duplicate(datablock.datablock_id,
-                                  datablock.generation_id,
-                                  new_datablock.generation_id)
-
-    return new_datablock
+        dup_datablock = copy.copy(self)
+        self.generation_id += 1
+        dup_datablock.keys_inserted = copy.deepcopy(self.keys_inserted)
+        self.dataspace.duplicate(self.taskmanager_id,
+                                 dup_datablock.generation_id,
+                                 self.generation_id)
+        return dup_datablock
