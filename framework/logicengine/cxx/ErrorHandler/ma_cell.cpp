@@ -9,6 +9,7 @@ using namespace novadaq::errorhandler;
 ma_cell::ma_cell( )
 : msgs  (   )
 , on    ( false )
+, defined ( false )
 , what_ (   )
 , t_event ( 0 )
 {
@@ -18,6 +19,27 @@ ma_cell::ma_cell( )
 ma_cell::~ma_cell()
 {
 
+}
+
+bool ma_cell::hit( bool val )
+{
+  // undefined, always considered as flipped
+  if ( !defined )
+  {
+    defined = true;
+    on = val;
+    return true;
+  }
+
+  // already defined, no change in status
+  if( val == on )
+  {
+    return false;
+  }
+
+  // changed
+  on = val;
+  return true;
 }
 
 bool ma_cell::hit( msg_t const & msg
@@ -110,6 +132,7 @@ bool ma_cell::event(time_t t, ma_condition & cond)
 void ma_cell::reset()
 {
   on = false;
+  defined = false;
   t_event = 0;
   msgs.clear();
 }

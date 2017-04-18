@@ -24,6 +24,9 @@ public:
   // public method, call to run the rule engine
   void feed( msg_t const & msg );
 
+  // public method, call by the LogicEngine
+  void execute( std::map<std::string, bool> const & fact_vals );
+
   // public accessor for cond map and rule map
   size_t cond_size() const { return cmap.size(); }
   size_t rule_size() const { return rmap.size(); }

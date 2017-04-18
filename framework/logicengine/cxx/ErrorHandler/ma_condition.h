@@ -57,6 +57,12 @@ public:
             , conds_t & source 
             , conds_t & target );
 
+  // public method that forces the status to the passed value
+  bool force( bool val
+            , conds_t & status
+            , conds_t & source 
+            , conds_t & target );
+
   // scheduled event
   bool event( size_t src, size_t tgt, time_t t, conds_t & status );
 

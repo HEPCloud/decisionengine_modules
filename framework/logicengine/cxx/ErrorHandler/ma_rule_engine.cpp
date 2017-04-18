@@ -71,16 +71,16 @@ void ma_rule_engine::init_engine( )
     // construct the condition object
     ma_condition c( cond["description"].asString()
                   , cond["severity"].asString()
-                  , strings_t(1, "*") //, cond["source"].asString()
-                  , strings_t(1, "*") //, cond.get<strings_t>("category", strings_t(1, "*"))
+                  , strings_t(1, "*") // cond["source"].asString()
+                  , strings_t(1, "*") // cond.get<strings_t>("category", strings_t(1, "*"))
                   , cond["regex"].asString()
                   , cond["test"].asString()
                   , cond["persistent"].asBool()
                   , occur
                   , at_least
                   , rate["timespan"].asInt()
-                  , gran["per_source"].asBool()
-                  , gran["per_target"].asBool()
+                  , false // gran["per_source"].asBool()
+                  , false // gran["per_target"].asBool()
                   , gran["target_group"].asInt()
                   , events
                   );
@@ -126,7 +126,7 @@ void ma_rule_engine::init_engine( )
   for( ; it!=cmap.end(); ++it ) it->second.sort_notify_lists();
 
   // timing event worker thread
-  event_worker_t = boost::thread(&ma_rule_engine::event_worker, this);
+  // event_worker_t = boost::thread(&ma_rule_engine::event_worker, this);
 }
 
 void ma_rule_engine::event_worker()
@@ -177,6 +177,42 @@ void ma_rule_engine::feed( msg_t const & msg )
     for( ; it!=cmap.end(); ++it ) 
       if( it->second.match( msg, status, source, target ) )
         cond_match_fn( it->first ); // callback fn for condition match
+  }
+
+  // notification mechanism
+
+  // merge notification lists from reaction starters
+  notify_list_t notify_status;
+  notify_list_t notify_domain;
+
+  merge_notify_list( notify_status, status, STATUS_NOTIFY );
+  merge_notify_list( notify_domain, source, SOURCE_NOTIFY );
+  merge_notify_list( notify_domain, target, TARGET_NOTIFY );
+
+  // update domains
+  evaluate_rules_domain( notify_domain );
+
+  // loop to update status
+  evaluate_rules( notify_status );
+}
+
+void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals )
+{
+  // reaction starters
+  conds_t status;
+  conds_t source;
+  conds_t target;
+
+  // loop through conditions
+  for ( std::map<std::string, bool>::const_iterator it = fact_vals.begin();
+        it != fact_vals.end(); ++it )
+  {
+      cond_map_t::iterator cit = cmap.find(it->first);
+
+      if (cit == cmap.end())
+          throw std::runtime_error("invalid fact name");
+
+      cit->second.force(it->second, status, source, target);
   }
 
   // notification mechanism

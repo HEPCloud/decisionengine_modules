@@ -119,6 +119,57 @@ unsigned int
            ? (result | STATUS_CHANGE) : (result) ;
 }
 
+unsigned int 
+  ma_hitmap::force( bool val )
+{
+  size_t s_idx = 0;
+  size_t t_idx = 0;
+
+  unsigned int result = 0x00;
+
+  // find source index
+  if( src_idx.empty() )
+  {
+    src_idx[global_s] = 0;
+    result |= SOURCE_CHANGE;
+  }
+
+  s_idx = 0;
+  
+  // find target index
+  if( tgt_idx.empty() )
+  {
+    tgt_idx[global_t] = 0;
+    result |= TARGET_CHANGE;
+  }
+
+  t_idx = 0;
+
+  // resize the array if needed
+  bool resize = false;
+
+  if (s_idx >= src_cap) 
+  {
+    src_cap += cap_increment;
+    resize = true;
+  }
+
+  if (t_idx >= tgt_cap) 
+  {
+    tgt_cap += cap_increment;
+    resize = true;
+  }
+
+  if (resize)
+  {
+    hitmap.resize(boost::extents[src_cap][tgt_cap]);
+  }
+
+  // knock the cell
+  return hitmap[s_idx][t_idx].hit( val ) 
+           ? (result | STATUS_CHANGE) : (result) ;
+}
+
 bool
   ma_hitmap::event(size_t src, size_t tgt, time_t t)
 {
@@ -214,7 +265,7 @@ bool
   bool r = hitmap[v.first][v.second].is_on();
 
   std::cout << "hitmap::get_status @ " 
-                << v.first << ", " << v.second << " = " << r;
+                << v.first << ", " << v.second << " = " << r << "\n";
   return r; 
 }
 

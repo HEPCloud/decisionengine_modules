@@ -156,6 +156,29 @@ bool
   return true;
 }
 
+bool 
+  ma_condition::force( bool val
+                     , conds_t & status
+                     , conds_t & source 
+                     , conds_t & target )
+{
+  if (per_source() || per_target())
+    throw std::runtime_error("to force the value of a condition, it must not be per_source and per_target");
+
+  // register to hitmap
+  unsigned int result = hitmap.force(val);
+
+  std::cout << "cond::match() result = " << result << "\n";
+
+  // update reaction_start list
+  if (result & STATUS_CHANGE)  status.push_back(this);
+  if (result & SOURCE_CHANGE)  source.push_back(this);
+  if (result & TARGET_CHANGE)  target.push_back(this);
+
+  return true;
+}
+
+
 bool ma_condition::event( size_t src, size_t tgt, time_t t, conds_t & status )
 {
   if ( hitmap.event(src, tgt, t) )

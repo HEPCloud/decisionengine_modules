@@ -19,6 +19,10 @@ public:
   void
     reset( );
 
+  // simplified hit
+  bool 
+    hit( bool val );
+
   // call hit method when a message passes filtering and match tests
   // returns true if the status has changed (off->on or on->off), or 
   // false if not
@@ -61,6 +65,7 @@ public:
 private:
   msgs_t msgs;
   bool   on;
+  bool   defined;
 
   // groups from last hit
   boost::smatch what_;

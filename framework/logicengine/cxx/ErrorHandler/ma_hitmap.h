@@ -27,6 +27,8 @@ public:
                       , string_t const & tgt
                       , boost::smatch const & what );
 
+  unsigned int force( bool val );
+
   bool event(size_t src, size_t tgt, time_t t);
 
   const static string_t global_s;
