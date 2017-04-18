@@ -1,5 +1,6 @@
 
-class Module:
+class Module(obkect):
+    
 
     def __init__(self,set_of_parameters):
         self.parameters = set_of_parameters
