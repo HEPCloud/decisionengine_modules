@@ -244,15 +244,10 @@ class TaskManager(object):
             self.channel.publishers[s].worker.publish()
 
 if __name__ == '__main__':
-    import modules.de_logger as de_logger
-    import configmanager.ConfigManager as Conf_Manager
-
-    config_manager = Conf_Manager.ConfigManager()
+    import dataspace.dataspace as dataspace
+    config_manager = configmanager.ConfigManager()
     config_manager.load()
     global_config = config_manager.get_global_config()
-    channels = config_manager.get_channels()
-    print "GLOBAL CONF", global_config
-    print "CHANNELS", channels
 
     my_logger = logging.getLogger("decision_engine")
 
@@ -265,16 +260,35 @@ if __name__ == '__main__':
         sys.exit(1)
 
     my_logger.info("Starting decision engine")
-    task_mgrs = {}
-    data_space = () # get this from configuration
+
+
+    channels = config_manager.get_channels()
+
+    ds = dataspace.DataSpace(global_config)
+    taskmanager_id = 1
+    generation_id = 1
+
+    task_managers = {}
+    data_space = {}
+    """                                                                                                                
+    create channels                                                                                                    
+    """
     for ch in channels:
-        task_mgrs[ch] = TaskManager(ch, channels[ch], datablock.DataBlock(ch, 0, data_space))
+        task_managers[ch] = TaskManager.TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
 
-    while 1:
-        for t_mgr in task_mgrs:
-            task_mgrs[t_mgr].run()
-        time.sleep(20)
+    for key, value in task_managers.iteritems():
+        t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})
+        t.start()
 
+    try:
+        while True:
+            time.sleep(10)
+            if threading.activeCount() <= 1 : break
+    except (SystemExit, KeyboardInterrupt):
+        pass
+
+
+"""
     def run(self):
         for s in self.channel.sources:
             print "Calling produces for", s
@@ -292,3 +306,4 @@ if __name__ == '__main__':
         for s in self.channel.publishers:
             print "Calling  acquire for ", s
             self.channel.publishers[s].worker.publish()
+"""
