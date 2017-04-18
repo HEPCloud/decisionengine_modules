@@ -2,3 +2,4 @@ RE.so
 .cache/
 *.pyc
 *~
+*.swp
