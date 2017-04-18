@@ -4,6 +4,10 @@
                 'max_backup_count': 6,
             },
     'channels' : 'conf.d',
+
+    'dataspace': {
+        'filename': '/tmp/test-db.db',
+    },
 }
 
 
