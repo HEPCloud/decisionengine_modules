@@ -5,6 +5,7 @@ import sqlite3
 import traceback
 
 #from UserDict import UserDict
+# TODO: Schema definations and validation and updations
 
 
 class DataSpaceConnectionError(Exception):
@@ -22,6 +23,8 @@ class DataSpaceError(Exception):
 
 
 class DataSpace(object):
+
+    tables_created = False
 
     tables = {
         'header': [
@@ -66,8 +69,13 @@ class DataSpace(object):
             # Creates DB if it does not exist
             self.conn = sqlite3.connect(self.db_filename)
         except:
-            raise DataSpaceConnectionError(
-                'Error connecting to the database %s' % db_filename)
+            raise
+            #raise DataSpaceConnectionError(
+            #    'Error connecting to the database %s' % db_filename)
+        if DataSpace.tables_created:
+            raise Exception('Tables already created')
+        else:
+            self.create()
 
     def close(self):
         self.conn.close()
@@ -92,6 +100,7 @@ class DataSpace(object):
                     cursor = self.conn.cursor()
                     cursor.execute(cmd)
             self.conn.commit()
+            DataSpace.tables_created = True
         except:
              raise
              #traceback.print_stack()
