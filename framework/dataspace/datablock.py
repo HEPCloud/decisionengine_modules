@@ -31,7 +31,21 @@ class KeyNotFoundError(Exception):
     pass
 
 
+class ExpiredDataError(Exception):
+    """
+    Errors due to invalid Metadata
+    """
+    pass
+
+
 class InvalidMetadataError(Exception):
+    """
+    Errors due to invalid Metadata
+    """
+    pass
+
+
+class InvalidHeaderError(Exception):
     """
     Errors due to invalid Metadata
     """
