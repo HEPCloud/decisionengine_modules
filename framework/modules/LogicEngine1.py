@@ -1,4 +1,4 @@
-from modules import Module
+from decisionengine.framework.modules import Module
 
 class LogicEngine1(Module.Module):
     def __init__(self,set_of_parameters):

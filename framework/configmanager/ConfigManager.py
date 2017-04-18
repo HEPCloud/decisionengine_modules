@@ -1,7 +1,9 @@
+import importlib
 import logging
 import os
 import string
 import time
+
 
 CONFIG_FILE_NAME="DE-Config.py"
 
@@ -48,9 +50,9 @@ class ConfigManager(object):
     """
     @staticmethod
     def create(name,parameters):
-        module = __import__('modules.%s'%(name,))
-        module_class = getattr(getattr(module, name), name)
-        instance = module_class(parameters)
+        module = importlib.import_module("decisionengine.framework.modules.%s"%(name,))
+        clazz  = getattr(module, name)
+        instance  = clazz(parameters)
         return instance 
 
 if __name__ == "__main__":
