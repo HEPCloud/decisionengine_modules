@@ -13,13 +13,14 @@ class HTCondorJobQ(Source):
 
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
+        # JobId == ClusterId.ProcId
         job_manifests = [
-            {"JobId": "1.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-            {"JobId": "2.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-            {"JobId": "3.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-            {"JobId": "3.1", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-            {"JobId": "3.2", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-            {"JobId": "6.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"}
+            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12}
         ]
         manifest_keys = job_manifests[0].keys()
         pandas_data = {}
