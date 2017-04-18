@@ -13,33 +13,14 @@ from UserDict import UserDict
 # TODO:
 # 1) Need to make sure there are no race conditions
 # 2) Add mutex/locks/critical sections where ever required
-# 3) Add Header functionality
-# 4) Add Metadata functionality
+# 3) Manipulations on the Header functionality
+# 4) Manipulations on the Metadata functionality
+# 5) get() needs to error in case of expired data
 ###############################################################################
 
 STATE_NEW = 'NEW'
 STATE_STEADY = 'STEADY'
 STATE_ERROR = 'ERROR'
-
-"""
-HEADER = {
-    taskmanager_id: 0,
-    create_time: 0,
-    expiration_time: 0,
-    scheduled_create_time: 0,
-    creator: 'a',
-    schema_id: 0
-}
-
-METADATA = {
-    taskmanager_id: 0,
-    state: ('NEW', 'START_BACKUP', 'METADATA_UPDATE', 'END_CYCLE'),
-    generation_id: 0, # Not sure what this is??
-    generation_time: 0,
-    missed_update_count: 0,
-}
-
-"""
 
 
 class KeyNotFoundError(Exception):
@@ -137,9 +118,14 @@ class Header(UserDict):
 class DataBlock(object):
 
     def __init__(self, dataspace, taskmanager_id=None, generation_id=None):
-        # If taskmanager_id is None create new or 
-        self.taskmanager_id = taskmanager_id
         self.dataspace = dataspace
+
+        # If taskmanager_id is None create new or 
+        if taskmanager_id:
+            self.taskmanager_id = taskmanager_id
+        else:
+            self.taskmanager_id = ('%s' % uuid.uuid1()).upper()
+
         if generation_id:
             self.generation_id = generation_id
         else:
