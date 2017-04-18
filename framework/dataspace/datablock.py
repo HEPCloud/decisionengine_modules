@@ -4,6 +4,7 @@ import time
 import copy
 import cPickle as pickle
 import ast
+import uuid
 
 from UserDict import UserDict
 
