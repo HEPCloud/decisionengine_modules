@@ -12,12 +12,12 @@ import threading
 import logging
 import os
 
-import modules.de_logger as de_logger
-import configmanager.ConfigManager as Conf_Manager
-import taskmanager.TaskManager as TaskManager
+import decisionengine.framework.modules.de_logger as de_logger
+import decisionengine.framework.configmanager.ConfigManager as Conf_Manager
+import decisionengine.framework.taskmanager.TaskManager as TaskManager
 
-import dataspace.datablock as datablock
-import dataspace.dataspace as dataspace
+import decisionengine.framework.dataspace.datablock as datablock
+import decisionengine.framework.dataspace.dataspace as dataspace
 
 
 CONFIG_UPDATE_PERIOD = 10 # seconds

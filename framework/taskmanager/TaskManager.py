@@ -6,8 +6,8 @@ import threading
 import logging
 import time
 
-import dataspace.datablock as datablock
-import configmanager.ConfigManager as configmanager
+import decisionengine.framework.dataspace.datablock as datablock
+import decisionengine.framework.configmanager.ConfigManager as configmanager
 
 class Worker(object):
     def __init__(self, source_dict):
