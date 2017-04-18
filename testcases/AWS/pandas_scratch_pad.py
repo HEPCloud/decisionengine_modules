@@ -2,28 +2,28 @@
 import pandas as pd
 
 job_manifests = [
-    {"JobId": "1.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-    {"JobId": "2.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-    {"JobId": "3.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-    {"JobId": "3.1", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-    {"JobId": "3.2", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"},
-    {"JobId": "6.0", "JOB_CPUS": 2, "JOB_MEM": 4, "JOB_MEM_UNITS": "GB"}
+    {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+    {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+    {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+    {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+    {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
+    {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12}
 ]
 
 resource_list = [
-    {"RESOURCE_NAME": "AWS1", "RES_CPUS": 1, "RES_MEM": 2, "RES_MEM_UNITS": "GB"},
-    {"RESOURCE_NAME": "AWS2", "RES_CPUS": 2, "RES_MEM": 4, "RES_MEM_UNITS": "GB"},
-    {"RESOURCE_NAME": "AWS3", "RES_CPUS": 2, "RES_MEM": 6, "RES_MEM_UNITS": "GB"},
-    {"RESOURCE_NAME": "AWS4", "RES_CPUS": 1, "RES_MEM": 6, "RES_MEM_UNITS": "GB"},
-    {"RESOURCE_NAME": "AWS5", "RES_CPUS": 2, "RES_MEM": 5, "RES_MEM_UNITS": "GB"}
+    {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large"},
+    {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge"},
+    {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},
+    {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge"},
+    {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}
 ]
 
 resource_spot_price = [
-    {"RESOURCE_NAME": "AWS1", "SPOT_PRICE": .1},
-    {"RESOURCE_NAME": "AWS2", "SPOT_PRICE": .15},
-    {"RESOURCE_NAME": "AWS3", "SPOT_PRICE": .2},
-    {"RESOURCE_NAME": "AWS4", "SPOT_PRICE": .12},
-    {"RESOURCE_NAME": "AWS5", "SPOT_PRICE": .14}
+    {"ResourceName": "AWS1", "SpotPrice": .1},
+    {"ResourceName": "AWS2", "SpotPrice": .15},
+    {"ResourceName": "AWS3", "SpotPrice": .2},
+    {"ResourceName": "AWS4", "SpotPrice": .12},
+    {"ResourceName": "AWS5", "SpotPrice": .14}
 ]
 
 def load_data_frame(list_of_dicts):
@@ -44,24 +44,27 @@ if __name__ == "__main__":
     spot_pd = load_data_frame(resource_spot_price)
 
     # merge the spot prices into the resources_pd
-    resource_spot_pd = pd.merge(resources_pd, spot_pd, on=["RESOURCE_NAME"])
+    resource_spot_pd = pd.merge(resources_pd, spot_pd, on=["ResourceName"])
 
     # merge the two - sort of like:
     #   select *
     #   from jobs_pd, resources_pd
-    #   where jobs_pd.JOB_CPUS <= resources_pd.RES_CPUS
-    merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='JOB_CPUS', right_on='RES_CPUS')
+    #   where jobs_pd.RequestCpus <= resources_pd.ResourceCpus
+    #merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
+    merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_index=True, right_index=True)
+    print merged_pd
 
     # create a new column that gives a boolean determining wether or not the row matches memory requirments
-    merged_pd = merged_pd.assign(Match=merged_pd.JOB_MEM <= merged_pd.RES_MEM)
+    merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <= merged_pd.ResourceMemory)
+    merged_pd = merged_pd.assign(estimatedCost=merged_pd.RequestTime * merged_pd.SpotPrice)
 
     # filter for matched entries in the data frame
     matched_pd = merged_pd[(merged_pd.Match == True)]
     number_of_jobs = len(matched_pd.index)
 
-    group = matched_pd.groupby(['SPOT_PRICE','RESOURCE_NAME'])
-    res_group = group['RESOURCE_NAME']
-
+    group = matched_pd.groupby(['SpotPrice','ResourceName'])
+    res_group = group['ResourceName']
+'''
     req = {}
     limit = 5
     for i in res_group:
@@ -83,3 +86,4 @@ if __name__ == "__main__":
 
     for k in req.keys():
         print req[k]
+'''
