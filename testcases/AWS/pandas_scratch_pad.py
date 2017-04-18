@@ -57,29 +57,29 @@ if __name__ == "__main__":
 
     # filter for matched entries in the data frame
     matched_pd = merged_pd[(merged_pd.Match == True)]
+    number_of_jobs = len(matched_pd.index)
 
     group = matched_pd.groupby(['SPOT_PRICE','RESOURCE_NAME'])
     res_group = group['RESOURCE_NAME']
-    for i in res_group:
-        print i
-    for key in group.groups:
-        print group.groups[key]
-    # sort by SPOT_PRICE
-    #matched_pd = matched_pd.sort_values('SPOT_PRICE')
 
-"""
-    rows = len(matched_pd.index)
     req = {}
     limit = 5
-    for i in matched_pd.iterrows():
-        if rows - limit > 0:
-            print "requesting %i" % limit
-            print i
-            rows -= limit
-        elif rows > 0:
-            print "requesting %i" % rows
-            print i
-            rows = 0
+    for i in res_group:
+        entry_name = i[0][1]
+        spot_price = i[0][0]
+
+        print "considering jobs for %s" % entry_name
+        print "number of jobs remaining: %i" % number_of_jobs
+        print "limit: %i" % limit
+        if number_of_jobs - limit > 0:
+            req[entry_name] = (spot_price, limit)
+            number_of_jobs -= limit
+        elif number_of_jobs > 0:
+            req[entry_name] = (spot_price, number_of_jobs)
+            number_of_jobs = 0
         else:
             break
-"""
+    print "number of unconsidered jobs: %i" % number_of_jobs
+
+    for k in req.keys():
+        print req[k]
