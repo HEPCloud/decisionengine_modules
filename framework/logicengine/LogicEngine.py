@@ -7,9 +7,7 @@ class LogicEngine(Module, object):
     # Inheritance from object can be dropped if Module is modified to
     # inherit from object.
     def __init__(self, cfg):
-        # TODO: remove the second argument to the Module c'tor when
-        # the Module base class is updated.
-        super(LogicEngine, self).__init__(cfg, None)
+        super(LogicEngine, self).__init__(cfg)
         self.facts = [ NamedFact(name, expr) for name, expr in cfg["facts"] ]
         # Only the names of facts are really needed. We pass in the
         # JSON form of the whole facts dictionary until the C++ is

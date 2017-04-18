@@ -1,5 +1,5 @@
 
-class Module(obkect):
+class Module(object):
     
 
     def __init__(self,set_of_parameters):
