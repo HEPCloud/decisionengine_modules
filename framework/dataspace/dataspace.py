@@ -65,6 +65,9 @@ class DataSpace(object):
         self.db_filename = config['dataspace']['filename']
         self.credentials = credentials
 
+        if os.path.exists(self.db_filename):
+            os.unlink(self.db_filename)
+
         try:
             # Creates DB if it does not exist
             self.conn = sqlite3.connect(self.db_filename)
