@@ -31,4 +31,4 @@ add_executable(test_main test_main.cc)
 target_link_libraries(test_main LogicEngine boost_thread boost_regex)
 
 python_add_module(RE py_rule_engine.cc)
-target_link_libraries(RE boost_python ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+target_link_libraries(RE LogicEngine boost_python ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
