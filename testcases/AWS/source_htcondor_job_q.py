@@ -26,4 +26,5 @@ class HTCondorJobQ(Source):
         pandas_data = {}
         for key in manifest_keys:
             pandas_data[key] = pd.Series([d[key] for d in job_manifests])
-        DataBlock["job_manifests"] = pd.DataFrame(pandas_data)
+
+        return { "job_manifests" : pd.DataFrame(pandas_data) }
