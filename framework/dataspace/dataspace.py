@@ -28,9 +28,9 @@ class DataSpace(object):
             'taskmanager_id TEXT',
             'generation_id INT',
             'key TEXT',
-            'create_time INT',
-            'expiration_time INT',
-            'scheduled_create_time INT',
+            'create_time REAL',
+            'expiration_time REAL',
+            'scheduled_create_time REAL',
             'creator TEXT',
             'schema_id INT',
         ],
@@ -43,7 +43,7 @@ class DataSpace(object):
             'generation_id INT',
             'key TEXT',
             'state TEXT',
-            'generation_time INT',
+            'generation_time REAL',
             'missed_update_count INT',
         ],
         'dataproduct': [
@@ -109,6 +109,7 @@ class DataSpace(object):
             raise
         return value[0][0]
 
+
     def insert(self, taskmanager_id, generation_id, key, value, header, metadata):
         # Insert the data product, header and metadata to the database
         try:
@@ -120,7 +121,7 @@ class DataSpace(object):
             cursor.execute(cmd)
   
             # Insert header in the header table
-            cmd = """INSERT INTO %s VALUES ("%s", %i, "%s", %i, %i, %i, "%s", "%s")""" % (
+            cmd = """INSERT INTO %s VALUES ("%s", %i, "%s", %f, %f, %f, "%s", "%s")""" % (
                 DataSpace.header_table, taskmanager_id, generation_id,
                 key, header.get('create_time'), header.get('expiration_time'),
                 header.get('scheduled_create_time'), header.get('creator'),
@@ -129,7 +130,7 @@ class DataSpace(object):
             cursor.execute(cmd)
 
             # Insert metadata in the metadata table
-            cmd = """INSERT INTO %s VALUES ("%s", %i, "%s", "%s", %i, %i)""" % (
+            cmd = """INSERT INTO %s VALUES ("%s", %i, "%s", "%s", %f, %i)""" % (
                 DataSpace.metadata_table, taskmanager_id, generation_id,
                 key, metadata.get('state'), metadata.get('generation_time'),
                 metadata.get('missed_update_count'))
@@ -142,8 +143,9 @@ class DataSpace(object):
             # Commit data/header/metadata as a single transaction
             self.conn.commit()
         except:
-            traceback.print_stack()
-            raise DataSpaceError('Error creating table %s' % DataSpace.dataproduct_table)
+            raise
+            #traceback.print_stack()
+            #raise DataSpaceError('Error creating table %s' % DataSpace.dataproduct_table)
 
 
     def update(self, taskmanager_id, generation_id, key, value, header, metadata):
@@ -154,14 +156,14 @@ class DataSpace(object):
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
 
-            cmd = """UPDATE %s SET create_time=%i, expiration_time=%i, scheduled_create_time=%i, creator="%s", schema_id=%i WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % (DataSpace.header_table,
+            cmd = """UPDATE %s SET create_time=%f, expiration_time=%f, scheduled_create_time=%f, creator="%s", schema_id=%i WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % (DataSpace.header_table,
                 header.get('create_time'), header.get('expiration_time'),
                 header.get('scheduled_create_time'), header.get('creator'),
                 header.get('schema_id'))
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
 
-            cmd = """UPDATE %s SET state="%s", generation_time=%i, missed_update_count=%i WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % (
+            cmd = """UPDATE %s SET state="%s", generation_time=%f, missed_update_count=%i WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % (
                 DataSpace.metadata_table, metadata.get('state'),
                 metadata.get('generation_time'),
                 metadata.get('missed_update_count'))
