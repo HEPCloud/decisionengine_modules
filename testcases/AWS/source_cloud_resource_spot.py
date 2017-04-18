@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-class ProvisionerResourceList(Source):
+class AWSSpotPrice(Source):
     PRODUCES = ["provisioner_resource_spot_prices"]
 
     def __init__ (self, *args, **kwargs):

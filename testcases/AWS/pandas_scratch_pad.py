@@ -51,11 +51,11 @@ if __name__ == "__main__":
     #   from jobs_pd, resources_pd
     #   where jobs_pd.RequestCpus <= resources_pd.ResourceCpus
     #merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
-    merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_index=True, right_index=True)
+    merged_pd = pd.merge_asof(jobs_pd, resource_spot_pd, left_on='RequestCpus', right_on='ResourceCpus')
     print merged_pd
 
     # create a new column that gives a boolean determining wether or not the row matches memory requirments
-    merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <= merged_pd.ResourceMemory)
+    merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <=merged_pd.ResourceMemory)
     merged_pd = merged_pd.assign(estimatedCost=merged_pd.RequestTime * merged_pd.SpotPrice)
 
     # filter for matched entries in the data frame

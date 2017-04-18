@@ -3,89 +3,66 @@ import pandas as pd
 
 class CloudRequests(Transform):
     CONSUMES = ["job_manifests", "provisioner_resources", "provisioner_resource_spot_prices" ]
-    PRODUCES = ["jobs", ]
+    PRODUCES = ["jobs", "resource_requests"]
 
-    def __init__(self, para_dict):
+    def __init__(self, param_dict):
       pass
 
     # name_list:  A list of the data product names that the Transform will consume
-    def consumes(): return CONSUMES
+    def consumes(self): return CONSUMES
 
-    def produces(): return PRODUCES
+    def produces(self): return PRODUCES
 
-    def transform(DataBlock):
+    def _load_data_frame(self, list_of_dicts):
+        list_of_keys = list_of_dicts[0].keys()
+        pandas_data = {}
+        for key in list_of_keys:
+            pandas_data[key] = pd.Series([d[key] for d in list_of_dicts])
+        return pd.DataFrame(pandas_data)
+
+    def transform(self, DataBlock):
         job_manifests_pd = DataBlock["job_manifests"]
         resources_pd = DataBlock["provisioner_resources"]
         spot_pd = DataBlock["provisioner_resource_spot_prices"]
 
-        # merge the spot prices into the resources_pd
-        resource_spot_pd = pd.merge(resources_pd, spot_pd, on=["ResourceName"])
-
-        # merge the job_manifests_pd and resource_spot_pd - sort of like:
-        #   select *
-        #   from job_manifests_pd, resource_spot_pd
-        #   where job_manifests_pd.RequestCpus <= resource_spot_pd.ResourceCpus
-        merged_pd = pd.merge(job_manifests_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
-
-        # create a new column that gives a boolean determining whether or not the row matches memory requirments
-        merged_pd = merged_pd.assign(Match=((merged_pd.RequestMemory <= merged_pd.ResourceMemory) &&
-                                            (merged_pd.RequestCpus <= merged_pd.ResourceCpus)))
-
-        # filter for matched entries in the data frame
-        matched_pd = merged_pd[(merged_pd.Match == True)]
-        number_of_jobs = len(matched_pd.index)
-
-        group = matched_pd.groupby(['SpotPrice','ResourceName'])
-        res_group = group['ResourceName']
-
-        req = {}
-        limit = 5
-        for i in res_group:
-            entry_name = i[0][1]
-            spot_price = i[0][0]
-
-            print "considering jobs for %s" % entry_name
-            print "number of jobs remaining: %i" % number_of_jobs
-            print "limit: %i" % limit
-            if number_of_jobs - limit > 0:
-                req[entry_name] = (spot_price, limit)
-                number_of_jobs -= limit
-            elif number_of_jobs > 0:
-                req[entry_name] = (spot_price, number_of_jobs)
-                number_of_jobs = 0
-            else:
-                break
-        print "number of unconsidered jobs: %i" % number_of_jobs
-
-        for k in req.keys():
-            print req[k]
-
-
-
-
-
-
-        resource_list = [
-            {"ResourceName": "AWS1", "RequestCpus": 2, "RequestMemory": 8,   "EC2Type": "m4.large"},
-            {"ResourceName": "AWS2", "RequestCpus": 4, "RequestMemory": 16,  "EC2Type": "m4.xlarge"},
-            {"ResourceName": "AWS3", "RequestCpus": 2, "RequestMemory": 7.5, "EC2Type": "m3.large"},
-            {"ResourceName": "AWS4", "RequestCpus": 4, "RequestMemory": 15,  "EC2Type": "m3.xlarge"},
-            {"ResourceName": "AWS5", "RequestCpus": 4, "RequestMemory": 7.5, "EC2Type": "c4.xlarge"}
-        ]
-
-        resource_list = [
-            {"ResourceName": "AWS1", "SpotPrice": 1},
-            {"ResourceName": "AWS2", "SpotPrice": 2},
-            {"ResourceName": "AWS3", "SpotPrice": 2},
-            {"ResourceName": "AWS4", "SpotPrice": 1},
-            {"ResourceName": "AWS5", "SpotPrice": 2}
-        ]
+        # If this were a real transform, we'd do a lot of data manipulation here
+        # instead, because Tony is still learning Pandas and ran out of time for
+        # the code sprint, we are just going to push out dummy data
 
         job_manifests = [
-            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
-            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
-            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
-            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
-            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
-            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12}
+            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large", "SpotPrice": .1, "estimated_cost": 1.2, "burn_rate": .1},
+            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge", "SpotPrice": .15, "estimated_cost": 1.8, "burn_rate": .15},
+            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large", "SpotPrice": .2, "estimated_cost": 2.4, "burn_rate": .2},
+            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge", "SpotPrice": .12, "estimated_cost": 1.44, "burn_rate": .12},
+            {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14},
+            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large", "SpotPrice": .1, "estimated_cost": 1.2, "burn_rate": .1},
+            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge", "SpotPrice": .15, "estimated_cost": 1.8, "burn_rate": .15},
+            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large", "SpotPrice": .2, "estimated_cost": 2.4, "burn_rate": .2},
+            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge", "SpotPrice": .12, "estimated_cost": 1.44, "burn_rate": .12},
+            {"JobId": "2.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14},
+            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large", "SpotPrice": .1, "estimated_cost": 1.2, "burn_rate": .1},
+            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge", "SpotPrice": .15, "estimated_cost": 1.8, "burn_rate": .15},
+            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large", "SpotPrice": .2, "estimated_cost": 2.4, "burn_rate": .2},
+            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge", "SpotPrice": .12, "estimated_cost": 1.44, "burn_rate": .12},
+            {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14},
+            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large", "SpotPrice": .1, "estimated_cost": 1.2, "burn_rate": .1},
+            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge", "SpotPrice": .15, "estimated_cost": 1.8, "burn_rate": .15},
+            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large", "SpotPrice": .2, "estimated_cost": 2.4, "burn_rate": .2},
+            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge", "SpotPrice": .12, "estimated_cost": 1.44, "burn_rate": .12},
+            {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14},
+            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large", "SpotPrice": .1, "estimated_cost": 1.2, "burn_rate": .1},
+            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge", "SpotPrice": .15, "estimated_cost": 1.8, "burn_rate": .15},
+            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large", "SpotPrice": .2, "estimated_cost": 2.4, "burn_rate": .2},
+            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge", "SpotPrice": .12, "estimated_cost": 1.44, "burn_rate": .12},
+            {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14},
+            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large", "SpotPrice": .1, "estimated_cost": 1.2, "burn_rate": .1},
+            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge", "SpotPrice": .15, "estimated_cost": 1.8, "burn_rate": .15},
+            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large", "SpotPrice": .2, "estimated_cost": 2.4, "burn_rate": .2},
+            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12, "ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge", "SpotPrice": .12, "estimated_cost": 1.44, "burn_rate": .12},
+            {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12,"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14}
         ]
+
+        jobs_pd = _load_data_frame(job_manifests)
+        requests = [{"ResourceName": "AWS1", "Count": 6},]
+
+        return {"jobs": jobs_pd, "resource_requests": requests}
