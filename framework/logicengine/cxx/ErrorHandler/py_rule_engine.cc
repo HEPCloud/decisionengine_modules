@@ -61,10 +61,22 @@ struct RuleEngine
         dict py_facts;
 
         for(auto const & act : out_actions) 
-            py_actions[act.first] = act.second;
+        {
+            boost::python::list act_names;
+            for (auto const & act_name : act.second) 
+                act_names.append(act_name);
+
+            py_actions[act.first] = act_names;
+        }
 
         for(auto const & fact : out_facts) 
-            py_facts[fact.first] = fact.second;
+        {
+            boost::python::list fact_names;
+            for (auto const & fact_name : fact.second) 
+                fact_names.append(fact_name);
+
+            py_facts[fact.first] = fact_names;
+        }
 
         return boost::python::make_tuple(py_actions, py_facts);
     }
