@@ -12,4 +12,4 @@ class CloudBudget(Source):
     def acquire(self, DataBlock):
         with os.open(self.budget_file, os.O_EXLOCK) as fd:
             budget = float(fd.read().strip())
-            DataBlock["local_capacity_slots"] = budget
+            return { "available_cloud_budget": budget }
