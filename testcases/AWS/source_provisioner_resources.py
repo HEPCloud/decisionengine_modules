@@ -12,14 +12,15 @@ class ProvisionerResourceList(Source):
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
         resource_list = [
-            {"RESOURCE_NAME": "AWS1", "RES_CPUS": 1, "RES_MEM": 2, "RES_MEM_UNITS": "GB"},
-            {"RESOURCE_NAME": "AWS2", "RES_CPUS": 2, "RES_MEM": 4, "RES_MEM_UNITS": "GB"},
-            {"RESOURCE_NAME": "AWS3", "RES_CPUS": 2, "RES_MEM": 6, "RES_MEM_UNITS": "GB"},
-            {"RESOURCE_NAME": "AWS4", "RES_CPUS": 1, "RES_MEM": 6, "RES_MEM_UNITS": "GB"},
-            {"RESOURCE_NAME": "AWS5", "RES_CPUS": 2, "RES_MEM": 5, "RES_MEM_UNITS": "GB"}
+            {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large"},
+            {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge"},
+            {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},
+            {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge"},
+            {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}
         ]
         resource_keys = resource_list[0].keys()
         pandas_data = {}
         for key in resource_keys:
             pandas_data[key] = pd.Series([d[key] for d in resource_list])
-        DataBlock["provisioner_resources"] = pd.DataFrame(pandas_data)
+
+        return {"provisioner_resources": pd.DataFrame(pandas_data)}
