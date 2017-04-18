@@ -8,8 +8,6 @@ import uuid
 
 from UserDict import UserDict
 
-# from dataspace import DataSpace
-
 ###############################################################################
 # TODO:
 # 1) Need to make sure there are no race conditions
@@ -64,7 +62,15 @@ class Metadata(UserDict):
 
     def __init__(self, taskmanager_id, state='NEW', generation_id=None,
                  generation_time=None, missed_update_count=0):
+        """
+        Initialize Metadata object
 
+        :type taskmanager_id: :obj:`string`
+        :type state: :obj:`string`
+        :type generation_id: :obj:`int`
+        :type generation_time: :obj:`float`
+        :type missed_update_count: :obj:`int`
+        """
         UserDict.__init__(self)
         if state not in Metadata.valid_states:
             raise InvalidMetadataError('Invalid Metadata state "%s"' % state)
@@ -83,6 +89,8 @@ class Metadata(UserDict):
     def set_state(self, state):
         """
         Set the state for the Metadata
+
+        :type state: :obj:`string`
         """
 
         if state not in Metadata.valid_states:
@@ -103,6 +111,16 @@ class Header(UserDict):
 
     def __init__(self, taskmanager_id, create_time=None, expiration_time=None,
                  scheduled_create_time=None, creator='module', schema_id=None):
+        """
+        Initialize Header object
+
+        :type taskmanager_id: :obj:`string`
+        :type create_time: :obj:`float`
+        :type expiration_time: :obj:`float`
+        :type scheduled_create_time: :obj:`float`
+        :type creator: :obj:`string`
+        :type schema_id: :obj:`int`
+        """
 
         UserDict.__init__(self)
         if not create_time:
@@ -133,6 +151,14 @@ class Header(UserDict):
 class DataBlock(object):
 
     def __init__(self, dataspace, taskmanager_id=None, generation_id=None):
+        """
+        Initialize DataBlock object
+
+        :type dataspace: :obj:`DataSpace`
+        :type taskmanager_id: :obj:`string`
+        :type generation_id: :obj:`int`
+        """
+ 
         self.dataspace = dataspace
 
         # If taskmanager_id is None create new or 
@@ -149,27 +175,63 @@ class DataBlock(object):
 
 
     def put(self, key, value, header, metadata):
+        """
+        Put data into the DataBlock
+
+        :type key: :obj:`string`
+        :type value: :obj:`dict`
+        :type header: :obj:`Header`
+        :type metadata: :obj:`Metadata`
+        """
         self.__setitem__(key, value, header, metadata)
 
 
     def get(self, key):
+        """
+        Return the value associated with the key in the database
+
+        :type key: :obj:`string`
+        :rtype: :obj:`dict`
+        """
         return self.__getitem__(key)
 
 
     def _insert(self, key, value, header, metadata):
-        # Store data product, header and metadata to the database
+        """
+        Insert a new product into database with header and metadata
+
+        :type key: :obj:`string`
+        :type value: :obj:`dict`
+        :type header: :obj:`Header`
+        :type metadata: :obj:`Metadata`
+        """
         self.dataspace.insert(self.taskmanager_id, self.generation_id,
                               key, value, header, metadata)
         self.keys_inserted.append(key)
 
 
     def _update(self, key, value, header, metadata):
-        # Update data product, header and metadata to the database
+        """
+        Update an existing product in the database with header and metadata
+
+        :type key: :obj:`string`
+        :type value: :obj:`dict`
+        :type header: :obj:`Header`
+        :type metadata: :obj:`Metadata`
+        """
         self.dataspace.update(self.taskmanager_id, self.generation_id,
                               key, value, header, metadata)
 
 
     def __setitem__(self, key, value, header, metadata):
+        """
+        put a product in the database with header and metadata
+
+        :type key: :obj:`string`
+        :type value: :obj:`dict`
+        :type header: :obj:`Header`
+        :type metadata: :obj:`Metadata`
+        """
 
         if isinstance(value, dict):
             store_value = {'pickled': False, 'value': value}
@@ -188,6 +250,10 @@ class DataBlock(object):
     def __getitem__(self, key, default=None):
         """
         Return the value associated with the key in the database
+
+        :type key: :obj:`string`
+        :type default: :obj:`dict`
+        :rtype: :obj:`dict`
         """
 
         try:
@@ -211,7 +277,10 @@ class DataBlock(object):
 
     def get_header(self, key):
         """
-        Return the header associated with the key in the database
+        Return the Header associated with the key in the database
+
+        :type key: :obj:`string`
+        :rtype: :obj:`Header`
         """
         try:
             header_row = self.dataspace.get_header(self.taskmanager_id,
@@ -232,6 +301,9 @@ class DataBlock(object):
     def get_metadata(self, key):
         """
         Return the metadata associated with the key in the database
+
+        :type key: :obj:`string`
+        :rtype: :obj:`Metadata`
         """
         try:
             metadata_row = self.dataspace.get_metadata(self.taskmanager_id,
@@ -250,10 +322,15 @@ class DataBlock(object):
 
     def duplicate(self):
         """
-        Duplicate the datablock with the given id and return id of the new
-        datablock created. Only information from the sources is backed up.
+        Duplicate the datablock and return this new DataBlock. The intent is
+        that at the point the duplication occurs there is only information
+        from the sources in the DataBlock.
+        This also increments the generation_id of this DataBlock.
+
         TODO: Also update the header and the metadata information
         TODO: Make this threadsafe
+
+        :rtype: :obj:`DataBlock`
         """
 
         dup_datablock = copy.copy(self)
