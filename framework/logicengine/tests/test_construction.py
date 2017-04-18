@@ -17,3 +17,4 @@ def test_simple_configuration():
     cfg = { "rules": {}, "facts": {} }
     le = LogicEngine(cfg)
     assert le.produces() == ["actions", "newfacts"]
+    assert le.consumes() == []

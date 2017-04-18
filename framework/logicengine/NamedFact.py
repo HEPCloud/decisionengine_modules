@@ -9,6 +9,8 @@
 #   "vals.sum() > 40"   # OK, vals can be a numpy.ndarray
 #   "np.sum(vals) > 40" # WRONG, illegal call to np.sum
 
+import ast
+
 # If support for direct use of numpy and pandas functions becomes
 # wanted, then uncomment the following two import statements, and
 # switch the definition of facts_globals to the commented-out
@@ -22,7 +24,17 @@ facts_globals = {}
 class NamedFact(object):
     def __init__(self, name, expr):
         self.name = name
-        self.expr = expr
+        source = 'string'
+        mode = 'eval'
+        syntax_tree = ast.parse(expr, source, mode)
+        self.names = [n.id for n in ast.walk(syntax_tree) if isinstance(n, ast.Name)]
+        self.expr = compile(syntax_tree, source, mode)
+
+    def required_names(self):
+        """Return a list of the names that must be in data passed to evaluate
+        for the call to evaluate to work.
+        """
+        return self.names
 
     def evaluate(self, d):
         """Return the truth value of this fact, in the context

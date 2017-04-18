@@ -6,7 +6,7 @@ def test_simple_fact():
     assert fact.evaluate({ "z" : 50 })  == True
     assert fact.evaluate({ "z" : 100 }) == False
     assert fact.evaluate({ "z" : 200 }) == False
-
+    assert set(fact.required_names()) == set([ "z" ])
 
 def test_compound_fact():
     fact = NamedFact("f2", "z < 100 and a == 4")
@@ -16,6 +16,7 @@ def test_compound_fact():
     assert fact.evaluate({ "z" : 200, "a" : 5 })  == False
     assert fact.evaluate({ "z" : 100, "a" : 5 })  == False
     assert fact.evaluate({ "z" : 50, "a" : 5 })   == False
+    assert set(fact.required_names()) == set([ "z", "a" ])
 
 # We need to use this helper function to make sure the name np is not
 # seen in the context of the use of the facts.
@@ -28,7 +29,7 @@ def test_fact_using_numpy_array():
     #fact = NamedFact("f3", "np.sum(vals) > 40")
     assert fact.evaluate(make_db(3)) == False
     assert fact.evaluate(make_db(10)) == True
-
+    assert set(fact.required_names()) == set([ "vals" ])
 
 def test_fact_using_numpy_function():
     NamedFact("f3", "sum(vals) > 40")

@@ -2,6 +2,7 @@ from decisionengine.framework.logicengine.RE import RuleEngine
 from decisionengine.framework.logicengine.NamedFact import NamedFact
 from decisionengine.framework.modules.Module import Module
 import json
+from itertools import chain
 
 class LogicEngine(Module, object):
     # Inheritance from object can be dropped if Module is modified to
@@ -18,32 +19,21 @@ class LogicEngine(Module, object):
     def produces(self):
         return ["actions", "newfacts"]
 
+    def consumes(self):
+        """Return the names of all the items that must be in the DataBlock for
+        the rules to be evaluated.
+        """
+        list_of_lists = [ f.required_names() for f in self.facts ]
+        return list(chain(list_of_lists))        
+
     def evaluate(self, db):
         """evaluate our facts and rules, in the context of the given data.
 
         db can be any mappable, in particular a DataBlock or dictionary."""
         # Evaluate facts
-        evaluated_facts = { fact.name : fact.evalute(db) for fact in facts }
+        evaluated_facts = { f.name : f.evalute(db) for f in self.facts }
         # Process rules
         actions, newfacts = self.re.execute(evaluated_facts)
         return {"actions": actions, "newfacts": newfacts}
-
-if __name__ == "__main__":
-    import copy
-    facts = { "a": "True",
-              "b": "z>10",
-              "c": "match_table[still_good == True]).assign(req_cost=number_to_request * burn_rate)['req_cost'].sum() > 0"
-            }
-    rules = { "r1": { "expression": "a && b && c", "actions": ["launch_missile", "cook dinner"]} }
-    l1 = LogicEngine(facts, rules)
-
-    db = {"z" : 100 }
-    old = copy.copy(db)
-    l1.evaluate(db)
-    new_keys = set(db.keys()) - set(old.keys())
-    if (len(new_keys) != 2):
-        print "Wrong number of keys added"
-    print "New facts: ", db["newfacts"]
-    print "Actions: ", db["actions"]
     
               
