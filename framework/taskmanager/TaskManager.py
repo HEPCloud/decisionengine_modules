@@ -4,15 +4,15 @@ Task Manager
 """
 import threading
 import logging
+import time
 
 import dataspace.datablock as datablock
+import configmanager.ConfigManager as configmanager
 
 class Worker(object):
     def __init__(self, source_dict):
-        name = source_dict['module']
-        module = __import__('modules.%s'%(name,))
-        m_class = getattr(getattr(module, name), name)
-        self.worker = m_class(source_dict['parameters'], None)
+        self.worker = configmanager.ConfigManager.create(source_dict['module'],
+                                                         source_dict['parameters'])
         self.shedule = source_dict.get('shedule')
         self.run_counter = 0
         self.stop_running = threading.Event()
@@ -134,7 +134,8 @@ class TaskManager(object):
         """
         Decision cycle to be run periodically (by trigger)
         """
-        data_block_t1 = self.do_backup()
+        if self.state == STEADY:
+            data_block_t1 = self.do_backup() # do backup only in STEADY state????
         try:
             self.run_transforms(data_block_t1)
             self.run_logic_engine(data_block_t1)
@@ -182,6 +183,7 @@ class TaskManager(object):
                 self.logger.error("error starting thread %s: %s" % (name, detail))
                 self.state = OFFLINE
                 break
+
     def run_transforms(self, data_block=None):
         if not data_block:
             return
@@ -223,7 +225,55 @@ class TaskManager(object):
             print "Calling  acquire for ", s
             self.channel.publishers[s].worker.publish()
 
+    def run(self):
+        for s in self.channel.sources:
+            print "Calling produces for", s
+            self.channel.sources[s].worker.produces(None)
+        for s in self.channel.sources:
+            print "Calling  acquire for ", s
+            self.channel.sources[s].worker.acquire()
+        for s in self.channel.transforms:
+            print "Calling  produces for ", s
+            self.channel.transforms[s].worker.produces(None)
 
+        for s in self.channel.le_s:
+            print "Calling produces for", s
+            self.channel.le_s[s].worker.evaluate()
+        for s in self.channel.publishers:
+            print "Calling  acquire for ", s
+            self.channel.publishers[s].worker.publish()
+
+if __name__ == '__main__':
+    import modules.de_logger as de_logger
+    import configmanager.ConfigManager as Conf_Manager
+
+    config_manager = Conf_Manager.ConfigManager()
+    config_manager.load()
+    global_config = config_manager.get_global_config()
+    channels = config_manager.get_channels()
+    print "GLOBAL CONF", global_config
+    print "CHANNELS", channels
+
+    my_logger = logging.getLogger("decision_engine")
+
+    try:
+        de_logger.set_logging(log_file_name = global_config['logger']['log_file'],
+                              max_file_size = global_config['logger']['max_file_size'],
+                              max_backup_count = global_config['logger']['max_backup_count'])
+    except Exception, e:
+        print e
+        sys.exit(1)
+
+    my_logger.info("Starting decision engine")
+    task_mgrs = {}
+    data_space = () # get this from configuration
+    for ch in channels:
+        task_mgrs[ch] = TaskManager(ch, channels[ch], datablock.DataBlock(ch, 0, data_space))
+
+    while 1:
+        for t_mgr in task_mgrs:
+            task_mgrs[t_mgr].run()
+        time.sleep(20)
 
     def run(self):
         for s in self.channel.sources:

@@ -1,8 +1,8 @@
 from modules import Module
 
 class Transform1(Module.Module):
-    def __init__(self,set_of_parameters, my_data_block):
-        Module.Module.__init__(self,set_of_parameters, my_data_block)
+    def __init__(self,set_of_parameters):
+        Module.Module.__init__(self,set_of_parameters)
 
     """
     name_list: A list of the data product names that
@@ -28,6 +28,6 @@ class Transform1(Module.Module):
     DataBlock "put" transaction for each of the data
     products promised in the produces list
     """
-    def decide(self):
-        print "Called Transform1.decide"
+    def transform(self):
+        print "Called Transform1.transform"
         return True
