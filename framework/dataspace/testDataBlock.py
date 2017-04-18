@@ -40,7 +40,7 @@ print 'creating dataspace object ... %s\n' % filename
 dataspace = DataSpace(config)
 
 print 'creating dataspace tables ...\n'
-dataspace.create()
+#dataspace.create()
 
 taskmanager_id = 'E0B9A7F5-B55E-47F6-B5EF-DCCB8B977AFE'
 generation_id = 9999
