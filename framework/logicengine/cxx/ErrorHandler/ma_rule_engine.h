@@ -21,11 +21,18 @@ public:
                 , alarm_fn_t alarm 
                 , cond_match_fn_t cond_match );
 
+  ma_rule_engine( Json::Value const & facts
+                , Json::Value const & rules
+                , alarm_fn_t alarm 
+                , cond_match_fn_t cond_match );
+
   // public method, call to run the rule engine
   void feed( msg_t const & msg );
 
   // public method, call by the LogicEngine
-  void execute( std::map<std::string, bool> const & fact_vals );
+  void execute( std::map<std::string, bool> const & fact_vals
+              , std::map<std::string, strings_t> & actions
+              , std::map<std::string, strings_t> & facts );
 
   // public accessor for cond map and rule map
   size_t cond_size() const { return cmap.size(); }
@@ -126,7 +133,8 @@ public:
 private: 
 
   // initialize the rule engine with configuration file
-  void init_engine( );
+  void init_engine( Json::Value const & pset );
+  void init_minimal_engine( Json::Value const & facts, Json::Value const & rules );
 
   // event worker
   void event_worker( );
@@ -139,6 +147,9 @@ private:
   // evaluates the domain / status of all rules in the notification list
   void evaluate_rules_domain( notify_list_t & notify_domain );
   void evaluate_rules( notify_list_t & notify_status );
+  void evaluate_rules( notify_list_t & notify_status
+                     , std::map<string_t, strings_t> & actions
+                     , std::map<string_t, strings_t> & facts );
 
   // find condition/rule with given name
   const ma_condition & find_cond_by_name( string_t const & name ) const;
