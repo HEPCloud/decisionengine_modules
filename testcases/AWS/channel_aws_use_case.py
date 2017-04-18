@@ -2,6 +2,7 @@ $de_config_dir/config.d/channels/
 
 Sources = [
   {
+    # Do we put the python module name here (i.e. filename.py) or do we put the classname here?
     "name":    "HTCondor_Job_Q",
     "params":  {
       "schedd_name":   "cmsosgce.fnal.gov",
@@ -22,13 +23,15 @@ Parameters = ["p_overflow", "p_overflow_threshold", "p_overflow_cloud", "p_overf
 Transforms: ["osg_requests", "hpc_requests", "CloudRequests"]
 
 common_facts = {
-      "jobs_present":              "(len(db['jobs']) > 0)",
-      "overflow_condition":        "((len(db['jobs']) - db['local']['slots']) > db['params']['threshold'])",
-      "overflow_permitted":        "(db['params']['overflow_permitted'])",
-      "overflow_hpc_permitted":    "(db['params']['overflow_hpc_permitted'])",
-      "overflow_cloud_permitted":  "(db['params']['overflow_cloud_permitted'])",
-      "hpc_sufficient_allocation": "(db['hpcinfo']['hours_available'] > sum(db['jobs']['time']))",
-      "cloud_sufficient_budget":   "(db['cloudinfo']['available_budget'] > sum(['jobs']['estimated_cost']))"
+      "jobs_present":              "(len(jobs.index) > 0)",
+      "overflow_condition":        "((len(jobs.index) - local['slots']) > params['threshold'])",
+      "overflow_permitted":        "(params['overflow_permitted'])",
+
+      "overflow_hpc_permitted":    "(params['overflow_hpc_permitted'])",
+      "overflow_cloud_permitted":  "(params['overflow_cloud_permitted'])",
+      "hpc_sufficient_allocation": "(hpcinfo['hours_available'] > jobs['time'].sum())",
+      "cloud_sufficient_budget":   "(cloudinfo['available_budget'] > sum(['jobs']['estimated_cost']))"
+
     }
 
 common_rules = {
@@ -40,8 +43,8 @@ common_rules = {
 }
 
 cloud_facts = {
-    "good_total_estimated_budget" : "db['ds']['budget'] - ( (db['match_table'][still_good == True]).assign(req_cost=number_to_request * burn_rate)['req_cost'].sum()) > 0",
-    "good_total_burn_rate" : "db['ds']['targetburn'] <= (db['match_table'][still_good == True]['burn_rate'].sum())"
+    "good_total_estimated_budget" : "ds['budget'] - ( (match_table[still_good == True]).assign(req_cost=number_to_request * burn_rate)['req_cost'].sum()) > 0",
+    "good_total_burn_rate" : "ds['targetburn'] <= (match_table[still_good == True]['burn_rate'].sum())"
 }
 
 cloud_rules = {
