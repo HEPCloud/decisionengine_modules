@@ -6,7 +6,7 @@
     'channels' : 'conf.d',
 
     'dataspace': {
-        'filename': '/tmp/test-db.db',
+        'filename': '%s/tmp/test-db.db'%(os.environ.get('HOME'),)
     },
 }
 
