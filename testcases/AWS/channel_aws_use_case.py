@@ -24,7 +24,7 @@ Transforms: ["osg_requests", "hpc_requests", "CloudRequests"]
 
 common_facts = {
       "jobs_present":              "(len(jobs.index) > 0)",
-      "overflow_condition":        "((len(jobs.index) - local['slots']) > params['threshold'])",
+      "overflow_condition":        "((len(jobs.index) - local_slots) > params['threshold'])",
       "overflow_permitted":        "(params['overflow_permitted'])",
 
       "overflow_hpc_permitted":    "(params['overflow_hpc_permitted'])",
