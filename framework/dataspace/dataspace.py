@@ -93,8 +93,9 @@ class DataSpace(object):
                     cursor.execute(cmd)
             self.conn.commit()
         except:
-             traceback.print_stack()
-             raise DataSpaceError('Error creating table %s' % table)
+             raise
+             #traceback.print_stack()
+             #raise DataSpaceError('Error creating table %s' % table)
 
 
     def get_last_generation_id(self, taskmanager_id):
