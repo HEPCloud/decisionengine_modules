@@ -39,8 +39,23 @@ public:
   void
     parse( string_t const & cond_expr
          , string_t const & alarm_message
-         , fhicl::ParameterSet const & actions
+         , fhicl::ParameterSet const & act_pset
          , cond_map_t * cond_map_ptr );
+
+  void
+    parse( string_t const & cond_expr
+         , string_t const & alarm_message
+         , strings_t const & actions
+         , strings_t const & facts
+         , cond_map_t * cond_map_ptr );
+
+  strings_t const &
+    get_action_names() const
+    { return str_actions; }
+
+  strings_t const &
+    get_chained_fact_names() const
+    { return str_facts; }
 
   // public method, call to evaluate the domain expression
   void
@@ -184,6 +199,9 @@ private:
   bool            enabled;
 
   ma_actions      actions;
+
+  strings_t       str_actions;
+  strings_t       str_facts;
 };
 
 typedef boost::shared_ptr<ma_rule>   rule_sp;

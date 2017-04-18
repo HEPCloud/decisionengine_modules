@@ -27,8 +27,8 @@ typedef std::vector<boost::regex>          vregex_t;
 class ma_condition
 {
 public:
-  
-  // c'tor
+
+  // c'tor full
   ma_condition( string_t  const & desc
               , string_t  const & sev
               , strings_t const & sources
@@ -44,6 +44,10 @@ public:
               , int               target_group
               , ma_timing_events & events
               );
+
+ 
+  // c'tor minified
+  ma_condition( string_t  const & name );
 
   // reset the condition to its ground state
   void reset();

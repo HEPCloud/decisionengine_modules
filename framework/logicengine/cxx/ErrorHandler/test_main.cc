@@ -30,15 +30,45 @@ int main(int argc, char ** argv)
     Json::StyledWriter writer;
     std::cout << writer.write(conf);
 
-    novadaq::errorhandler::ma_rule_engine engine(conf, &alarm_fn, &cond_match);
+    novadaq::errorhandler::ma_rule_engine engine(conf["conditions"], conf["rules"], &alarm_fn, &cond_match);
 
-    std::map<std::string, bool> facts;
-    facts.insert(std::make_pair("c1", false));
-    facts.insert(std::make_pair("c2", true));
+    std::map<std::string, bool> facts_vals;
+    facts_vals.insert(std::make_pair("c1", false));
+    facts_vals.insert(std::make_pair("c2", true));
 
-    engine.execute(facts);
-    engine.execute(facts);
-    
+    std::map<std::string, std::vector<std::string>> actions;
+    std::map<std::string, std::vector<std::string>> facts;
+
+    engine.execute(facts_vals, actions, facts);
+
+    std::cout << "\n\n";
+    std::cout << "triggered actions\n";
+
+    for(auto const & action : actions)
+    {
+        std::cout << action.first << ": ";
+
+        for(auto const & name : action.second)
+        {
+            std::cout << name << ", ";
+        }
+
+        std::cout << "\n";
+    }
+ 
+    std::cout << "intermediate facts\n";
+    for(auto const & fact : facts)
+    {
+        std::cout << fact.first << ": ";
+
+        for(auto const & name : fact.second)
+        {
+            std::cout << name << ", ";
+        }
+
+        std::cout << "\n";
+    }   
+
     std::cout << "hello world\n";
     return 0;
 }

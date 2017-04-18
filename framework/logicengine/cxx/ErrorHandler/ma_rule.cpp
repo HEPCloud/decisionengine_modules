@@ -31,6 +31,8 @@ ma_rule::ma_rule( string_t const & rule_name
 , initialized( false )
 , enabled( true )
 , actions( )
+, str_actions( )
+, str_facts( )
 {
 
 }
@@ -38,8 +40,8 @@ ma_rule::ma_rule( string_t const & rule_name
 void
   ma_rule::parse( string_t const & cond_expr
                 , string_t const & alarm_message
-                , ParameterSet const & act_pset
-                , cond_map_t     * cond_map_ptr )
+                , fhicl::ParameterSet const & act_pset
+                , cond_map_t * cond_map_ptr )
 {
   cond_map = cond_map_ptr;
   condition_expr = cond_expr;
@@ -64,11 +66,34 @@ void
     domains.push_back(ma_domain_ctor_any(conditions.size()));
 
   initialized = true;
+}
 
-  std::cout << "\n";
-  std::cout << cond_expr << "\n";
-  std::cout << "domains.size = " << domains.size() << "\n";
-  std::cout << "domain.size = " << domains.front().size() << "\n";
+void
+  ma_rule::parse( string_t const & cond_expr
+                , string_t const & alarm_message
+                , strings_t const & actions
+                , strings_t const & facts
+                , cond_map_t * cond_map_ptr )
+{
+  cond_map = cond_map_ptr;
+  condition_expr = cond_expr;
+
+  // condition expression
+  if( !parse_condition_expr( cond_expr, this ) )
+    throw std::runtime_error("rule parsing failed");
+
+  // alarm message
+  alarm_msg.init(this, alarm_message);
+
+  // actions
+  str_actions = actions;
+  str_facts = facts;
+
+  // init
+  if( domain_expr.empty() )
+    domains.push_back(ma_domain_ctor_any(conditions.size()));
+
+  initialized = true;
 }
 
 

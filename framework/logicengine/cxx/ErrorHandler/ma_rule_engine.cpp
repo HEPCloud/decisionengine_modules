@@ -19,13 +19,32 @@ ma_rule_engine::ma_rule_engine( fhicl::ParameterSet const & pset
 , alarm_fn      ( alarm )
 , cond_match_fn ( cond_match )
 , events ( )                              
-, event_worker_t ( )
+//, event_worker_t ( )
 , EHS    ( false )
 {
-  init_engine( );
+  init_engine( pset );
 }
 
-void ma_rule_engine::init_engine( )
+ma_rule_engine::ma_rule_engine( Json::Value const & conf_facts
+                              , Json::Value const & conf_rules
+                              , alarm_fn_t alarm 
+                              , cond_match_fn_t cond_match )
+: pset   ( )
+, cmap   ( )
+, cnames ( )
+, rmap   ( )
+, rnames ( )
+, alarm_fn      ( alarm )
+, cond_match_fn ( cond_match )
+, events ( )                              
+//, event_worker_t ( )
+, EHS    ( false )
+{
+  init_minimal_engine( conf_facts, conf_rules );
+}
+
+
+void ma_rule_engine::init_engine( fhicl::ParameterSet const & pset )
 {
   // Error Handling Supervisor -- EHS
   EHS = pset["EHS"].asBool();
@@ -79,8 +98,8 @@ void ma_rule_engine::init_engine( )
                   , occur
                   , at_least
                   , rate["timespan"].asInt()
-                  , false // gran["per_source"].asBool()
-                  , false // gran["per_target"].asBool()
+                  , gran["per_source"].asBool()
+                  , gran["per_target"].asBool()
                   , gran["target_group"].asInt()
                   , events
                   );
@@ -129,8 +148,85 @@ void ma_rule_engine::init_engine( )
   // event_worker_t = boost::thread(&ma_rule_engine::event_worker, this);
 }
 
+void ma_rule_engine::init_minimal_engine( Json::Value const & facts, Json::Value const & rules )
+{
+  // Error Handling Supervisor -- EHS
+  EHS = false;
+
+  // fact names and rule names
+  cnames = facts.getMemberNames();
+  rnames = rules.getMemberNames();
+
+  // find all facts from the rule's actions
+  for( size_t i=0; i<rnames.size(); ++i )
+  {
+    ParameterSet rule = rules[rnames[i]];
+
+    if (rule.isMember("facts"))
+    {
+      for (auto const & f : rule["facts"]) 
+      {
+        cnames.emplace_back(f.asString());
+      }
+    }
+  }
+
+  // create all facts
+  for( size_t i=0; i<cnames.size(); ++i )
+  {
+    // construct the condition object
+    ma_condition c( cnames[i] );
+
+    // push the condition to the container, and parse the test function
+    cond_map_t::iterator it = cmap.insert(std::make_pair(cnames[i], c)).first;
+
+    // init after the condition has been inserted into the map
+    it->second.init();
+  }
+
+  // go through all rules
+  for( size_t i=0; i<rnames.size(); ++i )
+  {
+    ParameterSet rule = rules[rnames[i]];
+
+    // construct the rule object
+    ma_rule r( rnames[i]
+             , rnames[i]
+             , false //, rule["repeat_alarm"].asBool()
+             , 0     //, rule["holdoff"].asInt()
+             );
+
+    // push the rule to the container
+    rule_map_t::iterator it = rmap.insert(std::make_pair(rnames[i], r)).first;
+    
+    // parse the condition expression and alarm message
+    // this is done in a two-step method (init the object, push into container
+    // then parse) because the parse process involves updating the conditions
+    // notification list which needs the pointer to the ma_rule object. There-
+    // fore we push the ma_rule object into the container first, then do the
+    // parse
+
+    std::vector<std::string> actions;
+    std::vector<std::string> facts;
+
+    for (auto const & action : rule["actions"])  actions.emplace_back(action.asString());
+    for (auto const & fact   : rule["facts"  ])  facts.emplace_back(fact.asString());
+
+    it->second.parse( rule["expression"].asString()
+                    , rule["message"].asString()
+                    , actions
+                    , facts
+                    , &cmap );
+  }
+
+  // for all conditions sort their notification lists
+  cond_map_t::iterator it = cmap.begin();
+  for( ; it!=cmap.end(); ++it ) it->second.sort_notify_lists();
+}
+
 void ma_rule_engine::event_worker()
 {
+#if 0
   while(true)
   {
     // get current second
@@ -162,6 +258,7 @@ void ma_rule_engine::event_worker()
 
     sleep(1);
   }
+#endif
 }
 
 void ma_rule_engine::feed( msg_t const & msg )
@@ -196,7 +293,9 @@ void ma_rule_engine::feed( msg_t const & msg )
   evaluate_rules( notify_status );
 }
 
-void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals )
+void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals
+                            , std::map<std::string, strings_t> & actions
+                            , std::map<std::string, strings_t> & facts )
 {
   // reaction starters
   conds_t status;
@@ -229,7 +328,7 @@ void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals )
   evaluate_rules_domain( notify_domain );
 
   // loop to update status
-  evaluate_rules( notify_status );
+  evaluate_rules( notify_status, actions, facts );
 }
 
 void ma_rule_engine::evaluate_rules_domain( notify_list_t & notify_domain )
@@ -242,6 +341,23 @@ void ma_rule_engine::evaluate_rules_domain( notify_list_t & notify_domain )
 void ma_rule_engine::evaluate_rules( notify_list_t & notify_status )
 {
   notify_list_t::iterator it = notify_status.begin();
+
+  for( ; it!=notify_status.end(); ++it )
+  {
+    if( (*it)->evaluate() )
+    {
+      // alarm message
+      alarm_fn((*it)->name(), (*it)->get_alarm_message());
+    }
+  }
+}
+
+void ma_rule_engine::evaluate_rules( notify_list_t & notify_status
+                                   , std::map<string_t, strings_t> & actions
+                                   , std::map<string_t, strings_t> & facts )
+{
+  notify_list_t::iterator it = notify_status.begin();
+
   for( ; it!=notify_status.end(); ++it )
   {
     if( (*it)->evaluate() )
@@ -249,19 +365,11 @@ void ma_rule_engine::evaluate_rules( notify_list_t & notify_status )
       // alarm message
       alarm_fn((*it)->name(), (*it)->get_alarm_message());
 
-      // actions
-      if( EHS )
-      {
-        int now_reset_rule = (*it)->act();
-        if( now_reset_rule > 0 )
-        {
-          this->reset_rule((*it)->name());
-          alarm_fn((*it)->name(), "reseting this rule!");
-        }
-      }
+      // form the actions and facts
+      actions.emplace((*it)->name(), (*it)->get_action_names());
+      facts.emplace((*it)->name(), (*it)->get_chained_fact_names());
     }
   }
- 
 }
 
 void ma_rule_engine::merge_notify_list( notify_list_t & n_list

@@ -105,6 +105,48 @@ ma_condition::ma_condition( string_t  const & desc
     throw std::runtime_error("condition test function parse failed");
 }
 
+
+ma_condition::ma_condition( string_t  const & name )
+: description_  ( name )
+, severity_     ( 0 )
+, srcs_str      ( "any" )
+, e_srcs        ( )
+, any_src       ( true )
+, cats_str      ( "any" )
+, e_cats        ( )
+, any_cat       ( true )
+, match_type    ( MATCH_ANY )
+, regex_str     ( )
+, e             ( )
+, test_expr     ( )
+, tc            ( 1 )
+, at_least_     ( true )
+, ts            ( )
+, ps            ( false )
+, pt            ( false )
+, t_group       ( 0 )
+, persistent_   ( true )
+, hitmap        ( )
+, events        ( events )
+, sev_             ( )
+, src_             ( )
+, tgt_             ( )
+, cat_             ( )
+, bdy_             ( )
+, what_            ( )
+, last_sev_        ( )
+, last_src_        ( )
+, last_tgt_        ( )
+, last_cat_        ( )
+, last_bdy_        ( )
+, last_what_       ( )
+, notify_on_source ( )
+, notify_on_target ( )
+, notify_on_status ( )
+, catched_messages ( 0 )
+{
+}
+
 void
   ma_condition::reset( )
 {

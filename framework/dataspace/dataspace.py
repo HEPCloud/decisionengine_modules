@@ -23,9 +23,14 @@ class DataSpaceError(Exception):
 
 
 class DataSpace(object):
+    """
+    DataSpace class provides interface to the database used to store the data
+    """
 
-    tables_created = False
+    # Internal variable to inform if the database tables have been created
+    _tables_created = False
 
+    #: Description of tables and their columns
     tables = {
         'header': [
             'taskmanager_id TEXT',
@@ -57,13 +62,25 @@ class DataSpace(object):
         ]
     }
 
+    #: Name of the dataproduct table
     dataproduct_table = 'dataproduct'
+
+    #: Name of the header table
     header_table = 'header'
+
+    #: Name of the metadata table
     metadata_table = 'metadata'
 
-    def __init__(self, config, credentials=None):
+
+    def __init__(self, config):
+        """
+        :type config: :obj:`dict`
+        :arg config: Configuration dictionary
+
+        TODO: Change a single connection to the database to a connection pool
+        """
+
         self.db_filename = config['dataspace']['filename']
-        self.credentials = credentials
 
         if os.path.exists(self.db_filename):
             os.unlink(self.db_filename)
@@ -75,26 +92,23 @@ class DataSpace(object):
             raise
             #raise DataSpaceConnectionError(
             #    'Error connecting to the database %s' % db_filename)
-        if DataSpace.tables_created:
+        if DataSpace._tables_created:
             raise Exception('Tables already created')
         else:
             self.create()
 
+
     def close(self):
+        """Close all connections to the database"""
         self.conn.close()
 
 
-    def _execute(self, cmd):
-        cursor = self.conn.cursor()
-        cursor.execute(cmd)
-        self.conn.commit()
-
-
     def create(self):
-        # TODO: implement dataspace creation from config
-        # Create the necessary tables for the datablocks
-        # Should be called only once or ignore if tables created
-        # TODO: Need to add functionality to ignore if tables exist
+        """
+        Create database tables for dataproduct, header and metadata
+
+        TODO: Need to add functionality to ignore if tables exist
+        """
 
         try:
             for table, cols in DataSpace.tables.iteritems():
@@ -103,7 +117,7 @@ class DataSpace(object):
                     cursor = self.conn.cursor()
                     cursor.execute(cmd)
             self.conn.commit()
-            DataSpace.tables_created = True
+            DataSpace._tables_created = True
         except:
              raise
              #traceback.print_stack()
@@ -111,7 +125,17 @@ class DataSpace(object):
 
 
     def get_last_generation_id(self, taskmanager_id):
-        # TODO: COALESCE is not safe. Find a better way check with DB experts
+        """
+        Get the last known generation_id for the given taskmanager_id
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        
+        :rtype: :obj:`int`
+
+        TODO: COALESCE is not safe. Find a better way check with DB experts
+        """
+
         try:
             cmd = """SELECT COALESCE(MAX(generation_id),0) FROM %s""" % DataSpace.dataproduct_table
 
@@ -124,6 +148,24 @@ class DataSpace(object):
 
 
     def insert(self, taskmanager_id, generation_id, key, value, header, metadata):
+        """
+        Insert data into respective tables for the given
+        taskmanager_id, generation_id, key
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        :type generation_id: :obj:`int`
+        :arg generation_id: generation_id of the data
+        :type key: :obj:`string`
+        :arg key: key for the value
+        :type value: :obj:`object`
+        :arg value: Value can be an object or dict
+        :type header: :obj:`~datablock.Header`
+        :arg header: Header for the value
+        :type metadata: :obj:`~datablock.Metadata`
+        :arg header: Metadata for the value
+        """
+
         # Insert the data product, header and metadata to the database
         try:
             # Insert value in the dataproduct table
@@ -162,6 +204,24 @@ class DataSpace(object):
 
 
     def update(self, taskmanager_id, generation_id, key, value, header, metadata):
+        """
+        Update the data in respective tables for the given
+        taskmanager_id, generation_id, key
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        :type generation_id: :obj:`int`
+        :arg generation_id: generation_id of the data
+        :type key: :obj:`string`
+        :arg key: key for the value
+        :type value: :obj:`object`
+        :arg value: Value can be an object or dict
+        :type header: :obj:`~datablock.Header`
+        :arg header: Header for the value
+        :type metadata: :obj:`~datablock.Metadata`
+        :arg header: Metadata for the value
+        """
+
         # Update the data product, header and metadata in the database
         try:
             params = (taskmanager_id, generation_id, key)
@@ -207,8 +267,6 @@ class DataSpace(object):
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
             value = cursor.fetchall()
-
-            #self._execute(cmd)
         except:
             raise
             #traceback.print_stack()
@@ -219,27 +277,73 @@ class DataSpace(object):
 
 
     def get_dataproduct(self, taskmanager_id, generation_id, key):
+        """
+        Return the data from the dataproduct table for the given
+        taskmanager_id, generation_id, key
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        :type generation_id: :obj:`int`
+        :arg generation_id: generation_id of the data
+        :type key: :obj:`string`
+        :arg key: key for the value
+        """
+
         value = self._get_table_row(DataSpace.dataproduct_table, taskmanager_id,
                                     generation_id, key, ['value'])
         return value
 
 
     def get_header(self, taskmanager_id, generation_id, key):
+        """
+        Return the header from the header table for the given
+        taskmanager_id, generation_id, key
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        :type generation_id: :obj:`int`
+        :arg generation_id: generation_id of the data
+        :type key: :obj:`string`
+        :arg key: key for the value
+        """
+
         cols = [(x.split())[0] for x in DataSpace.tables.get(DataSpace.header_table)]
         return self._get_table_row(DataSpace.header_table, taskmanager_id,
                                    generation_id, key, cols)
 
 
     def get_metadata(self, taskmanager_id, generation_id, key):
+        """
+        Return the metadata from the metadata table for the given
+        taskmanager_id, generation_id, key
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        :type generation_id: :obj:`int`
+        :arg generation_id: generation_id of the data
+        :type key: :obj:`string`
+        :arg key: key for the value
+        """
+
         cols = [(x.split())[0] for x in DataSpace.tables.get(DataSpace.metadata_table)]
         return self._get_table_row(DataSpace.metadata_table, taskmanager_id,
                                    generation_id, key, cols)
 
 
     def duplicate(self, taskmanager_id, generation_id, new_generation_id):
+        """
+        For the given taskmanager_id, make a copy of the datablock with given 
+        generation_id, set the generation_id for the datablock copy
+
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: taskmanager_id for generation to be retrieved
+        :type generation_id: :obj:`int`
+        :arg generation_id: generation_id of the data
+        :type new_generation_id: :obj:`int`
+        :arg new_generation_id: generation_id of the new datablock created
+        """
 
         cursor = self.conn.cursor()
-
         params = (taskmanager_id, generation_id)
 
         cmd = """INSERT INTO %s (taskmanager_id, generation_id, key, value) SELECT taskmanager_id, %i, key, value FROM %s WHERE (taskmanager_id=?) AND (generation_id=?)""" % (
