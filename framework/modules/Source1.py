@@ -1,8 +1,8 @@
 from modules import Module
 
 class Source1(Module.Module):
-    def __init__(self,set_of_parameters, my_data_block):
-        Module.Module.__init__(self,set_of_parameters, my_data_block)
+    def __init__(self,set_of_parameters):
+        Module.Module.__init__(self,set_of_parameters)
 
     # name_schema_id_list: a list of dictionaries containing
     # the data product name and a pointer to a schema

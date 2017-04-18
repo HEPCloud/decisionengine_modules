@@ -6,6 +6,9 @@ import time
 CONFIG_FILE_NAME="DE-Config.py"
 
 class ConfigManager(object):
+
+    
+    
     def __init__(self):
         self.config_dir = os.getenv("CONFIG_PATH")
         if not self.config_dir or not os.path.isdir(self.config_dir) : 
@@ -31,14 +34,29 @@ class ConfigManager(object):
                 code="self.channels[name] ="+string.join(f.readlines(),"")
                 exec(code)
 
+    def isUpdated():
+        return 
+
     def get_channels(self):
         return self.channels
 
     def get_global_config(self):
         return self.global_config
-    
+
+    """
+    Factory method:  create instance of dynamically loaded module 
+    """
+    @staticmethod
+    def create(name,parameters):
+        module = __import__('modules.%s'%(name,))
+        module_class = getattr(getattr(module, name), name)
+        instance = module_class(parameters)
+        return instance 
 
 if __name__ == "__main__":
     c = ConfigManager()
     c.load()
+    a = ConfigManager.create("Publisher1",{},{})
+    a.consumes({})
+    print type(a), a.__dict__
             
