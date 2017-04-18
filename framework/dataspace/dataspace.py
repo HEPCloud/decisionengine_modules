@@ -81,7 +81,6 @@ class DataSpace(object):
         """
 
         self.db_filename = config['dataspace']['filename']
-        self.credentials = credentials
 
         if os.path.exists(self.db_filename):
             os.unlink(self.db_filename)
