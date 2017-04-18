@@ -15,6 +15,7 @@ import os
 import modules.de_logger as de_logger
 import configmanager.ConfigManager as Conf_Manager
 import taskmanager.TaskManager as TaskManager
+
 import dataspace.datablock as datablock
 import dataspace.dataspace as dataspace
 
@@ -56,24 +57,21 @@ class DecisionEngine(object):
         global_config = config_manager.get_global_config()
         channels = config_manager.get_channels()
 
-#        ds = dataspace.DataSpace("/tmp/test.db",None)     
-#        ds.create()
-#        taskmanager_id = 1
-#        generation_id = 1
-#        datablock = datablock.DataBlock(taskmanager_id, generation_id, ds)         
-#
+        ds = dataspace.DataSpace(global_config)
+        taskmanager_id = 1
+        generation_id = 1
+
         task_managers = {} 
         data_space = {}
         """
         create channels
         """
         for ch in channels:
-                task_managers[ch] = TaskManager.TaskManager(ch, channels[ch], datablock.DataBlock(ch, 0, data_space))
+                task_managers[ch] = TaskManager.TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
                 
         for key, value in task_managers.iteritems():
             t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})
             t.start()
-
 
         try:
             while True: 
