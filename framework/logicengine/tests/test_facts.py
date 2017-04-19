@@ -39,11 +39,12 @@ def test_fact_using_numpy_array():
     #fact = NamedFact("f3", "np.sum(vals) > 40")
     assert fact.evaluate(make_db(3)) == False
     assert fact.evaluate(make_db(10)) == True
-    assert set(fact.required_names()) == set([ "vals" ])
+    assert fact.required_names() == [ "vals" ]
 
 def test_fact_using_numpy_function():
     fact = NamedFact("f3", "np.sum(vals) > 40")
     assert fact.name == "f3"
+    assert set(fact.required_names()) == set(["vals", "np"])
     with pytest.raises(BaseException):
         fact.evaluate(make_db(3))
 

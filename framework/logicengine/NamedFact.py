@@ -21,13 +21,30 @@ import pandas as pd
 facts_globals = {}
 #facts_globals = {"np": np, "pd": pd}
 
+
+def function_name_from_call(callnode):
+    print "In name_from_call: ", callnode
+    if (not isinstance(callnode, ast.Call)):
+        raise LogicError("not a call node")
+    if (isinstance(callnode.func, ast.Name)):
+        # This really is a function name
+        return callnode.func.id
+    if (isinstance(callnode.func, ast.Attribute)):
+        # This is the name of a function argument
+        # not the name of a function.
+        return None
+    raise LogicError("unknown node type")
+
 class NamedFact(object):
     def __init__(self, name, expr):
         self.name = name
         source = 'string'
         mode = 'eval'
         syntax_tree = ast.parse(expr, source, mode)
-        self.names = [n.id for n in ast.walk(syntax_tree) if isinstance(n, ast.Name)]
+        all_names = [n.id for n in ast.walk(syntax_tree) if isinstance(n, ast.Name)]
+        func_names = [function_name_from_call(n) for n in ast.walk(syntax_tree) if isinstance(n, ast.Call) ]
+
+        self.names = list(set(all_names) - set(func_names))
         self.expr = compile(syntax_tree, source, mode)
 
     def required_names(self):
