@@ -207,14 +207,22 @@ void ma_rule_engine::init_minimal_engine( Json::Value const & facts, Json::Value
     // parse
 
     std::vector<std::string> actions;
+    std::vector<std::string> false_actions;
     std::vector<std::string> facts;
 
-    for (auto const & action : rule["actions"])  actions.emplace_back(action.asString());
-    for (auto const & fact   : rule["facts"  ])  facts.emplace_back(fact.asString());
+    for (auto const & action : rule["actions"])  
+      actions.emplace_back(action.asString());
+
+    for (auto const & action : rule["false_actions"])  
+      false_actions.emplace_back(action.asString());
+
+    for (auto const & fact   : rule["facts"  ])  
+      facts.emplace_back(fact.asString());
 
     it->second.parse( rule["expression"].asString()
                     , rule["message"].asString()
                     , actions
+                    , false_actions
                     , facts
                     , &cmap );
   }
@@ -403,6 +411,9 @@ void ma_rule_engine::evaluate_rules( notify_list_t & notify_status
     }
     else
     {
+      // form the actions from rule's false actions
+      actions.emplace((*it)->name(), (*it)->get_false_action_names());
+
       // still need to form the facts, but with false values
       std::map<string_t, bool> rule_facts;
       auto const & rule_fact_names = (*it)->get_chained_fact_names();

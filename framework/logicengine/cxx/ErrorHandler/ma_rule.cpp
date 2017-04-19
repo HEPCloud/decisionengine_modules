@@ -32,6 +32,7 @@ ma_rule::ma_rule( string_t const & rule_name
 , enabled( true )
 , actions( )
 , str_actions( )
+, str_false_actions( )
 , str_facts( )
 {
 
@@ -72,6 +73,7 @@ void
   ma_rule::parse( string_t const & cond_expr
                 , string_t const & alarm_message
                 , strings_t const & actions
+                , strings_t const & false_actions
                 , strings_t const & facts
                 , cond_map_t * cond_map_ptr )
 {
@@ -87,6 +89,7 @@ void
 
   // actions
   str_actions = actions;
+  str_false_actions = false_actions;
   str_facts = facts;
 
   // init
