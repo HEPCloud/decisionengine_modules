@@ -226,6 +226,7 @@ class TaskManager(object):
             self.channel.publishers[s].worker.publish()
 
     def run(self):
+        print self.data_block_t0
         for s in self.channel.sources:
             print "Calling produces for", s
             try:
