@@ -55,6 +55,14 @@ Transforms: [ {
     "params": {}
   },
 
+Publishers: [ {
+    "name": "ProvisionerRequests",
+    "params": {}
+  }, {
+    "name": "PublishMonitoring",
+    "params": {}
+  }
+]
 
 common_facts = {
     "jobs_present":              "(len(jobs.index) > 0)",
