@@ -238,7 +238,7 @@ class TaskManager(object):
 
         for s in self.channel.le_s:
             print "Calling produces for", s
-            self.channel.le_s[s].worker.evaluate()
+            self.channel.le_s[s].worker.evaluate({})
         for s in self.channel.publishers:
             print "Calling  acquire for ", s
             self.channel.publishers[s].worker.publish()
