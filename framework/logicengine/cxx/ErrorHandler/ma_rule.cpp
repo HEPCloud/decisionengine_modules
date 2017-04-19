@@ -197,8 +197,6 @@ bool ma_rule::recursive_evaluate ( ma_domain & value
     }
   }
 
-  std::cout << "this condition has never been hit. evaluates to false by default";
-
   return false;
 }
 

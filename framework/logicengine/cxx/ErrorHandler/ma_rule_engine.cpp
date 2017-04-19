@@ -327,8 +327,30 @@ void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals
   // update domains
   evaluate_rules_domain( notify_domain );
 
-  // loop to update status
-  evaluate_rules( notify_status, actions, facts );
+  // prepare for the new facts
+  std::map<string_t, strings_t> new_facts;  // rule -> [fact1, fact2]
+  std::map<string_t, bool> new_fact_vals;   // fact -> bool
+
+  // loop to update status, and store the new facts into the new_facts map
+  evaluate_rules( notify_status, actions, new_facts );
+
+  // exam the new facts
+  for (auto const & rfs : new_facts)
+  {
+      for (auto const & f : rfs.second)
+      {
+          new_fact_vals.insert(std::make_pair(f, true));
+      }
+  }
+
+  // insert the new facts into the facts map
+  facts.insert(new_facts.begin(), new_facts.end());
+
+  // if there's any new fact values, we should call the execute again
+  if (!new_fact_vals.empty())
+  {
+      execute(new_fact_vals, actions, facts);
+  }
 }
 
 void ma_rule_engine::evaluate_rules_domain( notify_list_t & notify_domain )
