@@ -48,7 +48,7 @@ void
 
   // condition expression
   if( !parse_condition_expr( cond_expr, this ) )
-    throw std::runtime_error("rule parsing failed");
+    throw std::runtime_error(std::string("rule parsing failed: ")+cond_expr);
 
   // alarm message
   alarm_msg.init(this, alarm_message);
@@ -80,7 +80,7 @@ void
 
   // condition expression
   if( !parse_condition_expr( cond_expr, this ) )
-    throw std::runtime_error("rule parsing failed");
+    throw std::runtime_error(std::string("rule parsing failed: ")+cond_expr);
 
   // alarm message
   alarm_msg.init(this, alarm_message);
