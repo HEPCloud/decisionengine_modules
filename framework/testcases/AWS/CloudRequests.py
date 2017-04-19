@@ -65,7 +65,7 @@ class CloudRequests(Transform.Transform):
             {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12,"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge", "SpotPrice": .14, "estimated_cost": 1.68, "burn_rate": .14}
         ]
 
-        jobs_pd = _load_data_frame(job_manifests)
+        jobs_pd = self._load_data_frame(job_manifests)
         requests = [{"ResourceName": "AWS1", "Count": 6},]
 
         return {"jobs": jobs_pd, "resource_requests": requests}
