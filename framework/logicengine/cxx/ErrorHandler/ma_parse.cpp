@@ -242,6 +242,13 @@ static void
   cond.insert_expr(expr);
 }
 
+static void
+  insert_boolean_expr_neg( ma_boolean_cond & cond  
+                     , ma_boolean_expr const & expr )
+{
+  cond.insert_expr_neg(expr);
+}
+
 static void 
   insert_primitive_cond( ma_boolean_cond & cond
                        , string_t const & name
@@ -254,6 +261,20 @@ static void
   // 2. then insert the (ptr, idx) pair to the boolean_cond
   cond.insert_cond( rule->insert_condition_ptr( name, true ) );
 }
+
+static void 
+  insert_primitive_cond_neg( ma_boolean_cond & cond
+                       , string_t const & name
+                       , ma_rule * rule )
+{
+  // 1. first insert the condition ptr to the corresponding rule
+  //    such that the condition has an index in the rule
+  //    NOTE* that the insertion of condition ptr only happens when
+  //          parsing the boolean expression
+  // 2. then insert the (ptr, idx) pair to the boolean_cond
+  cond.insert_cond_neg( rule->insert_condition_ptr( name, true ) );
+}
+
 
 static void
   insert_ext_func( ma_boolean_cond & cond
@@ -349,6 +370,11 @@ template< class FwdIter, class Skip >
            >> boolean_expr [phx::bind(&insert_boolean_expr,ql::_val,ql::_1)] 
            >> ')' 
          )  // '(' >> expr >> ')'
+       |
+         (    lit('!') >> lit('(') 
+           >> boolean_expr [phx::bind(&insert_boolean_expr_neg,ql::_val,ql::_1)] 
+           >> ')' 
+         )  // '! (' >> expr >> ')'
        | 
          (
               key                                [ ql::_a = ql::_1 ]
@@ -372,6 +398,9 @@ template< class FwdIter, class Skip >
        |
          key    [ phx::bind( &insert_primitive_cond, ql::_val, ql::_1, rule) ] 
             // Cond
+       | ( lit('!') >> key
+                [ phx::bind( &insert_primitive_cond_neg, ql::_val, ql::_1, rule) ]
+         )
   ;
 
   args     = ( arg % ',' )

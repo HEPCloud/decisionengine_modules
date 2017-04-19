@@ -38,6 +38,8 @@ void ma_boolean_cond::insert_ext_func( cond_idx_t ci
 
 void ma_boolean_cond::reset( )
 {
+  neg_cond = false;
+
   if( cond_type == EXPR )
   {
     // expression must not be null
@@ -78,7 +80,8 @@ bool ma_boolean_cond::evaluate( ma_domain & value
     assert( expr.get() != NULL );
 
     // evaluate from the expr
-    return expr->evaluate(value, alarm, domain);
+    bool v = expr->evaluate(value, alarm, domain);
+    return neg_cond ? (!v) : (v);
   }
 
   if( cond_type == COND )
@@ -93,7 +96,8 @@ bool ma_boolean_cond::evaluate( ma_domain & value
       alarm[cond_idx.second] = value[cond_idx.second];
 
     // get status from hitmap of the condition
-    return cond_idx.first->get_status(value[cond_idx.second]);
+    bool v = cond_idx.first->get_status(value[cond_idx.second]);
+    return neg_cond ? (!v) : (v);
   }
 
   if( cond_type >= FUNCTION )
@@ -155,4 +159,12 @@ void ma_boolean_cond::insert_expr( ma_boolean_expr const & b_expr )
 {
   expr.reset(new ma_boolean_expr(b_expr));
   cond_type = EXPR;
+  neg_cond = false;
+}
+
+void ma_boolean_cond::insert_expr_neg( ma_boolean_expr const & b_expr )
+{
+  expr.reset(new ma_boolean_expr(b_expr));
+  cond_type = EXPR;
+  neg_cond = true;
 }

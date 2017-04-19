@@ -32,6 +32,7 @@ public:
   // c'tor
   ma_boolean_cond( ) 
     : cond_type ( COND )
+    , neg_cond  ( false )
     , cond_arg  ( cond_arg_t(cond_idx_t(NULL, 0), NONE) )
     , op        ( CO_L )
     , rhv_b     ( false )
@@ -51,10 +52,14 @@ public:
 
   // insert a boolean expression
   void insert_expr( ma_boolean_expr const & expr );
+  void insert_expr_neg( ma_boolean_expr const & expr );
 
   // insert a primitive condition
   void insert_cond( cond_idx_t ci ) 
-    { cond_arg.first = ci; cond_arg.second = NONE; }
+    { cond_arg.first = ci; cond_arg.second = NONE; neg_cond = false; }
+
+  void insert_cond_neg( cond_idx_t ci ) 
+    { cond_arg.first = ci; cond_arg.second = NONE; neg_cond = true; }
 
   void insert_ext_func( cond_idx_t ci
                       , arg_t arg
@@ -75,6 +80,9 @@ private:
 
   // type of this element condition
   cond_type_t    cond_type;
+
+  // negtive condition ( !cond )
+  bool           neg_cond;
 
   // case COND: this boolean cond is the boolean value of a ma_condition
   //   a pointer to the condition in the one big condition container
