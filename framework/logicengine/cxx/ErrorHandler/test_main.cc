@@ -69,6 +69,42 @@ int main(int argc, char ** argv)
         std::cout << "\n";
     }   
 
+    // execute another time
+    actions.clear();
+    facts.clear();
+
+    engine.reset_rules();
+    engine.execute(facts_vals, actions, facts);
+
+    std::cout << "\n\n";
+    std::cout << "triggered actions\n";
+
+    for(auto const & action : actions)
+    {
+        std::cout << action.first << ": ";
+
+        for(auto const & name : action.second)
+        {
+            std::cout << name << ", ";
+        }
+
+        std::cout << "\n";
+    }
+ 
+    std::cout << "intermediate facts\n";
+    for(auto const & fact : facts)
+    {
+        std::cout << fact.first << ": ";
+
+        for(auto const & name : fact.second)
+        {
+            std::cout << name << ", ";
+        }
+
+        std::cout << "\n";
+    }   
+
+
     std::cout << "hello world\n";
     return 0;
 }
