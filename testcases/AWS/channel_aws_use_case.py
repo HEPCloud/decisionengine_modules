@@ -40,7 +40,7 @@ Sources = [
   }]
 
 # These are the parameters that must be copied from the parameter store into the DataBlock
-Parameters = ["p_overflow", "p_overflow_threshold", "p_overflow_cloud", "p_overflow_hpc", "p_overflow_osg"]
+Parameters = ["p_overflow", "p_overflow_threshold", "p_overflow_cloud", "p_overflow_hpc", "p_overflow_osg", "p_target_burn_rate"]
 
 Transforms: [ {
     # Class name to import
@@ -55,6 +55,14 @@ Transforms: [ {
     "params": {}
   },
 
+Publishers: [ {
+    "name": "ProvisionerRequests",
+    "params": {}
+  }, {
+    "name": "PublishMonitoring",
+    "params": {}
+  }
+]
 
 common_facts = {
     "jobs_present":              "(len(jobs.index) > 0)",
@@ -62,29 +70,48 @@ common_facts = {
     "overflow_permitted":        "(params['overflow_permitted'])",
     "overflow_hpc_permitted":    "(params['overflow_hpc_permitted'])",
     "overflow_cloud_permitted":  "(params['overflow_cloud_permitted'])",
-    "hpc_sufficient_allocation": "(hpcinfo['hours_available'] > jobs['time'].sum())",
-    "cloud_sufficient_budget":   "(cloudinfo['available_budget'] > sum(['jobs']['estimated_cost']))"
+    "hpc_sufficient_allocation": "(available_hpc_allocation > jobs['time'].sum())",
+    "cloud_sufficient_budget":   "(available_cloud_budget > sum(['jobs']['estimated_cost']))"
 }
 
 common_rules = {
-    [
-        "(jobs_present & overflow_permitted &  overflow_condition) -> [use_osg, handle_overflow]",
-        "(jobs_present & !(overflow_permitted & overflow_condition)) -> [use_local]",
-        "(overflow_hpc_permitted & handle_overflow & hpc_sufficient_allocation) -> use_hpc"
-    ]
+    "allow_overflow": {
+        "expression": "(jobs_present && overflow_permitted && overflow_condition)",
+        "actions": ["use_osg"],
+        "facts": ["handle_overflow"],
+    },
+    "disallow_overflow": {
+        "expression": "!handle_overflow",
+        "actions": ["use_local"],
+        "facts": [],
+    },
+    "handle_hpc": {
+        "expression": "(handle_overflow && overflow_hpc_permitted && hpc_sufficient_allocation)",
+        "actions": [""],
+        "facts": ["use_hpc"],
+    }
+    "handle_cloud": {
+        "expression": "(handle_overflow && !use_hpc && overflow_cloud_permitted && cloud_sufficient_budget)",
+        "actions": [""],
+        "facts": ["use_cloud"],
+    }
 }
 
+
 cloud_facts = {
-    "good_total_estimated_budget" : "ds['budget'] - ( (match_table[still_good == True]).assign(req_cost=number_to_request * burn_rate)['req_cost'].sum()) > 0",
-    "good_total_burn_rate" : "ds['targetburn'] <= (match_table[still_good == True]['burn_rate'].sum())"
+    "good_total_estimated_budget" : "available_cloud_budget - ( jobs['estimated_cost'].sum()) > 0",
+    "good_total_burn_rate" : "p_target_burn_rate >= (jobs['burn_rate'].sum())"
 }
 
 cloud_rules = {
-    [
-    ]
+    "publish_cloud": {
+        "expression": "use_cloud",
+        "actions": ["publish_cloud"],
+        "facts": [],
+    }
 }
 
 LogicEngine = {
-    'facts' : common_facts
-    "rules" : common_rules
+    'facts' : [common_facts, cloud_facts]
+    "rules" : [common_rules, cloud_rules]
 }
