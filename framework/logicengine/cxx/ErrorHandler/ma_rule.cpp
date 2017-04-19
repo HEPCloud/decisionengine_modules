@@ -106,8 +106,8 @@ cond_idx_t
   // cond_map must not be empty
   assert (cond_map != NULL);
 
-  std::cout << "insert_cond_ptr: name = " << name << "  "
-            << "primitive = " << primitive << "\n";
+  //std::cout << "insert_cond_ptr: name = " << name << "  "
+  //          << "primitive = " << primitive << "\n";
 
   // the condition has already been added
   {
@@ -151,8 +151,8 @@ void ma_rule::evaluate_domain( )
   domains.clear();
   domain_expr.evaluate(domains);
 
-  std::cout << description_
-                << ": domain evaluated, size = " << domains.size() << "\n";
+  //std::cout << description_
+  //              << ": domain evaluated, size = " << domains.size() << "\n";
 }
 
 bool ma_rule::recursive_evaluate ( ma_domain & value  
@@ -172,8 +172,8 @@ bool ma_rule::recursive_evaluate ( ma_domain & value
   if (primitive_cond[n])
     conditions[n]->get_cond_range(domain[n], src, target);
 
-  std::cout << "depth: " << n << "  "
-                << "primitive_cond[n]: " << primitive_cond[n] << "\n";
+  //std::cout << "depth: " << n << "  "
+  //              << "primitive_cond[n]: " << primitive_cond[n] << "\n";
 
   for(int s = src.first; s<=src.second; ++s)
   {
@@ -182,9 +182,9 @@ bool ma_rule::recursive_evaluate ( ma_domain & value
       value[n].first = s;
       value[n].second = t;
 
-      std::cout << "depth: " << n << "  "
-                    << "src: "   << s << "  "
-                    << "tgt: "   << t << "\n";
+      //std::cout << "depth: " << n << "  "
+      //              << "src: "   << s << "  "
+      //              << "tgt: "   << t << "\n";
 
       if( n != domain.size()-1 )
       {
@@ -210,7 +210,7 @@ bool ma_rule::evaluate( )
   // if disabled, always returns false
   if( !enabled ) return false;
 
-  std::cout << description_ << ": evaluate boolean expr...\n";
+  //std::cout << description_ << ": evaluate boolean expr...\n";
 
   // loop through domain alternatives
   for ( ma_domains::const_iterator ait = domains.begin()
@@ -246,7 +246,7 @@ bool ma_rule::boolean_evaluate( ma_domain & value
                               , ma_domain & alarm
                               , ma_domain const & domain )
 {
-  std::cout << "now evaluate boolean_expr with given value \n";
+  //std::cout << "now evaluate boolean_expr with given value \n";
 
   // make sure all conditions are defined
   for (int i=0; i<conditions.size(); ++i)
@@ -255,8 +255,8 @@ bool ma_rule::boolean_evaluate( ma_domain & value
   // evaluate as true with given set of values
   if (boolean_expr.evaluate(value, alarm, domain))
   {
-    std::cout << "alarm (" << alarm[0].first << ", "
-                               << alarm[0].second << ")\n";
+    //std::cout << "alarm (" << alarm[0].first << ", "
+    //                           << alarm[0].second << ")\n";
 
     std::map<ma_domain, timeval>::iterator it = alarms.find(alarm);
     if ( it==alarms.end() )
@@ -300,7 +300,7 @@ bool ma_rule::boolean_evaluate( ma_domain & value
 
     // otherwise, the alarm has already been triggered, or hasn't passed
     // the holdoff time
-    std::cout << "this alarm has already been triggered\n";
+    //std::cout << "this alarm has already been triggered\n";
   }
 
   // reset alarm

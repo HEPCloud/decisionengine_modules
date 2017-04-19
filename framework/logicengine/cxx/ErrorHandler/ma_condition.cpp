@@ -184,7 +184,7 @@ bool
   // register to hitmap
   unsigned int result = hitmap.capture(msg, src_, tgt_, what_);
 
-  std::cout << "cond::match() result = " << result << " src = " << src_;
+  //std::cout << "cond::match() result = " << result << " src = " << src_;
 
   // update reaction_start list
   if (result & STATUS_CHANGE)  status.push_back(this);
@@ -210,7 +210,7 @@ bool
   // register to hitmap
   unsigned int result = hitmap.force(val);
 
-  std::cout << "cond::match() result = " << result << "\n";
+  //std::cout << "cond::match() result = " << result << "\n";
 
   // update reaction_start list
   if (result & STATUS_CHANGE)  status.push_back(this);

@@ -33,8 +33,8 @@ struct RuleEngine
     RuleEngine(string const & facts, string const & rules)
     : engine(string_to_json(facts), string_to_json(rules), &alarm_fn, &cond_match)
     {
-        cout << "rules = " << rules << "\n";
-        cout << "facts = " << facts << "\n";
+        //cout << "rules = " << rules << "\n";
+        //cout << "facts = " << facts << "\n";
     }
 
     boost::python::tuple execute( boost::python::dict const & facts )
@@ -48,8 +48,8 @@ struct RuleEngine
                     (string)extract<string>(fnames[i]),
                     extract<bool>(facts[fnames[i]]) );
 
-            cout << (string)extract<string>(fnames[i]) << " : " 
-                 << extract<bool>(facts[fnames[i]]) << "\n";
+            //cout << (string)extract<string>(fnames[i]) << " : " 
+            //     << extract<bool>(facts[fnames[i]]) << "\n";
         }
 
         std::map<std::string, std::vector<std::string>>    out_actions;

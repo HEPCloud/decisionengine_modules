@@ -264,8 +264,8 @@ bool
 { 
   bool r = hitmap[v.first][v.second].is_on();
 
-  std::cout << "hitmap::get_status @ " 
-                << v.first << ", " << v.second << " = " << r << "\n";
+  //std::cout << "hitmap::get_status @ " 
+  //              << v.first << ", " << v.second << " = " << r << "\n";
   return r; 
 }
 
