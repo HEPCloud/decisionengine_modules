@@ -37,7 +37,7 @@ struct RuleEngine
         cout << "facts = " << facts << "\n";
     }
 
-    boost::python::tuple execute( boost::python::dict const & facts)
+    boost::python::tuple execute( boost::python::dict const & facts )
     {
         std::map<std::string, bool> fact_vals;
 
@@ -56,6 +56,7 @@ struct RuleEngine
         std::map<std::string, std::vector<std::string>> out_facts;
 
         engine.execute(fact_vals, out_actions, out_facts);
+        engine.reset_rules();
 
         dict py_actions;
         dict py_facts;
