@@ -65,27 +65,23 @@ if __name__ == "__main__":
 
     number_of_jobs = len(jobs_pd.index)
 
-    group = merged_pd.groupby(['SpotPrice'])
-    res_group = group['ResourceName']
+    new_pd = merged_pd[merged_pd['estimatedCost'] == merged_pd.groupby(['JobId'])['estimatedCost'].transform(min)]
+    resources_to_request = new_pd['ResourceName'].drop_duplicates()
 
     req = {}
     limit = 5
-    for i in res_group:
-        entry_name = i[0][1]
-        spot_price = i[0][0]
-
-        print "considering jobs for %s" % entry_name
+    for res in resources_to_request:
+        print "considering jobs for %s" % res
         print "number of jobs remaining: %i" % number_of_jobs
         print "limit: %i" % limit
         if number_of_jobs - limit > 0:
-            req[entry_name] = (spot_price, limit)
+            req[res] = limit
             number_of_jobs -= limit
         elif number_of_jobs > 0:
-            req[entry_name] = (spot_price, number_of_jobs)
+            req[res] = number_of_jobs
             number_of_jobs = 0
         else:
             break
     print "number of unconsidered jobs: %i" % number_of_jobs
 
-    for k in req.keys():
-        print req[k]
+    print req
