@@ -25,18 +25,15 @@ class LogicEngine(Module, object):
         the rules to be evaluated.
         """
         list_of_lists = [ f.required_names() for f in self.facts ]
-        return list(chain(list_of_lists))
+        return list(set(chain(*list_of_lists)))
 
     def evaluate_facts(self, db):
         return { f.name : f.evaluate(db) for f in self.facts }
 
     def evaluate(self, db):
         """evaluate our facts and rules, in the context of the given data.
-
         db can be any mappable, in particular a DataBlock or dictionary."""
-
         evaluated_facts = self.evaluate_facts(db)
-        
         # Process rules
         actions, newfacts = self.re.execute(evaluated_facts)
         return {"actions": actions, "newfacts": newfacts}

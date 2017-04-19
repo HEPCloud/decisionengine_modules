@@ -8,6 +8,7 @@ def test_simple_fact():
     assert fact.evaluate({ "z" : 100 }) == False
     assert fact.evaluate({ "z" : 200 }) == False
     assert set(fact.required_names()) == set([ "z" ])
+    assert fact.required_names() == [ "z" ]
 
 def test_compound_fact():
     fact = NamedFact("f2", "z < 100 and a == 4")
