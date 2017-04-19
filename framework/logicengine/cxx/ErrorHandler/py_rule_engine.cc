@@ -52,8 +52,8 @@ struct RuleEngine
                  << extract<bool>(facts[fnames[i]]) << "\n";
         }
 
-        std::map<std::string, std::vector<std::string>> out_actions;
-        std::map<std::string, std::vector<std::string>> out_facts;
+        std::map<std::string, std::vector<std::string>>    out_actions;
+        std::map<std::string, std::map<std::string, bool>> out_facts;
 
         engine.execute(fact_vals, out_actions, out_facts);
         engine.reset_rules();
@@ -70,13 +70,13 @@ struct RuleEngine
             py_actions[act.first] = act_names;
         }
 
-        for(auto const & fact : out_facts) 
+        for(auto const & rule_facts : out_facts) 
         {
-            boost::python::list fact_names;
-            for (auto const & fact_name : fact.second) 
-                fact_names.append(fact_name);
+            dict py_rule_facts;
+            for (auto const & fact_val : rule_facts.second) 
+                py_rule_facts[fact_val.first] = fact_val.second;
 
-            py_facts[fact.first] = fact_names;
+            py_facts[rule_facts.first] = py_rule_facts;
         }
 
         return boost::python::make_tuple(py_actions, py_facts);

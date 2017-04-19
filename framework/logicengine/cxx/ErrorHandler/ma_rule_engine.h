@@ -32,7 +32,7 @@ public:
   // public method, call by the LogicEngine
   void execute( std::map<std::string, bool> const & fact_vals
               , std::map<std::string, strings_t> & actions
-              , std::map<std::string, strings_t> & facts );
+              , std::map<std::string, std::map<string_t, bool>> & facts );
 
   // public accessor for cond map and rule map
   size_t cond_size() const { return cmap.size(); }
@@ -149,7 +149,7 @@ private:
   void evaluate_rules( notify_list_t & notify_status );
   void evaluate_rules( notify_list_t & notify_status
                      , std::map<string_t, strings_t> & actions
-                     , std::map<string_t, strings_t> & facts );
+                     , std::map<string_t, std::map<string_t, bool>> & facts );
 
   // find condition/rule with given name
   const ma_condition & find_cond_by_name( string_t const & name ) const;

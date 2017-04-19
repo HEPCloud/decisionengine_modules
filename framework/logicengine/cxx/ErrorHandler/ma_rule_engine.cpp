@@ -295,7 +295,7 @@ void ma_rule_engine::feed( msg_t const & msg )
 
 void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals
                             , std::map<std::string, strings_t> & actions
-                            , std::map<std::string, strings_t> & facts )
+                            , std::map<std::string, std::map<string_t, bool>> & facts )
 {
   // reaction starters
   conds_t status;
@@ -328,8 +328,8 @@ void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals
   evaluate_rules_domain( notify_domain );
 
   // prepare for the new facts
-  std::map<string_t, strings_t> new_facts;  // rule -> [fact1, fact2]
-  std::map<string_t, bool> new_fact_vals;   // fact -> bool
+  std::map<string_t, std::map<string_t, bool>> new_facts;  // rule -> { f1 : true, f2 : false }
+  std::map<string_t, bool> new_fact_vals;                  // fact -> bool
 
   // loop to update status, and store the new facts into the new_facts map
   evaluate_rules( notify_status, actions, new_facts );
@@ -339,7 +339,7 @@ void ma_rule_engine::execute( std::map<std::string, bool> const & fact_vals
   {
       for (auto const & f : rfs.second)
       {
-          new_fact_vals.insert(std::make_pair(f, true));
+          new_fact_vals.insert(std::make_pair(f.first, f.second));
       }
   }
 
@@ -376,20 +376,41 @@ void ma_rule_engine::evaluate_rules( notify_list_t & notify_status )
 
 void ma_rule_engine::evaluate_rules( notify_list_t & notify_status
                                    , std::map<string_t, strings_t> & actions
-                                   , std::map<string_t, strings_t> & facts )
+                                   , std::map<string_t, std::map<string_t, bool>> & facts )
 {
   notify_list_t::iterator it = notify_status.begin();
 
   for( ; it!=notify_status.end(); ++it )
   {
+    if( !(*it)->evaluable() ) continue;
+
     if( (*it)->evaluate() )
     {
       // alarm message
       alarm_fn((*it)->name(), (*it)->get_alarm_message());
 
-      // form the actions and facts
+      // form the actions
       actions.emplace((*it)->name(), (*it)->get_action_names());
-      facts.emplace((*it)->name(), (*it)->get_chained_fact_names());
+
+      // for the new facts
+      std::map<string_t, bool> rule_facts;
+      auto const & rule_fact_names = (*it)->get_chained_fact_names();
+
+      for (auto const & name : rule_fact_names)
+        rule_facts.emplace(name, true);
+
+      facts.emplace((*it)->name(), rule_facts);
+    }
+    else
+    {
+      // still need to form the facts, but with false values
+      std::map<string_t, bool> rule_facts;
+      auto const & rule_fact_names = (*it)->get_chained_fact_names();
+
+      for (auto const & name : rule_fact_names)
+        rule_facts.emplace(name, false);
+
+      facts.emplace((*it)->name(), rule_facts);
     }
   }
 }

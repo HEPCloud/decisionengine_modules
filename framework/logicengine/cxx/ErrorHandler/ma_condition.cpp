@@ -305,6 +305,19 @@ bool ma_condition::match_test ( )
   return test_expr.evaluate( this );
 }
 
+bool ma_condition::get_defined( ) const
+{
+  auto s_sz = hitmap.source_size();
+  auto t_sz = hitmap.target_size();
+
+  if (s_sz == 0 || t_sz == 0)
+    return false;
+
+  if (s_sz > 1 || t_sz > 1)
+    throw std::runtime_error("ma_condition::get_defined() is only applicable to non-parameterized conditions");
+
+  return hitmap.get_defined(ma_cond_domain_ctor(0, 0));
+}
 
 
 
