@@ -228,7 +228,10 @@ class TaskManager(object):
     def run(self):
         for s in self.channel.sources:
             print "Calling produces for", s
-            self.channel.sources[s].worker.produces(None)
+            try:
+                self.channel.sources[s].worker.produces(None)
+            except Exception, msg:
+                print "busted ", msg, self.channel.sources[s].worker.__class__.__name__
         for s in self.channel.sources:
             print "Calling  acquire for ", s
             self.channel.sources[s].worker.acquire()
@@ -238,7 +241,7 @@ class TaskManager(object):
 
         for s in self.channel.le_s:
             print "Calling produces for", s
-            self.channel.le_s[s].worker.evaluate({})
+            self.channel.le_s[s].worker.evaluate( self.data_block_t0 )
         for s in self.channel.publishers:
             print "Calling  acquire for ", s
             self.channel.publishers[s].worker.publish()
