@@ -20,6 +20,7 @@ from UserDict import UserDict
 STATE_NEW = 'NEW'
 STATE_STEADY = 'STEADY'
 STATE_ERROR = 'ERROR'
+STATE_EXPIRED = 'EXPIRED'
 
 
 class KeyNotFoundError(Exception):
@@ -174,7 +175,7 @@ class DataBlock(object):
         self.keys_inserted = []
 
 
-    def put(self, key, value, header, metadata):
+    def put(self, key, value, header, metadata=None):
         """
         Put data into the DataBlock
 
@@ -183,7 +184,7 @@ class DataBlock(object):
         :type header: :obj:`Header`
         :type metadata: :obj:`Metadata`
         """
-        self.__setitem__(key, value, header, metadata)
+        self.__setitem__(key, value, header, metadata=metadata)
 
 
     def get(self, key):
@@ -223,7 +224,7 @@ class DataBlock(object):
                               key, value, header, metadata)
 
 
-    def __setitem__(self, key, value, header, metadata):
+    def __setitem__(self, key, value, header, metadata=None):
         """
         put a product in the database with header and metadata
 
@@ -232,6 +233,12 @@ class DataBlock(object):
         :type header: :obj:`Header`
         :type metadata: :obj:`Metadata`
         """
+
+        if not metadata:
+            metadata = Metadata(self.taskmanager_id, state='NEW',
+                                generation_id=self.generation_id,
+                                generation_time=time.time(),
+                                missed_update_count=0)
 
         if isinstance(value, dict):
             store_value = {'pickled': False, 'value': value}
@@ -242,7 +249,7 @@ class DataBlock(object):
             # This has been already inserted, so you are working on a copy
             # that was backedup. You need to update and adjust the update
             # counter
-            self._update(key, store_value, header, metadata)
+            self._update(key, store_value, header, metadata=metadata)
         else:
             self._insert(key, store_value, header, metadata)
 
@@ -340,3 +347,20 @@ class DataBlock(object):
                                  dup_datablock.generation_id,
                                  self.generation_id)
         return dup_datablock
+
+
+    def is_expired(self, key=None):
+        """
+        Check if the dataproduct for a given key or any key is expired
+        """
+        pass
+
+
+    def mark_expired(self, expiration_time):
+        """
+        Set the expiration_time for the current generation of the dataproduct
+        and mark it as expired if expiration_time <= current time
+        
+        """
+
+        pass

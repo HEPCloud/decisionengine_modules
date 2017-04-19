@@ -59,7 +59,7 @@ metadata = Metadata(taskmanager_id, generation_time=timestamp, generation_id=gen
 
 print 'Doing put:\nkey=%s\nvalue=%s\n\nheader=%s\n\nmetadata=%s\n\n' % (
     key, value, header, metadata)
-datablock.put(key, value, header, metadata)
+datablock.put(key, value, header)
 #datablock[key] = value
 
 print 'Doing get: key=%s ...\n' % key
@@ -84,7 +84,7 @@ else:
 new_value = { "m2": "v2" }
 print 'Doing put:\nkey=%s\nvalue=%s\nheader=%s\nmetadata=%s\n' % (
     key, new_value, header, metadata)
-datablock.put(key, new_value, header, metadata)
+datablock.put(key, new_value, header)
 print 'Doing get: key=%s ...\n' % key
 print datablock.get(key)
 
@@ -112,7 +112,8 @@ print '---'
 
 # TEST: Insert new value on duplicated datablock
 new_value = { "m3": "v3" }
-dup_datablock.put(key, new_value, dup_datablock.get_header(key), dup_datablock.get_metadata(key))
+#dup_datablock.put(key, new_value, dup_datablock.get_header(key), dup_datablock.get_metadata(key))
+dup_datablock.put(key, new_value, dup_datablock.get_header(key))
 
 print dup_datablock.get(key)
 print dup_datablock.get_header(key)
