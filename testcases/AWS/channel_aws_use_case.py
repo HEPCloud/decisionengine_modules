@@ -55,12 +55,19 @@ Transforms: [ {
     "params": {}
   },
 
+Publishers: [ {
+    "name": "ProvisionerRequests",
+    "params": {}
+  }, {
+    "name": "PublishMonitoring",
+    "params": {}
+  }
+]
 
 common_facts = {
     "jobs_present":              "(len(jobs.index) > 0)",
     "overflow_condition":        "((len(jobs.index) - local_slots) > params['threshold'])",
     "overflow_permitted":        "(params['overflow_permitted'])",
-
     "overflow_hpc_permitted":    "(params['overflow_hpc_permitted'])",
     "overflow_cloud_permitted":  "(params['overflow_cloud_permitted'])",
     "hpc_sufficient_allocation": "(hpcinfo['hours_available'] > jobs['time'].sum())",
