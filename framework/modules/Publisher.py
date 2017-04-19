@@ -1,12 +1,12 @@
 from decisionengine.framework.modules import Module
 
-class Publisher1(Module.Module):
+class Publisher(Module.Module):
     def __init__(self,set_of_parameters):
         Module.Module.__init__(self,set_of_parameters)
 
     def consumes(self, name_list): 
-        print "Called Publisher1.consumes"
+        print "Called Publisher.consumes"
 
     def publish(self):
-        print "Called Publisher1.publish"
+        print "Called Publisher.publish"
 

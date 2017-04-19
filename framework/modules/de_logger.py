@@ -7,7 +7,7 @@ import logging
 import logging.handlers
 
 LOG_FILE='/tmp/decision_engine_logs/decision_engine_log'
-MB=1000000
+MB=000000
 ROTATE_AFTER = 6
 
 def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count = ROTATE_AFTER):

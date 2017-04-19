@@ -1,6 +1,6 @@
 from decisionengine.framework.modules import Module
 
-class Transform1(Module.Module):
+class Transform(Module.Module):
     def __init__(self,set_of_parameters):
         Module.Module.__init__(self,set_of_parameters)
 
@@ -9,7 +9,7 @@ class Transform1(Module.Module):
     the Transform will consume
     """
     def consumes(self,name_list):
-        print "Called Transform1.consumes"
+        print "Called Transform.consumes"
         self.name_list = name_list
 
     """
@@ -17,7 +17,7 @@ class Transform1(Module.Module):
     the data product name and a pointer to a schema
     """
     def produces(self, name_schema_id_list):
-        print "Called Transform1.produces"
+        print "Called Transform.produces"
         return None
 
     """
@@ -29,5 +29,5 @@ class Transform1(Module.Module):
     products promised in the produces list
     """
     def transform(self):
-        print "Called Transform1.transform"
+        print "Called Transform.transform"
         return True
