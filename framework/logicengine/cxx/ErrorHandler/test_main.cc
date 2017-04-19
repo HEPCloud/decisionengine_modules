@@ -37,7 +37,7 @@ int main(int argc, char ** argv)
     facts_vals.insert(std::make_pair("c2", true));
 
     std::map<std::string, std::vector<std::string>> actions;
-    std::map<std::string, std::vector<std::string>> facts;
+    std::map<std::string, std::map<std::string, bool>> facts;
 
     engine.execute(facts_vals, actions, facts);
 
@@ -61,9 +61,9 @@ int main(int argc, char ** argv)
     {
         std::cout << fact.first << ": ";
 
-        for(auto const & name : fact.second)
+        for(auto const & fact_val : fact.second)
         {
-            std::cout << name << ", ";
+            std::cout << fact_val.first << ": " << fact_val.second << ", ";
         }
 
         std::cout << "\n";
@@ -91,19 +91,19 @@ int main(int argc, char ** argv)
         std::cout << "\n";
     }
  
+ 
     std::cout << "intermediate facts\n";
     for(auto const & fact : facts)
     {
         std::cout << fact.first << ": ";
 
-        for(auto const & name : fact.second)
+        for(auto const & fact_val : fact.second)
         {
-            std::cout << name << ", ";
+            std::cout << fact_val.first << ": " << fact_val.second << ", ";
         }
 
         std::cout << "\n";
     }   
-
 
     std::cout << "hello world\n";
     return 0;

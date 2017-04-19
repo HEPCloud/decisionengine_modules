@@ -231,6 +231,14 @@ bool ma_rule::evaluate( )
   return false;
 }
 
+bool ma_rule::evaluable( ) const
+{
+  for (auto const & c : conditions)
+    if (!c->get_defined()) return false;
+
+  return true;
+}
+
 bool ma_rule::boolean_evaluate( ma_domain & value
                               , ma_domain & alarm
                               , ma_domain const & domain )

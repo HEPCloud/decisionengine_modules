@@ -61,6 +61,11 @@ public:
   void
     evaluate_domain( );
 
+  // public method, call to check if all the dependent facts(conditions) are defined
+  // note, only applicable when all the facts are non-parameterized (per_source/target = false)
+  bool
+    evaluable( ) const;
+
   // public method, call to evaluate the boolean expression 
   bool
     evaluate( );

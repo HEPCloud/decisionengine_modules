@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import pandas as pd
-import pandasql as pdsql
 
 job_manifests = [
     {"JobId": "1.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
@@ -35,9 +34,6 @@ def load_data_frame(list_of_dicts):
     return pd.DataFrame(pandas_data)
 
 if __name__ == "__main__":
-    # Set the display to a more reasonable value
-    pd.set_option('display.width', 1000)
-
     # create jobs pandas data frame
     jobs_pd = load_data_frame(job_manifests)
 
@@ -50,38 +46,44 @@ if __name__ == "__main__":
     # merge the spot prices into the resources_pd
     resource_spot_pd = pd.merge(resources_pd, spot_pd, on=["ResourceName"])
 
-    # Because pandas has difficulties in doing unordered outer joins, we will perform a sql query to do our join
-    # This query only returns joined rows where the job requirements match the entry offerings
-    pysql = lambda q: pdsql.sqldf(q, globals())
-    join_sql = """
-    select * from jobs_pd, resource_spot_pd
-    where jobs_pd.RequestCpus <= resource_spot_pd.ResourceCpus and
-          jobs_pd.RequestMemory <= resource_spot_pd.ResourceMemory
-"""
-    merged_pd = pysql(join_sql)
+    # merge the two - sort of like:
+    #   select *
+    #   from jobs_pd, resources_pd
+    #   where jobs_pd.RequestCpus <= resources_pd.ResourceCpus
+    #merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
+    merged_pd = pd.merge_asof(jobs_pd, resource_spot_pd, left_on='RequestCpus', right_on='ResourceCpus')
+    print merged_pd
 
-    # calculate and store the estimated cost per job
+    # create a new column that gives a boolean determining wether or not the row matches memory requirments
+    merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <=merged_pd.ResourceMemory)
     merged_pd = merged_pd.assign(estimatedCost=merged_pd.RequestTime * merged_pd.SpotPrice)
 
-    number_of_jobs = len(jobs_pd.index)
+    # filter for matched entries in the data frame
+    matched_pd = merged_pd[(merged_pd.Match == True)]
+    number_of_jobs = len(matched_pd.index)
 
-    new_pd = merged_pd[merged_pd['estimatedCost'] == merged_pd.groupby(['JobId'])['estimatedCost'].transform(min)]
-    resources_to_request = new_pd['ResourceName'].drop_duplicates()
-
+    group = matched_pd.groupby(['SpotPrice','ResourceName'])
+    res_group = group['ResourceName']
+'''
     req = {}
     limit = 5
-    for res in resources_to_request:
-        print "considering jobs for %s" % res
+    for i in res_group:
+        entry_name = i[0][1]
+        spot_price = i[0][0]
+
+        print "considering jobs for %s" % entry_name
         print "number of jobs remaining: %i" % number_of_jobs
         print "limit: %i" % limit
         if number_of_jobs - limit > 0:
-            req[res] = limit
+            req[entry_name] = (spot_price, limit)
             number_of_jobs -= limit
         elif number_of_jobs > 0:
-            req[res] = number_of_jobs
+            req[entry_name] = (spot_price, number_of_jobs)
             number_of_jobs = 0
         else:
             break
     print "number of unconsidered jobs: %i" % number_of_jobs
 
-    print req
+    for k in req.keys():
+        print req[k]
+'''

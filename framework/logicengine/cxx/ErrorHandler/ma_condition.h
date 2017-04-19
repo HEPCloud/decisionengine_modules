@@ -135,6 +135,10 @@ public:
     get_defined( ma_cond_domain v ) const
     { return hitmap.get_defined(v); }
 
+  // returns if the condition status has been defined on all spots
+  bool
+    get_defined( ) const;
+
   int
     get_alarm_count( ma_cond_domain v, arg_t arg ) const
     { return hitmap.get_alarm_count(v, arg); }
