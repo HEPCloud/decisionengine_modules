@@ -5,6 +5,7 @@ import sqlite3
 import traceback
 import copy
 import ast
+import importlib
 
 #from UserDict import UserDict
 # TODO: Schema definations and validation and updations
@@ -31,6 +32,11 @@ class DataSpaceExistsError(Exception):
     pass
 
 
+#def get_database_handle(db_name, config):
+#    py_module = importlib.import_module('db_%s' % db_name)
+#    return py_module.Database(config)
+
+
 class DataSpace(object):
 
 
@@ -41,6 +47,11 @@ class DataSpace(object):
             'header': {},
             'metadata': {}
         }
+
+
+    def __str__(self):
+        return '%s' % self.table
+
 
     def insert(self, taskmanager_id, generation_id, key, value, header, metadata):
         row_id = (taskmanager_id, generation_id, key)
@@ -102,8 +113,10 @@ class DataSpace(object):
                 self.table[tname][new_id] = copy.deepcopy(self.table[tname][old_id])
 
 
-    def close(self):
-        pass
+    def close(self, outfile=None):
+        if outfile:
+            with open(outfile, 'w') as fd:
+                fd.write(self.table)
 
 
 class DataSpaceSqlite3(object):
