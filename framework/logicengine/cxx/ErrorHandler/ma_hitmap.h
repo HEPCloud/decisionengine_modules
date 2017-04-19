@@ -59,6 +59,7 @@ public:
 
   // if the cell has been triggered
   bool get_status( ma_cond_domain v ) const;
+  bool get_defined( ma_cond_domain v ) const;
 
   int get_alarm_count( ma_cond_domain v, arg_t arg ) const;
 

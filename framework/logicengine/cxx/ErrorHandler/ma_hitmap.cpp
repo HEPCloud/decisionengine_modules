@@ -269,6 +269,13 @@ bool
   return r; 
 }
 
+bool
+  ma_hitmap::get_defined( ma_cond_domain v ) const
+{
+  bool r = hitmap[v.first][v.second].is_defined();
+  return r;
+}  
+
 int 
   ma_hitmap::get_alarm_count( ma_cond_domain v, arg_t arg ) const
 {

@@ -43,6 +43,9 @@ public:
   bool 
     is_on() const { return on; }
 
+  bool
+    is_defined() const { return defined; }
+
   // get number of messages
   size_t
     get_message_count() const { return msgs.size(); }
