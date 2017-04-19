@@ -22,7 +22,7 @@ def test_rule_that_fires():
     assert type(newfacts) == type({})
     assert actions["r1"] ==  ["a1", "a2"]
     assert len(actions) == 1
-    assert newfacts["r1"] == []
+    assert newfacts["r1"] == {}
     assert len(newfacts) == 1
 
     result = myengine().evaluate(db)
@@ -34,7 +34,7 @@ def test_rule_that_fires():
     assert type(newfacts) == type({})
     assert actions["r1"] ==  ["a1", "a2"]
     assert len(actions) == 1
-    assert newfacts["r1"] == []
+    assert newfacts["r1"] == {}
     assert len(newfacts) == 1
 
 
@@ -54,7 +54,8 @@ def test_rule_that_does_not_fire():
     assert type(actions) == type({})
     assert type(newfacts) == type({})
     assert len(actions) == 0
-    assert len(newfacts) == 0
+    assert len(newfacts) == 1
+    assert newfacts["r1"] == {}
 
     result = myengine().evaluate(db)
     assert type(result) == type({})
@@ -64,4 +65,5 @@ def test_rule_that_does_not_fire():
     assert type(actions) == type({})
     assert type(newfacts) == type({})
     assert len(actions) == 0
-    assert len(newfacts) == 0
+    assert len(newfacts) == 1
+    assert newfacts["r1"] == {}

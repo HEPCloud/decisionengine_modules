@@ -30,8 +30,8 @@ def test_rule_that_fires():
     assert actions["r4"] == ["a4"]
 
     assert len(newfacts) == 4
-    assert newfacts["r1"] == ["f2"]
-    assert newfacts["r2"] == ["f3"]
-    assert newfacts["r3"] == ["f4"]
-    assert newfacts["r4"] == []
+    assert newfacts["r1"] == {"f2": True}
+    assert newfacts["r2"] == {"f3": True}
+    assert newfacts["r3"] == {"f4": True}
+    assert newfacts["r4"] == {}
 
