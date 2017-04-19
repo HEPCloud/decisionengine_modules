@@ -12,6 +12,19 @@ def test_rule_that_fires():
     db =  {"val": 20} 
     ef = myengine().evaluate_facts(db)
     assert ef["f1"] == True
+
+    result = myengine().evaluate(db)
+    assert type(result) == type({})
+    assert len(result) == 2
+    actions = result["actions"]
+    newfacts = result["newfacts"]
+    assert type(actions) == type({})
+    assert type(newfacts) == type({})
+    assert actions["r1"] ==  ["a1", "a2"]
+    assert len(actions) == 1
+    assert newfacts["r1"] == []
+    assert len(newfacts) == 1
+
     result = myengine().evaluate(db)
     assert type(result) == type({})
     assert len(result) == 2
@@ -32,6 +45,7 @@ def test_rule_that_does_not_fire():
     db =  {"val": 3} 
     ef = myengine().evaluate_facts(db)
     assert ef["f1"] == False
+
     result = myengine().evaluate(db)
     assert type(result) == type({})
     assert len(result) == 2
@@ -42,3 +56,12 @@ def test_rule_that_does_not_fire():
     assert len(actions) == 0
     assert len(newfacts) == 0
 
+    result = myengine().evaluate(db)
+    assert type(result) == type({})
+    assert len(result) == 2
+    actions = result["actions"]
+    newfacts = result["newfacts"]
+    assert type(actions) == type({})
+    assert type(newfacts) == type({})
+    assert len(actions) == 0
+    assert len(newfacts) == 0
