@@ -52,10 +52,12 @@ class ConfigManager(object):
     def create(name,parameters):
         classname = name
         if len(name.split('.')) > 1:
-            module = importlib.import_module("decisionengine.framework.%s"%(name,))
+            module_name = "decisionengine.framework.%s"%(name,)
+            module = importlib.import_module(module_name)
             classname = name.split('.')[-1]
         else:
-            module = importlib.import_module("decisionengine.framework.modules.%s"%(name,))
+            module_name = "decisionengine.framework.modules.%s"%(name,)
+            module = importlib.import_module(module_name)
         clazz  = getattr(module, classname)
         instance  = clazz(parameters)
         return instance 
@@ -63,6 +65,4 @@ class ConfigManager(object):
 if __name__ == "__main__":
     c = ConfigManager()
     c.load()
-    a = ConfigManager.create("Publisher1",{},{})
-    a.consumes({})
             

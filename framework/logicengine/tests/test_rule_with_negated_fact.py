@@ -24,7 +24,8 @@ def test_rule_that_fires():
     assert actions["r1"] ==  ["a1"]
     assert actions["r2"] ==  ["a2"]
     assert len(actions) == 2
-    assert newfacts["r1"] == []
+    assert newfacts["r1"] == {}
+    assert newfacts["r2"] == {}
     assert len(newfacts) == 2
 
 
@@ -43,5 +44,7 @@ def test_rule_that_does_not_fire():
     assert type(actions) == type({})
     assert type(newfacts) == type({})
     assert len(actions) == 0
-    assert len(newfacts) == 0
+    assert newfacts["r1"] == {}
+    assert newfacts["r2"] == {}
+    assert len(newfacts) == 2
 

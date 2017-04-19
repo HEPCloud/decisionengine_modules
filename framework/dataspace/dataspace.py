@@ -3,6 +3,8 @@
 import os
 import sqlite3
 import traceback
+import copy
+import ast
 
 #from UserDict import UserDict
 # TODO: Schema definations and validation and updations
@@ -22,7 +24,89 @@ class DataSpaceError(Exception):
     pass
 
 
+class DataSpaceExistsError(Exception):
+    """
+    Errors related to database access
+    """
+    pass
+
+
 class DataSpace(object):
+
+
+    def __init__(self, config):
+
+        self.table = {
+            'dataproduct': {},
+            'header': {},
+            'metadata': {}
+        }
+
+    def insert(self, taskmanager_id, generation_id, key, value, header, metadata):
+        row_id = (taskmanager_id, generation_id, key)
+        for tname in self.table:
+            if (row_id in self.table[tname]):
+                raise Exception('Invoking insert on existing existing row in table %s with row_id %s' % (tname, row_id))
+        self._insert_or_update(taskmanager_id, generation_id, key,
+                               value, header, metadata)
+
+
+    def _insert_or_update(self, taskmanager_id, generation_id, key,
+                          value, header, metadata):
+        row_id = (taskmanager_id, generation_id, key)
+
+        self.table['dataproduct'][row_id] = '%s' % (value)
+        self.table['header'][row_id] = '%s' % (header)
+        self.table['metadata'][row_id] = '%s' % (metadata)
+
+        #self.table['dataproduct'][row_id] = copy.deepcopy(value)
+        #self.table['header'][row_id] = copy.deepcopy(header)
+        #self.table['metadata'][row_id] = copy.deepcopy(metadata)
+
+
+    def update(self, taskmanager_id, generation_id, key, value, header, metadata):
+        self._insert_or_update(taskmanager_id, generation_id, key,
+                               value, header, metadata)
+
+
+    def get_dataproduct(self, taskmanager_id, generation_id, key):
+        return (self.table['dataproduct'][(taskmanager_id, generation_id, key)],)
+
+
+    def get_header(self, taskmanager_id, generation_id, key):
+        header = ast.literal_eval(self.table['header'][(taskmanager_id, generation_id, key)])
+        return (taskmanager_id, generation_id, key,
+                header['create_time'], header['expiration_time'],
+                header['scheduled_create_time'], header['creator'],
+                header['schema_id'])
+
+
+    def get_metadata(self, taskmanager_id, generation_id, key):
+        metadata = ast.literal_eval(self.table['metadata'][(taskmanager_id, generation_id, key)])
+        return (taskmanager_id, generation_id, key,
+                metadata['state'], metadata['generation_time'],
+                metadata['missed_update_count'])
+
+
+    def duplicate(self, taskmanager_id, generation_id, new_generation_id):
+        # dumb and slow, but its ok for now
+        keys = []
+        for row_id in self.table['dataproduct']:
+            if ((taskmanager_id, generation_id) == (row_id[0], row_id[1])):
+                keys.append(row_id[2])
+
+        for key in keys:
+            old_id = (taskmanager_id, generation_id, key)
+            new_id = (taskmanager_id, new_generation_id, key)
+            for tname in self.table:
+                self.table[tname][new_id] = copy.deepcopy(self.table[tname][old_id])
+
+
+    def close(self):
+        pass
+
+
+class DataSpaceSqlite3(object):
     """
     DataSpace class provides interface to the database used to store the data
     """

@@ -137,4 +137,3 @@ class TestDataBlock:
                 are_dicts_same(metadata1, db_orig_metadata))
 
         dataspace.close()
-
