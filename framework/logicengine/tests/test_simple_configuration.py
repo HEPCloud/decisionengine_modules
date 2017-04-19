@@ -53,7 +53,8 @@ def test_rule_that_does_not_fire():
     newfacts = result["newfacts"]
     assert type(actions) == type({})
     assert type(newfacts) == type({})
-    assert len(actions) == 0
+    assert len(actions) == 1
+    assert actions["r1"] == []
     assert len(newfacts) == 1
     assert newfacts["r1"] == {}
 
@@ -64,6 +65,7 @@ def test_rule_that_does_not_fire():
     newfacts = result["newfacts"]
     assert type(actions) == type({})
     assert type(newfacts) == type({})
-    assert len(actions) == 0
+    assert len(actions) == 1
+    assert actions["r1"] == []
     assert len(newfacts) == 1
     assert newfacts["r1"] == {}
