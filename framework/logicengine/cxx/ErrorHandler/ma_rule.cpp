@@ -197,6 +197,8 @@ bool ma_rule::recursive_evaluate ( ma_domain & value
     }
   }
 
+  std::cout << "this condition has never been hit. evaluates to false by default";
+
   return false;
 }
 
@@ -236,6 +238,10 @@ bool ma_rule::boolean_evaluate( ma_domain & value
                               , ma_domain const & domain )
 {
   std::cout << "now evaluate boolean_expr with given value \n";
+
+  // make sure all conditions are defined
+  for (int i=0; i<conditions.size(); ++i)
+      if (!conditions[i]->get_defined(value[i])) return false;
 
   // evaluate as true with given set of values
   if (boolean_expr.evaluate(value, alarm, domain))
