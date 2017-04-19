@@ -5,19 +5,23 @@ Task Manager
 import threading
 import logging
 import time
+import sys
+import types
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
+import decisionengine.framework.modules.de_logger as de_logger
 
 class Worker(object):
     def __init__(self, source_dict):
         self.worker = configmanager.ConfigManager.create(source_dict['module'],
                                                          source_dict['parameters'])
+        self.module = source_dict['module']
+        self.name = self.worker.__class__.__name__
         self.shedule = source_dict.get('shedule')
         self.run_counter = 0
         self.stop_running = threading.Event()
         self.data_updated = threading.Event()
-
 '''
 class Source(Worker):
     def __init__(self, source_dict, lock):
@@ -63,7 +67,6 @@ class Channel(object):
             self.publishers[s] = Worker(channel_dict['publishers'][s])
 
 
-
 # states
 BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
 _state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
@@ -78,10 +81,51 @@ class TaskManager(object):
         self.lock = threading.Lock()
         self.logger = logging.getLogger("decision_engine")
         self.logger.info("TM starting %s" % (self.id,))
+        self.stop_running = threading.Event()
 
-    def _run_forever(self, args):
-        """
-        Run source in a loop
+    
+    def wait_for_all_sources_ran(self, events_done):
+        self.logger.info("Waiting for all sorces to run")
+        e_done = events_done
+        neevents = len(e_done)
+        while not all([e.isSet() for e in events_done]):
+            time.sleep(1)
+            """
+            ev_wait = [e.wait(1) for e in events_done])
+            if all(ev_wait):
+                
+            evs = [e.is_set() for e in events_done]
+            if all(evs):
+                break
+            """
+        for e in events_done:
+            e.clear()
+
+    def wait_for_any_source_ran(self, events_done):
+        while not any([e.isSet() for e in events_done]):
+            time.sleep(1)
+        for e in events_done:
+            if e.isSet():
+                e.clear()
+
+    def run(self):
+        '''
+        Task Manager main loop
+        '''
+
+        done_events = self.start_sources(self.data_block_t0)
+        # This is a boot phase
+        # Wait until all sources run at least one time
+        self.wait_for_all_sources_ran(done_events)
+        self.logger.info("All sorces finished")
+        self.decision_cycle()
+        self.state = STEADY
+
+        while self.state == STEADY:
+            self.wait_for_any_source_ran(done_events)
+            self.decision_cycle()
+            self.sleep(1)
+
         """
         self.stop_running = args
         self.running.value = 1
@@ -105,7 +149,8 @@ class TaskManager(object):
                 break
         self.logger.info("stopped %s" % (self.name,))
 
-    def data_block_put(self, data, data_block):
+        """
+    def data_block_put(self, data, header, data_block):
         """
         Put data into data block
 
@@ -115,9 +160,13 @@ class TaskManager(object):
         :arg data_block: data block
         """
 
+        if type(data) != types.DictType:
+            self.logger.error('data_block put expecting %s type, got %s'%
+                              (types.DictType, type(data)))
+            return
         with self.lock:
             for k in data:
-                data_block.put(k, data[k])
+                data_block.put(k, data[k], header)
 
     def do_backup(self):
         """
@@ -127,15 +176,15 @@ class TaskManager(object):
 
         """
         with self.lock:
-            data_block = datablock.duplicate(self.data_block_t0)
+            data_block = self.data_block_t0.duplicate()
+            self.logger.info('Duplicated block %s'%(data_block,))
         return data_block
 
     def decision_cycle(self):
         """
         Decision cycle to be run periodically (by trigger)
         """
-        if self.state == STEADY:
-            data_block_t1 = self.do_backup() # do backup only in STEADY state????
+        data_block_t1 = self.do_backup()
         try:
             self.run_transforms(data_block_t1)
             self.run_logic_engine(data_block_t1)
@@ -157,25 +206,35 @@ class TaskManager(object):
         """
         while 1:
             try:
-                data = src.acquire()
-                with self.lock:
-                    self.data_block_t0.put(data)
-                    src.run_counter += 1
-                    src.data_updated.set()
-            except Ecxeption:
+                self.logger.info('Src %s calling aquire'%(src.name,))
+                data = src.worker.acquire()
+                self.logger.info('Src %s aquire retuned %s'%(src.name, data))
+                
+                self.logger.info('Src %s filling header'%(src.name,))
+                header = datablock.Header(self.data_block_t0.taskmanager_id, 
+                                          create_time=time.time(), creator=src.module)
+                self.logger.info('Src %s header done'%(src.name,))
+                self.data_block_put(data, header, self.data_block_t0)
+                self.logger.info('Src %s header put done'%(src.name,))
+                src.run_counter += 1
+                src.data_updated.set()
+                self.logger.info('Src %s %s finished cycle'%(src.name, src.module))
+            except Exception:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error running surce %s %s %s" % (src, exc, detail))
+                self.logger.error("error running source %s %s %s" % (src, exc, detail))
             s = src.stop_running.wait(src.shedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
                 break
         self.logger.info("stopped %s" % (src.name,))
 
-    def run_sources(self, data_block=None):
+    def start_sources(self, data_block=None):
+        event_list = []
         for s in self.channel.sources:
             self.logger.info("starting loop for %s" % (s,))
-            thread = treading.Tread(group=None, target=self.run_source,
-                                    name=s.name, args=(), kwargs={})
+            event_list.append(self.channel.sources[s].data_updated)
+            thread = threading.Thread(group=None, target=self.run_source,
+                                      name=self.channel.sources[s].name, args=([self.channel.sources[s]]), kwargs={})
             try:
                 thread.start()
             except:
@@ -183,6 +242,7 @@ class TaskManager(object):
                 self.logger.error("error starting thread %s: %s" % (name, detail))
                 self.state = OFFLINE
                 break
+        return event_list
 
     def run_transforms(self, data_block=None):
         if not data_block:
@@ -224,9 +284,8 @@ class TaskManager(object):
         for s in self.channel.publishers:
             print "Calling  acquire for ", s
             self.channel.publishers[s].worker.publish()
-
+    """
     def run(self):
-        print self.data_block_t0
         for s in self.channel.sources:
             print "Calling produces for", s
             try:
@@ -246,12 +305,14 @@ class TaskManager(object):
         for s in self.channel.publishers:
             print "Calling  acquire for ", s
             self.channel.publishers[s].worker.publish()
-
+    """
 if __name__ == '__main__':
-    import dataspace.dataspace as dataspace
+    import decisionengine.framework.dataspace.dataspace as dataspace
+
     config_manager = configmanager.ConfigManager()
     config_manager.load()
     global_config = config_manager.get_global_config()
+    print "GLOBAL CONF", global_config
 
     my_logger = logging.getLogger("decision_engine")
 
@@ -278,7 +339,7 @@ if __name__ == '__main__':
     create channels                                                                                                    
     """
     for ch in channels:
-        task_managers[ch] = TaskManager.TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
+        task_managers[ch] = TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
 
     for key, value in task_managers.iteritems():
         t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})
