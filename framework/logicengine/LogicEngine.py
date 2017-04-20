@@ -38,7 +38,7 @@ class LogicEngine(Module, object):
 
         evaluated_facts = self.evaluate_facts(db)
         for key, val in evaluated_facts:
-            print "Evaluated Fact: %s -> Value: %s -> TypeOf(Value): %s" % (key, val, type(val))
+            print "Evaluated Fact: %s -> Value: %s -> TypeOf(Value): %s" % (key, val, str(type(val)))
 
         # Process rules
         print "LE: calling execute"
