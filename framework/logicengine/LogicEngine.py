@@ -10,11 +10,11 @@ class LogicEngine(Module, object):
     def __init__(self, cfg):
         super(LogicEngine, self).__init__(cfg)
         self.facts = [ NamedFact(name, expr) for name, expr in cfg["facts"].iteritems() ]
-        
+
         # Only the names of facts are really needed. We pass in the
         # JSON form of the whole facts dictionary until the C++ is
         # updated to take a list of strings.
-        
+
         self.re = RuleEngine(json.dumps(cfg["facts"]),
                              json.dumps(cfg["rules"]))
 
@@ -37,9 +37,10 @@ class LogicEngine(Module, object):
         print "LE: calling evaluate_facts"
 
         evaluated_facts = self.evaluate_facts(db)
+        for key, val in evaluated_facts:
+            print "Evaluated Fact: %s -> Value: %s -> TypeOf(Value): %s" % (key, val, type(val))
+
         # Process rules
         print "LE: calling execute"
         actions, newfacts = self.re.execute(evaluated_facts)
         return {"actions": actions, "newfacts": newfacts}
-    
-              
