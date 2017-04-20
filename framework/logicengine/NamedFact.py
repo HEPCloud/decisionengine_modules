@@ -56,7 +56,7 @@ class NamedFact(object):
     def evaluate(self, d):
         """Return the truth value of this fact, in the context
         of the given data 'd'."""
-        return eval(self.expr, facts_globals, d)
+        return bool(eval(self.expr, facts_globals, d))
 
     def __str__(self):
         return "name: %s  expression: %s" % (self.name, self.expr)
