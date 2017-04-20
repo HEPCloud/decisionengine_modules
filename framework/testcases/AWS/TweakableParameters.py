@@ -13,11 +13,11 @@ class TweakableParameters(Source.Source):
     def acquire(self):
         return {
             "params": {
-                "p_overflow":               True,
-                "p_overflow_threshold":     1,
-                "p_overflow_cloud":         True,
-                "p_overflow_hpc":           False,
-                "p_overflow_osg":           False,
-                "p_target_burn_rate":       2.5,
+                "overflow_permitted":        True,
+                "overflow_threshold":        1,
+                "overflow_cloud_permitted":  True,
+                "overflow_hpc_permitted":    False,
+                "overflow_osg_permitted":    False,
+                "target_burn_rate":          2.5,
             }
         }
