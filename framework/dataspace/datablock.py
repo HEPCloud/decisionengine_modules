@@ -178,6 +178,19 @@ class DataBlock(object):
         self.lock = threading.Lock()
 
 
+    def __str__(self):
+        value = {
+            'taskamanger_id': self.taskmanager_id,
+            'generation_id': self.generation_id,
+            'keys_inserted': self.keys_inserted,
+        }
+        dp = {}
+        for key in self.keys_inserted:
+            dp[key] = self.get(key)
+        value['dataproducts'] = dp
+        return '%s' % value
+
+
     def put(self, key, value, header, metadata=None):
         """
         Put data into the DataBlock
