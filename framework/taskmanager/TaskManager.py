@@ -164,7 +164,8 @@ class TaskManager(object):
             self.logger.error('data_block put expecting %s type, got %s'%
                               (types.DictType, type(data)))
             return
-        with self.lock:
+        self.logger.info('data_block_put %s'%(data,))
+        with data_block.lock:
             for k in data:
                 data_block.put(k, data[k], header)
 
@@ -187,11 +188,19 @@ class TaskManager(object):
         data_block_t1 = self.do_backup()
         try:
             self.run_transforms(data_block_t1)
-            self.run_logic_engine(data_block_t1)
-            self.run_publishers(data_block_t1)
-        except Ecxeption:
+        except Exception:
             exc, detail = sys.exc_info()[:2]
-            self.logger.error("error in decision cycle %s %s" % (exc, detail))
+            self.logger.error("error in decision cycle(transforms) %s %s" % (exc, detail))
+        try:
+            self.run_logic_engine(data_block_t1)
+        except Exception:
+            exc, detail = sys.exc_info()[:2]
+            self.logger.error("error in decision cycle(logic engine) %s %s" % (exc, detail))
+        try:
+            self.run_publishers(data_block_t1)
+        except Exception:
+            exc, detail = sys.exc_info()[:2]
+            self.logger.error("error in decision cycle (publishers) %s %s" % (exc, detail))
 
 
     def run_source(self, src):
@@ -245,22 +254,35 @@ class TaskManager(object):
         return event_list
 
     def run_transforms(self, data_block=None):
+        self.logger.info('run_transforms: data block %s'%(data_block,))
         if not data_block:
             return
         for t in self.channel.transforms:
-            self.channel.transforms[t].worker.acquire(data_block)
+            self.logger.info('run transform %s'%(self.channel.transforms[t].name,))
+            try:
+                data = self.channel.transforms[t].worker.transform(data_block)
+                self.logger.info('transform returned %s'%(data,))
+                header = datablock.Header(data_block.taskmanager_id, 
+                                          creator=self.channel.transforms[t].name)
+                self.data_block_put(data, header, data_block)
+                self.logger.info('tranform put data')
+            except Exception, detail:
+                self.logger.errorr('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
     def run_logic_engine(self, data_block=None):
         if not data_block:
             return
         for le in self.channel.le_s:
+
+            self.logger.info('run logic engine %s %s'%(self.channel.le_s[le].name, data_block))
             self.channel.le_s[le].worker.evaluate(data_block)
+            self.logger.info('run logic engine done')
 
     def run_publishers(self, data_block=None):
         if not data_block:
             return
         for p in self.channel.publishers:
-            self.channel.publishers[p].worker.publish(data_block)
+            self.channel.publishers[p].worker.publish()
 
 
     def boot(self):

@@ -34,8 +34,11 @@ class LogicEngine(Module, object):
     def evaluate(self, db):
         """evaluate our facts and rules, in the context of the given data.
         db can be any mappable, in particular a DataBlock or dictionary."""
+        print "LE: calling evaluate_facts"
+
         evaluated_facts = self.evaluate_facts(db)
         # Process rules
+        print "LE: calling execute"
         actions, newfacts = self.re.execute(evaluated_facts)
         return {"actions": actions, "newfacts": newfacts}
     
