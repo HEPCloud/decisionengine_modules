@@ -188,7 +188,7 @@ class DataBlock(object):
         for key in self.keys_inserted:
             dp[key] = self.get(key)
         value['dataproducts'] = dp
-        return value
+        return '%s' % value
 
 
     def put(self, key, value, header, metadata=None):
