@@ -5,6 +5,8 @@ import copy
 import cPickle as pickle
 import ast
 import uuid
+import threading
+
 
 from UserDict import UserDict
 
@@ -173,6 +175,7 @@ class DataBlock(object):
         else:
             self.generation_id = self.dataspace.get_last_generation_id(taskmanager_id) + 1
         self.keys_inserted = []
+        self.lock = threading.Lock()
 
 
     def put(self, key, value, header, metadata=None):
