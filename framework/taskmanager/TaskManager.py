@@ -18,7 +18,7 @@ class Worker(object):
                                                          source_dict['parameters'])
         self.module = source_dict['module']
         self.name = self.worker.__class__.__name__
-        self.shedule = source_dict.get('shedule')
+        self.schedule = source_dict.get('schedule')
         self.run_counter = 0
         self.stop_running = threading.Event()
         self.data_updated = threading.Event()
@@ -75,7 +75,6 @@ class TaskManager(object):
         self.data_block_t0 = data_block # my current data block
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
-        print "TM Channel", self.channel
         self.state = BOOT
         self.decision_cycle_active = False
         self.lock = threading.Lock()
@@ -124,32 +123,8 @@ class TaskManager(object):
         while self.state == STEADY:
             self.wait_for_any_source_ran(done_events)
             self.decision_cycle()
-            self.sleep(1)
+            time.sleep(1)
 
-        """
-        self.stop_running = args
-        self.running.value = 1
-        self.time_started = time.time()
-        while self.running.value:
-            self.idle = False
-            with self.lock:
-                try:
-                    self.task.main(self.kwargs)
-                except Exception, e:
-                    exc, value, tb = sys.exc_info()
-                    self.logger.error("run_forever:%s %s" % (self.name, str(e)))
-                    for l in traceback.format_exception( exc, value, tb ):
-                        self.logger.error("Traceback: %s"%(l,))
-                    break
-            self.logger.info("checking event %s"%(self.stop_running,))
-            s = self.stop_running.wait(self.sleeptime)
-            #s = stop_running.wait(self.sleeptime)
-            if s:
-                self.logger.info("received stop_running signal")
-                break
-        self.logger.info("stopped %s" % (self.name,))
-
-        """
     def data_block_put(self, data, header, data_block):
         """
         Put data into data block
@@ -231,7 +206,7 @@ class TaskManager(object):
             except Exception:
                 exc, detail = sys.exc_info()[:2]
                 self.logger.error("error running source %s %s %s" % (src, exc, detail))
-            s = src.stop_running.wait(src.shedule)
+            s = src.stop_running.wait(src.schedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
                 break
@@ -285,27 +260,6 @@ class TaskManager(object):
             self.channel.publishers[p].worker.publish()
 
 
-    def boot(self):
-        return
-
-    def run_forever(self):
-        # start sources
-        for s in self.channel.sources:
-            print "Calling produces for", s
-            self.channel.sources[s].worker.produces(None)
-        for s in self.channel.sources:
-            print "Calling  acquire for ", s
-            self.channel.sources[s].worker.acquire()
-        for s in self.channel.transforms:
-            print "Calling  produces for ", s
-            self.channel.transforms[s].worker.produces(None)
-
-        for s in self.channel.le_s:
-            print "Calling produces for", s
-            self.channel.le_s[s].worker.evaluate()
-        for s in self.channel.publishers:
-            print "Calling  acquire for ", s
-            self.channel.publishers[s].worker.publish()
     """
     def run(self):
         for s in self.channel.sources:
@@ -373,24 +327,3 @@ if __name__ == '__main__':
             if threading.activeCount() <= 1 : break
     except (SystemExit, KeyboardInterrupt):
         pass
-
-
-"""
-    def run(self):
-        for s in self.channel.sources:
-            print "Calling produces for", s
-            self.channel.sources[s].worker.produces(None)
-        for s in self.channel.sources:
-            print "Calling  acquire for ", s
-            self.channel.sources[s].worker.acquire()
-        for s in self.channel.transforms:
-            print "Calling  produces for ", s
-            self.channel.transforms[s].worker.produces(None)
-
-        for s in self.channel.le_s:
-            print "Calling produces for", s
-            self.channel.le_s[s].worker.evaluate()
-        for s in self.channel.publishers:
-            print "Calling  acquire for ", s
-            self.channel.publishers[s].worker.publish()
-"""
