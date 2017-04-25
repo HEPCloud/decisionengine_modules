@@ -1,7 +1,7 @@
 #!/usr/bin/env/python
-"""
+'''
 Task Manager
-"""
+'''
 import threading
 import logging
 import time
@@ -13,7 +13,16 @@ import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.modules.de_logger as de_logger
 
 class Worker(object):
-    def __init__(self, source_dict):
+    '''
+    Provides interface to loadable modules an events to sycronise
+    execution
+    '''
+
+    def __init__(self, conf_dict):
+        '''
+        :type conf_dict: :obj:`dict`
+        :arg conf_dict: configuration dictionary describing the worker
+        '''
         self.worker = configmanager.ConfigManager.create(source_dict['module'],
                                                          source_dict['parameters'])
         self.module = source_dict['module']
@@ -22,35 +31,19 @@ class Worker(object):
         self.run_counter = 0
         self.stop_running = threading.Event()
         self.data_updated = threading.Event()
-'''
-class Source(Worker):
-    def __init__(self, source_dict, lock):
-        Worker.__init__(source_dict)
-        self.stop = False
-
-
-class Transform:
-    def __init__(self, source_dict):
-        name = source_dict['module']
-        modlule = __import__('modules.%s'%(name,))
-        m_class = getattr(getattr(module, name), name)
-        self.transform = m_class(source_dict['parameters'], None)
-class LogicEngine:
-    def __init__(self, source_dict):
-        name = source_dict['module']
-        modlule = __import__(source_dict['module'])
-        m_class = getattr(getattr(name, module), name)
-        self.le = m_class(source_dict['parameters'], None)
-class Publisher:
-    def __init__(self, source_dict):
-
-        modlule = __import__(source_dict['module'])
-        m_class = getattr(module, source_dict['module'])
-        self.publisher = m_class(source_dict['parameters'], None)
-'''
 
 class Channel(object):
+    '''
+    Decision Channel.
+    Instantiates workers according to channel configuration
+    '''
+
     def __init__(self, channel_dict):
+        '''
+        :type channel_dict: :obj:`dict`
+        :arg channel_dict: channel configuration
+        '''
+
         self.sources = {}
         self.transforms = {}
         self.le_s = {}
@@ -71,7 +64,20 @@ class Channel(object):
 BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
 _state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
 class TaskManager(object):
+    '''
+    Task Manager
+    '''
+
     def __init__(self, task_manager_id, channel_dict, data_block):
+        '''
+        :type task_manager_id: :obj:`int`
+        :arg task_manager_id: Task Mnager id provided by caller
+        :type channel_dict: :obj:`dict`
+        :arg channel_dict: channel configuration
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+        '''
+
         self.data_block_t0 = data_block # my current data block
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
@@ -82,8 +88,15 @@ class TaskManager(object):
         self.logger.info("TM starting %s" % (self.id,))
         self.stop_running = threading.Event()
 
-    
+
     def wait_for_all_sources_ran(self, events_done):
+        '''
+        Wait for all sources to finish
+
+        :type events_done: :obj:`list`
+        :arg events_done: list of events to wait for
+        '''
+
         self.logger.info("Waiting for all sorces to run")
         e_done = events_done
         neevents = len(e_done)
@@ -92,7 +105,7 @@ class TaskManager(object):
             """
             ev_wait = [e.wait(1) for e in events_done])
             if all(ev_wait):
-                
+
             evs = [e.is_set() for e in events_done]
             if all(evs):
                 break
@@ -101,6 +114,12 @@ class TaskManager(object):
             e.clear()
 
     def wait_for_any_source_ran(self, events_done):
+        '''
+        Wait for aky sources to finish
+
+        :type events_done: :obj:`list`
+        :arg events_done: list of events to wait for
+        '''
         while not any([e.isSet() for e in events_done]):
             time.sleep(1)
         for e in events_done:
@@ -126,14 +145,14 @@ class TaskManager(object):
             time.sleep(1)
 
     def data_block_put(self, data, header, data_block):
-        """
+        '''
         Put data into data block
 
         :type data: :obj:`dict`
         :arg data: key, value pairs
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
-        """
+        '''
 
         if type(data) != types.DictType:
             self.logger.error('data_block put expecting %s type, got %s'%
@@ -145,21 +164,23 @@ class TaskManager(object):
                 data_block.put(k, data[k], header)
 
     def do_backup(self):
-        """
+        '''
         Duplicate current data block and return its copy
 
         :rtype: :obj:`~datablock.DataBlock`
 
-        """
+        '''
+
         with self.lock:
             data_block = self.data_block_t0.duplicate()
             self.logger.info('Duplicated block %s'%(data_block,))
         return data_block
 
     def decision_cycle(self):
-        """
+        '''
         Decision cycle to be run periodically (by trigger)
-        """
+        '''
+
         data_block_t1 = self.do_backup()
         try:
             self.run_transforms(data_block_t1)
@@ -179,23 +200,22 @@ class TaskManager(object):
 
 
     def run_source(self, src):
-        """
+        '''
         Get the data from source
         and put it into the data block
 
         :type src: :obj:`~Worker`
         :arg src: source Worker
+        '''
 
-
-        """
         while 1:
             try:
                 self.logger.info('Src %s calling aquire'%(src.name,))
                 data = src.worker.acquire()
                 self.logger.info('Src %s aquire retuned %s'%(src.name, data))
-                
+
                 self.logger.info('Src %s filling header'%(src.name,))
-                header = datablock.Header(self.data_block_t0.taskmanager_id, 
+                header = datablock.Header(self.data_block_t0.taskmanager_id,
                                           create_time=time.time(), creator=src.module)
                 self.logger.info('Src %s header done'%(src.name,))
                 self.data_block_put(data, header, self.data_block_t0)
@@ -213,6 +233,13 @@ class TaskManager(object):
         self.logger.info("stopped %s" % (src.name,))
 
     def start_sources(self, data_block=None):
+        '''
+        Start sources, each in a separate thread
+
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+        '''
+
         event_list = []
         for s in self.channel.sources:
             self.logger.info("starting loop for %s" % (s,))
@@ -229,6 +256,14 @@ class TaskManager(object):
         return event_list
 
     def run_transforms(self, data_block=None):
+        '''
+        Run transforms.
+        So far in main process.
+
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+
+        '''
         self.logger.info('run_transforms: data block %s'%(data_block,))
         if not data_block:
             return
@@ -237,7 +272,7 @@ class TaskManager(object):
             try:
                 data = self.channel.transforms[t].worker.transform(data_block)
                 self.logger.info('transform returned %s'%(data,))
-                header = datablock.Header(data_block.taskmanager_id, 
+                header = datablock.Header(data_block.taskmanager_id,
                                           creator=self.channel.transforms[t].name)
                 self.data_block_put(data, header, data_block)
                 self.logger.info('tranform put data')
@@ -245,6 +280,12 @@ class TaskManager(object):
                 self.logger.errorr('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
     def run_logic_engine(self, data_block=None):
+        '''
+        Run Logic Engine.
+
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+        '''
         if not data_block:
             return
         for le in self.channel.le_s:
@@ -254,34 +295,20 @@ class TaskManager(object):
             self.logger.info('run logic engine done')
 
     def run_publishers(self, data_block=None):
+        '''
+        Run Publishers in main process.
+
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+
+        '''
         if not data_block:
             return
         for p in self.channel.publishers:
             self.channel.publishers[p].worker.publish()
 
 
-    """
-    def run(self):
-        for s in self.channel.sources:
-            print "Calling produces for", s
-            try:
-                self.channel.sources[s].worker.produces(None)
-            except Exception, msg:
-                print "busted ", msg, self.channel.sources[s].worker.__class__.__name__
-        for s in self.channel.sources:
-            print "Calling  acquire for ", s
-            self.channel.sources[s].worker.acquire()
-        for s in self.channel.transforms:
-            print "Calling  produces for ", s
-            self.channel.transforms[s].worker.produces(None)
 
-        for s in self.channel.le_s:
-            print "Calling produces for", s
-            self.channel.le_s[s].worker.evaluate( self.data_block_t0 )
-        for s in self.channel.publishers:
-            print "Calling  acquire for ", s
-            self.channel.publishers[s].worker.publish()
-    """
 if __name__ == '__main__':
     import decisionengine.framework.dataspace.dataspace as dataspace
 
@@ -311,8 +338,8 @@ if __name__ == '__main__':
 
     task_managers = {}
     data_space = {}
-    """                                                                                                                
-    create channels                                                                                                    
+    """
+    create channels
     """
     for ch in channels:
         task_managers[ch] = TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
