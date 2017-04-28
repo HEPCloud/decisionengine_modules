@@ -23,14 +23,14 @@ class Worker(object):
         :type conf_dict: :obj:`dict`
         :arg conf_dict: configuration dictionary describing the worker
         '''
-        self.worker = configmanager.ConfigManager.create(source_dict['module'],
-                                                         source_dict['parameters'])
-        self.module = source_dict['module']
+        self.worker = configmanager.ConfigManager.create(conf_dict['module'],
+                                                         conf_dict['parameters'])
+        self.module = conf_dict['module']
         self.name = self.worker.__class__.__name__
-        self.schedule = source_dict.get('schedule')
+        self.schedule = conf_dict.get('schedule')
         self.run_counter = 0
         self.data_updated = threading.Event()
-        src.stop_running = threading.Event()
+        self.stop_running = threading.Event()
 
 class Channel(object):
     '''
@@ -135,7 +135,8 @@ class TaskManager(object):
         '''
         Task Manager main loop
         '''
-
+        
+        self.logger.info("Starting Task Manager %s"%(self.id,))
         done_events = self.start_sources(self.data_block_t0)
         # This is a boot phase
         # Wait until all sources run at least one time
@@ -329,6 +330,7 @@ class TaskManager(object):
         if not data_block:
             return
         for p in self.channel.publishers:
+            self.logger.info('run publisher %s %s'%(self.channel.publishers[p].name, data_block))
             self.channel.publishers[p].worker.publish()
 
 
