@@ -16,7 +16,16 @@ import os, sys, time
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0,os.path.abspath('../../..'))
+sys.path.insert(0,os.path.abspath('../../../framework'))
+sys.path.insert(0,os.path.abspath('../../../framework/taskmanager'))
+sys.path.insert(0,os.path.abspath('../../../framework/configmanager'))
+sys.path.insert(0,os.path.abspath('../../../framework/dataspace'))
+sys.path.insert(0,os.path.abspath('../../../framework/engine'))
+sys.path.insert(0,os.path.abspath('../../../framework/logicengine'))
+sys.path.insert(0,os.path.abspath('../../../framework/modules'))
+sys.path.insert(0,os.path.abspath('../../../framework/testcases'))
 
 # -- General configuration -----------------------------------------------------
 
