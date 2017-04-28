@@ -29,8 +29,8 @@ class Worker(object):
         self.name = self.worker.__class__.__name__
         self.schedule = source_dict.get('schedule')
         self.run_counter = 0
-        self.stop_running = threading.Event()
         self.data_updated = threading.Event()
+        src.stop_running = threading.Event()
 
 class Channel(object):
     '''
@@ -71,7 +71,7 @@ class TaskManager(object):
     def __init__(self, task_manager_id, channel_dict, data_block):
         '''
         :type task_manager_id: :obj:`int`
-        :arg task_manager_id: Task Mnager id provided by caller
+        :arg task_manager_id: Task Manager id provided by caller
         :type channel_dict: :obj:`dict`
         :arg channel_dict: channel configuration
         :type data_block: :obj:`~datablock.DataBlock`
@@ -86,7 +86,7 @@ class TaskManager(object):
         self.lock = threading.Lock()
         self.logger = logging.getLogger("decision_engine")
         self.logger.info("TM starting %s" % (self.id,))
-        self.stop_running = threading.Event()
+        self.stop = False # stop running all loops when this is True
 
 
     def wait_for_all_sources_ran(self, events_done):
@@ -102,6 +102,8 @@ class TaskManager(object):
         neevents = len(e_done)
         while not all([e.isSet() for e in events_done]):
             time.sleep(1)
+            if self.stop:
+                break
             """
             ev_wait = [e.wait(1) for e in events_done])
             if all(ev_wait):
@@ -122,6 +124,9 @@ class TaskManager(object):
         '''
         while not any([e.isSet() for e in events_done]):
             time.sleep(1)
+            if self.stop:
+                break
+
         for e in events_done:
             if e.isSet():
                 e.clear()
@@ -137,12 +142,31 @@ class TaskManager(object):
         self.wait_for_all_sources_ran(done_events)
         self.logger.info("All sorces finished")
         self.decision_cycle()
-        self.state = STEADY
+        if self.state != OFFLINE:
+            self.state = STEADY
+        else:
+            self.logger.error("Error occured. Task Manager %s exits"%(self.id,))
+            return
 
         while self.state == STEADY:
             self.wait_for_any_source_ran(done_events)
             self.decision_cycle()
+            if self.stop:
+                self.logger.info("Task Manager %s received stop signal and exits"%(self.id,))
+                for s in self.channel.sources:
+                    self.channel.sources[s].stop_running.set()
+                    time.sleep(5)
+                break
+
             time.sleep(1)
+        self.logger.error("Error occured. Task Manager %s exits"%(self.id,))
+
+
+    def stop_task_manager(self):
+        '''
+        signal task manager to stop
+        '''
+        self.stop = True
 
     def data_block_put(self, data, header, data_block):
         '''
