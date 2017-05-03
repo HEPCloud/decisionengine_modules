@@ -3,14 +3,15 @@
 %define version 0.1
 %define release 0.1
 
-%define decisionengine_user decisionengine
-%define decisionengine_group decisionengine
+%define de_user decisionengine
+%define de_group decisionengine
 
-
-%define logicengine_build_dir %{_builddir}/decisionengine/framework/logicengine/cxx/build
+%define de_confdir %{_sysconfdir}/decisionengine
+%define de_logdir %{_localstatedir}/log/decisionengine
+%define de_lockdir %{_localstatedir}/lock/decisionengine
 %define systemddir %{_prefix}/lib/systemd/system
-%define decisionengine_logdir %{_localstatedir}/log/decisionengine
-%define decisionengine_lockdir %{_localstatedir}/lock/decisionengine
+
+%define le_builddir %{_builddir}/decisionengine/framework/logicengine/cxx/build
 
 # From http://fedoraproject.org/wiki/Packaging:Python
 # Define python_sitelib
@@ -59,8 +60,8 @@ of cycles.
 
 %build
 pwd
-mkdir %{logicengine_build_dir}
-cd %{logicengine_build_dir}
+mkdir %{le_builddir}
+cd %{le_builddir}
 cmake ..
 make
 cp ErrorHandler/RE.so ../..
@@ -75,16 +76,17 @@ rm -rf $RPM_BUILD_ROOT
 # Create the system directories
 install -d $RPM_BUILD_ROOT%{_sbindir}
 install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}
-install -d $RPM_BUILD_ROOT%{_initrddir}
-install -d $RPM_BUILD_ROOT%{_localstatedir}/log/decisionengine
-install -d $RPM_BUILD_ROOT%{_localstatedir}/lock/decisionengine
+install -d $RPM_BUILD_ROOT%{_initddir}
+install -d $RPM_BUILD_ROOT%{de_confdir}
+install -d $RPM_BUILD_ROOT%{de_logdir}
+install -d $RPM_BUILD_ROOT%{de_lockdir}
 install -d $RPM_BUILD_ROOT%{systemddir}
 install -d $RPM_BUILD_ROOT%{python_sitelib}
 
 # Copy files in place
 cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
 
+install -m 0644 build/packaging/rpm/decision_engine_template.conf $RPM_BUILD_ROOT%{de_confdir}/decision_engine.conf
 install -m 0644 build/packaging/rpm/decisionengine.service $RPM_BUILD_ROOT%{systemddir}/decision-engine.service
 install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROOT%{_initrddir}/decision-engine
 
@@ -100,9 +102,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/tes
 %{python_sitelib}/decisionengine
 %{systemddir}/decision-engine.service
 %{_initrddir}/decision-engine
-%{_localstatedir}/log/decisionengine
-%{_localstatedir}/lock/decisionengine
-
+%attr(-, %{de_user}, %{de_group}) %{de_logdir}
+%attr(-, %{de_user}, %{de_group}) %{de_lockdir}
+%config(noreplace) %{de_confdir}/decision_engine.conf
 
 #%clean
 #rm -rf $RPM_BUILD_ROOT
@@ -110,14 +112,14 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/tes
 
 %pre
 # Add the "decisionengine" user and group if they do not exist
-getent group %{decisionengine_group} >/dev/null || 
-    groupadd -r  %{decisionengine_group}
-getent passwd  %{decisionengine_user} >/dev/null || \
-    useradd -r -g  %{decisionengine_user} -d /var/lib/decisionengine \
-    -c "Decision Engine user" -s /sbin/nologin  %{decisionengine_user}
+getent group %{de_group} >/dev/null || 
+    groupadd -r  %{de_group}
+getent passwd  %{de_user} >/dev/null || \
+    useradd -r -g  %{de_user} -d /var/lib/decisionengine \
+    -c "Decision Engine user" -s /sbin/nologin -m %{de_user}
 # If the decisionengine user already exists make sure it is part of
 # the decisionengine group
-usermod --append --groups  %{decisionengine_group}  %{decisionengine_user} >/dev/null
+usermod --append --groups  %{de_group}  %{de_user} >/dev/null
 
 
 %post
@@ -125,12 +127,12 @@ usermod --append --groups  %{decisionengine_group}  %{decisionengine_user} >/dev
 # $1 = 2 - Upgrade
 /sbin/chkconfig --add decision-engine
 
-# Chane the ownership of log and lock dir if theay already exist
-if [ -d %{decisionengine_logdir} ]; then
-    chown -R %{decisionengine_user}.%{decisionengine_group} %{decisionengine_logdir}
+# Change the ownership of log and lock dir if they already exist
+if [ -d %{de_logdir} ]; then
+    chown -R %{de_user}.%{de_group} %{de_logdir}
 fi
-if [ -d %{decisionengine_logdir} ]; then
-    chown -R %{decisionengine_user}.%{decisionengine_group} %{decisionengine_logdir}
+if [ -d %{de_lockdir} ]; then
+    chown -R %{de_user}.%{de_group} %{de_lockdir}
 fi
 
 
