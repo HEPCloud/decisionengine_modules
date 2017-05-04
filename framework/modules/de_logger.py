@@ -39,6 +39,14 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
 
     return logger
 
+def get_logger():
+    """
+    get default logger - "decision_engine"
+    :rtype: :class:`logging.Logger` - rotating file logger
+    """
+    return logging.getLogger("decision_engine")
+
+
 def set_stream_logging(logger_name=''):
     """
     This is for debugging.
