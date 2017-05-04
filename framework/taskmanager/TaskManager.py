@@ -84,7 +84,8 @@ class TaskManager(object):
         self.state = BOOT
         self.decision_cycle_active = False
         self.lock = threading.Lock()
-        self.logger = logging.getLogger("decision_engine")
+        #self.logger = logging.getLogger("decision_engine")
+        self.logger = de_logger.get_logger()
         self.logger.info("TM starting %s" % (self.id,))
         self.stop = False # stop running all loops when this is True
 
