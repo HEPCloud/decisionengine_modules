@@ -7,7 +7,6 @@ import logging
 import time
 import sys
 import types
-import os, os.path
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -86,21 +85,6 @@ class TaskManager(object):
         self.decision_cycle_active = False
         self.lock = threading.Lock()
         self.logger = logging.getLogger("decision_engine")
-        # TODO: Use de_logger and make sure logging is threadsafe
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(levelname)s - %(message)s")
-        logdir = '/tmp'
-        system_logdir = '/var/log/decisionengine'
-        if os.path.isdir(system_logdir) and os.access(system_logdir, os.W_OK):
-            logdir = system_logdir
-        logfile = os.path.join(logdir, 'decision_engine.log')
-        handler = logging.handlers.RotatingFileHandler(logfile,
-                                                       maxBytes=10000000,
-                                                       backupCount=5)
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
-
-       
         self.logger.info("TM starting %s" % (self.id,))
         self.stop = False # stop running all loops when this is True
 
