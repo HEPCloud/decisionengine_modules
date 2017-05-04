@@ -7,6 +7,7 @@
 %define de_group decisionengine
 
 %define de_confdir %{_sysconfdir}/decisionengine
+%define de_channel_confdir %{_sysconfdir}/decisionengine/config.d
 %define de_logdir %{_localstatedir}/log/decisionengine
 %define de_lockdir %{_localstatedir}/lock/decisionengine
 %define systemddir %{_prefix}/lib/systemd/system
@@ -53,6 +54,14 @@ provides the functionality of resource scheduling for disparate resource
 providers, including those which may have a cost or a restricted allocation
 of cycles.
 
+%package testcase
+Summary:        The HEPCloud Decision Engine Test Case
+Group:          System Environment/Daemons
+Requires:       decisionengine = %{version}-%{release}
+
+%description testcase
+The testcase used to try out the Decision Engine.
+
 
 %prep
 %setup -q -n decisionengine
@@ -78,6 +87,7 @@ install -d $RPM_BUILD_ROOT%{_sbindir}
 install -d $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{_initddir}
 install -d $RPM_BUILD_ROOT%{de_confdir}
+install -d $RPM_BUILD_ROOT%{de_channel_confdir}
 install -d $RPM_BUILD_ROOT%{de_logdir}
 install -d $RPM_BUILD_ROOT%{de_lockdir}
 install -d $RPM_BUILD_ROOT%{systemddir}
@@ -89,25 +99,45 @@ cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
 install -m 0644 build/packaging/rpm/decision_engine_template.conf $RPM_BUILD_ROOT%{de_confdir}/decision_engine.conf
 install -m 0644 build/packaging/rpm/decisionengine.service $RPM_BUILD_ROOT%{systemddir}/decision-engine.service
 install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROOT%{_initrddir}/decision-engine
+install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
 #rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/doc
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/build
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/modules
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/cxx
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/tests
 
+mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUILD_ROOT%{python_sitelib}
 
 %files
-%{python_sitelib}/decisionengine
+%{python_sitelib}/decisionengine/framework/configmanager
+%{python_sitelib}/decisionengine/framework/dataspace
+%{python_sitelib}/decisionengine/framework/engine
+%{python_sitelib}/decisionengine/framework/logicengine
+%{python_sitelib}/decisionengine/framework/modules
+%{python_sitelib}/decisionengine/framework/taskmanager
+%{python_sitelib}/decisionengine/framework/__init__.py
+%{python_sitelib}/decisionengine/framework/__init__.pyo
+%{python_sitelib}/decisionengine/framework/__init__.pyc
+%{python_sitelib}/decisionengine/__init__.py
+%{python_sitelib}/decisionengine/__init__.pyo
+%{python_sitelib}/decisionengine/__init__.pyc
+%{python_sitelib}/decisionengine/LICENSE.txt
+
 %{systemddir}/decision-engine.service
 %{_initrddir}/decision-engine
 %attr(-, %{de_user}, %{de_group}) %{de_logdir}
 %attr(-, %{de_user}, %{de_group}) %{de_lockdir}
 %config(noreplace) %{de_confdir}/decision_engine.conf
 
-#%clean
-#rm -rf $RPM_BUILD_ROOT
+
+%files testcase
+%{python_sitelib}/testcases
+%config(noreplace) %{de_channel_confdir}/channelA.conf
 
 
 %pre
@@ -144,6 +174,9 @@ if [ "$1" = "0" ] ; then
     /sbin/chkconfig --del decision-engine
 fi
 
+
+#%clean
+#rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
