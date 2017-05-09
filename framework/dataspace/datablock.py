@@ -359,9 +359,9 @@ class DataBlock(object):
         dup_datablock = copy.copy(self)
         self.generation_id += 1
         dup_datablock.keys_inserted = copy.deepcopy(self.keys_inserted)
-        self.dataspace.duplicate(self.taskmanager_id,
-                                 dup_datablock.generation_id,
-                                 self.generation_id)
+        self.dataspace.duplicate_datablock(self.taskmanager_id,
+                                           dup_datablock.generation_id,
+                                           self.generation_id)
         return dup_datablock
 
 

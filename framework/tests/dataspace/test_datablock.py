@@ -9,7 +9,12 @@ from decisionengine.framework.dataspace.dataspace import DataSpace
 
 config = {
     'dataspace': {
-        'filename': '/tmp/test-%s.db' % getpass.getuser()
+        'filename': '/tmp/test-%s.db' % getpass.getuser(),
+        'db_driver': {
+            'module': 'decisionengine.framework.dataspace.db_object',
+            'name': 'ObjectDB',
+            'config': { },
+        },
     }
 }
 
@@ -47,6 +52,7 @@ class TestDataBlock:
         print 'Doing put:\nkey=%s\nvalue=%s\n\nheader=%s\n\nmetadata=%s\n\n' % (
             key, value, header, metadata)
         datablock.put(key, value, header, metadata)
+        datablock.put('zKey', {'mz': 'vz'}, header, metadata)
 
         print 'Doing get: key=%s ...\n' % key
         db_value = datablock.get(key)
