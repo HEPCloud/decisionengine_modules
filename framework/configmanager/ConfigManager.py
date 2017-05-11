@@ -18,6 +18,7 @@ class ConfigManager(object):
         if not os.path.isfile(self.config_file): 
             raise Exception("Config file '%s' not found" % self.config_file)
         self.channel_config_dir = os.path.join(self.config_dir, "config.d")
+        self.global_config = {}
 
 
     def load(self):
@@ -37,7 +38,7 @@ class ConfigManager(object):
                 exec(code)
 
 
-    def isUpdated():
+    def is_updated(self):
         return 
 
 

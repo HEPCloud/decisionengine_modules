@@ -276,7 +276,7 @@ class TaskManager(object):
                 thread.start()
             except:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error starting thread %s: %s" % (name, detail))
+                self.logger.error("error starting thread %s: %s" % (self.channel.sources[s].name, detail))
                 self.state = OFFLINE
                 break
         return event_list
@@ -303,7 +303,7 @@ class TaskManager(object):
                 self.data_block_put(data, header, data_block)
                 self.logger.info('tranform put data')
             except Exception, detail:
-                self.logger.errorr('exception from %s: %s'%(self.channel.transforms[t].name, detail))
+                self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
     def run_logic_engine(self, data_block=None):
         '''

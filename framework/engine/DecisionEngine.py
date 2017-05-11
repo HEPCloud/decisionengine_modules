@@ -47,7 +47,7 @@ class DecisionEngine(object):
             thread.start()
         except:
             exc, detail = sys.exc_info()[:2]
-            self.logger.error("error starting thread %s: %s" % (name, detail))
+            self.logger.error("error starting thread %s: %s" % (method, detail))
             rc = False
         return rc
 
