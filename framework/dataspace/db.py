@@ -2,6 +2,27 @@
 
 import abc
 
+class DatabaseConnectionError(Exception):
+    """
+    Errors related to database access
+    """
+    pass
+
+
+class DatabaseError(Exception):
+    """
+    Errors related to database access
+    """
+    pass
+
+
+class DatabaseExistsError(Exception):
+    """
+    Errors related to database access
+    """
+    pass
+
+
 class Database(object):
 
     __metaclass__ = abc.ABCMeta
@@ -30,7 +51,7 @@ class Database(object):
 
 
     def __str__(self):
-        return vars(self)
+        return '%s' % vars(self)
 
 
     @abc.abstractmethod
