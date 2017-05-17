@@ -10,7 +10,7 @@ import sys
 import time
 import threading
 import logging
-import os
+import uuid
 
 import decisionengine.framework.modules.de_logger as de_logger
 import decisionengine.framework.configmanager.ConfigManager as Conf_Manager
@@ -20,7 +20,8 @@ import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.dataspace.dataspace as dataspace
 
 
-CONFIG_UPDATE_PERIOD = 10 # seconds
+CONFIG_UPDATE_PERIOD = 10  # seconds
+
 
 class DecisionEngine(object):
 
@@ -32,7 +33,7 @@ class DecisionEngine(object):
     def get_logger(self):
         return self.logger
 
-    def run(self, method, args=[]):
+    def run(self, method, args=None):
         """
         Create and start  new thread.
 
@@ -40,8 +41,10 @@ class DecisionEngine(object):
         :arg args: arguments
         """
 
-        thread = threading.Thread(group=None, target=method,
-                              name=method, args=args)
+        thread = threading.Thread(group=None,
+                                  target=method,
+                                  name=method,
+                                  args=args)
         rc = True
         try:
             thread.start()
@@ -72,7 +75,7 @@ class DecisionEngine(object):
             max_backup_count=logfile_backup_count)
 
         ds = dataspace.DataSpace(global_config)
-        taskmanager_id = 1
+        taskmanager_id = str(uuid.uuid4()).upper()
         generation_id = 1
 
         task_managers = {} 
@@ -81,7 +84,9 @@ class DecisionEngine(object):
         create channels
         """
         for ch in channels:
-                task_managers[ch] = TaskManager.TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
+                task_managers[ch] = TaskManager.TaskManager(ch,
+                                                            channels[ch],
+                                                            datablock.DataBlock(ds,taskmanager_id, generation_id))
                 
         for key, value in task_managers.iteritems():
             t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})

@@ -5,17 +5,17 @@ import traceback
 import copy
 import ast
 import importlib
-import db
+import decisionengine.framework.dataspace.datasource
 
 
-class ObjectDB(db.Database):
+class ObjectDB(decisionengine.framework.dataspace.datasource.DataSource):
 
     _tables_created = False
     _tables = {}
 
 
     def __init__(self, config):
-        db.Database.__init__(self, config)
+        decisionengine.framework.dataspace.datasource.DataSource.__init__(self, config)
 
 
     def __str__(self):

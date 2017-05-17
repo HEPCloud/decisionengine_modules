@@ -5,13 +5,13 @@ import sqlite3
 import traceback
 import copy
 import ast
-import db
+import decisionengine.framework.dataspace.datasource
 
 #from UserDict import UserDict
 # TODO: Schema definations and validation and updations
 
 
-class SQLite3DB(db.Database):
+class SQLite3DB(decisionengine.framework.dataspace.datasource.DataSource):
     """
     SQLite3DB class provides interface to the database used to store the data
     """

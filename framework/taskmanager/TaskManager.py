@@ -7,6 +7,7 @@ import logging
 import time
 import sys
 import types
+import uuid
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -252,7 +253,7 @@ class TaskManager(object):
             except Exception:
                 exc, detail = sys.exc_info()[:2]
                 self.logger.error("error running source %s %s %s" % (src, exc, detail))
-            s = src.stop_running.wait(src.schedule)
+                            s = src.stop_running.wait(src.schedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
                 break
@@ -360,7 +361,7 @@ if __name__ == '__main__':
     channels = config_manager.get_channels()
 
     ds = dataspace.DataSpace(global_config)
-    taskmanager_id = 1
+    taskmanager_id = str(uuid.uuid4()).upper()
     generation_id = 1
 
     task_managers = {}
