@@ -118,7 +118,7 @@ class Postgresql(ds.DataSource):
         q = """
             UPDATE {} SET value=%s
                       WHERE taskmanager_id=%s AND generation_id=%s AND key=?%s
-            """.foramt(ds.DataSource.dataproduct_table)
+            """.format(ds.DataSource.dataproduct_table)
 
         self._update(q, (value, taskmanager_id, generation_id, key))
 
@@ -354,7 +354,5 @@ class Postgresql(ds.DataSource):
             result = self._select(sql_query, cursor_factory=psycopg2.extras.DictCursor)
         return result
 
-    def _select_tuple(self, sql_query, vlaues):
+    def _select_tuple(self, sql_query, values):
         return self._select(sql_query, values)
-
-
