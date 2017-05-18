@@ -137,7 +137,7 @@ class TaskManager(object):
         '''
         Task Manager main loop
         '''
-        
+
         self.logger.info("Starting Task Manager %s"%(self.id,))
         done_events = self.start_sources(self.data_block_t0)
         # This is a boot phase
@@ -253,7 +253,7 @@ class TaskManager(object):
             except Exception:
                 exc, detail = sys.exc_info()[:2]
                 self.logger.error("error running source %s %s %s" % (src, exc, detail))
-                            s = src.stop_running.wait(src.schedule)
+            s = src.stop_running.wait(src.schedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
                 break
