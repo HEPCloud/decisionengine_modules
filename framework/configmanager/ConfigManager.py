@@ -1,16 +1,12 @@
 import importlib
-import logging
 import os
 import string
-import time
-
 
 CONFIG_FILE_NAME="decision_engine.conf"
 
 class ConfigManager(object):
 
-    
-    def __init__(self):
+        def __init__(self):
         self.config_dir = os.getenv("CONFIG_PATH", "/etc/decisionengine")
         if not os.path.isdir(self.config_dir): 
             raise Exception("Config dir '%s' not found" % self.config_dir)
@@ -19,7 +15,6 @@ class ConfigManager(object):
             raise Exception("Config file '%s' not found" % self.config_file)
         self.channel_config_dir = os.path.join(self.config_dir, "config.d")
         self.global_config = {}
-
 
     def load(self):
         self.last_update_time = os.stat(self.config_file).st_mtime
@@ -37,14 +32,11 @@ class ConfigManager(object):
                 code = "self.channels[name]=" + string.join(f.readlines(), "")
                 exec(code)
 
-
     def is_updated(self):
         return 
 
-
     def get_channels(self):
         return self.channels
-
 
     def get_global_config(self):
         return self.global_config

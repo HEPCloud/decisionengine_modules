@@ -227,7 +227,7 @@ class Postgresql(ds.DataSource):
         t = self.timeout
         while i:
             try:
-                return self.pool.connection()
+                return self.connection_pool.connection()
             except Exception, msg:
                 i -= 1
                 if not i:
