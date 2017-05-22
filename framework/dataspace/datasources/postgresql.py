@@ -146,15 +146,15 @@ class Postgresql(ds.DataSource):
 
     def get_header(self, taskmanager_id, generation_id, key):
         q = SELECT_QUERY.format(ds.DataSource.header_table)
-        return self._select(q, (taskmanager_id, generation_id, key))[0][0]
+        return self._select(q, (taskmanager_id, generation_id, key))[0]
 
     def get_metadata(self, taskmanager_id, generation_id, key):
         q = SELECT_QUERY.format(ds.DataSource.metadata_table)
-        return self._select(q, (taskmanager_id, generation_id, key))[0][0]
+        return self._select(q, (taskmanager_id, generation_id, key))[0]
 
     def get_dataproduct(self, taskmanager_id, generation_id, key):
         q = SELECT_QUERY.format(ds.DataSource.dataproduct_table)
-        return self._select(q, (taskmanager_id, generation_id, key))[0][0]
+        return self._select_dictresult(q, (taskmanager_id, generation_id, key))[0]
 
     def get_datablock(self, taskmanager_id, generation_id):
         return {}

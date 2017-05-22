@@ -25,6 +25,7 @@ class Worker(object):
         :arg conf_dict: configuration dictionary describing the worker
         '''
         self.worker = configmanager.ConfigManager.create(conf_dict['module'],
+                                                         conf_dict['name'],
                                                          conf_dict['parameters'])
         self.module = conf_dict['module']
         self.name = self.worker.__class__.__name__

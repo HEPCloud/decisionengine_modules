@@ -2,11 +2,12 @@ import importlib
 import os
 import string
 
-CONFIG_FILE_NAME="decision_engine.conf"
+CONFIG_FILE_NAME = "decision_engine.conf"
+
 
 class ConfigManager(object):
 
-        def __init__(self):
+    def __init__(self):
         self.config_dir = os.getenv("CONFIG_PATH", "/etc/decisionengine")
         if not os.path.isdir(self.config_dir): 
             raise Exception("Config dir '%s' not found" % self.config_dir)
@@ -45,22 +46,9 @@ class ConfigManager(object):
     Factory method:  create instance of dynamically loaded module 
     """
     @staticmethod
-    def create(name, parameters):
-        classname = name.split('.')[-1]
-        # Channel config is required to provide with full module path
-        if len(name.split('.')) > 1:
-            module_name = "decisionengine.framework.%s"%(name,)
-            classname = name.split('.')[-1]
-        else:
-            module_name = "decisionengine.framework.modules.%s"%(name,)
-
-        try:
-            module = importlib.import_module(module_name)
-        except ImportError:
-            # TODO: Modules are external to the framework. Need to handle that
-            module = importlib.import_module(name)
-
-        clazz = getattr(module, classname)
+    def create(module_name, class_name, parameters):
+        my_module = importlib.import_module(module_name)
+        clazz = getattr(my_module, class_name)
         instance = clazz(parameters)
         return instance 
 

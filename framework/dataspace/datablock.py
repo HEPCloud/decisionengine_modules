@@ -282,15 +282,13 @@ class DataBlock(object):
         try:
             value_row = self.dataspace.get_dataproduct(self.taskmanager_id,
                                                        self.generation_id, key)
-            value = ast.literal_eval(value_row[0])
+            value = ast.literal_eval(str(value_row['value']))
         except KeyNotFoundError, e:
             value = default
         except:
             # TODO: FINSIH with more exceptions, content
             raise
 
-        #print '-------'
-        #print value
         if value.get('pickled'):
             return_value = pickle.loads(value.get('value'))
         else:
