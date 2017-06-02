@@ -7,6 +7,7 @@ import logging
 import time
 import sys
 import types
+import uuid
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -24,6 +25,7 @@ class Worker(object):
         :arg conf_dict: configuration dictionary describing the worker
         '''
         self.worker = configmanager.ConfigManager.create(conf_dict['module'],
+                                                         conf_dict['name'],
                                                          conf_dict['parameters'])
         self.module = conf_dict['module']
         self.name = self.worker.__class__.__name__
@@ -136,7 +138,7 @@ class TaskManager(object):
         '''
         Task Manager main loop
         '''
-        
+
         self.logger.info("Starting Task Manager %s"%(self.id,))
         done_events = self.start_sources(self.data_block_t0)
         # This is a boot phase
@@ -276,7 +278,7 @@ class TaskManager(object):
                 thread.start()
             except:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error starting thread %s: %s" % (name, detail))
+                self.logger.error("error starting thread %s: %s" % (self.channel.sources[s].name, detail))
                 self.state = OFFLINE
                 break
         return event_list
@@ -303,7 +305,7 @@ class TaskManager(object):
                 self.data_block_put(data, header, data_block)
                 self.logger.info('tranform put data')
             except Exception, detail:
-                self.logger.errorr('exception from %s: %s'%(self.channel.transforms[t].name, detail))
+                self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
     def run_logic_engine(self, data_block=None):
         '''
@@ -360,7 +362,7 @@ if __name__ == '__main__':
     channels = config_manager.get_channels()
 
     ds = dataspace.DataSpace(global_config)
-    taskmanager_id = 1
+    taskmanager_id = str(uuid.uuid4()).upper()
     generation_id = 1
 
     task_managers = {}

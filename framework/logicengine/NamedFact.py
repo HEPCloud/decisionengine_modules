@@ -22,6 +22,10 @@ facts_globals = {}
 #facts_globals = {"np": np, "pd": pd}
 
 
+class LogicError(TypeError):
+    pass
+
+
 def function_name_from_call(callnode):
     print "In name_from_call: ", callnode
     if (not isinstance(callnode, ast.Call)):

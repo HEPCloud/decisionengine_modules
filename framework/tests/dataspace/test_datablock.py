@@ -7,11 +7,29 @@ import getpass
 from decisionengine.framework.dataspace.datablock import DataBlock, Header, Metadata
 from decisionengine.framework.dataspace.dataspace import DataSpace
 
-config = {
+config_object_db = {
     'dataspace': {
-        'filename': '/tmp/test-%s.db' % getpass.getuser()
+        'db_driver': {
+            'module': 'decisionengine.framework.dataspace.db_object',
+            'name': 'ObjectDB',
+            'config': { },
+        },
     }
 }
+
+config_sqlite3_db = {
+    'dataspace': {
+        'db_driver': {
+            'module': 'decisionengine.framework.dataspace.db_sqlite3',
+            'name': 'SQLite3DB',
+            'config': {
+                'filename': '/tmp/testdb-%s.db' % (os.environ.get('USER'),),
+            },
+        },
+    }
+}
+
+config = config_object_db
 
 def are_dicts_same(x, y):
 
@@ -25,9 +43,10 @@ class TestDataBlock:
 
     def test_datablock(self):
         print "Hello test_datablock"
-        filename = config['dataspace']['filename']
-        if os.path.exists(filename):
-            os.unlink(filename)
+        if config['dataspace']['db_driver']['name'] == 'SQLite3DB':
+            filename = config['dataspace']['db_driver']['config']['filename']
+            if os.path.exists(filename):
+                os.unlink(filename)
 
         dataspace = DataSpace(config)
 
@@ -47,6 +66,7 @@ class TestDataBlock:
         print 'Doing put:\nkey=%s\nvalue=%s\n\nheader=%s\n\nmetadata=%s\n\n' % (
             key, value, header, metadata)
         datablock.put(key, value, header, metadata)
+        datablock.put('zKey', {'mz': 'vz'}, header, metadata)
 
         print 'Doing get: key=%s ...\n' % key
         db_value = datablock.get(key)

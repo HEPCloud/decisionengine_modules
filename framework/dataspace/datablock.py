@@ -282,15 +282,13 @@ class DataBlock(object):
         try:
             value_row = self.dataspace.get_dataproduct(self.taskmanager_id,
                                                        self.generation_id, key)
-            value = ast.literal_eval(value_row[0])
+            value = ast.literal_eval(str(value_row['value']))
         except KeyNotFoundError, e:
             value = default
         except:
             # TODO: FINSIH with more exceptions, content
             raise
 
-        #print '-------'
-        #print value
         if value.get('pickled'):
             return_value = pickle.loads(value.get('value'))
         else:
@@ -359,9 +357,9 @@ class DataBlock(object):
         dup_datablock = copy.copy(self)
         self.generation_id += 1
         dup_datablock.keys_inserted = copy.deepcopy(self.keys_inserted)
-        self.dataspace.duplicate(self.taskmanager_id,
-                                 dup_datablock.generation_id,
-                                 self.generation_id)
+        self.dataspace.duplicate_datablock(self.taskmanager_id,
+                                           dup_datablock.generation_id,
+                                           self.generation_id)
         return dup_datablock
 
 
