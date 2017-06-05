@@ -117,10 +117,10 @@ class Postgresql(ds.DataSource):
 
         q = """
             UPDATE {} SET value=%s
-                      WHERE taskmanager_id=%s AND generation_id=%s AND key=?%s
+                      WHERE taskmanager_id=%s AND generation_id=%s AND key=%s
             """.format(ds.DataSource.dataproduct_table)
 
-        self._update(q, (value, taskmanager_id, generation_id, key))
+        self._update(q, (psycopg2.Binary(str(value)), taskmanager_id, generation_id, key))
 
         q = """
         UPDATE {} SET create_time=%s, 
