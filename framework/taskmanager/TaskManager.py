@@ -33,7 +33,7 @@ class Worker(object):
         self.run_counter = 0
         self.data_updated = threading.Event()
         self.stop_running = threading.Event()
-
+    
 class Channel(object):
     '''
     Decision Channel.
@@ -238,22 +238,21 @@ class TaskManager(object):
 
         while 1:
             try:
-                self.logger.info('Src %s calling aquire'%(src.name,))
+                self.logger.info('Src %s calling acquire'%(src.name,))
                 data = src.worker.acquire()
-                self.logger.info('Src %s aquire retuned %s'%(src.name, data))
-
+                self.logger.info('Src %s acquire retuned %s'%(src.name, data))
                 self.logger.info('Src %s filling header'%(src.name,))
                 header = datablock.Header(self.data_block_t0.taskmanager_id,
                                           create_time=time.time(), creator=src.module)
                 self.logger.info('Src %s header done'%(src.name,))
                 self.data_block_put(data, header, self.data_block_t0)
-                self.logger.info('Src %s header put done'%(src.name,))
+                self.logger.info('Src %s data block put done'%(src.name,))
                 src.run_counter += 1
                 src.data_updated.set()
                 self.logger.info('Src %s %s finished cycle'%(src.name, src.module))
             except Exception:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error running source %s %s %s" % (src, exc, detail))
+                self.logger.error("error running source %s %s %s" % (src.name, exc, detail))
             s = src.stop_running.wait(src.schedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
