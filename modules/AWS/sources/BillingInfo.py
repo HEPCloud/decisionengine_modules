@@ -675,12 +675,12 @@ def module_config_template():
                     }
     }
 
-    print "Entry in channel cofiguration"
+    print "Entry in channel configuration"
     pprint.pprint(d)
     print "where"
     print "\t name - name of the class to be instantiated by task manager"
     print "\t billing_configuration - configuration requred to get AWS billing information"
-    print "\t Example:"
+    print "\t Example of Billing configuration file:"
     print "-------------"
     pprint.pprint(account_info)
     print "-------------"
