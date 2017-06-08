@@ -618,7 +618,7 @@ class BillingInfo(Source.Source):
         # get data for all accounts
         d = {}
         for i in self.accounts:
-            data = {}
+            data = []
             try:
                 calculator = AWSBillCalculator(accountName = i.accountName,
                                                accountProfileName = i.credentialsProfileName,
@@ -630,21 +630,13 @@ class BillingInfo(Source.Source):
                                                tmpDirForBuillingFiles = self.billing_files_location,
                                                verboseFlag = False)
                 lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
-                data[i.accountName] = calculator.CorrectedMonthlyBillSummaryList
-
+                data += calculator.CorrectedMonthlyBillSummaryList
             except Exception, detail:
                 print detail
             except:
                 pass
-        pandas_data = {}
-        if data:
-            for k in data:
-                keys = data[k][0].keys()
-                for key in keys:
-                    pandas_data[key] = pd.Series([d[key] for d in data[k]])
 
-        df = pd.DataFrame(pandas_data)
-        return { PRODUCES[0]: df }
+        return { PRODUCES[0]: pd.DataFrame(data) }
 
 def module_config_template():
     """
