@@ -174,7 +174,7 @@ class DataBlock(object):
             self.generation_id = generation_id
         else:
             self.generation_id = self.dataspace.get_last_generation_id(taskmanager_id) + 1
-        self.keys_inserted = []
+        self.data_keys = []
         self.lock = threading.Lock()
 
 
@@ -182,10 +182,10 @@ class DataBlock(object):
         value = {
             'taskamanger_id': self.taskmanager_id,
             'generation_id': self.generation_id,
-            'keys_inserted': self.keys_inserted,
+            'data_keys': self.data_keys,
         }
         dp = {}
-        for key in self.keys_inserted:
+        for key in self.data_keys:
             dp[key] = self.get(key)
         value['dataproducts'] = dp
         return '%s' % value
@@ -224,7 +224,7 @@ class DataBlock(object):
         """
         self.dataspace.insert(self.taskmanager_id, self.generation_id,
                               key, value, header, metadata)
-        self.keys_inserted.append(key)
+        self.data_keys.append(key)
 
 
     def _update(self, key, value, header, metadata):
@@ -261,7 +261,7 @@ class DataBlock(object):
         else:
             store_value = {'pickled': True, 'value': pickle.dumps(value)}
 
-        if key in self.keys_inserted:
+        if key in self.data_keys:
             # This has been already inserted, so you are working on a copy
             # that was backedup. You need to update and adjust the update
             # counter
@@ -356,7 +356,7 @@ class DataBlock(object):
 
         dup_datablock = copy.copy(self)
         self.generation_id += 1
-        dup_datablock.keys_inserted = copy.deepcopy(self.keys_inserted)
+        dup_datablock.data_keys = copy.deepcopy(self.data_keys)
         self.dataspace.duplicate_datablock(self.taskmanager_id,
                                            dup_datablock.generation_id,
                                            self.generation_id)
