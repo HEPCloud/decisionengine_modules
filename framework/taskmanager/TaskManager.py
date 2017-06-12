@@ -1,29 +1,31 @@
 #!/usr/bin/env/python
-'''
+"""
 Task Manager
-'''
+"""
 import threading
 import logging
 import time
 import sys
 import types
+import uuid
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.modules.de_logger as de_logger
 
 class Worker(object):
-    '''
+    """
     Provides interface to loadable modules an events to sycronise
     execution
-    '''
+    """
 
     def __init__(self, conf_dict):
-        '''
+        """
         :type conf_dict: :obj:`dict`
         :arg conf_dict: configuration dictionary describing the worker
-        '''
+        """
         self.worker = configmanager.ConfigManager.create(conf_dict['module'],
+                                                         conf_dict['name'],
                                                          conf_dict['parameters'])
         self.module = conf_dict['module']
         self.name = self.worker.__class__.__name__
@@ -31,18 +33,18 @@ class Worker(object):
         self.run_counter = 0
         self.data_updated = threading.Event()
         self.stop_running = threading.Event()
-
+    
 class Channel(object):
-    '''
+    """
     Decision Channel.
     Instantiates workers according to channel configuration
-    '''
+    """
 
     def __init__(self, channel_dict):
-        '''
+        """
         :type channel_dict: :obj:`dict`
         :arg channel_dict: channel configuration
-        '''
+        """
 
         self.sources = {}
         self.transforms = {}
@@ -64,19 +66,19 @@ class Channel(object):
 BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
 _state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
 class TaskManager(object):
-    '''
+    """
     Task Manager
-    '''
+    """
 
     def __init__(self, task_manager_id, channel_dict, data_block):
-        '''
+        """
         :type task_manager_id: :obj:`int`
         :arg task_manager_id: Task Manager id provided by caller
         :type channel_dict: :obj:`dict`
         :arg channel_dict: channel configuration
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
-        '''
+        """
 
         self.data_block_t0 = data_block # my current data block
         self.id = task_manager_id
@@ -90,17 +92,15 @@ class TaskManager(object):
         self.stop = False # stop running all loops when this is True
 
 
-    def wait_for_all_sources_ran(self, events_done):
-        '''
-        Wait for all sources to finish
+    def wait_for_all(self, events_done):
+        """
+        Wait for all sources or transforms to finish
 
         :type events_done: :obj:`list`
         :arg events_done: list of events to wait for
-        '''
+        """
 
-        self.logger.info("Waiting for all sorces to run")
-        e_done = events_done
-        neevents = len(e_done)
+        self.logger.info("Waiting for all tasks to run")
         while not all([e.isSet() for e in events_done]):
             time.sleep(1)
             if self.stop:
@@ -116,13 +116,13 @@ class TaskManager(object):
         for e in events_done:
             e.clear()
 
-    def wait_for_any_source_ran(self, events_done):
-        '''
-        Wait for aky sources to finish
+    def wait_for_any(self, events_done):
+        """
+        Wait for any sources to finish
 
         :type events_done: :obj:`list`
         :arg events_done: list of events to wait for
-        '''
+        """
         while not any([e.isSet() for e in events_done]):
             time.sleep(1)
             if self.stop:
@@ -133,15 +133,15 @@ class TaskManager(object):
                 e.clear()
 
     def run(self):
-        '''
+        """
         Task Manager main loop
-        '''
-        
+        """
+
         self.logger.info("Starting Task Manager %s"%(self.id,))
         done_events = self.start_sources(self.data_block_t0)
         # This is a boot phase
         # Wait until all sources run at least one time
-        self.wait_for_all_sources_ran(done_events)
+        self.wait_for_all(done_events)
         self.logger.info("All sorces finished")
         self.decision_cycle()
         if self.state != OFFLINE:
@@ -151,12 +151,15 @@ class TaskManager(object):
             return
 
         while self.state == STEADY:
-            self.wait_for_any_source_ran(done_events)
+            self.wait_for_any(done_events)
             self.decision_cycle()
             if self.stop:
                 self.logger.info("Task Manager %s received stop signal and exits"%(self.id,))
                 for s in self.channel.sources:
                     self.channel.sources[s].stop_running.set()
+                    time.sleep(5)
+                for t in self.channel.transforms:
+                    self.channel.transforms[t].stop_running.set()
                     time.sleep(5)
                 break
 
@@ -165,20 +168,20 @@ class TaskManager(object):
 
 
     def stop_task_manager(self):
-        '''
+        """
         signal task manager to stop
-        '''
+        """
         self.stop = True
 
     def data_block_put(self, data, header, data_block):
-        '''
+        """
         Put data into data block
 
         :type data: :obj:`dict`
         :arg data: key, value pairs
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
-        '''
+        """
 
         if type(data) != types.DictType:
             self.logger.error('data_block put expecting %s type, got %s'%
@@ -190,12 +193,12 @@ class TaskManager(object):
                 data_block.put(k, data[k], header)
 
     def do_backup(self):
-        '''
+        """
         Duplicate current data block and return its copy
 
         :rtype: :obj:`~datablock.DataBlock`
 
-        '''
+        """
 
         with self.lock:
             data_block = self.data_block_t0.duplicate()
@@ -203,9 +206,9 @@ class TaskManager(object):
         return data_block
 
     def decision_cycle(self):
-        '''
+        """
         Decision cycle to be run periodically (by trigger)
-        '''
+        """
 
         data_block_t1 = self.do_backup()
         try:
@@ -226,32 +229,31 @@ class TaskManager(object):
 
 
     def run_source(self, src):
-        '''
+        """
         Get the data from source
         and put it into the data block
 
         :type src: :obj:`~Worker`
         :arg src: source Worker
-        '''
+        """
 
         while 1:
             try:
-                self.logger.info('Src %s calling aquire'%(src.name,))
+                self.logger.info('Src %s calling acquire'%(src.name,))
                 data = src.worker.acquire()
-                self.logger.info('Src %s aquire retuned %s'%(src.name, data))
-
+                self.logger.info('Src %s acquire retuned %s'%(src.name, data))
                 self.logger.info('Src %s filling header'%(src.name,))
                 header = datablock.Header(self.data_block_t0.taskmanager_id,
                                           create_time=time.time(), creator=src.module)
                 self.logger.info('Src %s header done'%(src.name,))
                 self.data_block_put(data, header, self.data_block_t0)
-                self.logger.info('Src %s header put done'%(src.name,))
+                self.logger.info('Src %s data block put done'%(src.name,))
                 src.run_counter += 1
                 src.data_updated.set()
                 self.logger.info('Src %s %s finished cycle'%(src.name, src.module))
             except Exception:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error running source %s %s %s" % (src, exc, detail))
+                self.logger.error("error running source %s %s %s" % (src.name, exc, detail))
             s = src.stop_running.wait(src.schedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
@@ -259,12 +261,12 @@ class TaskManager(object):
         self.logger.info("stopped %s" % (src.name,))
 
     def start_sources(self, data_block=None):
-        '''
+        """
         Start sources, each in a separate thread
 
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
-        '''
+        """
 
         event_list = []
         for s in self.channel.sources:
@@ -282,36 +284,86 @@ class TaskManager(object):
         return event_list
 
     def run_transforms(self, data_block=None):
-        '''
+        """
         Run transforms.
         So far in main process.
 
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
 
-        '''
+        """
         self.logger.info('run_transforms: data block %s'%(data_block,))
         if not data_block:
             return
+        event_list = []
         for t in self.channel.transforms:
-            self.logger.info('run transform %s'%(self.channel.transforms[t].name,))
+            self.logger.info('starting transform %s'%(self.channel.transforms[t].name,))
+            event_list.append(self.channel.transforms[t].data_updated)
+            thread = threading.Thread(group=None, target=self.run_transform,
+                                      name=self.channel.transforms[t].name, args=(self.channel.transforms[t], data_block), kwargs={})
+
             try:
-                data = self.channel.transforms[t].worker.transform(data_block)
-                self.logger.info('transform returned %s'%(data,))
-                header = datablock.Header(data_block.taskmanager_id,
-                                          creator=self.channel.transforms[t].name)
-                self.data_block_put(data, header, data_block)
-                self.logger.info('tranform put data')
-            except Exception, detail:
+                thread.start()
+            except:
+                exc, detail = sys.exc_info()[:2]
+                self.logger.error("error starting thread %s: %s" % (self.channel.transforms[t].name, detail))
+                self.state = OFFLINE
+                break
                 self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
+        print "EVENT LIST", event_list
+        self.wait_for_all(event_list)
+        self.logger.info("all tranforms finished")
+                
+        
+    def run_transform(self, transform, data_block):
+        """
+        Run a transform
+        
+        :type transform: :obj:`~Worker`
+        :arg transform: source Worker
+        :type data_block: :obj:`~datablock.DataBlock`
+        :arg data_block: data block
+        """
+        DATA_TO = 60
+        consume_keys = transform.worker.consumes()
+        
+        self.logger.info('transform: %s expected keys: %s provided keys: %s'%(transform.name, consume_keys, data_block.keys()))
+        loop_counter = 0
+        while 1:
+            with data_block.lock:
+                # Check if data is ready
+                if consume_keys in data_block.keys():
+                    # data is ready -  may run transform()
+                    self.logger.info('run transform %s'%(transform.name,))
+                    try:
+                        data = transform.worker.transform(data_block)
+                        self.logger.info('transform returned %s'%(data,))
+                        header = datablock.Header(data_block.taskmanager_id,
+                                                  creator=transform.name)
+                        self.data_block_put(data, header, data_block)
+                        self.logger.info('tranform put data')
+                    except Exception, detail:
+                        self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
+                    break
+                else:
+                    s = transform.stop_running.wait(1)
+                    if s:
+                        self.logger.info("received stop_running signal for %s"%(transform.name,))
+                        break
+                    loop_counter += 1
+                    if loop_counter == DATA_TO:
+                        self.logger.info("transform %s did not get consumes data in %s seconds. Exiting"%(transform.name, DATA_TO))
+                        break
+        transform.data_updated.set()
+
     def run_logic_engine(self, data_block=None):
-        '''
+        """
         Run Logic Engine.
 
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
-        '''
+        """
         if not data_block:
             return
         for le in self.channel.le_s:
@@ -321,13 +373,13 @@ class TaskManager(object):
             self.logger.info('run logic engine done')
 
     def run_publishers(self, data_block=None):
-        '''
+        """
         Run Publishers in main process.
 
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
 
-        '''
+        """
         if not data_block:
             return
         for p in self.channel.publishers:
@@ -360,7 +412,7 @@ if __name__ == '__main__':
     channels = config_manager.get_channels()
 
     ds = dataspace.DataSpace(global_config)
-    taskmanager_id = 1
+    taskmanager_id = str(uuid.uuid4()).upper()
     generation_id = 1
 
     task_managers = {}

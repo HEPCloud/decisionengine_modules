@@ -2,28 +2,8 @@
 
 import abc
 
-class DatabaseConnectionError(Exception):
-    """
-    Errors related to database access
-    """
-    pass
 
-
-class DatabaseError(Exception):
-    """
-    Errors related to database access
-    """
-    pass
-
-
-class DatabaseExistsError(Exception):
-    """
-    Errors related to database access
-    """
-    pass
-
-
-class Database(object):
+class DataSource(object):
 
     __metaclass__ = abc.ABCMeta
 

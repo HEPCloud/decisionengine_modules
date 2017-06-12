@@ -174,7 +174,7 @@ class DataBlock(object):
             self.generation_id = generation_id
         else:
             self.generation_id = self.dataspace.get_last_generation_id(taskmanager_id) + 1
-        self.keys_inserted = []
+        self._keys = []
         self.lock = threading.Lock()
 
 
@@ -182,13 +182,21 @@ class DataBlock(object):
         value = {
             'taskamanger_id': self.taskmanager_id,
             'generation_id': self.generation_id,
-            'keys_inserted': self.keys_inserted,
+            'keys': self._keys,
         }
         dp = {}
-        for key in self.keys_inserted:
+        for key in self._keys:
             dp[key] = self.get(key)
         value['dataproducts'] = dp
         return '%s' % value
+
+
+    def __contains__(self, key):
+        return key in self._keys
+
+
+    def keys(self):
+        return self._keys
 
 
     def put(self, key, value, header, metadata=None):
@@ -224,7 +232,7 @@ class DataBlock(object):
         """
         self.dataspace.insert(self.taskmanager_id, self.generation_id,
                               key, value, header, metadata)
-        self.keys_inserted.append(key)
+        self._keys.append(key)
 
 
     def _update(self, key, value, header, metadata):
@@ -261,7 +269,7 @@ class DataBlock(object):
         else:
             store_value = {'pickled': True, 'value': pickle.dumps(value)}
 
-        if key in self.keys_inserted:
+        if key in self._keys:
             # This has been already inserted, so you are working on a copy
             # that was backedup. You need to update and adjust the update
             # counter
@@ -282,15 +290,13 @@ class DataBlock(object):
         try:
             value_row = self.dataspace.get_dataproduct(self.taskmanager_id,
                                                        self.generation_id, key)
-            value = ast.literal_eval(value_row[0])
+            value = ast.literal_eval(str(value_row['value']))
         except KeyNotFoundError, e:
             value = default
         except:
             # TODO: FINSIH with more exceptions, content
             raise
 
-        #print '-------'
-        #print value
         if value.get('pickled'):
             return_value = pickle.loads(value.get('value'))
         else:
@@ -358,7 +364,7 @@ class DataBlock(object):
 
         dup_datablock = copy.copy(self)
         self.generation_id += 1
-        dup_datablock.keys_inserted = copy.deepcopy(self.keys_inserted)
+        dup_datablock._keys = copy.deepcopy(self._keys)
         self.dataspace.duplicate_datablock(self.taskmanager_id,
                                            dup_datablock.generation_id,
                                            self.generation_id)

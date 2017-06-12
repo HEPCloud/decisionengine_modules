@@ -58,20 +58,21 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class DatabaseDriver(object):
+class DataSourceLoader(object):
 
     __metaclass__ = Singleton
 
-    _db = None
+    _ds = None
 
     @staticmethod
-    def get_db(module, name, config):
-        db = DatabaseDriver._db
-        if not db:
-            py_module = importlib.import_module(module)
-            cls = getattr(py_module, name)
-            db = cls(config)
-        return db
+    def create_datasource(module_name, class_name, config):
+        ds = DataSourceLoader._ds
+        print module_name, class_name
+        if not ds:
+            py_module = importlib.import_module(module_name)
+            clazz = getattr(py_module, class_name)
+            ds = clazz(config)
+        return ds
 
 
 class DataSpace(object):
@@ -95,28 +96,27 @@ class DataSpace(object):
         elif not isinstance(config.get('dataspace'), dict):
             raise DataSpaceConfigurationError('Invalid dataspace configuration') 
         try:
-            self._db_driver_name = config['dataspace']['db_driver']['name']
-            self._db_driver_module = config['dataspace']['db_driver']['module']
-            self._db_driver_config = config['dataspace']['db_driver']['config']
+            self._db_driver_name = config['dataspace']['datasource']['name']
+            self._db_driver_module = config['dataspace']['datasource']['module']
+            self._db_driver_config = config['dataspace']['datasource']['config']
         except KeyError, e:
             raise DataSpaceConfigurationError('Invalid dataspace configuration')
 
-        self.database = DatabaseDriver().get_db(self._db_driver_module,
-                                                self._db_driver_name,
-                                                self._db_driver_config)
+        self.datasource = DataSourceLoader().create_datasource(self._db_driver_module,
+                                                               self._db_driver_name,
+                                                               self._db_driver_config)
 
         # Datablocks, current and previous, keyed by taskmanager_ids
         self.curr_datablocks = {}
         self.prev_datablocks = {}
 
         # Connect to the database
-        self.database.connect()
+        self.datasource.connect()
 
         # Create tables if not created
         if not DataSpace._tables_created:
-            self.database.create_tables()
+            self.datasource.create_tables()
             DataSpace._tables_created = True
-
 
     def __str__(self):
         return '%s' % vars(self)
@@ -124,32 +124,32 @@ class DataSpace(object):
 
     def insert(self, taskmanager_id, generation_id, key,
                value, header, metadata):
-        self.database.insert(taskmanager_id, generation_id, key,
-                             value, header, metadata)
+        self.datasource.insert(taskmanager_id, generation_id, key,
+                               value, header, metadata)
 
 
     def update(self, taskmanager_id, generation_id, key,
                value, header, metadata):
-        self.database.update(taskmanager_id, generation_id, key,
-                             value, header, metadata)
+        self.datasource.update(taskmanager_id, generation_id, key,
+                               value, header, metadata)
 
 
     def get_dataproduct(self, taskmanager_id, generation_id, key):
-        return self.database.get_dataproduct(taskmanager_id, generation_id, key)
+        return self.datasource.get_dataproduct(taskmanager_id, generation_id, key)
 
 
     def get_header(self, taskmanager_id, generation_id, key):
-        return self.database.get_header(taskmanager_id, generation_id, key)
+        return self.datasource.get_header(taskmanager_id, generation_id, key)
 
 
     def get_metadata(self, taskmanager_id, generation_id, key):
-        return self.database.get_metadata(taskmanager_id, generation_id, key)
+        return self.datasource.get_metadata(taskmanager_id, generation_id, key)
 
 
     def duplicate_datablock(self, taskmanager_id, generation_id,
                             new_generation_id):
-        return self.database.duplicate_datablock(taskmanager_id, generation_id,
-                                                 new_generation_id)
+        return self.datasource.duplicate_datablock(taskmanager_id, generation_id,
+                                                   new_generation_id)
 
 
     def delete(self, taskmanager_id, all_generations=False):
@@ -165,8 +165,8 @@ class DataSpace(object):
     def mark_demented(self, taskmanager_id, keys, generation_id=None):
         if not generation_id:
             generation_id = self.curr_datablocks[taskmanager_id].generation_id
-        self.database.mark_demented(taskmanager_id, generation_id, keys)
+        self.datasource.mark_demented(taskmanager_id, generation_id, keys)
 
 
     def close(self):
-        self.database.close()
+        self.datasource.close()
