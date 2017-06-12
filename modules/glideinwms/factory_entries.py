@@ -11,7 +11,7 @@ from decisionengine.modules.htcondor import htcondor_query
 
 PRODUCES = [
     'Factory_Entries_Grid', 'Factory_Entries_AWS',
-    'Factory_entries_GCE', 'Factory_Entries_LCF'
+    'Factory_Entries_GCE', 'Factory_Entries_LCF'
 ]
 
 
@@ -73,7 +73,7 @@ def module_config_template():
     """
 
     template = {
-        'Factory_Entries': {
+        'factory_entries': {
             'module': 'modules.glideinwms.factory_entries',
             'name': 'FactoryEntries',
             'parameters': {
