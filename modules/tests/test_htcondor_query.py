@@ -2,9 +2,8 @@ import os
 import pytest
 import mock
 import pprint
-
 import classad
-
+import utils
 from decisionengine.modules.htcondor import htcondor_query
 
 
@@ -18,18 +17,6 @@ config_cs = {
     'condor_config': 'condor_config',
     'pool_name': 'fermicloud122.fnal.gov:8618',
 }
-
-
-def prepare_dict_from_file(fname):
-    with open(fname) as fd:
-        return eval(fd.read())
-
-def prepare_condorstatus_dict():
-    return prepare_dict_from_file('cs.fixture')
-
-
-def prepare_condorq_dict():
-    return prepare_dict_from_file('cq.fixture')
 
 
 class TestCondorQ:
@@ -53,7 +40,7 @@ class TestCondorQ:
             pool_name=config_cq.get('pool_name'))
 
         with mock.patch.object(htcondor_query.CondorQ, 'fetch') as f:
-            f.return_value = prepare_condorq_dict()
+            f.return_value = utils.input_from_file('cq.fixture')
             condor_q.load()
             pprint.pprint(condor_q.stored_data)
 
@@ -77,7 +64,7 @@ class TestCondorStatus:
             pool_name=config_cs.get('pool_name'))
 
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
-            f.return_value = prepare_condorstatus_dict()
+            f.return_value = utils.input_from_file('cs.fixture')
             condor_status.load()
             pprint.pprint(condor_status.stored_data)
 
