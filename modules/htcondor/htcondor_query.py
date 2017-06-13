@@ -60,7 +60,7 @@ class Query(object):
         @rtype: dict
         @return: Same as fetch(), but limited to constraint_func(el)==True
         """
-        return apply_contraint(self.stored_data, constraint_func)
+        return apply_constraint(self.stored_data, constraint_func)
 
 
 class CondorQuery(Query):
