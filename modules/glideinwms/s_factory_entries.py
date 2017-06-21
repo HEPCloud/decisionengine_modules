@@ -17,10 +17,13 @@ PRODUCES = [
 
 class FactoryEntries(Source.Source):
 
-    def __init__(self, config, *args, **kwargs):
-        if config is None:
+    def __init__(self, *args, **kwargs):
+        if args:
+            config = args[0]
+        else:
             config = {}
-        elif not isinstance(config, dict):
+
+        if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
