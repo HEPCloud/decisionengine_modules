@@ -67,6 +67,7 @@ class OccupancyForRegion(object):
         else:
             self.ec2_resource =  boto3.resource('ec2', region)
         self.instance_types = instance_types
+        self.account_name = profile_name
 
     def get_ec2_instances(self):
         """
@@ -78,7 +79,8 @@ class OccupancyForRegion(object):
         instances = self.ec2_resource.instances.all()
         d ={}
         for instance in instances:
-            d[instance.id] = {'InstanceId': instance.id,
+            d[instance.id] = {'AccountName': self.account_name,
+                              'InstanceId': instance.id,
                               'InstanceType' : instance.instance_type,
                               'InstanceState': instance.state['Name'],
                               'AvailabilityZone': instance.placement['AvailabilityZone'],
