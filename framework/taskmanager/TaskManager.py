@@ -142,7 +142,7 @@ class TaskManager(object):
         # This is a boot phase
         # Wait until all sources run at least one time
         self.wait_for_all(done_events)
-        self.logger.info("All sorces finished")
+        self.logger.info("All sources finished")
         self.decision_cycle()
         if self.state != OFFLINE:
             self.state = STEADY
@@ -296,11 +296,14 @@ class TaskManager(object):
         if not data_block:
             return
         event_list = []
-        for t in self.channel.transforms:
-            self.logger.info('starting transform %s'%(self.channel.transforms[t].name,))
-            event_list.append(self.channel.transforms[t].data_updated)
-            thread = threading.Thread(group=None, target=self.run_transform,
-                                      name=self.channel.transforms[t].name, args=(self.channel.transforms[t], data_block), kwargs={})
+        for name, transform in self.channel.transforms:
+            self.logger.info('starting transform %s'%(transform.name,))
+            event_list.append(transform.data_updated)
+            thread = threading.Thread(group=None, 
+                                      target=self.run_transform,
+                                      name=transform.name, 
+                                      args=(transforms, data_block), 
+                                      kwargs={})
 
             try:
                 thread.start()
@@ -311,11 +314,9 @@ class TaskManager(object):
                 break
                 self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
-        print "EVENT LIST", event_list
         self.wait_for_all(event_list)
         self.logger.info("all tranforms finished")
-                
-        
+
     def run_transform(self, transform, data_block):
         """
         Run a transform
