@@ -15,7 +15,7 @@ config_cq = {
 
 config_cs = {
     'condor_config': 'condor_config',
-    'pool_name': 'fermicloud122.fnal.gov:8618',
+    'pool_name': 'fermicloud122.fnal.gov',
 }
 
 
@@ -44,6 +44,7 @@ class TestCondorQ:
             condor_q.load()
             pprint.pprint(condor_q.stored_data)
 
+
 class TestCondorStatus:
 
     def test_condorstatus_live(self):
@@ -51,10 +52,9 @@ class TestCondorStatus:
             os.environ['CONDOR_CONFIG'] = config_cs.get('condor_config')
 
         condor_status = htcondor_query.CondorStatus(
-            subsystem_name='any',
             pool_name=config_cs.get('pool_name'))
 
-        condor_status.load(constraint='glideinmytype=="glidefactory"')
+        condor_status.load()
         pprint.pprint(condor_status.stored_data)
 
 
