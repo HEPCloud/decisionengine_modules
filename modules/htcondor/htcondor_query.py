@@ -102,7 +102,7 @@ class CondorQ(CondorQuery):
         Fetch job classads
         """
 
-        results_dict = {}
+        results = []
         constraint = bindings_friendly_constraint(constraint)
         attrs = bindings_friendly_attrs(format_list)
 
@@ -122,8 +122,9 @@ class CondorQ(CondorQuery):
                 schedd = htcondor.Schedd(
                     collector.locate(htcondor.DaemonTypes.Schedd,
                                      self.schedd_name))
-            results = schedd.query(constraint, attrs)
-            results_dict = list2dict(results, self.group_attr)
+            classads = schedd.query(constraint, attrs)
+            #results_dict = list2dict(results, self.group_attr)
+            results = eval_classad_expr(classads)
         except Exception as ex:
             s = 'default'
             if self.schedd_name is not None:
@@ -137,7 +138,7 @@ class CondorQ(CondorQuery):
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
 
-        return results_dict
+        return results
 
 
 class CondorStatus(CondorQuery):

@@ -9,8 +9,9 @@ from decisionengine.modules.htcondor import s_job_q
 
 config_cq = {
     'condor_config': 'condor_config',
-    'pool_name': 'fermicloud122.fnal.gov',
+    'collector_host': 'fermicloud122.fnal.gov',
     'schedds': ['fermicloud122.fnal.gov'],
+    'classad_attrs': ['ClusterId', 'ProcId', 'JobStatus']
 }
 
 
@@ -27,3 +28,8 @@ class TestJobQ:
         with mock.patch.object(htcondor_query.CondorQ, 'fetch') as f:
             f.return_value = utils.input_from_file('cq.fixture')
             pprint.pprint(job_q.acquire())
+
+
+    def test_condorq_live(self):
+        job_q = s_job_q.JobQ(config_cq)
+        pprint.pprint(job_q.acquire())

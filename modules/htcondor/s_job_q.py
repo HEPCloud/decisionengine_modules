@@ -49,11 +49,12 @@ class JobQ(Source.Source):
                           format_list=self.classad_attrs,
                           condor_config=self.condor_config)
             jobs = []
-            for job in condor_q.stored_data.values():
+            for job in condor_q.stored_data:
                 jobs.extend(job)
-            df = pandas.DataFrame(jobs)
+            df = pandas.DataFrame(condor_q.stored_data)
             # Add schedd name to the jobs
             df['ScheddName'] = pandas.Series([schedd]*len(condor_q.stored_data))
+            df['CollectorHost'] = pandas.Series([self.collector_host]*len(condor_q.stored_data))
             dataframe = dataframe.append(df, ignore_index=True)
         return {'job_manifests': dataframe}
 
