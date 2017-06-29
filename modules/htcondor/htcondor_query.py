@@ -159,10 +159,10 @@ class CondorStatus(CondorQuery):
 
     def fetch(self, constraint=None, format_list=None, condor_config=None):
         """
-        Fetch resource classads
+        Fetch resource classads and return a list of evaluated classads
         """
 
-        results_dict = {}
+        results = []
         constraint = bindings_friendly_constraint(constraint)
         attrs = bindings_friendly_attrs(format_list)
         adtype = resource_str_to_py_adtype(self.resource_str)
@@ -177,9 +177,10 @@ class CondorStatus(CondorQuery):
             else:
                 collector = htcondor.Collector()
 
-            results = collector.query(adtype, constraint, attrs)
-            results_dict = list2dict(results, self.group_attr)
+            classads = collector.query(adtype, constraint, attrs)
+            results = eval_classad_expr(classads)
         except Exception as ex:
+            raise
             p = 'default'
             if self.pool_name is not None:
                 p = self.pool_name
@@ -189,7 +190,7 @@ class CondorStatus(CondorQuery):
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
 
-        return results_dict
+        return results
 
 
 def apply_constraint(data, constraint_func):
@@ -305,7 +306,7 @@ def list2dict(list_data, attr_name):
     return dict_data
 
 
-def classads2list(classads):
+def eval_classad_expr(classads):
     """
     Convert the classads into list of classads
     """
