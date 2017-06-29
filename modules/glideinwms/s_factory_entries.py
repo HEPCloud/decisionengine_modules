@@ -60,13 +60,21 @@ class FactoryEntries(Source.Source):
         condor_status.load(constraint, self.classad_attrs, self.condor_config)
 
         results = {}
+        """
         for key, value in condor_status.stored_data.iteritems():
             entry_type = key[0].lower()
             if entry_type in self._entry_gridtype_map:
                 results[self._entry_gridtype_map[entry_type]] = pandas.DataFrame(value)
             else:
                 print('WARNING: No mapping found for entry_type %s, ignoring.' % entry_type)
-
+        """
+        import pprint
+        #pprint.pprint(condor_status.stored_data)
+        dataframe = pandas.DataFrame(condor_status.stored_data)
+        pprint.pprint(dataframe)
+        
+        for key, value in self._entry_gridtype_map.iteritems():
+            results[value] = dataframe.loc[(dataframe.GLIDEIN_GridType == key)]
         return results
 
 

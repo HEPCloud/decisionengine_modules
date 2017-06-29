@@ -24,8 +24,14 @@ class TestFactoryEntries:
         ]
         assert(entries.produces() == produces)
 
+
     def test_acquire(self):
         entries = s_factory_entries.FactoryEntries(config_factory_entries)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
             f.return_value = utils.input_from_file('factory_entries.cs.fixture')
             pprint.pprint(entries.acquire())
+
+
+    def test_acquire_live(self):
+        entries = s_factory_entries.FactoryEntries(config_factory_entries)
+        pprint.pprint(entries.acquire())
