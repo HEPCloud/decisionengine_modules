@@ -180,7 +180,6 @@ class CondorStatus(CondorQuery):
             classads = collector.query(adtype, constraint, attrs)
             results = eval_classad_expr(classads)
         except Exception as ex:
-            raise
             p = 'default'
             if self.pool_name is not None:
                 p = self.pool_name
