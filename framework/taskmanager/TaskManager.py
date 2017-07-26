@@ -8,10 +8,13 @@ import time
 import sys
 import types
 import uuid
+import traceback
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.modules.de_logger as de_logger
+
+TRANSFORMS_TO = 300
 
 class Worker(object):
     """
@@ -60,6 +63,7 @@ class Channel(object):
 
         for s in channel_dict['publishers']:
             self.publishers[s] = Worker(channel_dict['publishers'][s])
+        self.task_manager = channel_dict.get('task_manager', {})
 
 
 # states
@@ -86,9 +90,7 @@ class TaskManager(object):
         self.state = BOOT
         self.decision_cycle_active = False
         self.lock = threading.Lock()
-        #self.logger = logging.getLogger("decision_engine")
         self.logger = de_logger.get_logger()
-        self.logger.info("TM starting %s" % (self.id,))
         self.stop = False # stop running all loops when this is True
 
 
@@ -214,8 +216,8 @@ class TaskManager(object):
         try:
             self.run_transforms(data_block_t1)
         except Exception:
-            exc, detail = sys.exc_info()[:2]
-            self.logger.error("error in decision cycle(transforms) %s %s" % (exc, detail))
+            exc, detail, tb = sys.exc_info()
+            self.logger.error("error in decision cycle(transforms) %s %s %s" % (exc, detail,  traceback.format_exception( exc, value, tb )))
         try:
             self.run_logic_engine(data_block_t1)
         except Exception:
@@ -296,13 +298,13 @@ class TaskManager(object):
         if not data_block:
             return
         event_list = []
-        for name, transform in self.channel.transforms:
+        for name, transform in self.channel.transforms.items():
             self.logger.info('starting transform %s'%(transform.name,))
             event_list.append(transform.data_updated)
-            thread = threading.Thread(group=None, 
+            thread = threading.Thread(group=None,
                                       target=self.run_transform,
-                                      name=transform.name, 
-                                      args=(transforms, data_block), 
+                                      name=transform.name,
+                                      args=(transform, data_block),
                                       kwargs={})
 
             try:
@@ -315,47 +317,47 @@ class TaskManager(object):
                 self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
         self.wait_for_all(event_list)
-        self.logger.info("all tranforms finished")
+        self.logger.info("all transforms finished")
 
     def run_transform(self, transform, data_block):
         """
         Run a transform
-        
+
         :type transform: :obj:`~Worker`
         :arg transform: source Worker
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
         """
-        DATA_TO = 60
+        data_to = self.channel.task_manager.get('data_TO', TRANSFORMS_TO)
         consume_keys = transform.worker.consumes()
-        
+
         self.logger.info('transform: %s expected keys: %s provided keys: %s'%(transform.name, consume_keys, data_block.keys()))
         loop_counter = 0
         while 1:
-            with data_block.lock:
-                # Check if data is ready
-                if consume_keys in data_block.keys():
-                    # data is ready -  may run transform()
-                    self.logger.info('run transform %s'%(transform.name,))
-                    try:
+            # Check if data is ready
+            if set(consume_keys) <= set(data_block.keys()):
+                # data is ready -  may run transform()
+                self.logger.info('run transform %s'%(transform.name,))
+                try:
+                    with data_block.lock:
                         data = transform.worker.transform(data_block)
-                        self.logger.info('transform returned %s'%(data,))
-                        header = datablock.Header(data_block.taskmanager_id,
-                                                  creator=transform.name)
-                        self.data_block_put(data, header, data_block)
-                        self.logger.info('tranform put data')
-                    except Exception, detail:
-                        self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
+                    self.logger.info('transform returned %s'%(data,))
+                    header = datablock.Header(data_block.taskmanager_id,
+                                              creator=transform.name)
+                    self.data_block_put(data, header, data_block)
+                    self.logger.info('transform put data')
+                except Exception, detail:
+                    self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
+                break
+            else:
+                s = transform.stop_running.wait(1)
+                if s:
+                    self.logger.info("received stop_running signal for %s"%(transform.name,))
                     break
-                else:
-                    s = transform.stop_running.wait(1)
-                    if s:
-                        self.logger.info("received stop_running signal for %s"%(transform.name,))
-                        break
-                    loop_counter += 1
-                    if loop_counter == DATA_TO:
-                        self.logger.info("transform %s did not get consumes data in %s seconds. Exiting"%(transform.name, DATA_TO))
-                        break
+                loop_counter += 1
+                if loop_counter == data_to:
+                    self.logger.info("transform %s did not get consumes data in %s seconds. Exiting"%(transform.name, data_to))
+                    break
         transform.data_updated.set()
 
     def run_logic_engine(self, data_block=None):
@@ -422,7 +424,7 @@ if __name__ == '__main__':
     create channels
     """
     for ch in channels:
-        task_managers[ch] = TaskManager(ch, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
+        task_managers[ch] = TaskManager(taskmanager_id, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
 
     for key, value in task_managers.iteritems():
         t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})
