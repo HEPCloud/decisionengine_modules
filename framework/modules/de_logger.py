@@ -27,15 +27,16 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
     #logger =  logging.getLogger()
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(levelname)s - %(message)s")
 
-    handler = logging.handlers.RotatingFileHandler(log_file_name,
-                                                   maxBytes=max_file_size,
-                                                   backupCount=max_backup_count)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    file_handler = logging.handlers.RotatingFileHandler(log_file_name,
+                                                        maxBytes=max_file_size,
+                                                        backupCount=max_backup_count)
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
 
-    logger.setLevel(logging.INFO)
-    #logger.setLevel(logging.DEBUG)
-    #logger =  logging.getLogger(__name__)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.ERROR)
+    logger.addHandler(console_handler)
 
     return logger
 

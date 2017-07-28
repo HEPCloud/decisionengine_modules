@@ -59,47 +59,38 @@ class DecisionEngine(object):
         config_manager.load()
         global_config = config_manager.get_global_config()
         channels = config_manager.get_channels()
-
-        # TODO: Make sure log rotation is threadsafe
-        logfile = global_config['logger']['log_file']
-        logfile_size = global_config['logger'].get('max_file_size', 10000000)
-        logfile_backup_count = global_config['logger'].get('max_backup_count', 5)
-        #formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(levelname)s - %(message)s")
-        #handler = logging.handlers.RotatingFileHandler(
-        #    logfile, maxBytes=logfile_size, backupCount=logfile_backup_count)
-        #handler.setFormatter(formatter)
-        #self.logger.addHandler(handler)
-        #self.logger.setLevel(logging.INFO)
-        self.logger = de_logger.set_logging(
-            log_file_name=logfile, max_file_size=logfile_size,
-            max_backup_count=logfile_backup_count)
+        if not channels or len(channels) == 0:
+            raise RuntimeError("No channels configured")
 
         ds = dataspace.DataSpace(global_config)
-        taskmanager_id = str(uuid.uuid4()).upper()
         generation_id = 1
+        task_managers = {}
 
-        task_managers = {} 
-        data_space = {}
         """
         create channels
         """
         for ch in channels:
-                task_managers[ch] = TaskManager.TaskManager(ch,
-                                                            channels[ch],
-                                                            datablock.DataBlock(ds,taskmanager_id, generation_id))
-                
+            task_managers[ch] = TaskManager.TaskManager(ch,
+                                                        channels[ch],
+                                                        datablock.DataBlock(ds,str(uuid.uuid4()).upper(), generation_id))
+
         for key, value in task_managers.iteritems():
             t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})
             t.start()
 
         try:
-            while True: 
+            while True:
                 time.sleep(10)
                 if threading.activeCount() <= 1 : break
-        except (SystemExit, KeyboardInterrupt):   
+        except (SystemExit, KeyboardInterrupt):
             pass
 
 
 if __name__ == '__main__':
-    de = DecisionEngine()
-    de.main()
+    try:
+        de = DecisionEngine()
+        de.main()
+    except Exception, msg:
+        sys.stderr.write("Fatal Error: {}\n".format(msg))
+        sys.exit(1)
+
