@@ -11,6 +11,7 @@ MANDATORY_MODULE_KEYS = {"module", "name", "parameters"}
 
 CONFIG_FILE_NAME = "decision_engine.conf"
 
+
 class ConfigManager(object):
 
     def __init__(self):
@@ -27,27 +28,31 @@ class ConfigManager(object):
 
     def check_keys(self, channel_conf_dict):
         """
-        check that channel config has mandatory keys 
-        :type data: :obj:`dict` 
+        check that channel config has mandatory keys
+        :type data: :obj:`dict`
         """
         channel_keys = set(channel_conf_dict.keys())
         diff = MANDATORY_CHANNEL_KEYS - channel_keys
         if diff:
             raise RuntimeError("channel is missing one or more mandatory keys {} ".
                                format(list(diff)))
-        for name, conf in channel_conf_dict.items():
+        for name in MANDATORY_CHANNEL_KEYS:
+            conf = channel_conf_dict[name]
             for module_name, module_conf in conf.items():
-                module_keys = set(module_conf.keys())
+                try:
+                    module_keys = set(module_conf.keys())
+                except Exception, msg:
+                    raise RuntimeError("{} module {} is not a dictionary, {}".
+                                       format(name, module_name, str(msg)))
                 diff = MANDATORY_MODULE_KEYS - module_keys
                 if diff:
                     raise RuntimeError("{} module {} is missing one or more mandatory keys {} ".
-                                       format(name,module_name,str(list(diff))))
+                                       format(name, module_name, str(list(diff))))
 
     def validate_channel(self, channel):
         """
-        Validate channels 
-        
-        :type data: :obj:`dict` 
+        Validate channels
+        :type channel: :obj:`dict`
         """
         self.check_keys(channel)
         """
@@ -55,7 +60,6 @@ class ConfigManager(object):
         """
         sources = channel.get('sources')
         all_produces = set()
-        failure = False
         for sname, conf in sources.iteritems():
             my_module = importlib.import_module(conf.get('module'))
             try:
@@ -63,7 +67,7 @@ class ConfigManager(object):
                 all_produces |= set(produces)
             except AttributeError, msg:
                 raise RuntimeError("source module {} does not have required PRODUCES list".
-                                    format(sname))
+                                   format(sname))
 
         all_consumes = set()
 
@@ -84,16 +88,16 @@ class ConfigManager(object):
                                         'produces': produces}
             except AttributeError, msg:
                 raise RuntimeError("transform module {} does not have required lists {}".
-                                   format(tname,str(msg)))
+                                   format(tname, str(msg)))
 
         if not all_consumes.issubset(all_produces):
             raise RuntimeError("consumes are not subset of produce, extra keys {}".
                                format(list(all_consumes-all_produces)))
 
         """
-        graph contains pairs of modules and lists of modules that depends on 
+        graph contains pairs of modules and lists of modules that depends on
         this module, e.g.:
-        { "A" : [B,C,D], 
+        { "A" : [B,C,D],
         "D" : [C,B] }
         """
 
@@ -118,11 +122,11 @@ class ConfigManager(object):
 
         """
         sort modules using topological sort
-        sorted_modules are transform modules in order of execution 
+        sorted_modules are transform modules in order of execution
         """
         sorted_modules, cyclic_modules = tsort.tsort(graph)
 
-        if cyclic_modules and len(cyclic_modules) > 0:
+        if cyclic_modules:
             raise RuntimeError("cyclic dependency detected for modules {}".
                                format(list(cyclic_modules)))
 
@@ -137,11 +141,12 @@ class ConfigManager(object):
                     exec(code)
                 except Exception, msg:
                     raise RuntimeError("Configuration file {} contains errors: {}".
-                                       format(self.config_file,str(msg)))
+                                       format(self.config_file, str(msg)))
             else:
                 raise RuntimeError("Empty configuration file {}".format(self.config_file))
         except Exception, msg:
-            raise RuntimeError("Failed to read configuration file {}".format(self.config_file,str(msg)))
+            raise RuntimeError("Failed to read configuration file {} {}".
+                               format(self.config_file, str(msg)))
 
         if not self.logger:
             try:
@@ -168,21 +173,23 @@ class ConfigManager(object):
                     try:
                         exec(code)
                     except Exception, msg:
-                        self.logger.error("Channel configuration file {} contains error {}, SKIPPING".
+                        self.logger.error("Channel configuration file {} \
+                                           contains error {}, SKIPPING".
                                           format(channel_conf, str(msg)))
                         continue
             except Exception, msg:
-                self.logger.error("Failed to open channel configuration file {} contains error {}, SKIPPING".
+                self.logger.error("Failed to open channel configuration file {} \
+                                  contains error {}, SKIPPING".
                                   format(channel_conf, str(msg)))
 
             """
-            check that channel configuration contains necessary keys 
-            if keys are missing channel is removed and error is printed 
+            check that channel configuration contains necessary keys
+            if keys are missing channel is removed and error is printed
             """
             try:
                 self.validate_channel(self.channels[name])
             except Exception, msg:
-                self.logger.error("{} {}, REMOVING the channel".format(name,str(msg)))
+                self.logger.error("{} {}, REMOVING the channel".format(name, str(msg)))
                 del self.channels[name]
                 continue
 
