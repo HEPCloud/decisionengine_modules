@@ -2,7 +2,7 @@
 class Module(object):
     
 
-    def __init__(self,set_of_parameters):
+    def __init__(self, set_of_parameters):
         self.parameters = set_of_parameters
 
     def get_paramaters(self):

@@ -1,8 +1,8 @@
 from decisionengine.framework.modules import Module
 
 class Transform(Module.Module):
-    def __init__(self,set_of_parameters):
-        Module.Module.__init__(self,set_of_parameters)
+    def __init__(self, set_of_parameters):
+        Module.Module.__init__(self, set_of_parameters)
 
     """
     name_list: A list of the data product names that
