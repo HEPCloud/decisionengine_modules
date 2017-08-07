@@ -23,7 +23,6 @@ class HTCondorManifests(Publisher.Publisher):
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
-        self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
         self.logger = de_logger.get_logger()
         self.update_ad_command = 'UPDATE_AD_GENERIC'
@@ -53,12 +52,31 @@ class HTCondorManifests(Publisher.Publisher):
         :type ads: :obj:`list`
         :type collector_host: :obj:`string`
         """
-        collector = None
-        if collector_host:
-            collector = htcondor.Collector(collector_host)
-        else:
-            collector = htcondor.Collector()
-        collector.advertise(ads, self.update_ad_command, True)
+
+        try:
+            old_condor_config_env = os.environ.get('CONDOR_CONFIG')
+            if condor_config and os.path.exists(condor_config):
+                os.environ['CONDOR_CONFIG'] = condor_config
+            htcondor.reload_config()
+       
+            collector = None
+            if collector_host:
+                collector = htcondor.Collector(collector_host)
+            else:
+                collector = htcondor.Collector()
+            collector.advertise(ads, self.update_ad_command, True)
+        except Exception as ex:
+            raise
+            # TODO: We need to be more specific about the errors/exception
+            #       For now just raise to get more info logged
+            #p = 'default'
+            #if collector_host:
+            #    p = collector_host
+            #err_str = 'Error advertising with command %s to pool %s: %s' % (self.update_ad_command, p, ex)
+            #raise QueryError(err_str), None, sys.exc_info()[2]
+        finally:
+            if old_condor_config_env:
+                os.environ['CONDOR_CONFIG'] = old_condor_config_env
 
 
     def publish(self, datablock):
