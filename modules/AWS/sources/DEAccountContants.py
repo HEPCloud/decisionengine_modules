@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-import importlib
 import string
-import pprint
 
 """
 This data is taken from billing and arranged as dictionary of
@@ -21,14 +19,14 @@ EXPECTED_NAMES = ['accountName',
                   'projectId',
                   ]
 class AccountConstants(object):
-    def __init__(self, constants = {}):
+    def __init__(self, constants={}):
         # Initialize variables
         for k in EXPECTED_NAMES:
-           setattr(self, k, None)
+            setattr(self, k, None)
         # Set variables
         for k, val in constants.items():
             if k in EXPECTED_NAMES:
-                setattr(self, k,val)
+                setattr(self, k, val)
 
     def __repr__(self):
         return "%s %s %s %s %s %s %s %s %s"%(self.accountName,
@@ -43,7 +41,7 @@ class AccountConstants(object):
 
     def info(self):
         for name in EXPECTED_NAMES:
-            attr = getattr(self,name)
+            attr = getattr(self, name)
             print name, attr, type(attr)
 
 def load_constants(constants_file):
@@ -58,6 +56,7 @@ def load_constants(constants_file):
     '''
 
     code = None
+    config_dict = {} # to trick pylint
     with open(constants_file, "r") as f:
         code = "config_dict=" + string.join(f.readlines(), "")
     if code:
