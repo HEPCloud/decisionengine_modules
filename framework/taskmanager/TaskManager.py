@@ -387,12 +387,14 @@ class TaskManager(object):
             return
         for p in self.channel.publishers:
             self.logger.info('run publisher %s %s'%(self.channel.publishers[p].name, data_block))
-            self.channel.publishers[p].worker.publish()
+            self.channel.publishers[p].worker.publish(data_block)
 
 
 
 if __name__ == '__main__':
     import decisionengine.framework.dataspace.dataspace as dataspace
+    import os
+    import string
 
     config_manager = configmanager.ConfigManager()
     config_manager.load()
@@ -411,8 +413,16 @@ if __name__ == '__main__':
 
     my_logger.info("Starting decision engine")
 
-
-    channels = config_manager.get_channels()
+    if len(sys.argv) > 1:
+        channel_name = sys.argv[1]
+        channel_conf = os.path.join(config_manager.channel_config_dir, channel_name)
+        with open(os.path.abspath(channel_conf), "r") as f:
+            channels = {}
+            channel_name = channel_name.split('.')[0]
+            code = "channels[channel_name]=" + string.join(f.readlines(), "")
+            exec(code)
+    else:
+        channels = config_manager.get_channels()
 
     ds = dataspace.DataSpace(global_config)
     taskmanager_id = str(uuid.uuid4()).upper()
