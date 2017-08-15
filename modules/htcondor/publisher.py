@@ -1,12 +1,13 @@
 #!/usr/bin/python
 import abc
+import os
 import pandas
 import htcondor
 import classad
 
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Publisher
-#from decisionengine.framework.dataspace import datablock
+from decisionengine.framework.dataspace import datablock
 
 class HTCondorManifests(Publisher.Publisher):
 
@@ -53,10 +54,10 @@ class HTCondorManifests(Publisher.Publisher):
         :type collector_host: :obj:`string`
         """
 
+        old_condor_config_env = os.environ.get('CONDOR_CONFIG')
         try:
-            old_condor_config_env = os.environ.get('CONDOR_CONFIG')
-            if condor_config and os.path.exists(condor_config):
-                os.environ['CONDOR_CONFIG'] = condor_config
+            if self.condor_config and os.path.exists(self.condor_config):
+                os.environ['CONDOR_CONFIG'] = self.condor_config
             htcondor.reload_config()
        
             collector = None
@@ -97,6 +98,7 @@ class HTCondorManifests(Publisher.Publisher):
                     ads = dataframe_to_classads(
                         dataframe[(dataframe['CollectorHost'] == collector)])
                     # Advertise the classad to given collector
+                    self.condor_advertise(ads, collector_host=collector)
             else:
                 self.logger.info('No %s classads found to advertise' % key)
 
