@@ -22,10 +22,6 @@ class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
         return CONSUMES
 
 
-    def acquire(self):
-        return {PRODUCES[0]: self.load()}
-
-
 def module_config_template():
     """
     Print template for this module configuration
