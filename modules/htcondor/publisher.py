@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 import abc
 import os
 import pandas
@@ -8,6 +9,11 @@ import classad
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.dataspace import datablock
+
+
+DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
+DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
+
 
 class HTCondorManifests(Publisher.Publisher):
 
@@ -26,8 +32,8 @@ class HTCondorManifests(Publisher.Publisher):
 
         self.condor_config = config.get('condor_config')
         self.logger = de_logger.get_logger()
-        self.update_ad_command = 'UPDATE_AD_GENERIC'
-        self.invalidate_ad_command = 'INVALIDATE_AD_GENERIC'
+        self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
+        self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
 
 
     def __repr__(self):
@@ -46,7 +52,8 @@ class HTCondorManifests(Publisher.Publisher):
         return None
 
 
-    def condor_advertise(self, ads, collector_host=None):
+    def condor_advertise(self, ads, collector_host=None,
+                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
         Advertise list of classads to the HTCondor Collector
 
@@ -65,7 +72,7 @@ class HTCondorManifests(Publisher.Publisher):
                 collector = htcondor.Collector(collector_host)
             else:
                 collector = htcondor.Collector()
-            collector.advertise(ads, self.update_ad_command, True)
+            collector.advertise(ads, update_ad_command, True)
         except Exception as ex:
             raise
             # TODO: We need to be more specific about the errors/exception
