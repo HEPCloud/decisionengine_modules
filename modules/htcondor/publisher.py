@@ -66,7 +66,7 @@ class HTCondorManifests(Publisher.Publisher):
             if self.condor_config and os.path.exists(self.condor_config):
                 os.environ['CONDOR_CONFIG'] = self.condor_config
             htcondor.reload_config()
-       
+
             collector = None
             if collector_host:
                 collector = htcondor.Collector(collector_host)
