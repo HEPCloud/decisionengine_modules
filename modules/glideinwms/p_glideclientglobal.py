@@ -33,7 +33,7 @@ def module_config_template():
 
     template = {
         'glideclientglobal_manifests': {
-            'module': 'modules.htcondor.p_glideclientglobal',
+            'module': 'modules.glideinwms.p_glideclientglobal',
             'name': 'GlideClientGlobalManifests',
             'parameters': {
                 'collector_host': 'factory_collector.com',
