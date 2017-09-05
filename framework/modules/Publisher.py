@@ -7,6 +7,6 @@ class Publisher(Module.Module):
     def consumes(self, name_list):
         print "Called Publisher.consumes"
 
-    def publish(self):
+    def publish(self, data_block=None):
         print "Called Publisher.publish"
 

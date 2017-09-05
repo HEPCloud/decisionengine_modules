@@ -7,7 +7,7 @@ import logging
 import logging.handlers
 
 LOG_FILE='/tmp/decision_engine_logs/decision_engine_log'
-MB=000000
+MB=1000000
 ROTATE_AFTER = 6
 
 def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count = ROTATE_AFTER):
@@ -24,8 +24,7 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
     if not os.path.exists(os.path.dirname(log_file_name)):
         os.makedirs(os.path.dirname(log_file_name))
     logger =  logging.getLogger("decision_engine")
-    #logger =  logging.getLogger()
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(threadName)s - %(levelname)s - %(message)s")
 
     file_handler = logging.handlers.RotatingFileHandler(log_file_name,
                                                         maxBytes=max_file_size,
@@ -37,6 +36,7 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.ERROR)
     logger.addHandler(console_handler)
+    logger.setLevel(logging.INFO)
 
     return logger
 
@@ -72,3 +72,10 @@ def set_stream_logging(logger_name=''):
 
     return logger
 
+if __name__ == '__main__':
+    my_logger = logging.getLogger("decision_engine")
+    set_logging(log_file_name = '%s/de_log/decision_engine_log0'%(os.environ.get('HOME')),
+                max_file_size = 100000,
+                max_backup_count = 5)
+    my_logger.info("THIS IS INFO")
+    my_logger.error("THIS IS ERROR")

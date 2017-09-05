@@ -219,16 +219,17 @@ class TaskManager(object):
             exc, detail, tb = sys.exc_info()
             self.logger.error("error in decision cycle(transforms) %s %s %s" % (exc, detail,  traceback.format_exception( exc, value, tb )))
         try:
-            self.run_logic_engine(data_block_t1)
+            actions_facts = self.run_logic_engine(data_block_t1)
+            self.logger.info("logic engine returned %s"%(actions_facts,))
+            for a_f in actions_facts:
+                try:
+                    self.run_publishers(a_f['actions'], a_f['newfacts'], data_block_t1)
+                except Exception:
+                    exc, detail = sys.exc_info()[:2]
+                    self.logger.error("error in decision cycle(publishers) %s %s" % (exc, detail))
         except Exception:
             exc, detail = sys.exc_info()[:2]
             self.logger.error("error in decision cycle(logic engine) %s %s" % (exc, detail))
-        try:
-            self.run_publishers(data_block_t1)
-        except Exception:
-            exc, detail = sys.exc_info()[:2]
-            self.logger.error("error in decision cycle (publishers) %s %s" % (exc, detail))
-
 
     def run_source(self, src):
         """
@@ -367,15 +368,17 @@ class TaskManager(object):
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
         """
+        le_list = []
         if not data_block:
             return
         for le in self.channel.le_s:
-
             self.logger.info('run logic engine %s %s'%(self.channel.le_s[le].name, data_block))
-            self.channel.le_s[le].worker.evaluate(data_block)
-            self.logger.info('run logic engine done')
+            rc = self.channel.le_s[le].worker.evaluate(data_block)
+            le_list.append(rc)
+            self.logger.info('run logic engine %s done'%(self.channel.le_s[le].name,))
+        return le_list
 
-    def run_publishers(self, data_block=None):
+    def run_publishers(self, actions, facts, data_block=None):
         """
         Run Publishers in main process.
 
@@ -385,11 +388,10 @@ class TaskManager(object):
         """
         if not data_block:
             return
-        for p in self.channel.publishers:
-            self.logger.info('run publisher %s %s'%(self.channel.publishers[p].name, data_block))
-            self.channel.publishers[p].worker.publish(data_block)
-
-
+        for key, action_list in actions.items():
+            for action in action_list:
+                self.logger.info('run publisher %s %s'%(self.channel.publishers[action].name, data_block))
+                self.channel.publishers[action].worker.publish(data_block)
 
 if __name__ == '__main__':
     import decisionengine.framework.dataspace.dataspace as dataspace
