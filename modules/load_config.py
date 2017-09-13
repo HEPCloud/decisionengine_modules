@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 import importlib
 import string
+import time
 import pprint
 
 """
 Load python object
 """
 
-def load(python_file):
+def load(python_file, retries=0, timeout=0):
     """
     Load constants from file.
 
@@ -19,10 +20,20 @@ def load(python_file):
     """
 
     code = None
-    with open(python_file, "r") as f:
-        code = "config=" + string.join(f.readlines(), "")
-    if code:
-        exec(code)
+    config = None
+    retries = max(1, retries)
+    timeout = max(1, timeout)
+    for i in range(retries):
+        try:
+            with open(python_file, "r") as f:
+                code = "config=" + string.join(f.readlines(), "")
+            if code:
+                exec(code)
+            break
+        except IOError:
+            time.sleep(timeout)
+    else:
+         raise RuntimeError('can not load %s'%(python_file,))
 
     return config
 

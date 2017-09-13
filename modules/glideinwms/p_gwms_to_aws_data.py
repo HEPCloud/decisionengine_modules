@@ -5,6 +5,7 @@ import argparse
 import pprint
 import pandas
 import tempfile
+import shutil
 
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.dataspace.datablock import DataBlock
@@ -51,13 +52,15 @@ class AWSFactoryEntryDataPublisher(Publisher.Publisher):
             fname = fd.name
             pprint.pprint(so_config, fd)
             #fd.write('%s\n' % so_config)
-        os.rename(fname, self.spot_occupancy_config)
+        shutil.move(fname, self.spot_occupancy_config)
+        #os.rename(fname, self.spot_occupancy_config)
 
         fname = None
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as fd:
             fname = fd.name
             fd.write('%s' % limits_df.to_csv(index=False))
-        os.rename(fname, self.aws_instance_limits)
+        shutil.move(fname, self.aws_instance_limits)
+        #os.rename(fname, self.aws_instance_limits)
 
 
 def module_config_template():

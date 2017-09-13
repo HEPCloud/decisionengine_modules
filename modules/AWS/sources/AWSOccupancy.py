@@ -132,10 +132,7 @@ class OccupancyForRegion(object):
 
 class AWSOccupancy(Source.Source):
     def __init__(self, *args, **kwargs):
-        config_file = args[0]['occupancy_configuration']
-
-        # Load kown accounts configuration
-        self.account_dict = load_config.load(config_file)
+        self.config_file = args[0]['occupancy_configuration']
 
     def produces(self,schema_id_list): return PRODUCES
 
@@ -146,6 +143,9 @@ class AWSOccupancy(Source.Source):
         :type spot_price_history: :obj:`list`
         :arg spot_price_history: list of spotprice data (:class:`SpotPriceData`)
         """
+
+        # Load kown accounts configuration
+        self.account_dict = load_config.load(self.config_file, 5, 20) # account configuration is dynamic
         occupancy_data = []
         for account in self.account_dict:
             for region in self.account_dict[account]:

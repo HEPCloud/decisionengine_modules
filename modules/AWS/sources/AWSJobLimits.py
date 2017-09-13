@@ -5,6 +5,7 @@ Fill in data from Job Limits CSV file
 import pprint
 import sys
 import os
+import time
 import csv
 import numpy as np
 import pandas as pd
@@ -14,6 +15,8 @@ import decisionengine.framework.modules.de_logger as de_logger
 import decisionengine.modules.load_config as load_config
 
 PRODUCES = ['Job_Limits']
+RETRIES = 5
+TO = 20
 
 class AWSJobLimits(Source.Source):
     def __init__(self, *args, **kwargs):
@@ -23,7 +26,14 @@ class AWSJobLimits(Source.Source):
         return PRODUCES
 
     def acquire(self):
-        return {PRODUCES[0]: pd.read_csv(self.data_file).drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)}
+        rc = None
+        for i in range(RETRIES):
+            if os.path.exists(self.data_file):
+                rc = {PRODUCES[0]: pd.read_csv(self.data_file).drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)}
+                break
+            else:
+                time.sleep(TO)
+        return rc
 
 def module_config_template():
     """

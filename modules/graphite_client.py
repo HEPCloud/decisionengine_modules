@@ -5,12 +5,24 @@ import struct
 import socket
 import sys
 
+
+def sanitize_key(key):
+    if key is None:
+        return key
+    replacements = {
+            ".": "_",
+            " ": "_",
+    }
+    for old,new in replacements.iteritems():
+        key = key.replace(old, new)
+    return key
+
 class Graphite(object):
     def __init__(self,host="fifemondata.fnal.gov",pickle_port=2004):
         self.graphite_host = host
         self.graphite_pickle_port = pickle_port
 
-    def send_dict(self,namespace, data, debug_print=True, send_data=True):
+    def send_dict(self, namespace, data, debug_print=True, send_data=True):
         """send data contained in dictionary as {k: v} to graphite dataset
         $namespace.k with current timestamp"""
         if data is None:
@@ -34,8 +46,8 @@ class Graphite(object):
             try:
                 s.connect( (self.graphite_host, self.graphite_pickle_port) )
                 s.sendall(message)
-            except socket.error:
-                sys.stderr.write("Error sending data to graphite at %s:%d\n" % (self.graphite_host,self.graphite_pickle_port))
+            except socket.error, detail:
+                sys.stderr.write("Error sending data to graphite at %s:%d: %s\n" % (self.graphite_host,self.graphite_pickle_port, detail))
             finally:
                 s.close()
 

@@ -146,33 +146,57 @@ class TaskManager(object):
         self.wait_for_all(done_events)
         self.logger.info("All sources finished")
         self.decision_cycle()
-        if self.state != OFFLINE:
-            self.state = STEADY
+        if self.get_state() != OFFLINE:
+            self.set_state(STEADY)
         else:
             self.logger.error("Error occured. Task Manager %s exits"%(self.id,))
             return
 
-        while self.state == STEADY:
-            self.wait_for_any(done_events)
-            self.decision_cycle()
-            if self.stop:
-                self.logger.info("Task Manager %s received stop signal and exits"%(self.id,))
-                for s in self.channel.sources:
-                    self.channel.sources[s].stop_running.set()
-                    time.sleep(5)
-                for t in self.channel.transforms:
-                    self.channel.transforms[t].stop_running.set()
-                    time.sleep(5)
+        while self.get_state() == STEADY:
+            try:
+                self.wait_for_any(done_events)
+                self.decision_cycle()
+                if self.stop:
+                    self.logger.info("Task Manager %s received stop signal and exits"%(self.id,))
+                    for s in self.channel.sources:
+                        self.channel.sources[s].stop_running.set()
+                        time.sleep(5)
+                    for t in self.channel.transforms:
+                        self.channel.transforms[t].stop_running.set()
+                        time.sleep(5)
+                    break
+            except:
+                exc, detail, tb = sys.exc_info()
+                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail,  traceback.format_exception( exc, value, tb )))
                 break
 
             time.sleep(1)
-        self.logger.error("Error occured. Task Manager %s exits"%(self.id,))
+        self.logger.error("Error occured. Task Manager %s exits with state %s"%(self.id, self.state))
 
+
+    def set_state(self, state):
+        with self.lock:
+           self.state = state
+
+    def get_state(self):
+        with self.lock:
+            return self.state
 
     def stop_task_manager(self):
         """
         signal task manager to stop
         """
+        self.stop = True
+
+    def offline_task_manager(self, current_data_block):
+        """
+        offline and stop task manager
+        """
+
+        with self.lock:
+            self.state = OFFLINE
+            # invalidate data block
+            # not implemented yet
         self.stop = True
 
     def data_block_put(self, data, header, data_block):
@@ -244,19 +268,24 @@ class TaskManager(object):
             try:
                 self.logger.info('Src %s calling acquire'%(src.name,))
                 data = src.worker.acquire()
-                self.logger.info('Src %s acquire retuned %s'%(src.name, data))
+                #self.logger.info('Src %s acquire retuned %s'%(src.name, data))
+                self.logger.info('Src %s acquire retuned'%(src.name,))
                 self.logger.info('Src %s filling header'%(src.name,))
-                header = datablock.Header(self.data_block_t0.taskmanager_id,
-                                          create_time=time.time(), creator=src.module)
-                self.logger.info('Src %s header done'%(src.name,))
-                self.data_block_put(data, header, self.data_block_t0)
-                self.logger.info('Src %s data block put done'%(src.name,))
+                if data:
+                    header = datablock.Header(self.data_block_t0.taskmanager_id,
+                                              create_time=time.time(), creator=src.module)
+                    self.logger.info('Src %s header done'%(src.name,))
+                    self.data_block_put(data, header, self.data_block_t0)
+                    self.logger.info('Src %s data block put done'%(src.name,))
+                else:
+                    self.logger.warning('Src %s acquire retuned no data'%(src.name,))
                 src.run_counter += 1
                 src.data_updated.set()
                 self.logger.info('Src %s %s finished cycle'%(src.name, src.module))
             except Exception:
                 exc, detail = sys.exc_info()[:2]
                 self.logger.error("error running source %s %s %s" % (src.name, exc, detail))
+                self.offline_task_manager(self.data_block_t0)
             s = src.stop_running.wait(src.schedule)
             if s:
                 self.logger.info("received stop_running signal for %s"%(src.name,))
@@ -282,7 +311,7 @@ class TaskManager(object):
             except:
                 exc, detail = sys.exc_info()[:2]
                 self.logger.error("error starting thread %s: %s" % (self.channel.sources[s].name, detail))
-                self.state = OFFLINE
+                self.offline_task_manager(data_block)
                 break
         return event_list
 
@@ -313,9 +342,8 @@ class TaskManager(object):
             except:
                 exc, detail = sys.exc_info()[:2]
                 self.logger.error("error starting thread %s: %s" % (self.channel.transforms[t].name, detail))
-                self.state = OFFLINE
+                self.offline_task_manager(data_block)
                 break
-                self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
 
         self.wait_for_all(event_list)
         self.logger.info("all transforms finished")
@@ -348,7 +376,8 @@ class TaskManager(object):
                     self.data_block_put(data, header, data_block)
                     self.logger.info('transform put data')
                 except Exception, detail:
-                    self.logger.error('exception from %s: %s'%(self.channel.transforms[t].name, detail))
+                    self.logger.error('exception from %s: %s'%(transform.name, detail))
+                    self.offline_task_manager()
                 break
             else:
                 s = transform.stop_running.wait(1)
@@ -403,7 +432,6 @@ if __name__ == '__main__':
     global_config = config_manager.get_global_config()
     print "GLOBAL CONF", global_config
 
-    my_logger = logging.getLogger("decision_engine")
 
     try:
         de_logger.set_logging(log_file_name = global_config['logger']['log_file'],
@@ -413,6 +441,7 @@ if __name__ == '__main__':
         print e
         sys.exit(1)
 
+    my_logger = logging.getLogger("decision_engine")
     my_logger.info("Starting decision engine")
 
     if len(sys.argv) > 1:
@@ -446,5 +475,7 @@ if __name__ == '__main__':
         while True:
             time.sleep(10)
             if threading.activeCount() <= 1 : break
+            for tm_name, tm in task_managers.iteritems():
+                print "TM %s state %s"%(tm_name, _state_names[tm.state])
     except (SystemExit, KeyboardInterrupt):
         pass

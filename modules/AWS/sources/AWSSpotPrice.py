@@ -168,10 +168,7 @@ class AWSSpotPriceForRegion(object):
 
 class AWSSpotPrice(Source.Source):
     def __init__(self, *args, **kwargs):
-        config_file = args[0]['spot_price_configuration']
-
-        # Load kown accounts configuration
-        self.account_dict = load_config.load(config_file)
+        self.config_file = args[0]['spot_price_configuration']
 
     def produces(self,schema_id_list): return PRODUCES
 
@@ -181,6 +178,9 @@ class AWSSpotPrice(Source.Source):
 
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
+
+        # Load kown accounts configuration
+        self.account_dict = load_config.load(self.config_file, 5, 20) # account configuration is dynamic
         sp_data = []
         for account in self.account_dict:
             for region, instances in self.account_dict[account].items():

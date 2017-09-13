@@ -16,6 +16,7 @@ import decisionengine.modules.graphite_client as graphite
 
 DEFAULT_GRAPHITE_HOST='fermicloud399.fnal.gov'
 DEFAULT_GRAPHITE_PORT=2004
+DEFAULT_GRAPHITE_CONTEXT=""
 
 class AWSGenericPublisher(Publisher.Publisher):
 
@@ -24,7 +25,7 @@ class AWSGenericPublisher(Publisher.Publisher):
     def __init__(self, *args, **kwargs):
         self.graphite_host = args[0].get('graphite_host', DEFAULT_GRAPHITE_HOST)
         self.graphite_port = args[0].get('graphite_port', DEFAULT_GRAPHITE_PORT)
-        self.graphite_context = args[0].get('graphite_context', self.graphite_context())
+        self.graphite_context_header = args[0].get('graphite_context', DEFAULT_GRAPHITE_CONTEXT)
         self.publush_to_graphite = args[0].get('publish_to_graphite')
         self.output_file = args[0].get('output_file')
 
@@ -33,7 +34,7 @@ class AWSGenericPublisher(Publisher.Publisher):
         return None
 
     @abc.abstractmethod
-    def graphite_context(self): # this must be implemented by the inherited class
+    def graphite_context(self, data_block): # this must be implemented by the inherited class
         return None
 
     def publish(self, data_block):
@@ -44,12 +45,13 @@ class AWSGenericPublisher(Publisher.Publisher):
         :arg data_block: data block
 
         """
-        if not self.consumes:
+        if not self.consumes():
             return
+        data = data_block[self.consumes()[0]]
         if self.graphite_host and self.publush_to_graphite:
-            end_point = graphite.Graphite(host=self.graphite_host)
-            end_point.send_dict(self.graphite_context, data_block[self.consumes()[0]], debug_print=False, send_data=False)
-        csv_data = data_block[self.consumes()[0]].to_csv(self.output_file, index=False)
+            end_point = graphite.Graphite(host=self.graphite_host, pickle_port=self.graphite_port)
+            end_point.send_dict(self.graphite_context(data)[0], self.graphite_context(data)[1], debug_print=False, send_data=True)
+        csv_data = data.to_csv(self.output_file, index=False)
         if not self.output_file:
             print csv_data
 
