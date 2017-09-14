@@ -68,7 +68,6 @@ def module_config_template():
     Print template for this module configuration
     """
 
-    """
     template = {
         'gwms_to_aws_data': {
             'module': 'modules.glideinwms.t_gwms_to_aws_config',
@@ -78,7 +77,7 @@ def module_config_template():
                 "spot_occupancy_config": "/path/to/spot_occupancy_config.py"
             }'
         }
-    }"""
+    }
     print('Entry in channel configuration')
     pprint.pprint(template)
 
@@ -87,7 +86,7 @@ def module_config_info():
     """
     Print module information
     """
-    print('produces %s' % PRODUCES)
+    print('consumes %s' % CONSUMES)
     module_config_template()
 
 
