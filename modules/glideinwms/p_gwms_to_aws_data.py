@@ -3,9 +3,9 @@
 import os
 import argparse
 import pprint
-import pandas
 import tempfile
 import shutil
+import pandas
 
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.dataspace.datablock import DataBlock
@@ -16,7 +16,7 @@ CONSUMES = ['aws_instance_limits', 'spot_occupancy_config']
 
 class AWSFactoryEntryDataPublisher(Publisher.Publisher):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(AWSFactoryEntryDataPublisher, self).__init__(*args, **kwargs)
         if args:
             config = args[0]
@@ -51,16 +51,13 @@ class AWSFactoryEntryDataPublisher(Publisher.Publisher):
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as fd:
             fname = fd.name
             pprint.pprint(so_config, fd)
-            #fd.write('%s\n' % so_config)
         shutil.move(fname, self.spot_occupancy_config)
-        #os.rename(fname, self.spot_occupancy_config)
 
         fname = None
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as fd:
             fname = fd.name
             fd.write('%s' % limits_df.to_csv(index=False))
         shutil.move(fname, self.aws_instance_limits)
-        #os.rename(fname, self.aws_instance_limits)
 
 
 def module_config_template():
@@ -72,10 +69,10 @@ def module_config_template():
         'gwms_to_aws_data': {
             'module': 'modules.glideinwms.t_gwms_to_aws_config',
             'name': 'AWSFactoryEntryDataPublisher',
-            'parameters': '{
-                "data_file": "/path/to/aws_instance_limits.csv",
-                "spot_occupancy_config": "/path/to/spot_occupancy_config.py"
-            }'
+            'parameters': {
+                'data_file': '/path/to/aws_instance_limits.csv',
+                'spot_occupancy_config': '/path/to/spot_occupancy_config.py'
+            }
         }
     }
     print('Entry in channel configuration')
