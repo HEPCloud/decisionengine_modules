@@ -9,6 +9,7 @@ import sys
 import types
 import uuid
 import traceback
+import multiprocessing
 
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -36,7 +37,7 @@ class Worker(object):
         self.run_counter = 0
         self.data_updated = threading.Event()
         self.stop_running = threading.Event()
-    
+
 class Channel(object):
     """
     Decision Channel.
@@ -87,7 +88,7 @@ class TaskManager(object):
         self.data_block_t0 = data_block # my current data block
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
-        self.state = BOOT
+        self.state = multiprocessing.Value('i', BOOT)
         self.decision_cycle_active = False
         self.lock = threading.Lock()
         self.logger = de_logger.get_logger()
@@ -171,16 +172,16 @@ class TaskManager(object):
                 break
 
             time.sleep(1)
-        self.logger.error("Error occured. Task Manager %s exits with state %s"%(self.id, self.state))
+        self.logger.error("Error occured. Task Manager %s exits with state %s"%(self.id, _state_names[self.get_state()]))
 
 
     def set_state(self, state):
-        with self.lock:
-           self.state = state
+        with self.state.get_lock():
+           self.state.value = state
 
     def get_state(self):
-        with self.lock:
-            return self.state
+        with self.state.get_lock():
+            return self.state.value
 
     def stop_task_manager(self):
         """
@@ -193,10 +194,9 @@ class TaskManager(object):
         offline and stop task manager
         """
 
-        with self.lock:
-            self.state = OFFLINE
-            # invalidate data block
-            # not implemented yet
+        self.set_state(OFFLINE)
+        # invalidate data block
+        # not implemented yet
         self.stop = True
 
     def data_block_put(self, data, header, data_block):
@@ -468,14 +468,14 @@ if __name__ == '__main__':
         task_managers[ch] = TaskManager(taskmanager_id, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
 
     for key, value in task_managers.iteritems():
-        t = threading.Thread(target=value.run, args=(), name="Thread-%s"%(key,), kwargs={})
-        t.start()
+        p = multiprocessing.Process(target=value.run, args=(), name="Process-%s"%(key,), kwargs={})
+        p.start()
 
     try:
         while True:
-            time.sleep(10)
-            if threading.activeCount() <= 1 : break
+            if len(multiprocessing.active_children()) < 1 : break
             for tm_name, tm in task_managers.iteritems():
-                print "TM %s state %s"%(tm_name, _state_names[tm.state])
+                print "TM %s state %s"%(tm_name, _state_names[tm.get_state()])
+            time.sleep(10)
     except (SystemExit, KeyboardInterrupt):
         pass
