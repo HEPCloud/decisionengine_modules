@@ -168,7 +168,7 @@ class TaskManager(object):
                     break
             except:
                 exc, detail, tb = sys.exc_info()
-                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail,  traceback.format_exception( exc, value, tb )))
+                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail,  traceback.format_exception( exc, detail, tb )))
                 break
 
             time.sleep(1)

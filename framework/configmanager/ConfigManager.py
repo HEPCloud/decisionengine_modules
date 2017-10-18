@@ -1,3 +1,4 @@
+import copy
 import importlib
 import os
 import string
@@ -24,6 +25,7 @@ class ConfigManager(object):
         self.channel_config_dir = os.path.join(self.config_dir, "config.d")
         self.global_config = {}
         self.channels = {}
+        self.config = {}
         self.logger = None
 
     def check_keys(self, channel_conf_dict):
@@ -129,6 +131,16 @@ class ConfigManager(object):
         if cyclic_modules:
             raise RuntimeError("cyclic dependency detected for modules {}".
                                format(list(cyclic_modules)))
+
+    def reload(self):
+        old_global_config = copy.deepcopy(self.global_config)
+        old_config = copy.deepcopy(self.config)
+        try:
+            self.load()
+        except Exception, msg:
+            self.global_config = copy.deepcopy(old_global_config)
+            self.config = copy.deepcopy(old_config)
+            raise RuntimeError
 
     def load(self):
         self.last_update_time = os.stat(self.config_file).st_mtime
