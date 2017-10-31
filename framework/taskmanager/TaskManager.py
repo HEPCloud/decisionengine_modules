@@ -75,7 +75,7 @@ class TaskManager(object):
     Task Manager
     """
 
-    def __init__(self, task_manager_id, channel_dict, data_block):
+    def __init__(self, name, task_manager_id, channel_dict, data_block):
         """
         :type task_manager_id: :obj:`int`
         :arg task_manager_id: Task Manager id provided by caller
@@ -86,6 +86,7 @@ class TaskManager(object):
         """
 
         self.data_block_t0 = data_block # my current data block
+        self.name = name
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
         self.state = multiprocessing.Value('i', BOOT)
@@ -465,7 +466,7 @@ if __name__ == '__main__':
     create channels
     """
     for ch in channels:
-        task_managers[ch] = TaskManager(taskmanager_id, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
+        task_managers[ch] = TaskManager(ch, taskmanager_id, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
 
     for key, value in task_managers.iteritems():
         p = multiprocessing.Process(target=value.run, args=(), name="Process-%s"%(key,), kwargs={})

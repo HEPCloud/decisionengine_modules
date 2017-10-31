@@ -106,12 +106,14 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return "OK"
 
     def start_channel(self, channel):
-        ch = self.config_manager.get_channels()[channel]
+        channel_config = self.config_manager.get_channels()[channel]
         generation_id = 1
+        taskmanager_id = str(uuid.uuid4()).upper()
         task_manager = TaskManager.TaskManager(channel,
-                                               ch,
+                                               taskmanager_id,
+                                               channel_config,
                                                datablock.DataBlock(self.dataspace,
-                                                                   str(uuid.uuid4()).upper(),
+                                                                   taskmanager_id,
                                                                    generation_id))
         worker = Worker(task_manager)
         self.task_managers[channel] = worker
