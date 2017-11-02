@@ -123,11 +123,11 @@ class Postgresql(ds.DataSource):
         self._update(q, (psycopg2.Binary(str(value)), taskmanager_id, generation_id, key))
 
         q = """
-        UPDATE {} SET create_time=%s, 
-                      expiration_time=%s, 
-                      scheduled_create_time=%s, 
-                      creator=%s, 
-                      schema_id=%s 
+        UPDATE {} SET create_time=%s,
+                      expiration_time=%s,
+                      scheduled_create_time=%s,
+                      creator=%s,
+                      schema_id=%s
                   WHERE taskmanager_id=%s AND generation_id=%s AND key=%s
             """.format(ds.DataSource.header_table)
         self._update(q, (header.get('create_time'), header.get('expiration_time'),
@@ -137,7 +137,7 @@ class Postgresql(ds.DataSource):
         q = """
              UPDATE {} SET state=%s,
                            generation_time=%s,
-                           missed_update_count=%s 
+                           missed_update_count=%s
                         WHERE taskmanager_id=%s AND generation_id=%s AND key=%s
             """.format(ds.DataSource.metadata_table)
         self._update(q, (metadata.get('state'),
@@ -149,21 +149,21 @@ class Postgresql(ds.DataSource):
         try:
             return self._select(q, (taskmanager_id, generation_id, key))[0]
         except IndexError:
-            raise KeyError
+            raise KeyError("taskmanager_id={} or generation_id={} or key={} not found".format(taskmanager_id, generation_id, key))
 
     def get_metadata(self, taskmanager_id, generation_id, key):
         q = SELECT_QUERY.format(ds.DataSource.metadata_table)
         try:
             return self._select(q, (taskmanager_id, generation_id, key))[0]
         except IndexError:
-            raise KeyError
+            raise KeyError("taskmanager_id={} or generation_id={} or key={} not found".format(taskmanager_id, generation_id, key))
 
     def get_dataproduct(self, taskmanager_id, generation_id, key):
         q = SELECT_QUERY.format(ds.DataSource.dataproduct_table)
         try:
             return self._select_dictresult(q, (taskmanager_id, generation_id, key))[0]
         except IndexError:
-            raise KeyError
+            raise KeyError("taskmanager_id={} or generation_id={} or key={} not found".format(taskmanager_id, generation_id, key))
 
     def get_datablock(self, taskmanager_id, generation_id):
         return {}
@@ -179,7 +179,7 @@ class Postgresql(ds.DataSource):
                           %s,
                           key,
                           value
-                   FROM {} 
+                   FROM {}
                    WHERE taskmanager_id=%s AND generation_id=%s
             """.format(ds.DataSource.dataproduct_table, ds.DataSource.dataproduct_table),
             """
@@ -195,7 +195,7 @@ class Postgresql(ds.DataSource):
                           state,
                           generation_time,
                           missed_update_count
-                   FROM {} 
+                   FROM {}
                    WHERE taskmanager_id=%s AND generation_id=%s
             """.format(ds.DataSource.metadata_table, ds.DataSource.metadata_table),
             """
