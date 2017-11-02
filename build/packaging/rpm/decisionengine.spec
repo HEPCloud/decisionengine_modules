@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.1
+%define version 0.2
 %define release 0.1
 
 %define de_user decisionengine
@@ -63,6 +63,15 @@ Requires:       decisionengine = %{version}-%{release}
 The testcase used to try out the Decision Engine.
 
 
+%package standard-library
+Summary:        The HEPCloud Decision Engine Modules in Standard Library
+Group:          System Environment/Daemons
+Requires:       decisionengine = %{version}-%{release}
+
+%description standard-library
+The modules in the Decision Engine Standard Library.
+
+
 %prep
 %setup -q -n decisionengine
 
@@ -73,6 +82,7 @@ mkdir %{le_builddir}
 cd %{le_builddir}
 cmake ..
 make
+rm ../../RE.so ../../libLogicEngine.so
 cp ErrorHandler/RE.so ../..
 cp ErrorHandler/libLogicEngine.so ../..
 
@@ -105,7 +115,7 @@ install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_B
 #rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/doc
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/build
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/modules
+#rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/modules
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/cxx
@@ -123,6 +133,7 @@ mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUIL
 %{python_sitelib}/decisionengine/framework/__init__.py
 %{python_sitelib}/decisionengine/framework/__init__.pyo
 %{python_sitelib}/decisionengine/framework/__init__.pyc
+%{python_sitelib}/decisionengine/util/
 %{python_sitelib}/decisionengine/__init__.py
 %{python_sitelib}/decisionengine/__init__.pyo
 %{python_sitelib}/decisionengine/__init__.pyc
@@ -138,6 +149,10 @@ mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUIL
 %files testcase
 %{python_sitelib}/testcases
 %config(noreplace) %{de_channel_confdir}/channelA.conf
+
+
+%files standard-library
+%{python_sitelib}/decisionengine/modules
 
 
 %pre
@@ -180,6 +195,10 @@ fi
 
 
 %changelog
+* Thu Nov 02 2017 Parag Mhashilkar <parag@fnal.gov> - 0.2-0.1
+- Decision Engine v0.2 for the demo
+- RPM work in progress
+
 * Mon May 01 2017 Parag Mhashilkar <parag@fnal.gov> - 0.1-0.1
 - Decision Engine v0.1
 - RPM work in progress

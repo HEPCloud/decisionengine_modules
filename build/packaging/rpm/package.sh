@@ -48,7 +48,7 @@ mkdir -p $release_dir
 cp -r $source_dir  $release_dir
 cd $release_dir
 tar --exclude=.git --exclude=.gitignore --exclude=doc --exclude=cxx/build \
-    --exclude=readme \
+    --exclude=readme --exclude=.cache \
     -czf $release_tar decisionengine
 
 cp $release_tar $RPM_TOPDIR/SOURCES
