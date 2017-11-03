@@ -516,9 +516,9 @@ class GlideFrontendElement:
                 glidein_params_to_encrypt['PublicKey'] =  self.file_id_cache.file_id(cred, cred.filename)
                 glidein_params_to_encrypt['PrivateKey'] =  self.file_id_cache.file_id(cred, cred.key_fname)
             if 'vm_id' in cred.type:
-                glidein_params_to_encrypt['VMId'] =  self.file_id_cache.file_id(cred, cred.vm_id)
+                glidein_params_to_encrypt['VMId'] =  str(cred.vm_id)
             if 'vm_type' in cred.type:
-                glidein_params_to_encrypt['VMType'] =  self.file_id_cache.file_id(cred, cred.vm_type)
+                glidein_params_to_encrypt['VMType'] =  str(cred.vm_type)
             if 'remote_username' in cred.type:
                 glidein_params_to_encrypt['RemoteUsername'] =  self.file_id_cache.file_id(cred, cred.remote_username)
             if 'auth_file' in cred.type:
