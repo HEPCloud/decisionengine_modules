@@ -367,8 +367,8 @@ class GlideFrontendElement:
         #pprint.pprint('------------- REQUEST -------------')
      
         return {
-            'clientglobal_manifests': gcg_df,
-            'client_manifests': gc_df
+            'glideclientglobal_manifests': gcg_df,
+            'glideclient_manifests': gc_df
         }
 
 
@@ -384,7 +384,7 @@ class GlideFrontendElement:
         ad_params = {
             'ReqPubKeyID': key_obj.factory_pub_key_id,
             'ReqEncKeyCode': key_obj.factory_pub_key.encrypt_hex(glidein_symKey_str),
-            'ReqEncIdentity': key_obj.encrypt_hex(key_obj.classad_identity)
+            'ReqEncIdentity': key_obj.encrypt_hex(str(key_obj.classad_identity))
         }
         return ad_params
 
