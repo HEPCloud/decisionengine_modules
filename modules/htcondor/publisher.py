@@ -119,7 +119,14 @@ def dataframe_to_classads(dataframe):
     ads = []
     records = dataframe.to_dict(orient='records')
     for record in records:
+        # NOTE: Pandas will add NaN for some of the values. This causes
+        #       extremely undesired/unexpected issues. Better to remove
+        #       NaN values before converting a dataframe row to classad.
+        ad_dict = {}
+        for key in record:
+            if pandas.notnull(record[key]):
+                ad_dict[key] = record[key]
         ad = classad.ClassAd()
-        ad.update(record)
+        ad.update(ad_dict)
         ads.append(ad)
     return ads
