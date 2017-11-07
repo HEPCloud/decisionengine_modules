@@ -2,9 +2,12 @@
 
 import abc
 import os
+import sys
 import pandas
+import pprint
 import htcondor
 import classad
+import traceback
 
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Publisher
@@ -31,6 +34,7 @@ class HTCondorManifests(Publisher.Publisher):
             raise RuntimeError('parameters for module config should be a dict')
 
         self.condor_config = config.get('condor_config')
+        self.x509_user_proxy = config.get('x509_user_proxy')
         self.logger = de_logger.get_logger()
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
@@ -66,6 +70,8 @@ class HTCondorManifests(Publisher.Publisher):
             if self.condor_config and os.path.exists(self.condor_config):
                 os.environ['CONDOR_CONFIG'] = self.condor_config
             htcondor.reload_config()
+            if self.x509_user_proxy and os.path.exists(self.x509_user_proxy):
+                os.environ['X509_USER_PROXY'] = self.x509_user_proxy
 
             collector = None
             if collector_host:
@@ -96,18 +102,22 @@ class HTCondorManifests(Publisher.Publisher):
         :type datablock: :obj:`DataBlock`
         """
         for key in self.consumes():
-            dataframe = datablock.get(key)
-            # TODO: How can we do this pandas way rather than interative?
-            if not dataframe.empty:
-                # Iterate over sub dataframes with same CollectorHost value
-                for collector in pandas.unique(dataframe.CollectorHost.ravel()):
-                    # Convert dataframe -> dict -> classads
-                    ads = dataframe_to_classads(
-                        dataframe[(dataframe['CollectorHost'] == collector)])
-                    # Advertise the classad to given collector
-                    self.condor_advertise(ads, collector_host=collector)
-            else:
-                self.logger.info('No %s classads found to advertise' % key)
+            try:
+                dataframe = datablock.get(key)
+                # TODO: How can we do this pandas way rather than interative?
+                if not dataframe.empty:
+                    # Iterate over sub dataframes with same CollectorHost value
+                    for collector in pandas.unique(dataframe.CollectorHost.ravel()):
+                        # Convert dataframe -> dict -> classads
+                        ads = dataframe_to_classads(
+                            dataframe[(dataframe['CollectorHost'] == collector)])
+                        # Advertise the classad to given collector
+                        self.condor_advertise(ads, collector_host=collector)
+                else:
+                    self.logger.info('No %s classads found to advertise' % key)
+            except:
+                tb = traceback.format_exception(sys.exc_info()[0],sys.exc_info()[1], sys.exc_info()[2])
+                pprint.pprint(tb)
 
 
 def dataframe_to_classads(dataframe):

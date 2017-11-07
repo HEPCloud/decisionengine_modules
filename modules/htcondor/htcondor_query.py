@@ -283,22 +283,23 @@ def list2dict(list_data, attr_name):
             dict_name = list_el[attr_name]
         dict_el = {}
         for a in list_el:
-            try:
-                if (list_el[a].__class__.__name__ == 'ExprTree'):
-                    # Try to evaluate the condor expr and use its value
-                    # If cannot be evaluated, keep the expr as is
-                    a_value = list_el[a].eval()
-                    if '%s'%a_value != 'Undefined':
-                        # Cannot use classad.Value.Undefined for
-                        # for comparison as it gets cast to int
-                        dict_el[a] = a_value
-                elif str(list_el[a]) != 'Undefined':
-                    # No need for Undefined check to see if
-                    # attribute exists in the fetched classad
-                    dict_el[a] = list_el[a]
-            except:
-                # Do not fail
-                pass
+            if not (a in attr_list):
+                try:
+                    if (list_el[a].__class__.__name__ == 'ExprTree'):
+                        # Try to evaluate the condor expr and use its value
+                        # If cannot be evaluated, keep the expr as is
+                        a_value = list_el[a].eval()
+                        if '%s'%a_value != 'Undefined':
+                            # Cannot use classad.Value.Undefined for
+                            # for comparison as it gets cast to int
+                            dict_el[a] = a_value
+                    elif str(list_el[a]) != 'Undefined':
+                        # No need for Undefined check to see if
+                        # attribute exists in the fetched classad
+                        dict_el[a] = list_el[a]
+                except:
+                    # Do not fail
+                    pass
 
         if dict_name not in dict_data:
             dict_data[dict_name] = []
@@ -315,6 +316,13 @@ def eval_classad_expr(classads):
     for classad in classads:
         dict_el = {}
         for attr in classad:
+            if attr in ('Requirements', 'START'):
+                # Requirements and START cannot be evaluated until the
+                # jobs and slots match. This causes issues so better to
+                # bypass.
+                # TODO: If we come accross other user configured attributes
+                #       then we need to identify how to resolve this issue.
+                continue
             try:
                 if (classad[attr].__class__.__name__ == 'ExprTree'):
                     a_value = classad[attr].eval()
@@ -328,5 +336,29 @@ def eval_classad_expr(classads):
                     dict_el[attr] = classad[attr]
             except:
                 pass
+
+        # Do not delete this block until we resolve the TODO above.
+        # Useful for identifying the attribute that causes the problem.
+        
+        """
+        import cPickle
+        import pprint
+        try:
+            s = cPickle.dumps(dict_el)
+        except:
+            pprint.pprint('------------- PICKLE ERROR ---------------')
+            for key in dict_el:
+                try:
+                    s = cPickle.dumps(dict_el[key])
+                except:
+                    pprint.pprint('------- KEY: %s' % key)
+                    pprint.pprint('------- VAL: %s' % dict_el[key])
+                    pprint.pprint('------- VAL_TYPE: %s' % type(dict_el[key]))
+                    raise
+            pprint.pprint(dict_el)
+            pprint.pprint('------------- PICKLE ERROR ---------------')
+        """
+
+
         classad_list.append(dict_el)
     return classad_list
