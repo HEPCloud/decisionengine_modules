@@ -66,8 +66,6 @@ class GlideFrontendElement:
         ########################################################################
 
         factory_globals['PubKeyObj'] = self.create_factory_pubkeyobj(factory_globals)
-        # Only get entries that support this acct_group
-        entries = get_vo_entries(self.acct_group, entries)
         self.glideid_list = self.create_glideid_list(entries)
 
         ########################################################################
@@ -310,8 +308,8 @@ class GlideFrontendElement:
 
             key_obj = None
             for index, row in factory_globals.iterrows():
-                pubkeyid = row.get('PubKeyID')
-                pubkeyobj = row.get('PubKeyObj')
+                pubkeyid = row.get('PubKeyID', None)
+                pubkeyobj = row.get('PubKeyObj', None)
                 if (glideid[1].endswith(row['Name']) and
                     pubkeyid and pubkeyobj):
                     key_obj = key_builder.get_key_obj(
@@ -373,9 +371,6 @@ class GlideFrontendElement:
 
 
     def get_factory_key_ad_params(self, key_obj):
-        # TODO: ReqEncKeyCode maynot be correct
-        # TODO: ReqEncIdentity is not correct
-
         # ReqEncIdentity will be checked against the AuthenticatedIdentity
         # This will prevent replay attacks, as only who knows the symkey
         # can change this field no other changes needed, as Condor provides
@@ -505,30 +500,31 @@ class GlideFrontendElement:
 
             # Add id for all the credential files
             if 'username_password' in cred.type:
-                glidein_params_to_encrypt['Username'] =  self.file_id_cache.file_id(cred, cred.username)
-                glidein_params_to_encrypt['Password'] =  self.file_id_cache.file_id(cred, cred.password)
+                glidein_params_to_encrypt['Username'] = self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['Password'] = self.file_id_cache.file_id(cred, cred.key_fname)
             if 'grid_proxy' in cred.type:
-                glidein_params_to_encrypt['SubmitProxy'] =  self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['SubmitProxy'] = self.file_id_cache.file_id(cred, cred.filename)
             if 'cert_pair' in cred.type:
-                glidein_params_to_encrypt['PublicCert'] =  self.file_id_cache.file_id(cred, cred.filename)
-                glidein_params_to_encrypt['PrivateCert'] =  self.file_id_cache.file_id(cred, cred.key_fname)
+                glidein_params_to_encrypt['PublicCert'] = self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['PrivateCert'] = self.file_id_cache.file_id(cred, cred.key_fname)
             if 'key_pair' in cred.type:
-                glidein_params_to_encrypt['PublicKey'] =  self.file_id_cache.file_id(cred, cred.filename)
-                glidein_params_to_encrypt['PrivateKey'] =  self.file_id_cache.file_id(cred, cred.key_fname)
+                glidein_params_to_encrypt['PublicKey'] = self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['PrivateKey'] = self.file_id_cache.file_id(cred, cred.key_fname)
             if 'vm_id' in cred.type:
-                glidein_params_to_encrypt['VMId'] =  str(cred.vm_id)
+                glidein_params_to_encrypt['VMId'] = str(cred.vm_id)
             if 'vm_type' in cred.type:
-                glidein_params_to_encrypt['VMType'] =  str(cred.vm_type)
+                glidein_params_to_encrypt['VMType'] = str(cred.vm_type)
             if 'remote_username' in cred.type:
-                glidein_params_to_encrypt['RemoteUsername'] =  self.file_id_cache.file_id(cred, cred.remote_username)
+                glidein_params_to_encrypt['RemoteUsername'] = self.file_id_cache.file_id(cred, cred.remote_username)
             if 'auth_file' in cred.type:
-                glidein_params_to_encrypt['AuthFile'] =  self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['AuthFile'] = self.file_id_cache.file_id(cred, cred.filename)
             if cred.project_id:
                 glidein_params_to_encrypt['ProjectId'] = str(cred.project_id)
 
             # Add id for the pilot proxy
             if cred.pilot_fname:
                 glidein_params_to_encrypt['GlideinProxy'] = self.file_id_cache.file_id(cred, cred.pilot_fname)
+
             # Add classad attributes that need to be encrypted
             for attr in glidein_params_to_encrypt:
                 value = str(key_obj.encrypt_hex(glidein_params_to_encrypt[attr]))
@@ -670,6 +666,7 @@ class GlideFrontendElement:
         cred_plugin_class = glideinFrontendPlugins.proxy_plugins[cred_plugin_name]
         cred_list = create_credential_list(group_config['proxies'],
                                            group_config)
+        pprint.pprint('Number of credentials found from the configuration %s' % len(cred_list))
         self.credential_plugin = cred_plugin_class(self.workdir, cred_list)
         self.glidein_config_limits = {}
 
@@ -810,24 +807,19 @@ class GlideFrontendElement:
                     # Initialize all counts to 0 for potential empty frames
                     count_entry_slots_cred[request_name][cred.get_id()][st] = 0
                     entry_slots_cred = pandas.DataFrame()
-                    #if ((not slot_types[st]['dataframe'].empty) and
-                    #    (not entry_slot_types[st].empty)):
                     if not entry_slot_types[st].empty:
                         entry_slots_cred = entry_slot_types[st].query('GLIDEIN_CredentialIdentifier == "%s"' % cred.get_id())
 
                     if st == 'TotalCores':
-                        count_entry_slots[request_name][st] = count_total_cores(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id()][st] = count_total_cores(entry_slots_cred)
                     elif st == 'IdleCores':
-                        count_entry_slots[request_name][st] = count_idle_cores(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id()][st] = count_idle_cores(entry_slots_cred)
                     elif st == 'RunningCores':
-                        count_entry_slots[request_name][st] = count_running_cores(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id()][st] = count_running_cores(entry_slots_cred)
                     elif st == 'Running':
-                        # TODO: Need to confirm following and looks like we
-                        # can get pslots from the running slots
                         count_entry_slots_cred[request_name][cred.get_id()][st] = len(entry_slots_cred) - len(get_running_pslots(entry_slots_cred))
                     else:
                         count_entry_slots_cred[request_name][cred.get_id()][st] = len(entry_slots_cred)
-
 
         return (count_entry_slots, count_entry_slots_cred)
 
@@ -1188,8 +1180,8 @@ def count_total_cores(slots):
     if not slots.empty:
         # TotalSlotCpus should always be the correct number but
         # is not defined pre partitionable slots
-        count = slots.loc[slots['PartitionableSlot'] == True, 'TotalSlotCpus'].sum()
-        count += slots.loc[slots['PartitionableSlot'] != True, 'Cpus'].sum() 
+        count = slots.loc[slots['SlotType'] == 'Partitionable', 'TotalSlotCpus'].sum()
+        count += slots.loc[slots['SlotType'] != 'Partitionable', 'Cpus'].sum() 
     return count
 
 
@@ -1209,7 +1201,7 @@ def count_running_cores(slots):
     """
     count = 0
     if not slots.empty:
-        count = slots.loc[slots['PartitionableSlot'] != True, 'Cpus'].sum() 
+        count = slots.loc[slots['SlotType'] != 'Partitionable', 'Cpus'].sum() 
     return count
 
 
@@ -1320,19 +1312,19 @@ def log_factory_header():
 def get_idle_slots(slots_df):
     if slots_df.empty:
         return slots_df
-    return slots_df.query('(State == "Unclaimed") and (Activity == "Idle") and ((PartitionableSlot != True) or (TotalSlots == 1) or ((Cpus > 0) and (Memory > 2500)))')
+    return slots_df.query('(State == "Unclaimed") and (Activity == "Idle") and ((SlotType != "Partitionable") or (TotalSlots == 1) or ((Cpus > 0) and (Memory > 2500)))')
 
 
 def get_running_slots(slots_df):
     if slots_df.empty:
         return slots_df
-    return slots_df.query('((State == "Claimed") and (Activity == "Busy" or Activity == "Retiring")) or ((PartitionableSlot == True) and (TotalSlots > 1))')
+    return slots_df.query('((State == "Claimed") and (Activity == "Busy" or Activity == "Retiring")) or ((SlotType == "Partitionable") and (TotalSlots > 1))')
 
 
 def get_running_pslots(slots_df):
     if slots_df.empty:
         return slots_df
-    return slots_df.query('(PartitionableSlot == True) and (TotalSlots > 1)')
+    return slots_df.query('(SlotType == "Partitionable") and (TotalSlots > 1)')
 
 
 def get_nondynamic_slots(slots_df):

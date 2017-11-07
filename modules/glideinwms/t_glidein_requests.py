@@ -70,6 +70,7 @@ class GlideinRequestManifests(Transform.Transform):
         # Get factory entries dataframe for different type of entries
         for et in SUPPORTED_ENTRY_TYPES:
             entries = entries.append(datablock.get(et), ignore_index=True)
+
         # Get the jobs dataframe
         jobs_df = datablock.get('job_manifests')
         # Get HTCondor slots dataframe
