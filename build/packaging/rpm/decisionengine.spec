@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.2
+%define version 0.3
 %define release 0.1
 
 %define de_user decisionengine
@@ -195,6 +195,10 @@ fi
 
 
 %changelog
+* Mon Nov 13 2017 Parag Mhashilkar <parag@fnal.gov> - 0.3-0.1
+- Decision Engine v0.3
+- Includes fixes made during the demo
+
 * Thu Nov 02 2017 Parag Mhashilkar <parag@fnal.gov> - 0.2-0.1
 - Decision Engine v0.2 for the demo
 - RPM work in progress
