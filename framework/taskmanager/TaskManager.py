@@ -17,6 +17,15 @@ import decisionengine.framework.modules.de_logger as de_logger
 
 TRANSFORMS_TO = 300
 
+def log_exception(logger, header_message):
+    exc, detail, tb = sys.exc_info()
+    logger.error("%s %s %s"%(header_message, exc, detail))
+    logger.error("Traceback")
+    for l in traceback.format_exception(exc, detail, tb):
+        logger.error("%s"%(l,))
+    logger.error("=======================")
+    del tb
+
 class Worker(object):
     """
     Provides interface to loadable modules an events to sycronise
@@ -241,8 +250,7 @@ class TaskManager(object):
         try:
             self.run_transforms(data_block_t1)
         except Exception:
-            exc, detail, tb = sys.exc_info()
-            self.logger.error("error in decision cycle(transforms) %s %s %s" % (exc, detail,  traceback.format_exception( exc, value, tb )))
+            log_exception(self.logger, "error in decision cycle(transforms)")
         try:
             actions_facts = self.run_logic_engine(data_block_t1)
             self.logger.info("logic engine returned %s"%(actions_facts,))
@@ -250,11 +258,9 @@ class TaskManager(object):
                 try:
                     self.run_publishers(a_f['actions'], a_f['newfacts'], data_block_t1)
                 except Exception:
-                    exc, detail = sys.exc_info()[:2]
-                    self.logger.error("error in decision cycle(publishers) %s %s" % (exc, detail))
+                    log_exception(self.logger, "error in decision cycle(publishers)")
         except Exception:
-            exc, detail = sys.exc_info()[:2]
-            self.logger.error("error in decision cycle(logic engine) %s %s" % (exc, detail))
+            log_exception(self.logger, "error in decision cycle(logic engine)") 
 
     def run_source(self, src):
         """
