@@ -223,7 +223,7 @@ class TaskManager(object):
             self.logger.error('data_block put expecting %s type, got %s'%
                               (types.DictType, type(data)))
             return
-        self.logger.info('data_block_put %s'%(data,))
+        self.logger.debug('data_block_put %s'%(data,))
         with data_block.lock:
             for k in data:
                 data_block.put(k, data[k], header)
@@ -238,7 +238,7 @@ class TaskManager(object):
 
         with self.lock:
             data_block = self.data_block_t0.duplicate()
-            self.logger.info('Duplicated block %s'%(data_block,))
+            self.logger.debug('Duplicated block %s'%(data_block,))
         return data_block
 
     def decision_cycle(self):

@@ -26,6 +26,7 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
     logger =  logging.getLogger("decision_engine")
     if logger.handlers:
         return
+
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(threadName)s - %(levelname)s - %(message)s")
 
     file_handler = logging.handlers.RotatingFileHandler(log_file_name,
@@ -35,11 +36,18 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
     file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
 
+    debug_handler = logging.handlers.RotatingFileHandler("%s_debug"%(log_file_name,),
+                                                         maxBytes=max_file_size,
+                                                         backupCount=max_backup_count)
+    debug_handler.setFormatter(formatter)
+    debug_handler.setLevel(logging.DEBUG)
+    logger.addHandler(debug_handler)
+
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     console_handler.setLevel(logging.ERROR)
     logger.addHandler(console_handler)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     return logger
 
@@ -82,3 +90,4 @@ if __name__ == '__main__':
                 max_backup_count = 5)
     my_logger.info("THIS IS INFO")
     my_logger.error("THIS IS ERROR")
+    my_logger.debug("THIS IS DEBUG")
