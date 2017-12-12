@@ -82,7 +82,7 @@ class GlideFrontendElement:
         # Categorize HTCondor slots for this group based on status criteria
         slot_types = self.categorize_slots(slots_df)
 
-        pprint.pprint('Jobs found total %i idle %i (good %i, old(10min %s, 60min %i), grid %i, voms %i) running %i' % (
+        self.logger.log('Jobs found total %i idle %i (good %i, old(10min %s, 60min %i), grid %i, voms %i) running %i' % (
             len(jobs_df), job_types['IdleAll']['abs'],
             job_types['Idle']['abs'], job_types['OldIdle']['abs'],
             job_types['Idle_3600']['abs'], job_types['ProxyIdle']['abs'],
@@ -107,16 +107,13 @@ class GlideFrontendElement:
         total_running_cores = slot_types['RunningCores']['abs']
         total_idle_cores = slot_types['IdleCores']['abs']
 
-        pprint.pprint('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
+        self.logger.log('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
         # TODO: Need to compute following
         #       fe_[total_slots | total_idle_slots | total_running_slots]
         #       global_[total_slots | total_idle_slots | total_running_slots]
-        pprint.pprint('Frontend slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, total_running_slots))
-        pprint.pprint('Overall slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.global_total_max_slots, self.global_total_curb_slots, total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, total_running_slots))
+        self.logger.log('Frontend slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, total_running_slots))
+        self.logger.log('Overall slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.global_total_max_slots, self.global_total_curb_slots, total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, total_running_slots))
 
-        #pprint.pprint(job_types['Running']['dataframe'].to_dict(orient='list'))
-        #import sys
-        #sys.exit()
         # Add entry info to each running slot's classad
         append_running_on(job_types['Running']['dataframe'],
                           slot_types['Running']['dataframe'])
@@ -195,10 +192,10 @@ class GlideFrontendElement:
             if use_glexec != 'NEVER':
                 if entry_info.get('GLIDEIN_REQUIRE_VOMS') == 'True':
                     prop_jobs['Idle'] = prop_jobs['VomsIdle']
-                    logger.log.info('Voms proxy required, limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
+                    self.logger.log('Voms proxy required, limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
                 elif entry_info.get('GLIDEIN_REQUIRE_GLEXEC_USE') == 'True':
                     prop_jobs['Idle'] = prop_jobs['ProxyIdle']
-                    logger.log.info('Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
+                    self.logger.log('Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
 
             # effective idle is how much more we need
             # if there are idle slots, subtract them, they should match soon
@@ -209,7 +206,7 @@ class GlideFrontendElement:
             # the minimum running parameter is set
             if prop_mc_jobs['Idle'] < self.entry_min_glideins_running:
                 #logger.log.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
-                pprint.pprint("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
+                self.logger.log("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
                 prop_mc_jobs['Idle'] = self.entry_min_glideins_running
 
             # Compute min glideins required based on multicore jobs
@@ -336,8 +333,7 @@ class GlideFrontendElement:
                     trust_domain=trust_domain, auth_method=auth_method)
                 self.gc_classads.extend(gc_classad)
             else:
-                #self.logger.log.warning("Cannot advertise requests for %s because no factory %s key was found" % (request_name, factory_pool_node))
-                pprint.pprint("Cannot advertise requests for %s because no factory %s key was found" % (request_name, factory_pool_node))
+                self.logger.warning("Cannot advertise requests for %s because no factory %s key was found" % (request_name, factory_pool_node))
 
         # TODO: Enable following logging in future
         """
@@ -354,16 +350,6 @@ class GlideFrontendElement:
 
         gcg_df = pandas.DataFrame([ad.adParams for ad in self.gcg_classads])
         gc_df = pandas.DataFrame([ad.adParams for ad in self.gc_classads])
-
-        #pprint.pprint('------------- GLOBAL -------------')
-        #pprint.pprint(len(gcg_df.to_dict(orient='records')))
-        #pprint.pprint(gcg_df.to_dict(orient='records'))
-        #pprint.pprint('------------- GLOBAL -------------')
-        #pprint.pprint('------------- REQUEST -------------')
-        #pprint.pprint(len(self.gc_classads))
-        #pprint.pprint(gc_df.to_dict(orient='records'))
-        #pprint.pprint('------------- REQUEST -------------')
-     
         return {
             'glideclientglobal_manifests': gcg_df,
             'glideclient_manifests': gc_df
@@ -416,24 +402,19 @@ class GlideFrontendElement:
         # List of glideclient classad objects to return
         gc_classads = []
 
-        #pprint.pprint('Found %i credentials with requests to advertise' % len(credentials_with_request))
         for cred in credentials_with_request:
             if not cred.advertize:
-                pprint.pprint('Ignoring credential with id: %s, pilot_proxy: %s, type: %s, trust_domain: %s, security_name: %s, advertise: %s' % (cred.get_id(), cred.pilot_fname, cred.type, cred.trust_domain, cred.security_class, cred.advertize))
+                self.logger.log('Ignoring credential with id: %s, pilot_proxy: %s, type: %s, trust_domain: %s, security_name: %s, advertise: %s' % (cred.get_id(), cred.pilot_fname, cred.type, cred.trust_domain, cred.security_class, cred.advertize))
                 # We have already determined that this cred cannot be used
                 continue
 
             if not cred.supports_auth_method(auth_method):
-                #self.logger.log.warning('Credential %s does not match auth method %s (for %s), skipping...' % (cred.type, auth_method, params_obj.request_name))
-                pprint.pprint('Credential %s does not match auth method %s (for %s), skipping...' % (cred.type, auth_method, params_obj.request_name))
+                self.logger.warning('Credential %s does not match auth method %s (for %s), skipping...' % (cred.type, auth_method, params_obj.request_name))
                 continue
 
             if cred.trust_domain != trust_domain:
-                #self.logger.log.warning('Credential %s does not match %s (for %s) domain, skipping...' % (cred.trust_domain, trust_domain, params_obj.request_name))
-                pprint.pprint('Credential %s does not match %s (for %s) domain, skipping...' % (cred.trust_domain, trust_domain, params_obj.request_name))
+                self.logger.warning('Credential %s does not match %s (for %s) domain, skipping...' % (cred.trust_domain, trust_domain, params_obj.request_name))
                 continue
-
-            #classad_name = '%s_%s' % (cred.file_id(cred.filename, ignoredn=True), classad_name)
 
             glidein_monitors_this_cred = {}
             if glidein_params_to_encrypt is None:
@@ -442,7 +423,7 @@ class GlideFrontendElement:
                 glidein_params_to_encrypt = copy.deepcopy(glidein_params_to_encrypt)
             req_idle, req_max_run = cred.get_usage_details()
             #self.logger.log.debug('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
-            #pprint.pprint('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
+            self.logger.log('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
 
             glidein_monitors_this_cred = params_obj.glidein_monitors_per_cred.get(cred.get_id(), {})
 
