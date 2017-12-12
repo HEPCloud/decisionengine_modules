@@ -378,7 +378,7 @@ class TaskManager(object):
                     self.logger.info('transform put data')
                 except Exception, detail:
                     self.logger.error('exception from %s: %s'%(transform.name, detail))
-                    self.offline_task_manager()
+                    self.offline_task_manager(data_block)
                 break
             else:
                 s = transform.stop_running.wait(1)
