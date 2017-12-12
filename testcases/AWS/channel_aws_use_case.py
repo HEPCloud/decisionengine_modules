@@ -1,5 +1,3 @@
-$de_config_dir/config.d/channels/
-
 Sources = [
   {
     # Class name to import
@@ -9,7 +7,7 @@ Sources = [
       "schedd_name":   "cmsosgce.fnal.gov",
       "constraint":    "(VO_Name =?= 'CMS')",
       "desired_attrs": ["ProcId", "ClusterId", "VO_Name"],
-    }
+    },
     # I don't know how to express schedule
     "schedule": "5 minute",
   }, {
@@ -17,32 +15,32 @@ Sources = [
     "params": {
       "collector_name": "cmscollector.fnal.gov",
       "constraint": "(Slot_Type =!= 'Partitionable')",
-    }
+    },
     "schedule": "5 minute"
   }, {
     "name": "CloudBudget",
     "params": {
       "budget_file": "some path",
-    }
+    },
     "schedule": "5 minute"
   }, {
     "name": "ProvisionerResourceList",
-    "params": {}
+    "params": {},
     "schedule": "5 minute"
   }, {
     "name": "HPCAllocation",
-    "params": {}
+    "params": {},
     "schedule": "5 minute"
   }, {
     "name": "AWSSpotPrice",
-    "params": {}
+    "params": {},
     "schedule": "5 minute"
   }]
 
 # These are the parameters that must be copied from the parameter store into the DataBlock
 Parameters = ["p_overflow", "p_overflow_threshold", "p_overflow_cloud", "p_overflow_hpc", "p_overflow_osg", "p_target_burn_rate"]
 
-Transforms: [ {
+Transforms = [ {
     # Class name to import
     "name": "osg_requests",
     # pass the entire params dictionary as the parameter to __init__
@@ -54,8 +52,9 @@ Transforms: [ {
     "name": "CloudRequests",
     "params": {}
   },
+]
 
-Publishers: [ {
+Publishers = [ {
     "name": "ProvisionerRequests",
     "params": {}
   }, {
@@ -89,7 +88,7 @@ common_rules = {
         "expression": "(handle_overflow && overflow_hpc_permitted && hpc_sufficient_allocation)",
         "actions": [""],
         "facts": ["use_hpc"],
-    }
+    },
     "handle_cloud": {
         "expression": "(handle_overflow && !use_hpc && overflow_cloud_permitted && cloud_sufficient_budget)",
         "actions": [""],
@@ -112,6 +111,6 @@ cloud_rules = {
 }
 
 LogicEngine = {
-    'facts' : [common_facts, cloud_facts]
+    'facts' : [common_facts, cloud_facts],
     "rules" : [common_rules, cloud_rules]
 }
