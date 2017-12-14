@@ -81,6 +81,10 @@ class Postgresql(ds.DataSource):
     def create_tables(self):
         return True
 
+    def store_taskmanager(self,name,id):
+        return self._update_returning_result("INSERT INTO taskmanager \
+        (name,taskmanager_id) values (%s,%s)",(name,id)).get('sequence_id')
+
     def insert(self, taskmanager_id, generation_id, key,
                value, header, metadata):
 

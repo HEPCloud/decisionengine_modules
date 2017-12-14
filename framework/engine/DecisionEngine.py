@@ -113,6 +113,7 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
                                                taskmanager_id,
                                                channel_config,
                                                datablock.DataBlock(self.dataspace,
+                                                                   channel,
                                                                    taskmanager_id,
                                                                    generation_id))
         worker = Worker(task_manager)

@@ -7,6 +7,9 @@ class DataSource(object):
 
     __metaclass__ = abc.ABCMeta
 
+    #: Name of the taskmanager table
+    taskmanager_table = 'taskmanager'
+
     #: Name of the dataproduct table
     dataproduct_table = 'dataproduct'
 
@@ -44,8 +47,14 @@ class DataSource(object):
         """
 
         schemas = {
-            'header': [
+            'taskmanager': [
+                'sequence_id INT',
                 'taskmanager_id TEXT',
+                'name TEXT',
+                'datestamp timestamp with timezone',
+            ],
+            'header': [
+                'taskmanager_id INT',
                 'generation_id INT',
                 'key TEXT',
                 'create_time REAL',
@@ -59,7 +68,7 @@ class DataSource(object):
                 'schema BLOB',   # keys in the value dict of the dataproduct table
             ],
             'metadata': [
-                'taskmanager_id TEXT',
+                'taskmanager_id INT',
                 'generation_id INT',
                 'key TEXT',
                 'state TEXT',
@@ -67,7 +76,7 @@ class DataSource(object):
                 'missed_update_count INT',
             ],
             'dataproduct': [
-                'taskmanager_id TEXT',
+                'taskmanager_id INT',
                 'generation_id INT',
                 'key TEXT',
                 'value BLOB'
@@ -224,4 +233,8 @@ class DataSource(object):
         """
         Close all connections to the database
         """
+        return
+
+    @abc.abstractmethod
+    def store_taskmanager(self, name, id):
         return

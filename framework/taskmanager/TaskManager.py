@@ -472,7 +472,7 @@ if __name__ == '__main__':
     create channels
     """
     for ch in channels:
-        task_managers[ch] = TaskManager(ch, taskmanager_id, channels[ch], datablock.DataBlock(ds,taskmanager_id, generation_id))
+        task_managers[ch] = TaskManager(ch, taskmanager_id, channels[ch], datablock.DataBlock(ds, ch, taskmanager_id, generation_id))
 
     for key, value in task_managers.iteritems():
         p = multiprocessing.Process(target=value.run, args=(), name="Process-%s"%(key,), kwargs={})

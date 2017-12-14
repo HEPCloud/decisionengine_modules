@@ -153,18 +153,19 @@ class Header(UserDict):
 
 class DataBlock(object):
 
-    def __init__(self, dataspace, taskmanager_id=None, generation_id=None):
+    def __init__(self, dataspace, name, taskmanager_id=None, generation_id=None):
         """
         Initialize DataBlock object
 
         :type dataspace: :obj:`DataSpace`
+        :type name: :obj:`string`
         :type taskmanager_id: :obj:`string`
         :type generation_id: :obj:`int`
         """
- 
+
         self.dataspace = dataspace
 
-        # If taskmanager_id is None create new or 
+        # If taskmanager_id is None create new or
         if taskmanager_id:
             self.taskmanager_id = taskmanager_id
         else:
@@ -174,6 +175,7 @@ class DataBlock(object):
             self.generation_id = generation_id
         else:
             self.generation_id = self.dataspace.get_last_generation_id(taskmanager_id) + 1
+        self.sequence_id = self.store_taskmanager(name, taskmanager_id)
         self._keys = []
         self.lock = threading.Lock()
 
@@ -182,6 +184,7 @@ class DataBlock(object):
         value = {
             'taskamanger_id': self.taskmanager_id,
             'generation_id': self.generation_id,
+            'sequence_id' : self.sequence_id,
             'keys': self._keys,
         }
         dp = {}
@@ -198,6 +201,14 @@ class DataBlock(object):
     def keys(self):
         return self._keys
 
+    def store_taskmanager(self, name, taskmanager_id) :
+        """
+        Persist TaskManager, returns sequence number
+        :type name: :obj:`string`
+        :type taskmanager_id: :obj: `string`
+        :rtype: :obj:`int`
+        """
+        return self.dataspace.store_taskmanager(name, taskmanager_id)
 
     def put(self, key, value, header, metadata=None):
         """
@@ -230,7 +241,7 @@ class DataBlock(object):
         :type header: :obj:`Header`
         :type metadata: :obj:`Metadata`
         """
-        self.dataspace.insert(self.taskmanager_id, self.generation_id,
+        self.dataspace.insert(self.sequence_id, self.generation_id,
                               key, value, header, metadata)
         self._keys.append(key)
 
@@ -244,7 +255,7 @@ class DataBlock(object):
         :type header: :obj:`Header`
         :type metadata: :obj:`Metadata`
         """
-        self.dataspace.update(self.taskmanager_id, self.generation_id,
+        self.dataspace.update(self.sequence_id, self.generation_id,
                               key, value, header, metadata)
 
 
@@ -259,7 +270,7 @@ class DataBlock(object):
         """
 
         if not metadata:
-            metadata = Metadata(self.taskmanager_id, state='NEW',
+            metadata = Metadata(self.sequence_id, state='NEW',
                                 generation_id=self.generation_id,
                                 generation_time=time.time(),
                                 missed_update_count=0)
@@ -288,7 +299,7 @@ class DataBlock(object):
         """
 
         try:
-            value_row = self.dataspace.get_dataproduct(self.taskmanager_id,
+            value_row = self.dataspace.get_dataproduct(self.sequence_id,
                                                        self.generation_id, key)
             value = ast.literal_eval(str(value_row['value']))
         except KeyNotFoundError, e:
@@ -312,7 +323,7 @@ class DataBlock(object):
         :rtype: :obj:`Header`
         """
         try:
-            header_row = self.dataspace.get_header(self.taskmanager_id,
+            header_row = self.dataspace.get_header(self.sequence_id,
                                                    self.generation_id, key)
             header = Header(header_row[0], create_time=header_row[3],
                             expiration_time=header_row[4],
@@ -335,7 +346,7 @@ class DataBlock(object):
         :rtype: :obj:`Metadata`
         """
         try:
-            metadata_row = self.dataspace.get_metadata(self.taskmanager_id,
+            metadata_row = self.dataspace.get_metadata(self.sequence_id,
                                                        self.generation_id, key)
             metadata = Metadata(metadata_row[0], state=metadata_row[3],
                                 generation_id=metadata_row[1],
@@ -365,7 +376,7 @@ class DataBlock(object):
         dup_datablock = copy.copy(self)
         self.generation_id += 1
         dup_datablock._keys = copy.deepcopy(self._keys)
-        self.dataspace.duplicate_datablock(self.taskmanager_id,
+        self.dataspace.duplicate_datablock(self.sequence_id,
                                            dup_datablock.generation_id,
                                            self.generation_id)
         return dup_datablock
@@ -382,7 +393,7 @@ class DataBlock(object):
         """
         Set the expiration_time for the current generation of the dataproduct
         and mark it as expired if expiration_time <= current time
-        
+
         """
 
         pass

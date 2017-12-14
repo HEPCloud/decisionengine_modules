@@ -92,9 +92,9 @@ class DataSpace(object):
 
         # Validate configuration
         if not config.get('dataspace'):
-            raise DataSpaceConfigurationError('Configuration is missing dataspace information') 
+            raise DataSpaceConfigurationError('Configuration is missing dataspace information')
         elif not isinstance(config.get('dataspace'), dict):
-            raise DataSpaceConfigurationError('Invalid dataspace configuration') 
+            raise DataSpaceConfigurationError('Invalid dataspace configuration')
         try:
             self._db_driver_name = config['dataspace']['datasource']['name']
             self._db_driver_module = config['dataspace']['datasource']['module']
@@ -170,3 +170,6 @@ class DataSpace(object):
 
     def close(self):
         self.datasource.close()
+
+    def store_taskmanager(self, name, id):
+        return self.datasource.store_taskmanager(name, id)
