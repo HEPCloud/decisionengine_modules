@@ -170,11 +170,11 @@ class DataBlock(object):
             self.taskmanager_id = taskmanager_id
         else:
             self.taskmanager_id = ('%s' % uuid.uuid1()).upper()
-
+        self.sequence_id = self.store_taskmanager(name, taskmanager_id)
         if generation_id:
             self.generation_id = generation_id
         else:
-            self.generation_id = self.dataspace.get_last_generation_id(taskmanager_id) + 1
+            self.generation_id = self.dataspace.get_last_generation_id(name, taskmanager_id)
         self.sequence_id = self.store_taskmanager(name, taskmanager_id)
         self._keys = []
         self.lock = threading.Lock()
