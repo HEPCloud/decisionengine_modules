@@ -215,7 +215,7 @@ class DataSource(object):
     def duplicate_datablock(self, taskmanager_id, generation_id,
                             new_generation_id):
         """
-        For the given taskmanager_id, make a copy of the datablock with given 
+        For the given taskmanager_id, make a copy of the datablock with given
         generation_id, set the generation_id for the datablock copy
 
         :type taskmanager_id: :obj:`string`
@@ -227,6 +227,18 @@ class DataSource(object):
         """
         return
 
+    @abc.abstractmethod
+    def get_last_generation_id(self, name, taskmanager_id=None):
+        """
+        Return last generation id for current task manager
+        or taskmanager w/ task_manager_id.
+
+        :type name: :obj:`string`
+        :arg name: task manager name
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: task manager id
+        """
+        return
 
     @abc.abstractmethod
     def close(self):
@@ -236,5 +248,23 @@ class DataSource(object):
         return
 
     @abc.abstractmethod
-    def store_taskmanager(self, name, id):
+    def store_taskmanager(self, taskmanager_name, taskmanager_id):
+        """
+        Store TaskManager
+        :type taskmanager_name: :obj:`string`
+        :arg taskmanager_name: name of taskmanager to retrieve
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: id of taskmanager to retrieve
+        """
+        return
+
+    @abc.abstractmethod
+    def get_taskmanager(self, taskmanager_name, taskmanager_id):
+        """
+        Retrieve TaskManager
+        :type taskmanager_name: :obj:`string`
+        :arg taskmanager_name: name of taskmanager to retrieve
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: id of taskmanager to retrieve
+        """
         return

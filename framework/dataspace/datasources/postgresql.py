@@ -1,4 +1,3 @@
-
 import string
 import time
 import types
@@ -37,6 +36,30 @@ SELECT_QUERY = """
 SELECT * FROM {} WHERE taskmanager_id=%s AND generation_id=%s AND key=%s
 """
 
+SELECT_LAST_GENERATION_ID_BY_NAME = """
+SELECT max(generation_id)
+FROM dataproduct
+WHERE taskmanager_id = (select  max(sequence_id) from taskmanager where name = %s)
+"""
+
+SELECT_LAST_GENERATION_ID_BY_NAME_AND_ID = """
+SELECT max(dp.generation_id)
+FROM dataproduct dp
+JOIN taskmanager tm ON dp.taskmanager_id=tm.sequence_id
+WHERE tm.name=%s
+AND tm.taskmanager_id=%s
+"""
+
+SELECT_TASKMANAGER_BY_NAME = """
+SELECT tm.name, tm.sequence_id, tm.taskmanager_id, tm.datestamp
+FROM taskmanager tm where tm.sequence_id =
+(SELECT max(sequence_id) from taskmanager where name = %s);
+"""
+
+SELECT_TASKMANAGER_BY_NAME_AND_ID = """
+SELECT tm.name, tm.sequence_id, tm.taskmanager_id, tm.datestamp
+FROM taskmanager tm where tm.name = %s and tm.taskmanager_id = %s
+"""
 
 class Postgresql(ds.DataSource):
 
@@ -73,7 +96,7 @@ class Postgresql(ds.DataSource):
 
 
     def __init__(self, config_dict):
-        ds.DataSource.__init__(self,config_dict)
+        ds.DataSource.__init__(self, config_dict)
         self.connection_pool = DBUtils.PooledDB.PooledDB(psycopg2, **(config_dict))
         self.retries = MAX_NUMBER_OF_RETRIES
         self.timeout = TIME_TO_SLEEP
@@ -81,9 +104,41 @@ class Postgresql(ds.DataSource):
     def create_tables(self):
         return True
 
-    def store_taskmanager(self,name,id):
+    def store_taskmanager(self, name, id):
         return self._update_returning_result("INSERT INTO taskmanager \
-        (name,taskmanager_id) values (%s,%s)",(name,id)).get('sequence_id')
+        (name, taskmanager_id) values (%s, %s)", (name, id)).get('sequence_id')
+
+    def get_taskmanager(self, taskmanager_name, taskmanager_id=None):
+        if taskmanager_id:
+            try:
+                return self._select_dictresult(SELECT_TASKMANAGER_BY_NAME_AND_ID,
+                                               (taskmanager_name, taskmanager_id))[0]
+            except IndexError:
+                raise KeyError("Taskmanager={} taskmanager_id={} not found".format(taskmanager_name, taskmanager_id))
+        else:
+            try:
+                return self._select_dictresult(SELECT_TASKMANAGER_BY_NAME,
+                                               (taskmanager_name,))[0]
+            except IndexError:
+                raise KeyError("Taskmanager={} not found".format(taskmanager_name))
+
+    def get_last_generation_id(self,
+                               taskmanager_name,
+                               taskmanager_id=None):
+        if taskmanager_id:
+                try:
+                    return self._select(SELECT_LAST_GENERATION_ID_BY_NAME_AND_ID,
+                                        (taskmanager_name, taskmanager_id))[0][0]
+                except IndexError:
+                    raise KeyError("Last generation id not found for taskmanager={} taskmanager_id={}".
+                                   format(taskmanager_name, taskmanager_id))
+        else:
+                try:
+                    return self._select(SELECT_LAST_GENERATION_ID_BY_NAME,
+                                        (taskmanager_name, ))[0][0]
+                except IndexError:
+                    raise KeyError("Last generation id not found for taskmanager={}".
+                                   format(taskmanager_name, ))
 
     def insert(self, taskmanager_id, generation_id, key,
                value, header, metadata):
@@ -257,7 +312,7 @@ class Postgresql(ds.DataSource):
         db, cursor = None, None
         try:
             db = self.get_connection()
-            if cursor_factory :
+            if cursor_factory:
                 cursor = db.cursor(cursor_factory=cursor_factory)
             else:
                 cursor = db.cursor()
