@@ -52,7 +52,6 @@ class InvalidHeaderError(Exception):
     """
     pass
 
-
 class Metadata(UserDict):
 
     # Minimum information required for the Metadata dict to be valid
@@ -175,7 +174,6 @@ class DataBlock(object):
             self.generation_id = generation_id
         else:
             self.generation_id = self.dataspace.get_last_generation_id(name, taskmanager_id)
-        self.sequence_id = self.store_taskmanager(name, taskmanager_id)
         self._keys = []
         self.lock = threading.Lock()
 
@@ -201,14 +199,32 @@ class DataBlock(object):
     def keys(self):
         return self._keys
 
-    def store_taskmanager(self, name, taskmanager_id) :
+    def store_taskmanager(self, taskmanager_name, taskmanager_id) :
         """
         Persist TaskManager, returns sequence number
-        :type name: :obj:`string`
+        :type taskmanager_name: :obj:`string`
         :type taskmanager_id: :obj: `string`
         :rtype: :obj:`int`
         """
-        return self.dataspace.store_taskmanager(name, taskmanager_id)
+        return self.dataspace.store_taskmanager(taskmanager_name, taskmanager_id)
+
+    def get_taskmanager(self, taskmanager_name, taskmanager_id=None):
+        """
+        Retrieve TaskManager
+        :type taskmanager_name: :obj:`string`
+        :arg taskmanager_name: name of taskmanager to retrieve
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: id of taskmanager to retrieve
+        :rtype: :obj: `dict`
+
+        The dictionary returned looks like :
+        {'datestamp': datetime.datetime(2017, 12, 20, 17, 37, 17, 503210,
+                      tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=-360, name=None)),
+         'sequence_id': 135L,
+         'name': 'AWS_Calculations',
+         'taskmanager_id': '77B16EB5-C79E-45B0-B1B1-37E846692E1D'}
+        """
+        return self.dataspace.get_taskmanager(taskmanager_name, taskmanager_id)
 
     def put(self, key, value, header, metadata=None):
         """

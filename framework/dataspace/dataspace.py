@@ -180,3 +180,5 @@ class DataSpace(object):
         return self.datasource.get_last_generation_id(taskmanager_name,
                                                       taskmanager_id)
 
+    def get_taskmanager(self, taskmanager_name, taskmanager_id=None):
+        return self.datasource.get_taskmanager(taskmanager_name, taskmanager_id)

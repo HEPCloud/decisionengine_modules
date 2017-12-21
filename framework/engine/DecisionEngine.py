@@ -19,10 +19,6 @@ import decisionengine.framework.modules.de_logger as de_logger
 import decisionengine.framework.configmanager.ConfigManager as Conf_Manager
 import decisionengine.framework.taskmanager.TaskManager as TaskManager
 
-import decisionengine.framework.dataspace.datablock as datablock
-import decisionengine.framework.dataspace.dataspace as dataspace
-
-
 CONFIG_UPDATE_PERIOD = 10  # seconds
 
 
@@ -59,7 +55,6 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         signal.signal(signal.SIGHUP, self.handle_sighup)
         self.task_managers = {}
         self.config_manager = cfg
-        self.dataspace = dataspace.DataSpace(self.config_manager.get_global_config())
 
     def get_logger(self):
         return self.logger
@@ -111,11 +106,9 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         taskmanager_id = str(uuid.uuid4()).upper()
         task_manager = TaskManager.TaskManager(channel,
                                                taskmanager_id,
+                                               generation_id,
                                                channel_config,
-                                               datablock.DataBlock(self.dataspace,
-                                                                   channel,
-                                                                   taskmanager_id,
-                                                                   generation_id))
+                                               self.config_manager.get_global_config())
         worker = Worker(task_manager)
         self.task_managers[channel] = worker
         worker.start()

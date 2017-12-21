@@ -50,6 +50,16 @@ WHERE tm.name=%s
 AND tm.taskmanager_id=%s
 """
 
+SELECT_TASKMANAGER_BY_NAME = """
+SELECT tm.name, tm.sequence_id, tm.taskmanager_id, tm.datestamp
+FROM taskmanager tm where tm.sequence_id =
+(SELECT max(sequence_id) from taskmanager where name = %s);
+"""
+
+SELECT_TASKMANAGER_BY_NAME_AND_ID = """
+SELECT tm.name, tm.sequence_id, tm.taskmanager_id, tm.datestamp
+FROM taskmanager tm where tm.name = %s and tm.taskmanager_id = %s
+"""
 
 class Postgresql(ds.DataSource):
 
@@ -97,6 +107,20 @@ class Postgresql(ds.DataSource):
     def store_taskmanager(self, name, id):
         return self._update_returning_result("INSERT INTO taskmanager \
         (name, taskmanager_id) values (%s, %s)", (name, id)).get('sequence_id')
+
+    def get_taskmanager(self, taskmanager_name, taskmanager_id=None):
+        if taskmanager_id:
+            try:
+                return self._select_dictresult(SELECT_TASKMANAGER_BY_NAME_AND_ID,
+                                               (taskmanager_name, taskmanager_id))[0]
+            except IndexError:
+                raise KeyError("Taskmanager={} taskmanager_id={} not found".format(taskmanager_name, taskmanager_id))
+        else:
+            try:
+                return self._select_dictresult(SELECT_TASKMANAGER_BY_NAME,
+                                               (taskmanager_name,))[0]
+            except IndexError:
+                raise KeyError("Taskmanager={} not found".format(taskmanager_name))
 
     def get_last_generation_id(self,
                                taskmanager_name,
@@ -288,7 +312,7 @@ class Postgresql(ds.DataSource):
         db, cursor = None, None
         try:
             db = self.get_connection()
-            if cursor_factory :
+            if cursor_factory:
                 cursor = db.cursor(cursor_factory=cursor_factory)
             else:
                 cursor = db.cursor()

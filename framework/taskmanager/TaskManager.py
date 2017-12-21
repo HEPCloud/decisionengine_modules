@@ -11,6 +11,7 @@ import uuid
 import traceback
 import multiprocessing
 
+import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.modules.de_logger as de_logger
@@ -84,7 +85,7 @@ class TaskManager(object):
     Task Manager
     """
 
-    def __init__(self, name, task_manager_id, channel_dict, data_block):
+    def __init__(self, name, task_manager_id, generation_id, channel_dict, global_config):
         """
         :type task_manager_id: :obj:`int`
         :arg task_manager_id: Task Manager id provided by caller
@@ -93,8 +94,11 @@ class TaskManager(object):
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
         """
-
-        self.data_block_t0 = data_block # my current data block
+        self.dataspace = dataspace.DataSpace(global_config)
+        self.data_block_t0 =  datablock.DataBlock(self.dataspace,
+                                                  name,
+                                                  task_manager_id,
+                                                  generation_id) # my current data block
         self.name = name
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
@@ -260,7 +264,7 @@ class TaskManager(object):
                 except Exception:
                     log_exception(self.logger, "error in decision cycle(publishers)")
         except Exception:
-            log_exception(self.logger, "error in decision cycle(logic engine)") 
+            log_exception(self.logger, "error in decision cycle(logic engine)")
 
     def run_source(self, src):
         """
@@ -472,7 +476,7 @@ if __name__ == '__main__':
     create channels
     """
     for ch in channels:
-        task_managers[ch] = TaskManager(ch, taskmanager_id, channels[ch], datablock.DataBlock(ds, ch, taskmanager_id, generation_id))
+        task_managers[ch] = TaskManager(ch, taskmanager_id, generation_id, channels[ch], global_config)
 
     for key, value in task_managers.iteritems():
         p = multiprocessing.Process(target=value.run, args=(), name="Process-%s"%(key,), kwargs={})

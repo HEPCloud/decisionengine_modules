@@ -248,5 +248,23 @@ class DataSource(object):
         return
 
     @abc.abstractmethod
-    def store_taskmanager(self, name, id):
+    def store_taskmanager(self, taskmanager_name, taskmanager_id):
+        """
+        Store TaskManager
+        :type taskmanager_name: :obj:`string`
+        :arg taskmanager_name: name of taskmanager to retrieve
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: id of taskmanager to retrieve
+        """
+        return
+
+    @abc.abstractmethod
+    def get_taskmanager(self, taskmanager_name, taskmanager_id):
+        """
+        Retrieve TaskManager
+        :type taskmanager_name: :obj:`string`
+        :arg taskmanager_name: name of taskmanager to retrieve
+        :type taskmanager_id: :obj:`string`
+        :arg taskmanager_id: id of taskmanager to retrieve
+        """
         return
