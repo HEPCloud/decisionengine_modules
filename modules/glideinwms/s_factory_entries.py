@@ -30,10 +30,10 @@ class FactoryEntries(Source.Source):
         self.constraint = config.get('constraint', True)
         self.classad_attrs = config.get('classad_attrs')
         self._entry_gridtype_map = {
-            'gt2': 'Factory_Entries_Grid',
-            'ec2': 'Factory_Entries_AWS',
-            'gce': 'Factory_Entries_GCE',
-            'batch *': 'Factory_Entries_LCF',
+            ('gt2', 'condor') : 'Factory_Entries_Grid',
+            ('ec2',): 'Factory_Entries_AWS',
+            ('gce',): 'Factory_Entries_GCE',
+            ('batch slurm',): 'Factory_Entries_LCF',
         }
 
 
@@ -61,8 +61,9 @@ class FactoryEntries(Source.Source):
 
         results = {}
         dataframe = pandas.DataFrame(condor_status.stored_data)
+        dataframe['CollectorHost'] = [self.collector_host] * len(dataframe)
         for key, value in self._entry_gridtype_map.iteritems():
-            results[value] = dataframe.loc[(dataframe.GLIDEIN_GridType == key)]
+            results[value] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(key)) )]
         return results
 
 
