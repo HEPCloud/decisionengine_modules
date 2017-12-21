@@ -48,13 +48,13 @@ mkdir -p $release_dir
 cp -r $source_dir  $release_dir
 cd $release_dir
 tar --exclude=.git --exclude=.gitignore --exclude=doc --exclude=cxx/build \
-    --exclude=readme \
+    --exclude=readme --exclude=.cache \
     -czf $release_tar decisionengine
 
 cp $release_tar $RPM_TOPDIR/SOURCES
 cp $spec_template $RPM_TOPDIR/SPECS
 
-rpmbuild -bs $spec_file 
+rpmbuild -bs $spec_file
 rpmbuild -bb $spec_file
 
 #mock -r epel-el7-x86_64 --macro-file=$rpm_macros -i python

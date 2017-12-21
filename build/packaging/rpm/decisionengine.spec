@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.1
+%define version 0.3.1
 %define release 0.1
 
 %define de_user decisionengine
@@ -33,7 +33,6 @@ License:        Fermitools Software Legal Information (Modified BSD License)
 URL:            http://hepcloud.fnal.gov
 
 Source0:        decisionengine.tar.gz
-#Source1:        ../../../framework/logicengine/cxx/build
 
 BuildArch:      x86_64
 BuildRequires:  cmake numpy numpy-f2py python-pandas
@@ -63,6 +62,15 @@ Requires:       decisionengine = %{version}-%{release}
 The testcase used to try out the Decision Engine.
 
 
+%package standard-library
+Summary:        The HEPCloud Decision Engine Modules in Standard Library
+Group:          System Environment/Daemons
+Requires:       decisionengine = %{version}-%{release}
+
+%description standard-library
+The modules in the Decision Engine Standard Library.
+
+
 %prep
 %setup -q -n decisionengine
 
@@ -73,13 +81,12 @@ mkdir %{le_builddir}
 cd %{le_builddir}
 cmake ..
 make
+rm ../../RE.so ../../libLogicEngine.so
 cp ErrorHandler/RE.so ../..
 cp ErrorHandler/libLogicEngine.so ../..
 
 
 %install
-#make install DESTDIR=%{buildroot}
-
 rm -rf $RPM_BUILD_ROOT
 
 # Create the system directories
@@ -102,10 +109,8 @@ install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROO
 install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
-#rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/doc
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/build
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/modules
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/cxx
@@ -123,6 +128,7 @@ mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUIL
 %{python_sitelib}/decisionengine/framework/__init__.py
 %{python_sitelib}/decisionengine/framework/__init__.pyo
 %{python_sitelib}/decisionengine/framework/__init__.pyc
+%{python_sitelib}/decisionengine/util/
 %{python_sitelib}/decisionengine/__init__.py
 %{python_sitelib}/decisionengine/__init__.pyo
 %{python_sitelib}/decisionengine/__init__.pyc
@@ -140,9 +146,13 @@ mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUIL
 %config(noreplace) %{de_channel_confdir}/channelA.conf
 
 
+%files standard-library
+%{python_sitelib}/decisionengine/modules
+
+
 %pre
 # Add the "decisionengine" user and group if they do not exist
-getent group %{de_group} >/dev/null || 
+getent group %{de_group} >/dev/null ||
     groupadd -r  %{de_group}
 getent passwd  %{de_user} >/dev/null || \
     useradd -r -g  %{de_user} -d /var/lib/decisionengine \
@@ -175,11 +185,22 @@ if [ "$1" = "0" ] ; then
 fi
 
 
-#%clean
-#rm -rf $RPM_BUILD_ROOT
-
-
 %changelog
+* Tue Dec 12 2017 Parag Mhashilkar <parag@fnal.gov> - 0.3.1-0.1
+- Minor bug fixes
+
+* Mon Nov 13 2017 Parag Mhashilkar <parag@fnal.gov> - 0.3-0.1
+- Decision Engine v0.3
+- Includes fixes made during the demo
+
+* Thu Nov 02 2017 Parag Mhashilkar <parag@fnal.gov> - 0.2-0.1
+- Decision Engine v0.2 for the demo
+- RPM work in progress
+
+* Fri Sep 15 2017 Parag Mhashilkar <parag@fnal.gov> - 0.1-0.2
+- Decision Engine v0.1 work in progress
+- Added packaging for modules
+
 * Mon May 01 2017 Parag Mhashilkar <parag@fnal.gov> - 0.1-0.1
 - Decision Engine v0.1
 - RPM work in progress
