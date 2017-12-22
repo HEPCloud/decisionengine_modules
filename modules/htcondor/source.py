@@ -71,4 +71,6 @@ class ResourceManifests(Source.Source):
                            self.condor_config)
 
         dataframe = pandas.DataFrame(condor_status.stored_data)
+        if not dataframe.empty:
+            dataframe['CollectorHost'] = [self.collector_host] * len(dataframe)
         return dataframe
