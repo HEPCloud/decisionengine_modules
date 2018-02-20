@@ -90,7 +90,15 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
 
     def rpc_stop(self):
         for ch, worker in self.task_managers.items():
-            worker.terminate()
+            worker.task_manager.set_state(TaskManager.SHUTDOWN)
+        for i in range(10):
+            if not filter(lambda x: x[1].task_manager.get_state()!=TaskManager.OFFLINE,
+                          self.task_managers.items()):
+                break
+            else:
+                time.sleep(1)
+                continue
+        map(lambda x: x[1].terminate(), self.task_managers.items())
         self.shutdown()
         return "OK"
 
@@ -134,7 +142,13 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
     def stop_channel(self,channel):
         print channel, self.task_managers
         worker = self.task_managers[channel]
-        print "Worker", worker
+        worker.task_manager.set_state(TaskManager.SHUTDOWN)
+        for i in range(10):
+            if worker.task_manager.get_state()==TaskManager.OFFLINE:
+                break
+            else:
+                time.sleep(1)
+                continue
         worker.terminate()
         del self.task_managers[channel]
 
