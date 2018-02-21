@@ -89,8 +89,6 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return txt[:-1]
 
      def rpc_stop(self):
-         map(lambda x: x[1].task_manager.set_state(TaskManager.SHUTDOWN),
-             self.task_managers.items())
          self.stop_channels()
          self.shutdown()
          return "OK"
@@ -134,13 +132,9 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
 
     def stop_channel(self,channel):
         worker = self.task_managers[channel]
-        """
-        NB, check below is prone to race condition
-        """
-        if worker.task_manager.get_state() != TaskManager.OFFLINE:
-            worker.task_manager.set_state(TaskManager.SHUTDOWN)
-            for i in range(int(self.config_manager.get("shutdown_timeout",10))):
-                if worker.task_manager.get_state()==TaskManager.OFFLINE:
+        worker.task_manager.stop_task_manager()
+        for i in range(int(self.config_manager.get("shutdown_timeout",10))):
+                if worker.task_manager.get_state()==TaskManager.SHUTDOWN:
                     break
                 else:
                     time.sleep(1)
@@ -153,10 +147,7 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return "OK"
 
     def stop_channels(self):
-        """
-        need to set state to shutdown to avoid serial wait.
-        """
-        map(lambda x: x[1].task_manager.set_state(TaskManager.SHUTDOWN),
+        map(lambda x: x[1].task_manager.stop_task_manager(),
             self.task_managers.items())
         channels = self.task_managers.keys()
         for ch in channels:
