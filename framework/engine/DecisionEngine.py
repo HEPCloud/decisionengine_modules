@@ -88,10 +88,12 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
             txt += "channel: {:<{width}}, id = {:<{width}}, state = {:<10} \n".format(ch,worker.task_manager.id ,TaskManager._state_names[worker.task_manager.get_state()],width=width)
         return txt[:-1]
 
-    def rpc_stop(self):
-        self.stop_channels()
-        self.shutdown()
-        return "OK"
+     def rpc_stop(self):
+         map(lambda x: x[1].task_manager.set_state(TaskManager.SHUTDOWN),
+             self.task_managers.items())
+         self.stop_channels()
+         self.shutdown()
+         return "OK"
 
     def rpc_start_channel(self, channel):
         if channel in self.task_managers:
@@ -132,13 +134,17 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
 
     def stop_channel(self,channel):
         worker = self.task_managers[channel]
-        worker.task_manager.set_state(TaskManager.SHUTDOWN)
-        for i in range(10):
-            if worker.task_manager.get_state()==TaskManager.OFFLINE:
-                break
-            else:
-                time.sleep(1)
-                continue
+        """
+        NB, check below is prone to race condition
+        """
+        if worker.task_manager.get_state() != TaskManager.OFFLINE:
+            worker.task_manager.set_state(TaskManager.SHUTDOWN)
+            for i in range(int(self.config_manager.get("shutdown_timeout",10))):
+                if worker.task_manager.get_state()==TaskManager.OFFLINE:
+                    break
+                else:
+                    time.sleep(1)
+                    continue
         worker.terminate()
         del self.task_managers[channel]
 
@@ -147,6 +153,11 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return "OK"
 
     def stop_channels(self):
+        """
+        need to set state to shutdown to avoid serial wait.
+        """
+        map(lambda x: x[1].task_manager.set_state(TaskManager.SHUTDOWN),
+            self.task_managers.items())
         channels = self.task_managers.keys()
         for ch in channels:
             self.stop_channel(ch)
