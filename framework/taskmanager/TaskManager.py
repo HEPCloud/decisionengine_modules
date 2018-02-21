@@ -78,8 +78,8 @@ class Channel(object):
 
 
 # states
-BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
-_state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
+BOOT, STEADY, OFFLINE, SHUTTINGDOWN, SHUTDOWN = range(5)
+_state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTTINGDOWN', 'SHUTDOWN']
 class TaskManager(object):
     """
     Task Manager

@@ -132,13 +132,15 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
 
     def stop_channel(self,channel):
         worker = self.task_managers[channel]
-        worker.task_manager.stop_task_manager()
+        if worker.task_manager.get_state() not in (TaskManager.SHUTTINGDOWN,
+                                                   TaskManager.SHUTDOWN):
+            worker.task_manager.set_state(TaskManager.SHUTTINGDOWN)
         for i in range(int(self.config_manager.get("shutdown_timeout",10))):
-                if worker.task_manager.get_state()==TaskManager.SHUTDOWN:
-                    break
-                else:
-                    time.sleep(1)
-                    continue
+            if worker.task_manager.get_state()==TaskManager.SHUTDOWN:
+                break
+            else:
+                time.sleep(1)
+                continue
         worker.terminate()
         del self.task_managers[channel]
 
@@ -147,7 +149,7 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return "OK"
 
     def stop_channels(self):
-        map(lambda x: x[1].task_manager.stop_task_manager(),
+        map(lambda x: x[1].task_manager.set_state(TaskManager.SHUTTINGDOWN),
             self.task_managers.items())
         channels = self.task_managers.keys()
         for ch in channels:
