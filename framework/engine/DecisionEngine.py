@@ -88,10 +88,10 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
             txt += "channel: {:<{width}}, id = {:<{width}}, state = {:<10} \n".format(ch, worker.task_manager.id, TaskManager._state_names[worker.task_manager.get_state()], width=width)
         return txt[:-1]
 
-    def rpc_stop(self):
-        self.stop_channels()
-        self.shutdown()
-        return "OK"
+     def rpc_stop(self):
+         self.stop_channels()
+         self.shutdown()
+         return "OK"
 
     def rpc_start_channel(self, channel):
         if channel in self.task_managers:
