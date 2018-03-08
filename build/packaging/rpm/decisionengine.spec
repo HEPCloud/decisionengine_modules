@@ -81,7 +81,8 @@ mkdir %{le_builddir}
 cd %{le_builddir}
 cmake ..
 make
-rm ../../RE.so ../../libLogicEngine.so
+[ -e ../../RE.so ] && rm ../../RE.so
+[ -e ../../libLogicEngine.so ] && ../../libLogicEngine.so
 cp ErrorHandler/RE.so ../..
 cp ErrorHandler/libLogicEngine.so ../..
 
@@ -106,17 +107,17 @@ cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
 install -m 0644 build/packaging/rpm/decision_engine_template.conf $RPM_BUILD_ROOT%{de_confdir}/decision_engine.conf
 install -m 0644 build/packaging/rpm/decisionengine.service $RPM_BUILD_ROOT%{systemddir}/decision-engine.service
 install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROOT%{_initrddir}/decision-engine
-install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
+# BUILDING testcase RPM: Uncomment following 1 line
+#install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/build
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/cxx
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/tests
-
-mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUILD_ROOT%{python_sitelib}
+# BUILDING testcase RPM: Comment following line
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 
 %files
 %{python_sitelib}/decisionengine/framework/configmanager
@@ -141,9 +142,10 @@ mv $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/testcases $RPM_BUIL
 %config(noreplace) %{de_confdir}/decision_engine.conf
 
 
-%files testcase
-%{python_sitelib}/testcases
-%config(noreplace) %{de_channel_confdir}/channelA.conf
+# BUILDING testcase RPM: Uncomment following 3 lines
+#%files testcase
+#%{python_sitelib}/decisionengine/testcases
+#%config(noreplace) %{de_channel_confdir}/channelA.conf
 
 
 %files standard-library
