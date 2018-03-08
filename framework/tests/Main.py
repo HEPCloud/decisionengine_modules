@@ -1,6 +1,5 @@
 import sys
-from modules import Module 
+from decisionengine.framework.modules.Module import Module
 
 if __name__ == "__main__":
-    a = Module("a","a")
-    
+    a = Module("a")

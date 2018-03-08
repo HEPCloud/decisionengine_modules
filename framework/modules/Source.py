@@ -16,4 +16,3 @@ class Source(Module.Module):
     def acquire(self):
         print "Called Source.acquires"
         return None
-

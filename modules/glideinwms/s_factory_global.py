@@ -12,7 +12,7 @@ PRODUCES = ['factoryglobal_manifests']
 
 class FactoryGlobalManifests(source.ResourceManifests):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(FactoryGlobalManifests, self).__init__(*args, **kwargs)
         self.constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % self.constraint
         self.subsystem_name = 'any'

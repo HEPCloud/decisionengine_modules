@@ -13,7 +13,7 @@ PRODUCES = ['job_manifests']
 
 class JobQ(Source.Source):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         if args:
             config = args[0]
         else:
@@ -114,4 +114,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

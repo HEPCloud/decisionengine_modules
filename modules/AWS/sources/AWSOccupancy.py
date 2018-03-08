@@ -133,6 +133,7 @@ class OccupancyForRegion(object):
 class AWSOccupancy(Source.Source):
     def __init__(self, *args, **kwargs):
         self.config_file = args[0]['occupancy_configuration']
+        self.account_dict = {}
 
     def produces(self,schema_id_list): return PRODUCES
 

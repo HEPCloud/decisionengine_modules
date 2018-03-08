@@ -1,5 +1,12 @@
 #!/bin/sh
 
+get_current_git_branch() {
+    cd $DECISIONENGINE_SRC
+    gb=`git branch | grep "\*" | cut -d ' ' -f2`
+    cd $WORKSPACE
+    echo $gb
+}
+
 process_branch() {
     local pylint_log=$1
     local pep8_log=$2
@@ -19,7 +26,8 @@ process_branch() {
         cd $DECISIONENGINE_SRC
         git checkout $git_branch
         checkout_rc=$?
-        git pull
+        #HACK
+        #git pull
         cd $WORKSPACE
         if [ $checkout_rc -ne 0 ]; then
             log_nonzero_rc "git checkout" $?
@@ -30,11 +38,26 @@ process_branch() {
     # Consider success if no git checkout was done
     echo "GIT_CHECKOUT=\"PASSED\"" >> $results
 
+    # Build Logic Engine
+    echo "Building Logic Engine ..."
+    le_builddir=$DECISIONENGINE_SRC/framework/logicengine/cxx/build
+    mkdir $le_builddir
+    cd $le_builddir
+    cmake --debug-output ..
+    make --debug
+    [ -e ../../RE.so ] && rm ../../RE.so
+    [ -e ../../libLogicEngine.so ] && ../../libLogicEngine.so
+    cp ErrorHandler/RE.so ../..
+    cp ErrorHandler/libLogicEngine.so ../..
+    echo "Building Logic Engine ... DONE"
+
+    cd $WORKSPACE
+
     # pylint related variables
     PYLINT_RCFILE=/dev/null
     #PYLINT_RCFILE=$WORKSPACE/pylint.cfg
     #PYLINT_OPTIONS="--errors-only --msg-template=\"{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}\" --rcfile=$PYLINT_RCFILE"
-    PYLINT_OPTIONS="--errors-only --rcfile=$PYLINT_RCFILE"
+    PYLINT_OPTIONS="--contextmanager-decorators=contextlib.contextmanager,tf_contextlib.contextmanager --errors-only --rcfile=$PYLINT_RCFILE --disable=no-member"
 
     # pep8 related variables
     # default: E121,E123,E126,E226,E24,E704
@@ -59,25 +82,14 @@ process_branch() {
     #cat $PYLINT_RCFILE
 
     # get list of python scripts without .py extension
-    #scripts=`find $DECISIONENGINE_SRC -path decisionengine/.git -prune -o -exec file {} \; -a -type f | grep -i python | grep -vi '\.py' | cut -d: -f1 | grep -v "\.html$"`
-    #pylint $PYLINT_OPTIONS -e F0401 ${scripts}  >> $pylint_log || log_nonzero_rc "pylint" $?
-    #pep8 $PEP8_OPTIONS ${scripts} >> $pep8_log || log_nonzero_rc "pep8" $?
-
-    #echo "-------> $scripts"
+    scripts=`find $DECISIONENGINE_SRC/framework $DECISIONENGINE_SRC/modules $DECISIONENGINE_SRC/util -name "*.py"`
     currdir=`pwd`
-    files_checked=`echo $scripts`
-
-    for dir in `ls -d1 $DECISIONENGINE_SRC/framework/* | grep -v ".py"`
+    files_checked=""
+    for file in $scripts
     do
-        cd $dir
-        #for file in `ls -1 *.py`
-        for file in *.py
-        do
-            files_checked="$files_checked $file"
-            pylint $PYLINT_OPTIONS $file >> $pylint_log || log_nonzero_rc "pylint" $?
-            pep8 $PEP8_OPTIONS $file >> $pep8_log || log_nonzero_rc "pep8" $?
-        done
-        cd $currdir
+        files_checked="$files_checked $file"
+        pylint $PYLINT_OPTIONS $file >> $pylint_log || log_nonzero_rc "pylint" $?
+        pep8 $PEP8_OPTIONS $file >> $pep8_log || log_nonzero_rc "pep8" $?
     done
     echo "FILES_CHECKED=\"$files_checked\"" >> $results
     echo "FILES_CHECKED_COUNT=`echo $files_checked | wc -w | tr -d " "`" >> $results
@@ -197,6 +209,7 @@ export DECISIONENGINE_SRC=$WORKSPACE/decisionengine
 source $DECISIONENGINE_SRC/build/scripts/utils.sh
 setup_python_venv $WORKSPACE
 
+setup_dependencies $WORKSPACE
 # Jenkins will reuse the workspace on the slave node if it is available
 # There is no reason for not using it, but we need to make sure we keep
 # logs for same build together to make it easier to attach to the email
@@ -209,15 +222,12 @@ PYLINT_LOG=$LOG_DIR/pylint.log
 PEP8_LOG=$LOG_DIR/pep8.log
 RESULTS=$LOG_DIR/results.log
 RESULTS_MAIL=$LOG_DIR/mail.results
-
+attachments=""
 
 init_results_mail $RESULTS_MAIL
 init_results_logging $RESULTS_MAIL
 
-if [ $# -eq 0 ]; then
-    process_branch $PYLINT_LOG $PEP8_LOG $RESULTS $gb
-    log_branch_results $RESULTS_MAIL $RESULTS
-fi
+[ -z $git_branches ] && git_branches=`get_current_git_branch`
 
 for gb in `echo $git_branches | sed -e 's/,/ /g'`
 do
@@ -229,8 +239,17 @@ do
     fi
     process_branch $pylint_log $pep8_log $results $gb
     log_branch_results $RESULTS_MAIL $results
+    for log in $pep8_log $pylint_log ; do
+        if [ -s $log ]; then
+            if [ -z "$attachments" ]; then
+                attachments=$log
+            else
+                attachments="$attachments,$log"
+            fi
+        fi
+    done
 done
 
 finalize_results_logging $RESULTS_MAIL
 
-#mail_results $RESULTS_MAIL "Pylint/PEP8 Validation Results"
+mail_results $RESULTS_MAIL "Pylint/PEP8 Validation Results" "parag@fnal.gov" $attachments

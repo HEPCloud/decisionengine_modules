@@ -11,7 +11,7 @@ CONSUMES = ['decisionenginemonitor_manifests']
 
 class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(DecisionEngineMonitorManifests, self).__init__(*args, **kwargs)
 
 

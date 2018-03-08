@@ -46,7 +46,7 @@ class NamedFact(object):
         mode = 'eval'
         syntax_tree = ast.parse(expr, source, mode)
         all_names = [n.id for n in ast.walk(syntax_tree) if isinstance(n, ast.Name)]
-        func_names = [function_name_from_call(n) for n in ast.walk(syntax_tree) if isinstance(n, ast.Call) ]
+        func_names = [function_name_from_call(n) for n in ast.walk(syntax_tree) if isinstance(n, ast.Call)]
 
         self.names = list(set(all_names) - set(func_names))
         self.expr = compile(syntax_tree, source, mode)

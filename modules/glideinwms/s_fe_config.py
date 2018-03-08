@@ -14,7 +14,7 @@ PRODUCES = ['gwms_fe_config']
 
 class FrontendConfiguration():
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         if args:
             config = args[0]
         else:

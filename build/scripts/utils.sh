@@ -11,9 +11,10 @@ setup_python_venv() {
         exit 1
     fi
     WORKSPACE=${1:-`pwd`}
-    VIRTUALENV_TARBALL=virtualenv-12.0.7.tar.gz
-    VIRTUALENV_URL="https://pypi.python.org/packages/source/v/virtualenv/$VIRTUALENV_TARBALL"
-    VIRTUALENV_EXE=$WORKSPACE/virtualenv-12.0.7/virtualenv.py
+    VIRTUALENV_VER=15.1.0
+    VIRTUALENV_TARBALL=virtualenv-${VIRTUALENV_VER}.tar.gz
+    VIRTUALENV_URL="https://pypi.python.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/$VIRTUALENV_TARBALL"
+    VIRTUALENV_EXE=$WORKSPACE/virtualenv-${VIRTUALENV_VER}/virtualenv.py
     VENV=$WORKSPACE/venv
 
     # Following is useful for running the script outside jenkins
@@ -29,9 +30,7 @@ setup_python_venv() {
     curl -o $WORKSPACE/$VIRTUALENV_TARBALL $VIRTUALENV_URL
     tar xzf $WORKSPACE/$VIRTUALENV_TARBALL
     if [ ! -d $VENV ] ; then
-       #virtualenv --python=python2.6 --always-copy $VENV
-       $WORKSPACE/virtualenv-12.0.7/virtualenv.py --system-site-packages $VENV
-       #$WORKSPACE/virtualenv-12.0.7/virtualenv.py $VENV
+       $VIRTUALENV_EXE --system-site-packages $VENV
     fi
 
     source $VENV/bin/activate
@@ -40,11 +39,7 @@ setup_python_venv() {
 
     # Install dependancies first so we don't get uncompatible ones
     # Following RPMs need to be installed on the machine:
-    # 1. rrdtool-devel
-    # 2. openssl-devel
-    # 3. swig
-    #pip_packages="astroid==1.2.1 pylint==1.3.1 pep8 unittest2 coverage rrdtool pyyaml mock xmlrunner sphinx"
-    pip_packages="astroid==1.2.1 pylint==1.3.1 pep8 unittest2 coverage sphinx"
+    pip_packages="astroid pylint pep8 unittest2 coverage sphinx DBUtils pytest"
     for package in $pip_packages; do
         echo "Installing $package ..."
         status="DONE"
@@ -54,14 +49,32 @@ setup_python_venv() {
         fi
         echo "Installing $package ... $status"
     done
-    #pip install M2Crypto==0.20.2
 
-    ## Need this because some strange control sequences when using default TERM=xterm
+    # Need this because some strange control sequences when using default TERM=xterm
     export TERM="linux"
 
-    ## PYTHONPATH for glideinwms source code
-    # pythonpath for pre-packaged only
+    # PYTHONPATH for decision engine source code
     export PYTHONPATH=${PYTHONPATH}:${DECISIONENGINE_SRC}
+}
+
+
+setup_glideinwms() {
+    WSPACE=${1:-`pwd`}
+    glideinwms_git="http://cdcvs.fnal.gov/projects/glideinwms"
+    cd $WSPACE
+    git clone $glideinwms_git
+}
+
+setup_dependencies() {
+    WORKSPACE=${1:-`pwd`}
+    DEPS_DIR=$WORKSPACE/dependencies
+    rm -rf $DEPS_DIR
+    mkdir $DEPS_DIR
+    touch $DEPS_DIR/__init__.py
+
+    setup_glideinwms $DEPS_DIR
+    export PYTHONPATH=$DEPS_DIR:$PYTHONPATH
+    cd $WORKSPACE
 }
 
 
@@ -82,12 +95,18 @@ print_python_info() {
 mail_results() {
     local contents=$1
     local subject=$2
-    echo "From: gwms-builds@donot-reply.com;
-To: parag@fnal.gov;
-Subject: $subject;
-Content-Type: text/html;
-MIME-VERSION: 1.0;
-;
-`cat $contents`
-" | sendmail -t
+    local to=$3
+    local attachments=$4
+    local from="parag@fnal.gov"
+#    echo "From: parag@fnal.gov;
+#To: parag@fnal.gov;
+#Subject: $subject;
+#Content-Type: text/html;
+#MIME-VERSION: 1.0;
+#;
+#`cat $contents`
+#" | sendmail -t
+    local attach=""
+    [ -n "$attachments" ] && attach=" -a `echo $attachments | sed -e 's|,| -a |g'`"
+    mutt -e "set content_type=text/html"  -s "$subject" $to $attach < $contents
 }

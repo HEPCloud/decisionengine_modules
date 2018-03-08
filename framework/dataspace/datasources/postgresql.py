@@ -145,11 +145,10 @@ class Postgresql(ds.DataSource):
 
         self._insert(ds.DataSource.dataproduct_table,
                      {'taskmanager_id': taskmanager_id,
-                     'generation_id': generation_id,
-                     'key': key,
-                     'value':  psycopg2.Binary(str(value))
-                     }
-                     )
+                      'generation_id': generation_id,
+                      'key': key,
+                      'value':  psycopg2.Binary(str(value))
+                     })
 
         self._insert(ds.DataSource.header_table,
                      {'taskmanager_id': taskmanager_id,
@@ -159,8 +158,7 @@ class Postgresql(ds.DataSource):
                       'scheduled_create_time': header.get('scheduled_create_time'),
                       'creator': header.get('creator'),
                       'schema_id': header.get('schema_id')
-                      }
-                     )
+                     })
 
         self._insert(ds.DataSource.metadata_table,
                      {'taskmanager_id': taskmanager_id,
@@ -189,9 +187,11 @@ class Postgresql(ds.DataSource):
                       schema_id=%s
                   WHERE taskmanager_id=%s AND generation_id=%s AND key=%s
             """.format(ds.DataSource.header_table)
-        self._update(q, (header.get('create_time'), header.get('expiration_time'),
-                header.get('scheduled_create_time'), header.get('creator'),
-                header.get('schema_id'), taskmanager_id, generation_id, key))
+        self._update(q, (header.get('create_time'),
+                         header.get('expiration_time'),
+                         header.get('scheduled_create_time'),
+                         header.get('creator'), header.get('schema_id'),
+                         taskmanager_id, generation_id, key))
 
         q = """
              UPDATE {} SET state=%s,
@@ -199,9 +199,9 @@ class Postgresql(ds.DataSource):
                            missed_update_count=%s
                         WHERE taskmanager_id=%s AND generation_id=%s AND key=%s
             """.format(ds.DataSource.metadata_table)
-        self._update(q, (metadata.get('state'),
-                metadata.get('generation_time'),
-                metadata.get('missed_update_count'), taskmanager_id, generation_id, key))
+        self._update(q, (metadata.get('state'), metadata.get('generation_time'),
+                         metadata.get('missed_update_count'),
+                         taskmanager_id, generation_id, key))
 
     def get_header(self, taskmanager_id, generation_id, key):
         q = SELECT_QUERY.format(ds.DataSource.header_table)
@@ -384,7 +384,7 @@ class Postgresql(ds.DataSource):
 
     def _insert(self, table_name_or_sql_query, record=None):
         if record:
-            if type(record) == types.DictType:
+            if isinstance(record, dict):
                 q = generate_insert_query(table_name_or_sql_query, record.keys())
                 return self._update(q, record.values())
             else:
@@ -394,7 +394,7 @@ class Postgresql(ds.DataSource):
 
     def _insert_returning_result(self, table_name_or_sql_query, record=None):
         if record:
-            if type(record) == types.DictType:
+            if isinstance(record, dict):
                 q = generate_insert_query(table_name_or_sql_query, record.keys())
                 return self._update_returning_result(q, record.values())
             else:

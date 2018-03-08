@@ -203,8 +203,8 @@ class Credential:
         Only works if type is grid_proxy or creation_script is provided
         """
         remaining=self.time_left()
-        if ( (remaining !=-1) and (self.update_frequency!=-1) and
-             (remaining<self.update_frequency) ):
+        if ((remaining != -1) and (self.update_frequency != -1) and
+            (remaining < self.update_frequency)):
             self.create()
 
 

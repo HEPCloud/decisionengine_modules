@@ -13,7 +13,7 @@ CONSUMES = [
 
 class GlideinWMSManifests(publisher.HTCondorManifests):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(GlideinWMSManifests, self).__init__(*args, **kwargs)
 
 

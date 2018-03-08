@@ -14,7 +14,7 @@ class ResourceManifests(Source.Source):
     __metaclass__ = abc.ABCMeta
 
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(ResourceManifests, self).__init__(*args, **kwargs)
         if args:
             config = args[0]

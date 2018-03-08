@@ -7,7 +7,9 @@ Alex Leone (acleone ~AT~ gmail.com), 2010-01-30
 From http://alexleone.blogspot.co.uk/2010/01/python-ast-pretty-printer.html
 """
 
-from ast import *
+import sys
+import tokenize
+from ast import AST, iter_fields, parse
 
 def dump(node, annotate_fields=True, include_attributes=False, indent='  '):
     """
@@ -28,8 +30,8 @@ def dump(node, annotate_fields=True, include_attributes=False, indent='  '):
                 node.__class__.__name__,
                 '(',
                 ', '.join(('%s=%s' % field for field in fields)
-                           if annotate_fields else
-                           (b for a, b in fields)),
+                          if annotate_fields else
+                          (b for a, b in fields)),
                 ')'])
         elif isinstance(node, list):
             lines = ['[']
@@ -76,7 +78,6 @@ def load_ipython_extension(ip):
     ip.register_magics(AstMagics)
     
 if __name__ == '__main__':
-    import sys, tokenize
     for filename in sys.argv[1:]:
         print('=' * 50)
         print('AST tree for', filename)

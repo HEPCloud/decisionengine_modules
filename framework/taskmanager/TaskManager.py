@@ -79,7 +79,7 @@ class Channel(object):
 
 # states
 BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
-_state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
+_state_names = ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
 class TaskManager(object):
     """
     Task Manager
@@ -95,10 +95,8 @@ class TaskManager(object):
         :arg data_block: data block
         """
         self.dataspace = dataspace.DataSpace(global_config)
-        self.data_block_t0 =  datablock.DataBlock(self.dataspace,
-                                                  name,
-                                                  task_manager_id,
-                                                  generation_id) # my current data block
+        self.data_block_t0 = datablock.DataBlock(
+            self.dataspace, name, task_manager_id, generation_id) # my current data block
         self.name = name
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
@@ -182,7 +180,7 @@ class TaskManager(object):
                     break
             except:
                 exc, detail, tb = sys.exc_info()
-                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail,  traceback.format_exception( exc, detail, tb )))
+                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail, traceback.format_exception(exc, detail, tb)))
                 break
 
             time.sleep(1)
@@ -223,7 +221,7 @@ class TaskManager(object):
         :arg data_block: data block
         """
 
-        if type(data) != types.DictType:
+        if not isinstance(data, dict):
             self.logger.error('data_block put expecting %s type, got %s'%
                               (types.DictType, type(data)))
             return
@@ -352,7 +350,7 @@ class TaskManager(object):
                 thread.start()
             except:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error starting thread %s: %s" % (self.channel.transforms[t].name, detail))
+                self.logger.error("error starting thread %s: %s" % (transform.name, detail))
                 self.offline_task_manager(data_block)
                 break
 
@@ -484,7 +482,8 @@ if __name__ == '__main__':
 
     try:
         while True:
-            if len(multiprocessing.active_children()) < 1 : break
+            if len(multiprocessing.active_children()) < 1:
+                break
             for tm_name, tm in task_managers.iteritems():
                 print "TM %s state %s"%(tm_name, _state_names[tm.get_state()])
             time.sleep(10)
