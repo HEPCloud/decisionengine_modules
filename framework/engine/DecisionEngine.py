@@ -38,8 +38,8 @@ class RequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler):
 
 class RpcServer(SocketServer.ThreadingMixIn, SimpleXMLRPCServer.SimpleXMLRPCServer):
     def __init__(self, server_address, RequestHandlerClass):
-        SimpleXMLRPCServer.SimpleXMLRPCServer.__init__(self, server_address,
-                                    requestHandler=RequestHandlerClass)
+        SimpleXMLRPCServer.SimpleXMLRPCServer.__init__(
+            self, server_address, requestHandler=RequestHandlerClass)
 
 
 class DecisionEngine(SocketServer.ThreadingMixIn,
@@ -82,10 +82,10 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
             return self.config_manager.get_channels()[channel]
 
     def rpc_status(self):
-        width =  max(map(lambda x: len(x), self.task_managers.keys())) + 1
+        width = max(map(lambda x: len(x), self.task_managers.keys())) + 1
         txt=""
         for ch, worker in self.task_managers.items():
-            txt += "channel: {:<{width}}, id = {:<{width}}, state = {:<10} \n".format(ch,worker.task_manager.id ,TaskManager._state_names[worker.task_manager.get_state()],width=width)
+            txt += "channel: {:<{width}}, id = {:<{width}}, state = {:<10} \n".format(ch, worker.task_manager.id, TaskManager._state_names[worker.task_manager.get_state()], width=width)
         return txt[:-1]
 
     def rpc_stop(self):
@@ -180,4 +180,3 @@ if __name__ == '__main__':
     except Exception, msg:
         sys.stderr.write("Fatal Error: {}\n".format(msg))
         sys.exit(1)
-

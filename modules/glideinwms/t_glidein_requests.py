@@ -25,7 +25,7 @@ SUPPORTED_ENTRY_TYPES = [
 
 class GlideinRequestManifests(Transform.Transform):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(GlideinRequestManifests, self).__init__(*args, **kwargs)
         if args:
             config = args[0]

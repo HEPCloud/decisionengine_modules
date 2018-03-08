@@ -313,8 +313,7 @@ class GlideFrontendElement:
             for index, row in factory_globals.iterrows():
                 pubkeyid = row.get('PubKeyID', None)
                 pubkeyobj = row.get('PubKeyObj', None)
-                if (glideid[1].endswith(row['Name']) and
-                    pubkeyid and pubkeyobj):
+                if glideid[1].endswith(row['Name']) and pubkeyid and pubkeyobj:
                     key_obj = key_builder.get_key_obj(
                         my_identity, pubkeyid, pubkeyobj)
                     break
@@ -613,9 +612,9 @@ class GlideFrontendElement:
 
         # Frontend information
         self.frontend_workdir = self.fe_cfg['frontend']['workdir']
-        self.frontend_name =  self.fe_cfg['frontend']['frontend_name']
-        self.monitoring_web_url =  self.fe_cfg['frontend']['monitoring_web_url']
-        self.web_url =  self.fe_cfg['frontend']['web_url']
+        self.frontend_name = self.fe_cfg['frontend']['frontend_name']
+        self.monitoring_web_url = self.fe_cfg['frontend']['monitoring_web_url']
+        self.web_url = self.fe_cfg['frontend']['web_url']
 
         # Group information
         self.workdir = group_config['workdir']
@@ -973,14 +972,14 @@ class GlideFrontendElement:
         Identify the limits and curbs triggered for advertizing the info
         glideresource classad
         """
-        if ( (count_status['Total'] >= self.entry_max_glideins) or
-             (count_status['Idle'] >= self.entry_max_slots_idle) or
-             (total_glideins >= self.total_max_slots) or
-             (total_idle_glideins >= self.total_max_slots_idle) or
-             (fe_total_glideins >= self.fe_total_max_slots) or
-             (fe_total_idle_glideins >= self.fe_total_max_slots_idle) or
-             (global_total_glideins >= self.global_total_max_slots) or
-             (global_total_idle_glideins>=self.global_total_max_slots_idle) ):
+        if ((count_status['Total'] >= self.entry_max_glideins) or
+            (count_status['Idle'] >= self.entry_max_slots_idle) or
+            (total_glideins >= self.total_max_slots) or
+            (total_idle_glideins >= self.total_max_slots_idle) or
+            (fe_total_glideins >= self.fe_total_max_slots) or
+            (fe_total_idle_glideins >= self.fe_total_max_slots_idle) or
+            (global_total_glideins >= self.global_total_max_slots) or
+            (global_total_idle_glideins>=self.global_total_max_slots_idle)):
 
             # Do not request more glideins under following conditions:
             # 1. Have all the running jobs I wanted
@@ -1021,7 +1020,7 @@ class GlideFrontendElement:
 
             if count_status['Idle'] >= self.entry_curb_slots_idle:
                 glidein_min_idle/=2 # above first treshold, reduce
-                limits_triggered['CurbIdleGlideinsPerEntry'] = 'count=%i, curb=%i' % (count_status['Idle'], self.entry_curb_slots_idle )
+                limits_triggered['CurbIdleGlideinsPerEntry'] = 'count=%i, curb=%i' % (count_status['Idle'], self.entry_curb_slots_idle)
             if total_glideins >= self.total_curb_slots:
                 glidein_min_idle/=2 # above global treshold, reduce further
                 limits_triggered['CurbTotalGlideinsPerGroup'] = 'count=%i, curb=%i' % (total_glideins, self.total_curb_slots)
@@ -1093,8 +1092,8 @@ class GlideFrontendElement:
                 # if no valid key
                 # if key needed, will handle the error later on
                 raise
-                self.logger.warning("Factory Globals '%s': invalid RSA key" % globalid)
-                self.logger.exception("Factory Globals '%s': invalid RSA key" % globalid)
+                self.logger.warning("Factory Globals '%s': invalid RSA key" % row.get('Name', None))
+                self.logger.exception("Factory Globals '%s': invalid RSA key" % row.get('Name', None))
                 key_obj = None
             key_objs.append(key_obj)
         return key_objs
@@ -1134,9 +1133,9 @@ def count_running_cores(slots):
 
 
 def get_vo_entries(vo, all_entries):
-   """
-   Get the list of entries where the given VO is allowed
-   """
+    """
+    Get the list of entries where the given VO is allowed
+    """
     entries = pandas.DataFrame()
     for index, row in all_entries.iterrows():
         allowed_vos = row.get('GLIDEIN_Supported_VOs')

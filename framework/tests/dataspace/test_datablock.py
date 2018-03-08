@@ -12,7 +12,7 @@ config_object_db = {
         'db_driver': {
             'module': 'decisionengine.framework.dataspace.db_object',
             'name': 'ObjectDB',
-            'config': { },
+            'config': {},
         },
     }
 }
@@ -57,7 +57,7 @@ class TestDataBlock:
 
         timestamp = time.time()
         key = 'aKey'
-        value = { "m1": "v1" }
+        value = {"m1": "v1"}
         header = Header(taskmanager_id, create_time=timestamp,
                         scheduled_create_time=timestamp+600,
                         schema_id=0)
@@ -80,8 +80,8 @@ class TestDataBlock:
 
         print 'Performing comparison of value, header and metadata ...'
         if (are_dicts_same(value, db_value) and
-            are_dicts_same(header, db_header) and
-            are_dicts_same(metadata, db_metadata)):
+           are_dicts_same(header, db_header) and
+           are_dicts_same(metadata, db_metadata)):
             print 'DICTS CONSISTENCY CHECK PASSED\n'
         else:
             print 'DICTS CONSISTENCY CHECK FAILED\n'
@@ -91,7 +91,7 @@ class TestDataBlock:
 
 
         # TEST: Insert new value for same key
-        new_value = { "m2": "v2" }
+        new_value = {"m2": "v2"}
         print 'Doing put:\nkey=%s\nvalue=%s\nheader=%s\nmetadata=%s\n' % (
             key, new_value, header, metadata)
         datablock.put(key, new_value, header, metadata)
@@ -131,7 +131,7 @@ class TestDataBlock:
         print '---'
 
         # TEST: Insert new value on duplicated datablock
-        new_value3 = { "m3": "v3" }
+        new_value3 = {"m3": "v3"}
         dup_datablock.put(key, new_value3, dup_datablock.get_header(key), dup_datablock.get_metadata(key))
 
         print dup_datablock.get(key)

@@ -12,7 +12,7 @@ PRODUCES = ['factoryclient_manifests']
 
 class FactoryClientManifests(source.ResourceManifests):
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(FactoryClientManifests, self).__init__(*args, **kwargs)
         self.constraint = '(%s)&&(glideinmytype=="glidefactoryclient")' % self.constraint
         self.subsystem_name = 'any'

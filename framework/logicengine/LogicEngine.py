@@ -1,4 +1,6 @@
+#pylint: disable=no-name-in-module
 from decisionengine.framework.logicengine.RE import RuleEngine
+#pylint: enable=no-name-in-module
 from decisionengine.framework.logicengine.NamedFact import NamedFact
 from decisionengine.framework.modules.Module import Module
 import json
@@ -9,7 +11,7 @@ class LogicEngine(Module, object):
     # inherit from object.
     def __init__(self, cfg):
         super(LogicEngine, self).__init__(cfg)
-        self.facts = [ NamedFact(name, expr) for name, expr in cfg["facts"].iteritems() ]
+        self.facts = [NamedFact(name, expr) for name, expr in cfg["facts"].iteritems()]
 
         # Only the names of facts are really needed. We pass in the
         # JSON form of the whole facts dictionary until the C++ is
@@ -25,11 +27,11 @@ class LogicEngine(Module, object):
         """Return the names of all the items that must be in the DataBlock for
         the rules to be evaluated.
         """
-        list_of_lists = [ f.required_names() for f in self.facts ]
+        list_of_lists = [f.required_names() for f in self.facts]
         return list(set(chain(*list_of_lists)))
 
     def evaluate_facts(self, db):
-        return { f.name : f.evaluate(db) for f in self.facts }
+        return {f.name: f.evaluate(db) for f in self.facts}
 
     def evaluate(self, db):
         """evaluate our facts and rules, in the context of the given data.

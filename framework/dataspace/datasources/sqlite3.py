@@ -142,9 +142,7 @@ class SQLite3DB(decisionengine.framework.dataspace.datasource.DataSource):
             self.conn.commit()
             SQLite3DB._tables_created = True
         except:
-             raise
-             #traceback.print_stack()
-             #raise db.DatabaseError('Error creating table %s' % table)
+            raise
 
 
     def insert(self, taskmanager_id, generation_id, key,
@@ -228,10 +226,12 @@ class SQLite3DB(decisionengine.framework.dataspace.datasource.DataSource):
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
 
-            cmd = """UPDATE %s SET create_time=%f, expiration_time=%f, scheduled_create_time=%f, creator="%s", schema_id=%i WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % (SQLite3DB.header_table,
-                header.get('create_time'), header.get('expiration_time'),
-                header.get('scheduled_create_time'), header.get('creator'),
-                header.get('schema_id'))
+            cmd = """UPDATE %s SET create_time=%f, expiration_time=%f, scheduled_create_time=%f, creator="%s", schema_id=%i WHERE ((taskmanager_id=?) AND (generation_id=?) AND (key=?))""" % (
+                SQLite3DB.header_table,
+                header.get('create_time'),
+                header.get('expiration_time'),
+                header.get('scheduled_create_time'),
+                header.get('creator'), header.get('schema_id'))
             cursor = self.conn.cursor()
             cursor.execute(cmd, params)
 
@@ -375,7 +375,7 @@ class SQLite3DB(decisionengine.framework.dataspace.datasource.DataSource):
             cursor = self.conn.cursor()
             cursor.execute(cmd)
             value = cursor.fetchall()   
-	except:
+        except:
             raise
         return value[0][0]
 
@@ -398,10 +398,5 @@ class SQLite3DB(decisionengine.framework.dataspace.datasource.DataSource):
             value = cursor.fetchall()
         except:
             raise
-            #traceback.print_stack()
-            #raise db.DatabaseError('Error creating table %s' % SQLite3.dataproduct_table)
 
         return value[-1]
-        #return value
-
-

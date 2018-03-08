@@ -23,7 +23,7 @@ def set_logging(log_file_name=LOG_FILE, max_file_size= 200*MB, max_backup_count 
     """
     if not os.path.exists(os.path.dirname(log_file_name)):
         os.makedirs(os.path.dirname(log_file_name))
-    logger =  logging.getLogger("decision_engine")
+    logger = logging.getLogger("decision_engine")
     if logger.handlers:
         return
 
@@ -69,7 +69,7 @@ def set_stream_logging(logger_name=''):
     :rtype: :class:`logging.Logger`
     """
 
-    logger =  logging.getLogger("decision_engine")
+    logger = logging.getLogger("decision_engine")
     #logger =  logging.getLogger()
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(module)s - %(levelname)s - %(message)s")
 
