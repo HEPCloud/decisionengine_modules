@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 See:
 
@@ -79,15 +78,3 @@ def tsort(graph):
     """
 
     return sorted_graph, cyclic_graph
-
-if __name__ == "__main__":
-
-    a = [(3, [8, 10]),
-         (5, [11]),
-         (11, [2, 9, 10]),
-         (7, [8, 11]),
-         (8, [9]),
-         (10, [8]),
-        ]
-    sorted_a = tsort(a)
-    print sorted_a
