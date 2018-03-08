@@ -152,7 +152,7 @@ class Header(UserDict):
 
 class DataBlock(object):
 
-    def __init__(self, dataspace, name, taskmanager_id=None, generation_id=None):
+    def __init__(self, dataspace, name, taskmanager_id=None, generation_id=None, sequence_id=None):
         """
         Initialize DataBlock object
 
@@ -169,7 +169,10 @@ class DataBlock(object):
             self.taskmanager_id = taskmanager_id
         else:
             self.taskmanager_id = ('%s' % uuid.uuid1()).upper()
-        self.sequence_id = self.store_taskmanager(name, taskmanager_id)
+        if sequence_id:
+            self.sequence_id = sequence_id
+        else:
+            self.sequence_id = self.store_taskmanager(name, taskmanager_id)
         if generation_id:
             self.generation_id = generation_id
         else:
@@ -182,7 +185,7 @@ class DataBlock(object):
         value = {
             'taskamanger_id': self.taskmanager_id,
             'generation_id': self.generation_id,
-            'sequence_id': self.sequence_id,
+            'sequence_id' : self.sequence_id,
             'keys': self._keys,
         }
         dp = {}
@@ -199,7 +202,7 @@ class DataBlock(object):
     def keys(self):
         return self._keys
 
-    def store_taskmanager(self, taskmanager_name, taskmanager_id):
+    def store_taskmanager(self, taskmanager_name, taskmanager_id) :
         """
         Persist TaskManager, returns sequence number
         :type taskmanager_name: :obj:`string`
@@ -235,7 +238,7 @@ class DataBlock(object):
         :type header: :obj:`Header`
         :type metadata: :obj:`Metadata`
         """
-        self._setitem(key, value, header, metadata=metadata)
+        self.__setitem__(key, value, header, metadata=metadata)
 
 
     def get(self, key):
@@ -275,7 +278,7 @@ class DataBlock(object):
                               key, value, header, metadata)
 
 
-    def _setitem(self, key, value, header, metadata=None):
+    def __setitem__(self, key, value, header, metadata=None):
         """
         put a product in the database with header and metadata
 
@@ -295,7 +298,6 @@ class DataBlock(object):
             store_value = {'pickled': False, 'value': value}
         else:
             store_value = {'pickled': True, 'value': pickle.dumps(value)}
-
         if key in self._keys:
             # This has been already inserted, so you are working on a copy
             # that was backedup. You need to update and adjust the update
