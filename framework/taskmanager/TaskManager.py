@@ -6,7 +6,6 @@ import threading
 import logging
 import time
 import sys
-import types
 import uuid
 import traceback
 import multiprocessing
@@ -79,7 +78,7 @@ class Channel(object):
 
 # states
 BOOT, STEADY, OFFLINE, SHUTDOWN = range(4)
-_state_names = ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
+_state_names =  ['BOOT', 'STEADY', 'OFFLINE', 'SHUTDOWN']
 class TaskManager(object):
     """
     Task Manager
@@ -95,8 +94,10 @@ class TaskManager(object):
         :arg data_block: data block
         """
         self.dataspace = dataspace.DataSpace(global_config)
-        self.data_block_t0 = datablock.DataBlock(
-            self.dataspace, name, task_manager_id, generation_id) # my current data block
+        self.data_block_t0 =  datablock.DataBlock(self.dataspace,
+                                                  name,
+                                                  task_manager_id,
+                                                  generation_id) # my current data block
         self.name = name
         self.id = task_manager_id
         self.channel = Channel(channel_dict)
@@ -158,12 +159,16 @@ class TaskManager(object):
         # Wait until all sources run at least one time
         self.wait_for_all(done_events)
         self.logger.info("All sources finished")
-        self.decision_cycle()
-        if self.get_state() != OFFLINE:
+        if self.get_state() != BOOT:
+            self.logger.error("Error occured during initial run of sources. Task Manager %s exits"%(self.name,))
+            sys.exit(1)
+        else:
+            self.decision_cycle()
+        if self.get_state() == BOOT:
             self.set_state(STEADY)
         else:
-            self.logger.error("Error occured. Task Manager %s exits"%(self.id,))
-            return
+            self.logger.error("Error occured. Task Manager %s exits"%(self.name,))
+            sys.exit(1)
 
         while self.get_state() == STEADY:
             try:
@@ -180,7 +185,7 @@ class TaskManager(object):
                     break
             except:
                 exc, detail, tb = sys.exc_info()
-                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail, traceback.format_exception(exc, detail, tb)))
+                self.logger.error("Exception in the task manager main loop %s %s %s"%(exc, detail,  traceback.format_exception( exc, detail, tb )))
                 break
 
             time.sleep(1)
@@ -217,18 +222,22 @@ class TaskManager(object):
 
         :type data: :obj:`dict`
         :arg data: key, value pairs
+        :type header: :obj:`~datablock.Header`
+        :arg header: data header
         :type data_block: :obj:`~datablock.DataBlock`
         :arg data_block: data block
         """
 
         if not isinstance(data, dict):
             self.logger.error('data_block put expecting %s type, got %s'%
-                              (types.DictType, type(data)))
+                              (dict, type(data)))
             return
         self.logger.debug('data_block_put %s'%(data,))
         with data_block.lock:
             for k in data:
-                data_block.put(k, data[k], header)
+                metadata = datablock.Metadata(data_block.taskmanager_id, generation_id=data_block.generation_id)
+                metadata.set_state('END_CYCLE')
+                data_block.put(k, data[k], header, metadata=metadata)
 
     def do_backup(self):
         """
@@ -281,8 +290,9 @@ class TaskManager(object):
                 self.logger.info('Src %s acquire retuned'%(src.name,))
                 self.logger.info('Src %s filling header'%(src.name,))
                 if data:
+                    t = time.time()
                     header = datablock.Header(self.data_block_t0.taskmanager_id,
-                                              create_time=time.time(), creator=src.module)
+                                              create_time=t, creator=src.module)
                     self.logger.info('Src %s header done'%(src.name,))
                     self.data_block_put(data, header, self.data_block_t0)
                     self.logger.info('Src %s data block put done'%(src.name,))
@@ -333,7 +343,8 @@ class TaskManager(object):
         :arg data_block: data block
 
         """
-        self.logger.info('run_transforms: data block %s'%(data_block,))
+        self.logger.info('run_transforms')
+        self.logger.debug('run_transforms: data block %s'%(data_block,))
         if not data_block:
             return
         event_list = []
@@ -350,7 +361,7 @@ class TaskManager(object):
                 thread.start()
             except:
                 exc, detail = sys.exc_info()[:2]
-                self.logger.error("error starting thread %s: %s" % (transform.name, detail))
+                self.logger.error("error starting thread %s: %s" % (self.channel.transforms[t].name, detail))
                 self.offline_task_manager(data_block)
                 break
 
@@ -379,8 +390,10 @@ class TaskManager(object):
                 try:
                     with data_block.lock:
                         data = transform.worker.transform(data_block)
-                    self.logger.info('transform returned %s'%(data,))
+                    self.logger.debug('transform returned %s'%(data,))
+                    t = time.time()
                     header = datablock.Header(data_block.taskmanager_id,
+                                              create_time=t,
                                               creator=transform.name)
                     self.data_block_put(data, header, data_block)
                     self.logger.info('transform put data')
@@ -410,7 +423,8 @@ class TaskManager(object):
         if not data_block:
             return
         for le in self.channel.le_s:
-            self.logger.info('run logic engine %s %s'%(self.channel.le_s[le].name, data_block))
+            self.logger.info('run logic engine %s'%(self.channel.le_s[le].name,))
+            self.logger.debug('run logic engine %s %s'%(self.channel.le_s[le].name, data_block))
             rc = self.channel.le_s[le].worker.evaluate(data_block)
             le_list.append(rc)
             self.logger.info('run logic engine %s done'%(self.channel.le_s[le].name,))
@@ -428,7 +442,8 @@ class TaskManager(object):
             return
         for key, action_list in actions.items():
             for action in action_list:
-                self.logger.info('run publisher %s %s'%(self.channel.publishers[action].name, data_block))
+                self.logger.info('run publisher %s'%(self.channel.publishers[action].name))
+                self.logger.debug('run publisher %s %s'%(self.channel.publishers[action].name, data_block))
                 self.channel.publishers[action].worker.publish(data_block)
 
 if __name__ == '__main__':
@@ -482,8 +497,7 @@ if __name__ == '__main__':
 
     try:
         while True:
-            if len(multiprocessing.active_children()) < 1:
-                break
+            if len(multiprocessing.active_children()) < 1 : break
             for tm_name, tm in task_managers.iteritems():
                 print "TM %s state %s"%(tm_name, _state_names[tm.get_state()])
             time.sleep(10)

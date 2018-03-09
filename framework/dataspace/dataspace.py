@@ -67,7 +67,7 @@ class DataSourceLoader(object):
     @staticmethod
     def create_datasource(module_name, class_name, config):
         ds = DataSourceLoader._ds
-        print module_name, class_name
+        #print module_name, class_name
         if not ds:
             py_module = importlib.import_module(module_name)
             clazz = getattr(py_module, class_name)
