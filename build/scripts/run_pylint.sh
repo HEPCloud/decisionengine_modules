@@ -218,10 +218,11 @@ setup_dependencies $WORKSPACE
 LOG_DIR=$WORKSPACE/$BUILD_NUMBER
 [ -d $LOG_DIR ] || mkdir -p $LOG_DIR
 
-PYLINT_LOG=$LOG_DIR/pylint.log
-PEP8_LOG=$LOG_DIR/pep8.log
-RESULTS=$LOG_DIR/results.log
+PYLINT_LOG=$LOG_DIR/pylint
+PEP8_LOG=$LOG_DIR/pep8
+RESULTS=$LOG_DIR/results
 RESULTS_MAIL=$LOG_DIR/mail.results
+LOG_EXT="log"
 attachments=""
 
 init_results_mail $RESULTS_MAIL
@@ -233,9 +234,9 @@ for gb in `echo $git_branches | sed -e 's/,/ /g'`
 do
     if [ -n "$gb" ]; then
         gb_escape=`echo $gb | sed -e 's|/|_|g'`
-        pylint_log="$PYLINT_LOG.$gb_escape"
-        pep8_log="$PEP8_LOG.$gb_escape"
-        results="$RESULTS.$gb_escape"
+        pylint_log="$PYLINT_LOG.$gb_escape.$LOG_EXT"
+        pep8_log="$PEP8_LOG.$gb_escape.$LOG_EXT"
+        results="$RESULTS.$gb_escape.$LOG_EXT"
     fi
     process_branch $pylint_log $pep8_log $results $gb
     log_branch_results $RESULTS_MAIL $results

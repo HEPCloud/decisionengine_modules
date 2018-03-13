@@ -17,8 +17,7 @@ import decisionengine.framework.dataspace.dataspace as dataspace
 
 CONSUMES=['provisioner_resource_spot_prices',
           'Performance_Data',
-          'Job_Limits', 'AWS_Occupancy'
-          ]
+          'Job_Limits', 'AWS_Occupancy']
 
 PRODUCES=['AWS_Price_Performance',
           'AWS_Figure_Of_Merit']
@@ -124,8 +123,8 @@ def module_config_template():
     """
 
     d = {"FigureOfMerit": {
-        "module" :  "modules.AWS.transforms.FigureOfMerit",
-        "name"   :  "FigureOfMerit",
+        "module":  "modules.AWS.transforms.FigureOfMerit",
+        "name":  "FigureOfMerit",
         },
         }
     print "Entry in channel cofiguration"

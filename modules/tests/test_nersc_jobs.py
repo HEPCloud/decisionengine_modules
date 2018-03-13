@@ -7,11 +7,11 @@ from decisionengine.modules.NERSC.sources import nersc_allocation_info
 
 config_cs = {
 
-    'renew_cookie_script' : 'root/renew_cookies.sh',
-    'cookie_file' : '../NERSC/newt_cookies.txt',
-    'constraints' : {
-        'repo_types' : ["REPO"],
-        'repo_names' : ["m2696", "m2612"],
+    'renew_cookie_script': 'root/renew_cookies.sh',
+    'cookie_file': '../NERSC/newt_cookies.txt',
+    'constraints': {
+        'repo_types': ["REPO"],
+        'repo_names': ["m2696", "m2612"],
         'usernames': ["hufnagel", "timm"]
     },
 }
@@ -33,7 +33,3 @@ class TestNerscAllocationInfo:
     def test_acquire_live(self):
         nersc_allocations = nersc_allocation_info.NERSCAllocationInfo(config_cs)
         pprint.pprint(nersc_allocations.acquire())
-
-
-
-

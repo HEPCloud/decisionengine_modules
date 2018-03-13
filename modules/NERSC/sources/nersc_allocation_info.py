@@ -48,8 +48,8 @@ class NERSCAllocationInfo(Source.Source):
 
         for username in self.constraints['usernames']:
             query = ALLOCATION_QUERY_PREFIX+username
-            values = newt_query.NewtQuery.send_query(self.cookie_file, \
-                                            self.renew_cookie_script, query)
+            values = newt_query.NewtQuery.send_query(
+                self.cookie_file, self.renew_cookie_script, query)
             if values != []:
                 self.raw_results.extend(values['items'])
 
@@ -57,8 +57,8 @@ class NERSCAllocationInfo(Source.Source):
         del_index = []
 
         for index, value in enumerate(self.raw_results):
-            if (value['rname'] not in self.constraints['repo_names']) or \
-                (value['repo_type'] not in self.constraints['repo_types']):
+            if ((value['rname'] not in self.constraints['repo_names']) or 
+               (value['repo_type'] not in self.constraints['repo_types'])):
                 del_index.append(index)
 
         for index in sorted(del_index, reverse=True):
@@ -100,11 +100,11 @@ def module_config_template():
             'module': 'modules.NERSC.sources.nersc_allocation_info',
             'name': 'NERSCAllocationInfo',
             'parameters': {
-                'renew_cookie_script' : '/path/to/script',
+                'renew_cookie_script': '/path/to/script',
                 'cookie_file': '/path/to/cookie_file',
                 'constraints': {
                     'usernames': '[username1, username 2]',
-                    'repo_types' : '[STR, REPO]',
+                    'repo_types': '[STR, REPO]',
                     'repo_names': '[m2612, m2696]',
                 }
             }

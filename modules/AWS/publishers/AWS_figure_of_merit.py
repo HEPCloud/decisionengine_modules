@@ -37,10 +37,9 @@ def module_config_template():
     """
 
     d = {"AWSFOMPublisher": {
-        "module" :  "modules.AWS.publishers.AWS_figure_of_merit",
-        "name"   :  "AWSFOMPublisher",
-        },
-        }
+          "module": "modules.AWS.publishers.AWS_figure_of_merit",
+          "name": "AWSFOMPublisher",
+         },}
     print "Entry in channel cofiguration"
     pprint.pprint(d)
     print "where"
@@ -89,7 +88,7 @@ def main():
                                          'C56E0AAF-99D3-42A8-88A3-921E30C1879C',
                                          1)
 
-        fm_info = AWSFOMPublisher({"publish_to_graphite" : True,
+        fm_info = AWSFOMPublisher({"publish_to_graphite": True,
                                    "graphite_host": "fifemondata.fnal.gov",
                                    "graphite_port": 2104,
                                    "graphite_context":"hepcloud.aws",

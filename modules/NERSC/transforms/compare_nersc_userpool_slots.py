@@ -46,13 +46,12 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         factory_entry_df = data_block['Factory_Entries_LCF']
 
         # constrain userpool slots with only batch slurm
-        userpool_slots_df = userpool_slots_df[userpool_slots_df['GLIDEIN_GridType'] \
-                            == "batch slurm"]
+        userpool_slots_df = userpool_slots_df[userpool_slots_df['GLIDEIN_GridType'] == "batch slurm"]
         userpool_slots_df = userpool_slots_df[userpool_slots_df['SlotType'] == 'Partitionable']
 
         results = {}
 
-        # construct mapping of entry_name : #cores per node
+        # construct mapping of entry_name: #cores per node
         cores_dict = {}
 
         for index, row in factory_entry_df.iterrows():
@@ -77,7 +76,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
 
         logging.info("total number of slots on Nersc = " + str(total_slots_nersc))
 
-        ##### pull slot info from User pool ########
+        # pull slot info from User pool ########
 
         total_slots_userpool = 0
         for index, row in userpool_slots_df.iterrows():
@@ -85,7 +84,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
 
         logging.info("total number of slots on userpool = " + str(total_slots_userpool))
 
-        ##### compute the relative difference between the two metrics ###
+        # compute the relative difference between the two metrics ###
         rel_diff = 0.0
         diff = abs(total_slots_userpool - total_slots_nersc)
         if diff != 0:
@@ -94,12 +93,12 @@ class CompareNerscUserpoolSlots(Transform.Transform):
 
         logging.info("diff = %f, rel diff = %f" %(diff, rel_diff))
 
-        ##### construct the result namespace ############################
+        # construct the result namespace ############################
         results['nersc.count'] = total_slots_nersc
         results['userpool.count'] = total_slots_userpool
         results['relative_diff'] = rel_diff
 
-        return {PRODUCES[0] : results}
+        return {PRODUCES[0]: results}
 
 def module_config_template():
     """
@@ -110,7 +109,7 @@ def module_config_template():
             'module': 'modules.NERSC.transforms.compare_nersc_userpool_slots',
             'name': 'CompareNerscUserpoolSlots',
             'parameters': {
-                'entry_nersc_map' : 'map <jobs on nersc, entry name>'
+                'entry_nersc_map': 'map <jobs on nersc, entry name>'
             }
         }
     }

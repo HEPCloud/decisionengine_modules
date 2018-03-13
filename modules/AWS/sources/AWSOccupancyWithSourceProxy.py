@@ -147,7 +147,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         # Load kown accounts configuration
         account_conf = super(AWSOccupancy, self).acquire()
         if len(account_conf.keys()) != 1:
-            raise RuntimeError('Wrong configuration %s. Only one key is expected'%s(account_conf,))
+            raise RuntimeError('Wrong configuration %s. Only one key is expected'%(account_conf,))
         self.account_dict = {}
         for k in account_conf:
             self.account_dict = account_conf[k].to_dict()

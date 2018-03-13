@@ -26,7 +26,7 @@ class AWSSpotPrice(Source.Source):
         for key in resource_keys:
             pandas_data[key] = pd.Series([d[key] for d in resource_list])
 
-        return { "provisioner_resource_spot_prices": pd.DataFrame(pandas_data) }
+        return {"provisioner_resource_spot_prices": pd.DataFrame(pandas_data)}
 
 if __name__ == "__main__":
     sp = AWSSpotPrice()
