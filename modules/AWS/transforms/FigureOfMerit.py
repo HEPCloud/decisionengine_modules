@@ -4,6 +4,7 @@ Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
 
 """
+from __future__ import division
 import os
 import copy
 import pprint
@@ -25,39 +26,15 @@ DEFAULT_MAX_LIMIT=20
 
 def price_performance(SpotPrice, PerfTtbarTotal):
     pp = 0.
-    if PerfTtbarTotal > 0.:
+    if float(PerfTtbarTotal) > 0.:
         pp = (float(SpotPrice) / float(PerfTtbarTotal))
     return pp
 
 def figure_of_merit(RunningVms, MaxLimit, PricePerf):
+    fm = 0.
     if int(MaxLimit) > 0:
-        return ((float(RunningVms)+1) / int(MaxLimit)) * PricePerf
-    else:
-        return 0.
-
-class FOMEntry(object):
-    def __init__(self, fe_data):
-        """
-        :type fe_data: :obj:`dict`
-        :arg fe_data: factory entry data element
-        """
-        self.data = fe_data
-    
-    def __cmp__(self, other = None):
-        """
-        overrides comparison method
-        """
-        rc = -1
-        try:
-             if (self.data['AvailabilityZone'], self.data['InstanceType'], self.data['AccountName']) \
-                == (other.data['AvailabilityZone'], other.data['InstanceType'], other.data['AccountName']):
-                rc = 0
-        except:
-            pass
-        return rc
-
-    def __repr__(self):
-        return '%s'%(self.data,)
+        fm = ((float(RunningVms)+1) / int(MaxLimit)) * PricePerf
+    return fm
 
 class FigureOfMerit(Transform.Transform):
     def __init__(self, *args, **kwargs):
@@ -74,62 +51,66 @@ class FigureOfMerit(Transform.Transform):
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
-        fom_data = []
-        spot_prices = data_block.get('provisioner_resource_spot_prices').to_dict(orient='records')
-        perf_data = data_block.get('Performance_Data').to_dict(orient='records')
-        occup_data = data_block.get('AWS_Occupancy').to_dict(orient='records')
-        jl_data = data_block.get('Job_Limits').to_dict(orient='records')
+        spot_price_data = data_block.get('provisioner_resource_spot_prices')
+        perf_data = data_block.get('Performance_Data')
+        occup_data = data_block.get('AWS_Occupancy')
+        job_limits_data = data_block.get('Job_Limits')
 
-        for e in spot_prices:
-            data = dict(map(lambda k: (k, e.get(k)), ['AccountName', 'AvailabilityZone', 'InstanceType']))
-            fom_row = FOMEntry(e)
-            if fom_row not in fom_data:
-                fom_data.append(fom_row)
-            i = fom_data.index(fom_row)
-            for r in perf_data:
-                if ((fom_row.data['AvailabilityZone'] and
-                    fom_row.data['InstanceType']) ==
-                    (r['AvailabilityZone'] and r['InstanceType'])):
-                    fom_data[i].data['PerfTtbarTotal'] = r['PerfTtbarTotal']
-                    break
-            else:
-                fom_data[i].data['PerfTtbarTotal'] = 0.
-            for r in perf_data:
-                if ((fom_row.data['AvailabilityZone'] and
-                    fom_row.data['InstanceType']) ==
-                    (r['AvailabilityZone'] and r['InstanceType'])):
-                    fom_data[i].data['PerfTtbarTotal'] = r['PerfTtbarTotal']
-                    break
-            else:
-                fom_data[i].data['PerfTtbarTotal'] = 0.
+        price_perf_rows = []
+        fom_rows = []
+        for i, row in spot_price_data.iterrows():
+           if perf_data.empty:
+               r1 = perf_data
+           else:
+               r1 = perf_data.loc[(perf_data['AvailabilityZone'] == row['AvailabilityZone']) & (perf_data['InstanceType'] == row['InstanceType'])]
 
-            for r in jl_data:
-                if ((fom_row.data['AvailabilityZone'] and
-                    fom_row.data['InstanceType']) ==
-                    (r['AvailabilityZone'] and r['InstanceType'])):
-                    fom_data[i].data['MaxLimit'] = r['MaxLimit']
-                    break
-            else:
-                fom_data[i].data['MaxLimit'] = DEFAULT_MAX_LIMIT
+           if occup_data.empty:
+               r2 = occup_data
+           else:
+               r2 = occup_data[(occup_data['AvailabilityZone'] == row['AvailabilityZone']) & (occup_data['InstanceType'] == row['InstanceType'])]
 
-        pp_list = []
-        fom_list = []
-        for e in fom_data:
-            perf_ttbar_total = e.data['PerfTtbarTotal'] if 'PerfTtbarTotal' in e.data else 0
-            pp = copy.copy(e.data)
-            fom = copy.copy(e.data)
-            pp['AWS_Price_Performance'] = price_performance(e.data['SpotPrice'],
-                                                            perf_ttbar_total)
-            running_vms = e.data['RunningVms'] if 'RunningVms' in e.data else 0
-            max_limit = e.data['MaxLimit'] if 'MaxLimit' in e.data else DEFAULT_MAX_LIMIT
-            fom['AWS_Figure_Of_Merit'] = figure_of_merit(running_vms,
-                                                         max_limit,
-                                                         pp['AWS_Price_Performance'])
-            pp_list.append(pp)
-            fom_list.append(fom)
+           if job_limits_data.empty:
+               r3 = job_limits_data
+           else:
+               r3 = job_limits_data[(job_limits_data.AWSProfile == row['AccountName']) & (job_limits_data['AvailabilityZone'] == row['AvailabilityZone']) & (job_limits_data['InstanceType'] == row['InstanceType'])]
+
+           price_perf_row = copy.copy(row)
+           fom_row = copy.copy(row)
+
+           if r1.empty:
+               price_perf_row['PerfTtbarTotal'] = 0.
+               fom_row['PerfTtbarTotal'] = 0.
+           else:
+               price_perf_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
+               fom_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
         
-        return {PRODUCES[0]: pd.DataFrame(pp_list), PRODUCES[1]:pd.DataFrame(fom_list)}
+           if r2.empty:
+               running_vms = 0
+           else:
+               running_vms = r2['RunningVms'].values[0]
 
+           if r3.empty:
+               price_perf_row['MaxLimit'] = DEFAULT_MAX_LIMIT
+               fom_row['MaxLimit'] = DEFAULT_MAX_LIMIT
+           else:
+               price_perf_row['MaxLimit'] = r3['MaxLimit'].values[0]
+               fom_row['MaxLimit'] = r3['MaxLimit'].values[0]
+           
+           price_perf = price_performance(row['SpotPrice'],
+                                          price_perf_row['PerfTtbarTotal'])
+           price_perf_row['AWS_Price_Performance'] = price_perf
+           fom_row['AWS_Figure_Of_Merit'] = figure_of_merit(running_vms,
+                                                        price_perf_row['MaxLimit'],
+                                                        price_perf)
+           price_perf_rows.append(price_perf_row)
+           fom_rows.append(fom_row)
+            
+        price_perf_df = pd.DataFrame(price_perf_rows)
+        price_perf_df.reindex_axis(sorted(price_perf_df.columns), axis=1)
+        fom_df = pd.DataFrame(fom_rows)
+        fom_df.reindex_axis(sorted(fom_df.columns), axis=1)
+        return {PRODUCES[0]: price_perf_df, PRODUCES[1]:fom_df}
+            
     def consumes(self):
         return CONSUMES
 
@@ -188,9 +169,14 @@ def main():
         print "GLOBAL CONF", global_config
         ds = dataspace.DataSpace(global_config)
 
+        #data_block = datablock.DataBlock(ds,
+        #                                 '6D596F43-B4DB-4418-812A-79869001E72B',
+        #                                 1)
         data_block = datablock.DataBlock(ds,
-                                         '6D596F43-B4DB-4418-812A-79869001E72B',
-                                         1)
+                                         "AWS_Calculations",
+                                         "B183F454-5E7D-45B3-B4D2-E3D26392578B",
+                                         1,
+                                         151)
 
         fm_info = FigureOfMerit()
         rc = fm_info.transform(data_block)
