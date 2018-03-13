@@ -3,7 +3,7 @@ import pandas as pd
 
 from decisionengine.framework.modules import Transform
 
-CONSUMES = ["job_manifests", "provisioner_resources", "provisioner_resource_spot_prices" ]
+CONSUMES = ["job_manifests", "provisioner_resources", "provisioner_resource_spot_prices"]
 PRODUCES = ["jobs", "resource_requests"]
 
 class CloudRequests(Transform.Transform):

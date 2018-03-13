@@ -29,7 +29,7 @@ class NewtQuery(object):
     def send_query(cookie_file, renew_cookie_script, query):
         """
         Send query using NEWT API, if the cookie expires, renew the cookies and 
-		rerun the query immediately. For other HTTP errors, return empty list.
+        rerun the query immediately. For other HTTP errors, return empty list.
         """
         cookie_file = os.path.abspath(cookie_file)
         renew_cookie_script = os.path.abspath(renew_cookie_script)

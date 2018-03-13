@@ -54,4 +54,3 @@ class AWSGenericPublisher(Publisher.Publisher):
         csv_data = data.to_csv(self.output_file, index=False)
         if not self.output_file:
             print csv_data
-

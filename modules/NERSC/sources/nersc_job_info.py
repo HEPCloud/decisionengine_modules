@@ -136,7 +136,7 @@ def module_config_template():
             'module': 'modules.NERSC.sources.nersc_job_info',
             'name': 'NERSCJobInfo',
             'parameters': {
-                'renew_cookie_script' : '/path/to/script',
+                'renew_cookie_script': '/path/to/script',
                 'cookie_file': '/path/to/cookieFile',
                 'constraints': {
                     'machines': '[machine1, machine2]',

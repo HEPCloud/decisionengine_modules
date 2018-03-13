@@ -37,10 +37,9 @@ def module_config_template():
     """
 
     d = {"AWSPricePerformancePublisher": {
-        "module" :  "modules.AWS.publishers.AWS_price_performance",
-        "name"   :  "AWSPricePerformancePublisher",
-        },
-        }
+         "module": "modules.AWS.publishers.AWS_price_performance",
+         "name": "AWSPricePerformancePublisher",
+         },}
     print "Entry in channel cofiguration"
     pprint.pprint(d)
     print "where"
@@ -89,8 +88,8 @@ def main():
                                          'C56E0AAF-99D3-42A8-88A3-921E30C1879C',
                                          1)
 
-        pp_info = AWSPricePerformancePublisher({"publish_to_graphite" : True,
-	                                        "graphite_host": "fifemondata.fnal.gov",
+        pp_info = AWSPricePerformancePublisher({"publish_to_graphite": True,
+                                                "graphite_host": "fifemondata.fnal.gov",
                                                 "graphite_port": 2104,
                                                 "graphite_context":"hepcloud.aws",
                                                 "output_file": "%s/de_data/AWS_price_perf.csv"%(os.environ.get('HOME'),)})

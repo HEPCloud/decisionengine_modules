@@ -16,8 +16,7 @@ import decisionengine.framework.dataspace.dataspace as dataspace
 
 CONSUMES=['provisioner_resource_spot_prices',
           'Performance_Data',
-          'Job_Limits', 'AWS_Occupancy'
-          ]
+          'Job_Limits', 'AWS_Occupancy']
 
 PRODUCES=['AWS_Price_Performance',
           'AWS_Figure_Of_Merit']
@@ -84,33 +83,30 @@ class FigureOfMerit(Transform.Transform):
         for e in spot_prices:
             data = dict(map(lambda k: (k, e.get(k)), ['AccountName', 'AvailabilityZone', 'InstanceType']))
             fom_row = FOMEntry(e)
-            if not fom_row in fom_data:
+            if fom_row not in fom_data:
                 fom_data.append(fom_row)
             i = fom_data.index(fom_row)
-            for r in  perf_data:
-                if (fom_row.data['AvailabilityZone'] and \
-                    fom_row.data['InstanceType']) == \
-                    (r['AvailabilityZone'] and \
-                    r['InstanceType']):
+            for r in perf_data:
+                if ((fom_row.data['AvailabilityZone'] and
+                    fom_row.data['InstanceType']) ==
+                    (r['AvailabilityZone'] and r['InstanceType'])):
                     fom_data[i].data['PerfTtbarTotal'] = r['PerfTtbarTotal']
                     break
             else:
                 fom_data[i].data['PerfTtbarTotal'] = 0.
-            for r in  perf_data:
-                if (fom_row.data['AvailabilityZone'] and \
-                    fom_row.data['InstanceType']) == \
-                    (r['AvailabilityZone'] and \
-                    r['InstanceType']):
+            for r in perf_data:
+                if ((fom_row.data['AvailabilityZone'] and
+                    fom_row.data['InstanceType']) ==
+                    (r['AvailabilityZone'] and r['InstanceType'])):
                     fom_data[i].data['PerfTtbarTotal'] = r['PerfTtbarTotal']
                     break
             else:
                 fom_data[i].data['PerfTtbarTotal'] = 0.
 
-            for r in  jl_data:
-                if (fom_row.data['AvailabilityZone'] and \
-                    fom_row.data['InstanceType']) == \
-                    (r['AvailabilityZone'] and \
-                     r['InstanceType']):
+            for r in jl_data:
+                if ((fom_row.data['AvailabilityZone'] and
+                    fom_row.data['InstanceType']) ==
+                    (r['AvailabilityZone'] and r['InstanceType'])):
                     fom_data[i].data['MaxLimit'] = r['MaxLimit']
                     break
             else:
@@ -127,8 +123,8 @@ class FigureOfMerit(Transform.Transform):
             running_vms = e.data['RunningVms'] if 'RunningVms' in e.data else 0
             max_limit = e.data['MaxLimit'] if 'MaxLimit' in e.data else DEFAULT_MAX_LIMIT
             fom['AWS_Figure_Of_Merit'] = figure_of_merit(running_vms,
-                                                            max_limit,
-                                                            pp['AWS_Price_Performance'])
+                                                         max_limit,
+                                                         pp['AWS_Price_Performance'])
             pp_list.append(pp)
             fom_list.append(fom)
         
@@ -146,8 +142,8 @@ def module_config_template():
     """
 
     d = {"FigureOfMerit": {
-        "module" :  "modules.AWS.transforms.FigureOfMerit",
-        "name"   :  "FigureOfMerit",
+        "module":  "modules.AWS.transforms.FigureOfMerit",
+        "name":  "FigureOfMerit",
         },
         }
     print "Entry in channel cofiguration"

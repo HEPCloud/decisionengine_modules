@@ -44,7 +44,7 @@ class Graphite(object):
         if send_data:
             s=socket.socket()
             try:
-                s.connect( (self.graphite_host, self.graphite_pickle_port) )
+                s.connect((self.graphite_host, self.graphite_pickle_port))
                 s.sendall(message)
             except socket.error, detail:
                 sys.stderr.write("Error sending data to graphite at %s:%d: %s\n" % (self.graphite_host,self.graphite_pickle_port, detail))

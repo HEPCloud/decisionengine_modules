@@ -48,11 +48,11 @@ class CompareNerscFactoryJobs(Transform.Transform):
         factory_df = factory_df[factory_df.GridResource.str.startswith('batch slurm')]
 
         results = {
-            'both.count' : 0,
-            'nersc_only.count' : 0,
-            'factory_only.count' : 0,
-            'factory_no_ID.count' : 0,
-            'nersc.running.count' : 0,
+            'both.count': 0,
+            'nersc_only.count': 0,
+            'factory_only.count': 0,
+            'factory_no_ID.count': 0,
+            'nersc.running.count': 0,
         }
 
         if factory_df.empty:
@@ -143,7 +143,7 @@ class CompareNerscFactoryJobs(Transform.Transform):
             if row['status'] == 'R':
                 results['nersc.running.count'] += 1
 
-        return {'nersc_factory_jobs_comparison' : results}
+        return {'nersc_factory_jobs_comparison': results}
 
 def module_config_template():
     """

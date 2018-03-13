@@ -34,15 +34,17 @@ class SourceProxy(Source.Source):
         "module" : "modules.source_proxy",
         "name"   : "SourceProxy",
         "parameters": {"channel_name": "channel_aws_config_data",
-		      "Dataproducts":[("aws_instance_limits", "Job_Limits")],
-		      "retries": 3,
-		      "retry_timeout": 20,
-        	      },
-       	"schedule": 360,
+                       "Dataproducts":[("aws_instance_limits", "Job_Limits")],
+                       "retries": 3,
+                       "retry_timeout": 20,
+                      },
+        "schedule": 360,
     },
 
     """
+
     must_have = ('channel_name', 'Dataproducts')
+
     def __init__(self, *args, **kwargs):
         if not set(must_have).issubset(set(args[0].keys())):
             raise RuntimeError('SourceProxy misconfigured. Must have %s defined'%(must_have,))
@@ -109,7 +111,7 @@ class SourceProxy(Source.Source):
                 if data_block.generation_id > 1:
                     data_block.generation_id -= 1
                 else:
-                    raise KeyError, detail
+                    raise KeyError(detail)
         return data
 
     def acquire(self):
@@ -136,7 +138,7 @@ class SourceProxy(Source.Source):
                 self.logger.error('Error getting datablock for %s %s'%(self.source_channel, detail))
 
         if not data_block:
-            raise RuntimeError, ('Could not get data.')
+            raise RuntimeError('Could not get data.')
         rc = {}
         retry_cnt = 0
         filled_keys = []
@@ -167,7 +169,7 @@ class SourceProxy(Source.Source):
                 retry = False
 
         if retry_cnt == self.retries and len(filled_keys) != len(self.data_keys):
-            raise RuntimeError, ('Could not get all data. Expected %s Filled %s'%(self.data_keys, filled_keys))
+            raise RuntimeError('Could not get all data. Expected %s Filled %s'%(self.data_keys, filled_keys))
         return rc
 
 def module_config_template():
@@ -175,16 +177,17 @@ def module_config_template():
     print a template for this module configuration data
     """
 
-    d = {"source_proxy1": {
-        "module" :  "modules.source_proxy",
-        "name"   :  "SourceProxy",
-                    "parameters": {
-                        "channel_name": "source_channel_name",
-                        "Dataproducts": "list of data keys to retrieve from source channel data",
-                        "retries": "<number of retries to acquire data>",
-                        "retry_timeout": "<retry timeout>"
-                    },
-        "schedule": 60*60,
+    d = {
+        "source_proxy1": {
+            "module": "modules.source_proxy",
+            "name": "SourceProxy",
+            "parameters": {
+                "channel_name": "source_channel_name",
+                "Dataproducts": "list of data keys to retrieve from source channel data",
+                "retries": "<number of retries to acquire data>",
+                "retry_timeout": "<retry timeout>"
+            },
+            "schedule": 60*60,
         }
     }
 
