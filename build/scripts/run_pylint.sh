@@ -89,7 +89,7 @@ process_branch() {
     do
         files_checked="$files_checked $file"
         pylint $PYLINT_OPTIONS $file >> $pylint_log || log_nonzero_rc "pylint" $?
-        pep8 $PEP8_OPTIONS $file >> $pep8_log || log_nonzero_rc "pep8" $?
+        pycodestyle $PEP8_OPTIONS $file >> $pep8_log || log_nonzero_rc "pep8" $?
     done
     echo "FILES_CHECKED=\"$files_checked\"" >> $results
     echo "FILES_CHECKED_COUNT=`echo $files_checked | wc -w | tr -d " "`" >> $results
@@ -201,6 +201,24 @@ HTML_TD_FAILED="border: 0px solid black;border-collapse: collapse;background-col
 # MAIN
 ###############################################################################
 
+function usage {
+    echo "Usage: run_pylint.sh <OPTIONS>"
+    echo "OPTIONS:"
+    echo "  -tags <git tags>           : List of comma separated tags/branches"
+    echo "  -email <email address>     : Send results to the given email"
+
+}
+
+while [ $# -gt 0 ]
+do case "$1" in
+    -tags) git_branches="$2";;
+    -email) email_to="$2";;
+    *)  (warn "Unknown option $1"; usage) 1>&2; exit 1
+esac
+shift
+shift
+done
+
 
 git_branches="$1"
 WORKSPACE=`pwd`
@@ -253,4 +271,11 @@ done
 
 finalize_results_logging $RESULTS_MAIL
 
-mail_results $RESULTS_MAIL "Pylint/PEP8 Validation Results" "parag@fnal.gov" $attachments
+echo "RESULTS can be found in $attachments in dir $WORKSPACE"
+if [ -n "$email_to" ]; then
+    echo "Mailing results to $email_to ..."
+    mail_results $RESULTS_MAIL "Pylint/PEP8 Validation Results" "$email_to" $attachments
+    echo "Mailing results to $email_to ... DONE"
+else
+    echo "Email not provided. Results will not be emailed."
+fi
