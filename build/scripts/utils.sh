@@ -39,7 +39,8 @@ setup_python_venv() {
 
     # Install dependancies first so we don't get uncompatible ones
     # Following RPMs need to be installed on the machine:
-    pip_packages="astroid pylint pep8 unittest2 coverage sphinx DBUtils pytest"
+    #pip_packages="astroid pylint pep8 unittest2 coverage sphinx DBUtils pytest"
+    pip_packages="astroid pylint pycodestyle unittest2 coverage sphinx DBUtils pytest mock"
     for package in $pip_packages; do
         echo "Installing $package ..."
         status="DONE"
@@ -88,7 +89,7 @@ print_python_info() {
     echo "${bo}LINUX DISTRO:${bc} `lsb_release -d`$br"
     echo "${bo}PYTHON:${bc} `which python`$br"
     echo "${bo}PYLINT:${bc} `pylint --version`$br"
-    echo "${bo}PEP8:${bc} `pep8 --version`$br"
+    echo "${bo}PEP8:${bc} `pycodestyle --version`$br"
 }
 
 
