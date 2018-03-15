@@ -88,11 +88,10 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
             txt += "channel: {:<{width}}, id = {:<{width}}, state = {:<10} \n".format(ch, worker.task_manager.id, TaskManager._state_names[worker.task_manager.get_state()], width=width)
         return txt[:-1]
 
-    def rpc_stop(self):
-        for ch, worker in self.task_managers.items():
-            worker.terminate()
-        self.shutdown()
-        return "OK"
+     def rpc_stop(self):
+         self.stop_channels()
+         self.shutdown()
+         return "OK"
 
     def rpc_start_channel(self, channel):
         if channel in self.task_managers:
@@ -132,9 +131,16 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return "OK"
 
     def stop_channel(self,channel):
-        print channel, self.task_managers
         worker = self.task_managers[channel]
-        print "Worker", worker
+        if worker.task_manager.get_state() not in (TaskManager.SHUTTINGDOWN,
+                                                   TaskManager.SHUTDOWN):
+            worker.task_manager.set_state(TaskManager.SHUTTINGDOWN)
+        for i in range(int(self.config_manager.get("shutdown_timeout",10))):
+            if worker.task_manager.get_state()==TaskManager.SHUTDOWN:
+                break
+            else:
+                time.sleep(1)
+                continue
         worker.terminate()
         del self.task_managers[channel]
 
@@ -143,6 +149,8 @@ class DecisionEngine(SocketServer.ThreadingMixIn,
         return "OK"
 
     def stop_channels(self):
+        map(lambda x: x[1].task_manager.set_state(TaskManager.SHUTTINGDOWN),
+            self.task_managers.items())
         channels = self.task_managers.keys()
         for ch in channels:
             self.stop_channel(ch)
