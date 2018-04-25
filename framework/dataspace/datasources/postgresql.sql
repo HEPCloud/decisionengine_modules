@@ -9,6 +9,7 @@ CREATE TABLE taskmanager (
 ALTER TABLE ONLY taskmanager
       ADD CONSTRAINT pk_taskmanager PRIMARY KEY (sequence_id);
 
+CREATE INDEX i_taskmanager_datestamp ON taskmanager(datestamp);
 
 DROP TABLE IF EXISTS header;
 CREATE TABLE header (
@@ -26,6 +27,8 @@ ALTER TABLE ONLY header
     ADD CONSTRAINT header_taskmanager_id_fkey FOREIGN KEY (taskmanager_id)
     REFERENCES taskmanager(sequence_id)
     ON UPDATE CASCADE ON DELETE CASCADE;
+
+CREATE INDEX i_header_taskmanager_id ON header(taskmanager_id);
 
 DROP TABLE IF EXISTS schema;
 CREATE TABLE schema (
@@ -48,6 +51,7 @@ ALTER TABLE ONLY metadata
     REFERENCES taskmanager(sequence_id)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
+CREATE INDEX i_metadata_taskmanager_id ON metadata(taskmanager_id);
 
 DROP TABLE IF EXISTS dataproduct;
 CREATE TABLE dataproduct (
@@ -61,6 +65,8 @@ ALTER TABLE ONLY dataproduct
     ADD CONSTRAINT dataproduct_taskmanager_id_fkey FOREIGN KEY (taskmanager_id)
     REFERENCES taskmanager(sequence_id)
     ON UPDATE CASCADE ON DELETE CASCADE;
+
+CREATE INDEX i_dataproduct_taskmanager_id ON dataproduct(taskmanager_id);
 
 CREATE FUNCTION f_id2sequence(character varying) RETURNS BIGINT
     LANGUAGE sql
