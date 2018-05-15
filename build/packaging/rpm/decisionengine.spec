@@ -82,7 +82,7 @@ cd %{le_builddir}
 cmake ..
 make
 [ -e ../../RE.so ] && rm ../../RE.so
-[ -e ../../libLogicEngine.so ] && ../../libLogicEngine.so
+[ -e ../../libLogicEngine.so ] && rm ../../libLogicEngine.so
 cp ErrorHandler/RE.so ../..
 cp ErrorHandler/libLogicEngine.so ../..
 
