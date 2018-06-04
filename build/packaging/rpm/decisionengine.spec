@@ -82,7 +82,7 @@ cd %{le_builddir}
 cmake ..
 make
 [ -e ../../RE.so ] && rm ../../RE.so
-[ -e ../../libLogicEngine.so ] && ../../libLogicEngine.so
+[ -e ../../libLogicEngine.so ] && rm ../../libLogicEngine.so
 cp ErrorHandler/RE.so ../..
 cp ErrorHandler/libLogicEngine.so ../..
 
@@ -168,6 +168,12 @@ usermod --append --groups  %{de_group}  %{de_user} >/dev/null
 # $1 = 1 - Installation
 # $1 = 2 - Upgrade
 /sbin/chkconfig --add decision-engine
+if [ ! -e /usr/bin/de-client ]; then
+   ln -s %{python_sitelib}/decisionengine/framework/engine/de_client.py /usr/bin/de-client
+fi
+if [ ! -e /usr/sbin/decision-engine ]; then
+   ln -s %{python_sitelib}/decisionengine/framework/engine/DecisionEngine.py /usr/sbin/decision-engine
+fi
 
 # Change the ownership of log and lock dir if they already exist
 if [ -d %{de_logdir} ]; then
