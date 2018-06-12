@@ -3,7 +3,7 @@ import pytest
 import mock
 import pprint
 import utils
-from decisionengine.modules.glideinwms import s_factory_entries
+from decisionengine.modules.glideinwms.sources import factory_entries
 from decisionengine.modules.htcondor import htcondor_query
 
 
@@ -17,7 +17,7 @@ config_factory_entries = {
 class TestFactoryEntries:
 
     def test_produces(self):
-        entries = s_factory_entries.FactoryEntries(config_factory_entries)
+        entries = factory_entries.FactoryEntries(config_factory_entries)
         produces = [
             'Factory_Entries_Grid', 'Factory_Entries_AWS',
             'Factory_Entries_GCE', 'Factory_Entries_LCF'
@@ -26,12 +26,12 @@ class TestFactoryEntries:
 
 
     def test_acquire(self):
-        entries = s_factory_entries.FactoryEntries(config_factory_entries)
+        entries = factory_entries.FactoryEntries(config_factory_entries)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
             f.return_value = utils.input_from_file('factory_entries.cs.fixture')
             pprint.pprint(entries.acquire())
 
 
     def test_acquire_live(self):
-        entries = s_factory_entries.FactoryEntries(config_factory_entries)
+        entries = factory_entries.FactoryEntries(config_factory_entries)
         pprint.pprint(entries.acquire())
