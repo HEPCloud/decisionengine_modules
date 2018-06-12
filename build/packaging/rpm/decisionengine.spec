@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 0.3.1
-%define release 0.1
+%define release 0.2
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -104,6 +104,7 @@ install -d $RPM_BUILD_ROOT%{python_sitelib}
 # Copy files in place
 cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
 
+mkdir -p $RPM_BUILD_ROOT%{de_confdir}/config.d
 install -m 0644 build/packaging/rpm/decision_engine_template.conf $RPM_BUILD_ROOT%{de_confdir}/decision_engine.conf
 install -m 0644 build/packaging/rpm/decisionengine.service $RPM_BUILD_ROOT%{systemddir}/decision-engine.service
 install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROOT%{_initrddir}/decision-engine
@@ -134,6 +135,7 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 %{python_sitelib}/decisionengine/__init__.pyo
 %{python_sitelib}/decisionengine/__init__.pyc
 %{python_sitelib}/decisionengine/LICENSE.txt
+%{de_confdir}/config.d
 
 %{systemddir}/decision-engine.service
 %{_initrddir}/decision-engine
