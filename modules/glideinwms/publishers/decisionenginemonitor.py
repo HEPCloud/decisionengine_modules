@@ -4,15 +4,15 @@ import pprint
 import pandas
 import numpy
 
-from decisionengine.modules.htcondor import publisher
+from decisionengine.modules.htcondor.publishers import publisher
 
-CONSUMES = ['glideclientglobal_manifests']
+CONSUMES = ['decisionenginemonitor_manifests']
 
 
-class GlideClientGlobalManifests(publisher.HTCondorManifests):
+class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
 
     def __init__(self, *args, **kwargs):
-        super(GlideClientGlobalManifests, self).__init__(*args, **kwargs)
+        super(DecisionEngineMonitorManifests, self).__init__(*args, **kwargs)
 
 
     def consumes(self):
@@ -28,9 +28,9 @@ def module_config_template():
     """
 
     template = {
-        'glideclientglobal_manifests': {
-            'module': 'modules.glideinwms.p_glideclientglobal',
-            'name': 'GlideClientGlobalManifests',
+        'decisionenginemonitor_manifests': {
+            'module': 'modules.glideinwms.p_decisionenginemonitor',
+            'name': 'DecisionEngineMonitorManifests',
             'parameters': {
                 'collector_host': 'factory_collector.com',
                 'condor_config': '/path/to/condor_config',
