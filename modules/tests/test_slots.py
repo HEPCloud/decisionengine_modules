@@ -17,19 +17,19 @@ class TestStartdManifests:
 
     def test_produces(self):
         produces = ['startd_manifests']
-        slots = slots.StartdManifests(config_cs)
-        assert(slots.produces() == produces)
+        s = slots.StartdManifests(config_cs)
+        assert(s.produces() == produces)
 
 
     def test_acquire(self):
-        slots = slots.StartdManifests(config_cs)
+        s = slots.StartdManifests(config_cs)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
             f.return_value = utils.input_from_file('cs.fixture')
-            pprint.pprint(slots.acquire())
+            pprint.pprint(s.acquire())
+
+
     """
-
-
     def test_acquire_live(self):
-        slots = slots.StartdManifests(config_cs)
-        pprint.pprint(slots.acquire())
+        s = slots.StartdManifests(config_cs)
+        pprint.pprint(s.acquire())
     """

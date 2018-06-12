@@ -17,18 +17,18 @@ config = {
 class TestFactoryGlobalManifests:
 
     def test_produces(self):
-        factory_global = factory_global.FactoryGlobalManifests(config)
+        fg = factory_global.FactoryGlobalManifests(config)
         produces = ['factoryglobal_manifests']
-        assert(factory_global.produces() == produces)
+        assert(fg.produces() == produces)
 
 
     def test_acquire(self):
-        factory_global = factory_global.FactoryGlobalManifests(config)
+        fg = factory_global.FactoryGlobalManifests(config)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
             f.return_value = utils.input_from_file('factory_global.cs.fixture')
-            pprint.pprint(factory_global.acquire())
+            pprint.pprint(fg.acquire())
 
 
     def test_acquire_live(self):
-        factory_global = factory_global.FactoryGlobalManifests(config)
-        pprint.pprint(factory_global.acquire())
+        fg = factory_global.FactoryGlobalManifests(config)
+        pprint.pprint(fg.acquire())
