@@ -4,24 +4,29 @@ import pprint
 import pandas
 import numpy
 
-from decisionengine.modules.htcondor import publisher
-
-CONSUMES = [
-    'glideclient_manifests', 'glideresource_manifests',
-]
+from decisionengine.modules.htcondor.sources import source
 
 
-class GlideinWMSManifests(publisher.HTCondorManifests):
+PRODUCES = ['factoryclient_manifests']
+
+
+class FactoryClientManifests(source.ResourceManifests):
 
     def __init__(self, *args, **kwargs):
-        super(GlideinWMSManifests, self).__init__(*args, **kwargs)
+        super(FactoryClientManifests, self).__init__(*args, **kwargs)
+        self.constraint = '(%s)&&(glideinmytype=="glidefactoryclient")' % self.constraint
+        self.subsystem_name = 'any'
 
 
-    def consumes(self):
+    def produces(self):
         """
         Return list of items produced
         """
-        return CONSUMES
+        return PRODUCES
+
+
+    def acquire(self):
+        return {PRODUCES[0]: self.load()}
 
 
 def module_config_template():
@@ -30,11 +35,14 @@ def module_config_template():
     """
 
     template = {
-        'glideinwms_manifests': {
-            'module': 'modules.glideinwms.p_glideinwms_classads',
-            'name': 'GlideinWMSManifests',
+        'factoryclient_manifests': {
+            'module': 'modules.htcondor.s_factory_client',
+            'name': 'StartdManifests',
             'parameters': {
+                'collector_host': 'factory_collector.com',
                 'condor_config': '/path/to/condor_config',
+                'constraints': 'HTCondor collector query constraints',
+                'classad_attrs': [],
             }
         }
     }
@@ -46,7 +54,7 @@ def module_config_info():
     """
     Print module information
     """
-    print('consumes %s' % CONSUMES)
+    print('produces %s' % PRODUCES)
     module_config_template()
 
 

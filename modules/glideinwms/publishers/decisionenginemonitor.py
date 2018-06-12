@@ -4,27 +4,22 @@ import pprint
 import pandas
 import numpy
 
-from decisionengine.modules.htcondor import source
+from decisionengine.modules.htcondor.publishers import publisher
+
+CONSUMES = ['decisionenginemonitor_manifests']
 
 
-PRODUCES = ['startd_manifests']
-
-
-class StartdManifests(source.ResourceManifests):
+class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
 
     def __init__(self, *args, **kwargs):
-        super(StartdManifests, self).__init__(*args, **kwargs)
+        super(DecisionEngineMonitorManifests, self).__init__(*args, **kwargs)
 
 
-    def produces(self):
+    def consumes(self):
         """
         Return list of items produced
         """
-        return PRODUCES
-
-
-    def acquire(self):
-        return {PRODUCES[0]: self.load()}
+        return CONSUMES
 
 
 def module_config_template():
@@ -33,14 +28,12 @@ def module_config_template():
     """
 
     template = {
-        'startd_manifests': {
-            'module': 'modules.htcondor.s_slots',
-            'name': 'StartdManifests',
+        'decisionenginemonitor_manifests': {
+            'module': 'modules.glideinwms.p_decisionenginemonitor',
+            'name': 'DecisionEngineMonitorManifests',
             'parameters': {
                 'collector_host': 'factory_collector.com',
                 'condor_config': '/path/to/condor_config',
-                'constraints': 'HTCondor collector query constraints',
-                'classad_attrs': [],
             }
         }
     }
@@ -52,7 +45,7 @@ def module_config_info():
     """
     Print module information
     """
-    print('produces %s' % PRODUCES)
+    print('consumes %s' % CONSUMES)
     module_config_template()
 
 
