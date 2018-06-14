@@ -15,20 +15,13 @@ PRODUCES = ['Nersc_Job_Info']
 STATUS_QUERY_PREFIX = 'https://newt.nersc.gov/newt/status/'
 JOB_QUERY_PREFIX = 'https://newt.nersc.gov/newt/queue/'
 
-class NERSCJobInfo(Source.Source):
+class NerscJobInfo(Source.Source):
 
     """
     Information of jobs on NERSC machines
     """
 
-    def __init__(self, *args, **kwargs):
-        if args:
-            config = args[0]
-        else:
-            config = {}
-
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
+    def __init__(self, config):
 
         if ('renew_cookie_script' not in config) or ('cookie_file' not in config):
             raise RuntimeError('renew script and cookie file are not passed')
@@ -133,8 +126,8 @@ def module_config_template():
 
     template = {
         'nersc_job_info': {
-            'module': 'modules.NERSC.sources.nersc_job_info',
-            'name': 'NERSCJobInfo',
+            'module': 'framework.modules.NERSC.sources.NerscJobInfo',
+            'name': 'NerscJobInfo',
             'parameters': {
                 'renew_cookie_script': '/path/to/script',
                 'cookie_file': '/path/to/cookieFile',

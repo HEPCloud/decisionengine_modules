@@ -13,20 +13,13 @@ from decisionengine.modules.NERSC.sources import newt_query
 PRODUCES = ['Nersc_Allocation_Info']
 ALLOCATION_QUERY_PREFIX = 'https://newt.nersc.gov/newt/account/usage/user/'
 
-class NERSCAllocationInfo(Source.Source):
+class NerscAllocationInfo(Source.Source):
 
     """
     Information of allocations on NERSC machines
     """
 
-    def __init__(self, *args, **kwargs):
-        if args:
-            config = args[0]
-        else:
-            config = {}
-
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
+    def __init__(self, config):
 
         if ('renew_cookie_script' not in config) or ('cookie_file' not in config):
             raise RuntimeError('renew script and cookie file are not passed')
@@ -57,7 +50,7 @@ class NERSCAllocationInfo(Source.Source):
         del_index = []
 
         for index, value in enumerate(self.raw_results):
-            if ((value['rname'] not in self.constraints['repo_names']) or 
+            if ((value['rname'] not in self.constraints['repo_names']) or
                (value['repo_type'] not in self.constraints['repo_types'])):
                 del_index.append(index)
 
@@ -97,8 +90,8 @@ def module_config_template():
 
     template = {
         'nersc_allocation_info': {
-            'module': 'modules.NERSC.sources.nersc_allocation_info',
-            'name': 'NERSCAllocationInfo',
+            'module': 'framework.modules.NERSC.sources.NerscAllocationInfo',
+            'name': 'NerscAllocationInfo',
             'parameters': {
                 'renew_cookie_script': '/path/to/script',
                 'cookie_file': '/path/to/cookie_file',
