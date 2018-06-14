@@ -70,7 +70,7 @@ check_installed () {
     if [ -x "$DECISIONENGINE_START" ]; then
         return 0
     fi
-    euho -n "The decision engine is not installed correctly"
+    echo -n "The decision engine is not installed correctly"
     failure
     echo
     exit $RET_NOT_INSTALLED
@@ -103,7 +103,7 @@ invoke_as_frontend() {
         eval "$@"
         #with daemon: daemon "$@" &>/dev/null &
         return $?
-    else
+	else
         # someone else, raise error
         echo "ERROR: you must be the owner of ${def_frontend_config}."
         #return 4
@@ -129,7 +129,7 @@ stop() {
         check_installed
         echo -n "Shutting down decision engine"
 
-        echo "Stop functionality not implemented"
+	/usr/bin/de-client --stop
         MYRETVAL=$?
 
         if [ $MYRETVAL -ne 0 ]; then
@@ -138,7 +138,7 @@ stop() {
             RETVAL=$?
             echo
             return $RETVAL
-        fi         
+        fi
 
         success
         RETVAL=$?

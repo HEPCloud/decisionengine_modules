@@ -82,7 +82,8 @@ process_branch() {
     #cat $PYLINT_RCFILE
 
     # get list of python scripts without .py extension
-    scripts=`find $DECISIONENGINE_SRC/framework $DECISIONENGINE_SRC/modules $DECISIONENGINE_SRC/util -name "*.py"`
+    #scripts=`find $DECISIONENGINE_SRC/framework $DECISIONENGINE_SRC/modules $DECISIONENGINE_SRC/util -name "*.py"`
+    scripts=`find $DECISIONENGINE_SRC/modules -name "*.py"`
     currdir=`pwd`
     files_checked=""
     for file in $scripts

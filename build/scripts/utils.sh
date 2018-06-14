@@ -11,9 +11,10 @@ setup_python_venv() {
         exit 1
     fi
     WORKSPACE=${1:-`pwd`}
-    VIRTUALENV_VER=15.1.0
+    VIRTUALENV_VER=15.2.0
     VIRTUALENV_TARBALL=virtualenv-${VIRTUALENV_VER}.tar.gz
-    VIRTUALENV_URL="https://pypi.python.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/$VIRTUALENV_TARBALL"
+    #VIRTUALENV_URL="https://pypi.python.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/$VIRTUALENV_TARBALL"
+    VIRTUALENV_URL="https://glideinwms.fnal.gov/downloads/$VIRTUALENV_TARBALL"
     VIRTUALENV_EXE=$WORKSPACE/virtualenv-${VIRTUALENV_VER}/virtualenv.py
     VENV=$WORKSPACE/venv
 
@@ -40,7 +41,7 @@ setup_python_venv() {
     # Install dependancies first so we don't get uncompatible ones
     # Following RPMs need to be installed on the machine:
     #pip_packages="astroid pylint pep8 unittest2 coverage sphinx DBUtils pytest"
-    pip_packages="astroid pylint pycodestyle unittest2 coverage sphinx DBUtils pytest mock"
+    pip_packages="argparse WebOb astroid pylint pycodestyle unittest2 coverage sphinx DBUtils pytest mock"
     for package in $pip_packages; do
         echo "Installing $package ..."
         status="DONE"

@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 0.3.1
-%define release 0.1
+%define release 0.2
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -82,7 +82,7 @@ cd %{le_builddir}
 cmake ..
 make
 [ -e ../../RE.so ] && rm ../../RE.so
-[ -e ../../libLogicEngine.so ] && ../../libLogicEngine.so
+[ -e ../../libLogicEngine.so ] && rm ../../libLogicEngine.so
 cp ErrorHandler/RE.so ../..
 cp ErrorHandler/libLogicEngine.so ../..
 
@@ -104,6 +104,7 @@ install -d $RPM_BUILD_ROOT%{python_sitelib}
 # Copy files in place
 cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
 
+mkdir -p $RPM_BUILD_ROOT%{de_confdir}/config.d
 install -m 0644 build/packaging/rpm/decision_engine_template.conf $RPM_BUILD_ROOT%{de_confdir}/decision_engine.conf
 install -m 0644 build/packaging/rpm/decisionengine.service $RPM_BUILD_ROOT%{systemddir}/decision-engine.service
 install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROOT%{_initrddir}/decision-engine
@@ -134,6 +135,7 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 %{python_sitelib}/decisionengine/__init__.pyo
 %{python_sitelib}/decisionengine/__init__.pyc
 %{python_sitelib}/decisionengine/LICENSE.txt
+%{de_confdir}/config.d
 
 %{systemddir}/decision-engine.service
 %{_initrddir}/decision-engine
@@ -168,6 +170,12 @@ usermod --append --groups  %{de_group}  %{de_user} >/dev/null
 # $1 = 1 - Installation
 # $1 = 2 - Upgrade
 /sbin/chkconfig --add decision-engine
+if [ ! -e /usr/bin/de-client ]; then
+   ln -s %{python_sitelib}/decisionengine/framework/engine/de_client.py /usr/bin/de-client
+fi
+if [ ! -e /usr/sbin/decision-engine ]; then
+   ln -s %{python_sitelib}/decisionengine/framework/engine/DecisionEngine.py /usr/sbin/decision-engine
+fi
 
 # Change the ownership of log and lock dir if they already exist
 if [ -d %{de_logdir} ]; then

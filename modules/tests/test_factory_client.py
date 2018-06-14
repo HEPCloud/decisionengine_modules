@@ -3,7 +3,7 @@ import pytest
 import mock
 import pprint
 import utils
-from decisionengine.modules.glideinwms import s_factory_client
+from decisionengine.modules.glideinwms.sources import factory_client
 from decisionengine.modules.htcondor import htcondor_query
 
 
@@ -17,18 +17,18 @@ config = {
 class TestFactoryClientManifests:
 
     def test_produces(self):
-        factory_client = s_factory_client.FactoryClientManifests(config)
+        fc = factory_client.FactoryClientManifests(config)
         produces = ['factoryclient_manifests']
-        assert(factory_client.produces() == produces)
+        assert(fc.produces() == produces)
 
 
     def test_acquire(self):
-        factory_client = s_factory_client.FactoryClientManifests(config)
+        fc = factory_client.FactoryClientManifests(config)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
             f.return_value = utils.input_from_file('factory_client.cs.fixture')
-            pprint.pprint(factory_client.acquire())
+            pprint.pprint(fc.acquire())
 
 
     def test_acquire_live(self):
-        factory_client = s_factory_client.FactoryClientManifests(config)
-        pprint.pprint(factory_client.acquire())
+        fc = factory_client.FactoryClientManifests(config)
+        pprint.pprint(fc.acquire())
