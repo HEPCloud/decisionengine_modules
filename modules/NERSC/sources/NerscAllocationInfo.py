@@ -8,7 +8,7 @@ import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-from decisionengine.modules.NERSC.sources import newt_query
+from decisionengine.modules.NERSC.sources import NewtQuery
 
 PRODUCES = ['Nersc_Allocation_Info']
 ALLOCATION_QUERY_PREFIX = 'https://newt.nersc.gov/newt/account/usage/user/'
@@ -41,7 +41,7 @@ class NerscAllocationInfo(Source.Source):
 
         for username in self.constraints['usernames']:
             query = ALLOCATION_QUERY_PREFIX+username
-            values = newt_query.NewtQuery.send_query(
+            values = NewtQuery.NewtQuery.send_query(
                 self.cookie_file, self.renew_cookie_script, query)
             if values != []:
                 self.raw_results.extend(values['items'])
