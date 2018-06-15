@@ -8,7 +8,7 @@ import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-from decisionengine.modules.NERSC.sources import newt_query
+from decisionengine.modules.NERSC.sources import NewtQuery
 import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Job_Info']
@@ -51,7 +51,7 @@ class NerscJobInfo(Source.Source):
         # check if the machines listed are down, if so, delete this machine
         for m in self.constraints['machines']:
             q = STATUS_QUERY_PREFIX+m
-            values = newt_query.NewtQuery.send_query(self.cookie_file, self.renew_cookie_script, q)
+            values = NewtQuery.NewtQuery.send_query(self.cookie_file, self.renew_cookie_script, q)
             if values != []:
                 if values['status'] == 'down':
                     self.constraints['machines'].remove(m)
@@ -91,7 +91,7 @@ class NerscJobInfo(Source.Source):
 
         for q in queries:
             #self.logger.info("sending query %s to the newtQuery function" %(q))
-            values = newt_query.NewtQuery.send_query(self.cookie_file, self.renew_cookie_script, q)
+            values = NewtQuery.NewtQuery.send_query(self.cookie_file, self.renew_cookie_script, q)
             self.raw_results.extend(values)
 
     def raw_results_to_pandas_frame(self):
