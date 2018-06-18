@@ -23,6 +23,8 @@ PRODUCES=['AWS_Price_Performance',
           'AWS_Figure_Of_Merit']
 
 DEFAULT_MAX_LIMIT=20
+BIG_NUMBER=10000000.
+LARGE_NUMBER=100000000000.
 
 def price_performance(SpotPrice, PerfTtbarTotal):
     pp = 0.
@@ -31,9 +33,12 @@ def price_performance(SpotPrice, PerfTtbarTotal):
     return pp
 
 def figure_of_merit(RunningVms, MaxLimit, PricePerf):
-    fm = 0.
+    fm = LARGE_NUMBER
     if int(MaxLimit) > 0:
-        fm = ((float(RunningVms)+1) / int(MaxLimit)) * PricePerf
+        if RunningVms < MaxLimit:
+            fm = ((float(RunningVms)+1) / int(MaxLimit)) * PricePerf
+        else:
+            fm = BIG_NUMBER
     return fm
 
 class FigureOfMerit(Transform.Transform):
