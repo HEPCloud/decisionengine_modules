@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 Get allocation info from Nersc
 """
@@ -8,10 +7,10 @@ import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-from decisionengine.modules.NERSC.sources import NewtQuery
+from decisionengine.modules.NERSC.util import newt
+import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Allocation_Info']
-ALLOCATION_QUERY_PREFIX = 'https://newt.nersc.gov/newt/account/usage/user/'
 
 class NerscAllocationInfo(Source.Source):
 
@@ -21,41 +20,31 @@ class NerscAllocationInfo(Source.Source):
 
     def __init__(self, config):
 
-        if ('renew_cookie_script' not in config) or ('cookie_file' not in config):
-            raise RuntimeError('renew script and cookie file are not passed')
-
-        self.renew_cookie_script = config.get('renew_cookie_script')
-        self.cookie_file = config.get('cookie_file')
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
 
         self.raw_results = None
         self.pandas_frame = None
+        self.newt = newt.Newt(config.get('passwd_file'))
+        self.logger = de_logger.get_logger()
 
     def send_query(self):
         """
         Send queries and then filter the results based on user constraints
         """
-        self.raw_results = []
+        results = []
 
         for username in self.constraints['usernames']:
-            query = ALLOCATION_QUERY_PREFIX+username
-            values = NewtQuery.NewtQuery.send_query(
-                self.cookie_file, self.renew_cookie_script, query)
-            if values != []:
-                self.raw_results.extend(values['items'])
+            values = self.newt.get_usage(username)
+            if values: 
+                results.extend(values['items'])
 
-        # further filter the results based on 'repo_names' and 'repo_types'
-        del_index = []
+        # filter results based on 'repo_names' and 'repo_types'
 
-        for index, value in enumerate(self.raw_results):
-            if ((value['rname'] not in self.constraints['repo_names']) or
-               (value['repo_type'] not in self.constraints['repo_types'])):
-                del_index.append(index)
-
-        for index in sorted(del_index, reverse=True):
-            del self.raw_results[index]
+        self.raw_results = filter(lambda x : x['rname'] in self.constraints.get('repo_names',[]) and
+                                  x['repo_type'] in self.constraints.get('repo_types',[]),
+                                  results)
 
     def raw_results_to_pandas_frame(self):
         """
