@@ -103,7 +103,6 @@ def module_config_template():
             'parameters' : { 'passwd_file' : '/path/to/password_file',
                              'constraints' : {
                                  'machines': ["edison", "cori"],
-                                 'usernames' : ["user1", "user2"],
                                  'newt_keys' : {
                                      'user': ["hufnagel", "timm"],
                                      'repo': ['m2612','m2696'],
