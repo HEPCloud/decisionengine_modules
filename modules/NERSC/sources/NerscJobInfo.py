@@ -56,14 +56,13 @@ class NerscJobInfo(Source.Source):
 
         # filter results based on constraints specified in newt_keys dictionary
 
-        newt_keys = self.constraints.get("newt_keys")
+        newt_keys = self.constraints.get("newt_keys",{})
 
         for m in machines:
             values = self.newt.get_queue(m)
-            if newt_keys:
-                for k, v in newt_keys.iteritems():
-                    if v:
-                        values = filter(lambda x: x[k] in v, values)
+            for k, v in newt_keys.iteritems():
+                if v:
+                    values = filter(lambda x: x[k] in v, values)
             if values:
                 self.raw_results.extend(values)
 

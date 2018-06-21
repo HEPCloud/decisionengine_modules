@@ -42,7 +42,7 @@ class NerscAllocationInfo(Source.Source):
 
         # filter results based on constraints specified in newt_keys dictionary
 
-        newt_keys = self.constraints.get("newt_keys")
+        newt_keys = self.constraints.get("newt_keys",{})
 
         for key, values in newt_keys.iteritems():
             if values:
