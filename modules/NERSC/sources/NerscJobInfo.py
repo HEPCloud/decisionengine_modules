@@ -11,8 +11,6 @@ from decisionengine.modules.NERSC.util import newt
 import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Job_Info']
-STATUS_QUERY_PREFIX = 'https://newt.nersc.gov/newt/status/'
-JOB_QUERY_PREFIX = 'https://newt.nersc.gov/newt/queue/'
 
 class NerscJobInfo(Source.Source):
 
@@ -31,75 +29,42 @@ class NerscJobInfo(Source.Source):
 
 
     def send_query(self):
-        """
-        Construct NEWT query strings based on user constraints and then send queries
-        """
+
         self.raw_results = []
 
         # default, query edison and cori
-        if len(self.constraints['machines']) == 0:
-            self.constraints['machines'] = ['edison', 'cori']
+        self.constraints('machines') = self.constraints.get('machines',
+                                                            ['edison', 'cori'])
 
-
-        # get all system status
+        # get all systems that are up
 
         up_machines = filter(lambda x: x['status'] == 'up', self.newt.get_status())
-        
-        if not up_machines: 
+
+        if not up_machines:
             self.logger.info("All machines at NERSC are down")
             self.raw_results = []
-            return 
+            return
 
-        # filter up machines 
+        # filter machines that are up
 
         machines = filter(lambda x: x in [ y["system"] for y in up_machines],
                           self.constraints.get('machines'))
-
-        
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
             self.raw_results = []
-            return 
-           
+            return
+
+        # filter results based on constraints specified in newt_keys dictionary
+
+        newt_keys = self.constraints.get("newt_keys",{})
 
         for m in machines:
-            queries = ["?"]
-
-            if self.constraints.get('usernames'):
-                new_list = []
-                for u in self.constraints['usernames']:
-                    for index, q_string in enumerate(queries):
-                        s = queries[index] + 'user=' + u + '&'
-                        new_list.append(s)
-                queries = new_list
-                
-                if self.constraints['partitions']:
-                    new_list = []
-                    for p in self.constraints['partitions']:
-                        for index, q_string in enumerate(queries):
-                            s = queries[index] + 'queue=' + p + '&'
-                            new_list.append(s)
-                    queries = new_list
-
-                if self.constraints['accounts']:
-                    new_list = []
-                    for a in self.constraints['accounts']:
-                        for index, q_string in enumerate(queries):
-                            s = queries[index] + 'repo=' + a + '&'
-                            new_list.append(s)
-                    queries = new_list
-
-                for q in queries:
-                    query = q.rstrip("&")
-                    if query == "?" : query = ""
-                    self.logger.info("sending query {} to the newt function for system {}".format(query,m))
-                    try:
-                        values = self.newt.get_queue(m,query)
-                        if values:
-                            self.raw_results.extend(values)
-                    except Exception as e:
-                        self.logger.error(e)
-                        pass 
+            values = self.newt.get_queue(m)
+            for k, v in newt_keys.iteritems():
+                if v:
+                    values = filter(lambda x: x[k] in v, values)
+            if values:
+                self.raw_results.extend(values)
 
     def raw_results_to_pandas_frame(self):
         """
@@ -135,18 +100,19 @@ def module_config_template():
         'nersc_job_info': {
             'module': 'framework.modules.NERSC.sources.NerscJobInfo',
             'name': 'NerscJobInfo',
-            'parameters': {
-                'renew_cookie_script': '/path/to/script',
-                'cookie_file': '/path/to/cookieFile',
-                'constraints': {
-                    'machines': '[machine1, machine2]',
-                    'partitions': '[partition1, partition2]',
-                    'usernames': '[username1, username 2]',
-                    'accounts': '[account1, account2]'
-                }
+            'parameters' : { 'passwd_file' : '/path/to/password_file',
+                             'constraints' : {
+                                 'machines': ["edison", "cori"],
+                                 'newt_keys' : {
+                                     'user': ["user1", "user2"],
+                                     'repo': ['m2612','m2696'],
+                                     'features': ["knl&quad&cache",]
+                                 }
+                             }
             }
         }
     }
+
     print 'Entry in channel configuration'
     pprint.pprint(template)
 
