@@ -33,7 +33,7 @@ class NerscJobInfo(Source.Source):
         self.raw_results = []
 
         # default, query edison and cori
-        self.constraints('machines') = self.constraints.get('machines',
+        self.constraints['machines'] = self.constraints.get('machines',
                                                             ['edison', 'cori'])
 
         # get all systems that are up
