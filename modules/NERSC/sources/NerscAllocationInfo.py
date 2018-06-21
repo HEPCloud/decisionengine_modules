@@ -35,16 +35,21 @@ class NerscAllocationInfo(Source.Source):
         """
         results = []
 
-        for username in self.constraints['usernames']:
+        for username in self.constraints.get("usernames",[]):
             values = self.newt.get_usage(username)
-            if values: 
+            if values:
                 results.extend(values['items'])
 
-        # filter results based on 'repo_names' and 'repo_types'
+        # filter results based on constraints specified in newt_keys dictionary
 
-        self.raw_results = filter(lambda x : x['rname'] in self.constraints.get('repo_names',[]) and
-                                  x['repo_type'] in self.constraints.get('repo_types',[]),
-                                  results)
+        newt_keys = self.constraints.get("newt_keys")
+
+        for key, values in newt_keys.iteritems():
+            if values:
+                results = filter(lambda x : x[key] in values, results)
+
+        self.raw_result = results
+
 
     def raw_results_to_pandas_frame(self):
         """
@@ -82,12 +87,13 @@ def module_config_template():
             'module': 'framework.modules.NERSC.sources.NerscAllocationInfo',
             'name': 'NerscAllocationInfo',
             'parameters': {
-                'renew_cookie_script': '/path/to/script',
-                'cookie_file': '/path/to/cookie_file',
                 'constraints': {
-                    'usernames': '[username1, username 2]',
-                    'repo_types': '[STR, REPO]',
-                    'repo_names': '[m2612, m2696]',
+                    'passwd_file' : '/path/to/password_file',
+                    'usernames': [ 'user1', 'user2' ],
+                    'newt_keys' : {
+                        'rname': ['m2612', 'm2696'],
+                        'repo_type': ["STR",],
+                    }
                 }
             }
         }
