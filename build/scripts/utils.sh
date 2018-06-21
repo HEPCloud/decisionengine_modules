@@ -36,8 +36,6 @@ setup_python_venv() {
 
     source $VENV/bin/activate
 
-    export PYTHONPATH="$PWD:$PYTHONPATH"
-
     # Install dependancies first so we don't get uncompatible ones
     # Following RPMs need to be installed on the machine:
     #pip_packages="astroid pylint pep8 unittest2 coverage sphinx DBUtils pytest"
@@ -55,17 +53,30 @@ setup_python_venv() {
     # Need this because some strange control sequences when using default TERM=xterm
     export TERM="linux"
 
-    # PYTHONPATH for decision engine source code
-    export PYTHONPATH=${PYTHONPATH}:${DECISIONENGINE_SRC}
+}
+
+
+setup_git_product() {
+    product_git_repo=$1
+    wspace=${2:-`pwd`}
+    cd $wspace
+    git clone $product_git_repo
 }
 
 
 setup_glideinwms() {
-    WSPACE=${1:-`pwd`}
-    glideinwms_git="http://cdcvs.fnal.gov/projects/glideinwms"
-    cd $WSPACE
-    git clone $glideinwms_git
+    dir=$1
+    glideinwms_git_repo="http://cdcvs.fnal.gov/projects/glideinwms"
+    setup_git_product "$glideinwms_git_repo" $dir
 }
+
+
+setup_de_framework() {
+    dir=$1
+    de_framework_git_repo="https://github.com/HEPCloud/decisionengine.git"
+    setup_git_product "$de_framework_git_repo" $dir
+}
+
 
 setup_dependencies() {
     WORKSPACE=${1:-`pwd`}
@@ -74,8 +85,13 @@ setup_dependencies() {
     mkdir $DEPS_DIR
     touch $DEPS_DIR/__init__.py
 
+    # setup decisionengine framework
+    setup_de_framework $DEPS_DIR
+
+    # Setup glideinwms
     setup_glideinwms $DEPS_DIR
-    export PYTHONPATH=$DEPS_DIR:$PYTHONPATH
+
+    export PYTHONPATH=$DEPS_DIR
     cd $WORKSPACE
 }
 

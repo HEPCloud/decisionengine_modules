@@ -1,7 +1,7 @@
 #!/bin/sh
 
 get_current_git_branch() {
-    cd $DECISIONENGINE_SRC
+    cd $DE_MODULES_SRC
     gb=`git branch | grep "\*" | cut -d ' ' -f2`
     cd $WORKSPACE
     echo $gb
@@ -15,6 +15,7 @@ process_branch() {
 
     echo "===================================================================="
     echo "GIT BRANCH: $git_branch"
+    echo "PYTHONPATH: $PYTHONPATH"
     echo "===================================================================="
     # Initialize logs
     > $pylint_log
@@ -23,7 +24,7 @@ process_branch() {
 
     echo "GIT_BRANCH=\"$git_branch\"" >> $results
     if [ -n "$git_branch" ]; then
-        cd $DECISIONENGINE_SRC
+        cd $DE_MODULES_SRC
         git checkout $git_branch
         checkout_rc=$?
         #HACK
@@ -38,20 +39,8 @@ process_branch() {
     # Consider success if no git checkout was done
     echo "GIT_CHECKOUT=\"PASSED\"" >> $results
 
-    # Build Logic Engine
-    echo "Building Logic Engine ..."
-    le_builddir=$DECISIONENGINE_SRC/framework/logicengine/cxx/build
-    mkdir $le_builddir
-    cd $le_builddir
-    cmake --debug-output ..
-    make --debug
-    [ -e ../../RE.so ] && rm ../../RE.so
-    [ -e ../../libLogicEngine.so ] && ../../libLogicEngine.so
-    cp ErrorHandler/RE.so ../..
-    cp ErrorHandler/libLogicEngine.so ../..
-    echo "Building Logic Engine ... DONE"
-
-    cd $WORKSPACE
+    #cd $WORKSPACE
+    cd $DECISIONENGINE_SRC
 
     # pylint related variables
     PYLINT_RCFILE=/dev/null
@@ -83,7 +72,7 @@ process_branch() {
 
     # get list of python scripts without .py extension
     #scripts=`find $DECISIONENGINE_SRC/framework $DECISIONENGINE_SRC/modules $DECISIONENGINE_SRC/util -name "*.py"`
-    scripts=`find $DECISIONENGINE_SRC/modules -name "*.py"`
+    scripts=`find $DE_MODULES_SRC/modules -name "*.py"`
     currdir=`pwd`
     files_checked=""
     for file in $scripts
@@ -214,6 +203,7 @@ while [ $# -gt 0 ]
 do case "$1" in
     -tags) git_branches="$2";;
     -email) email_to="$2";;
+    -work-dir) work_dir="$2";;
     *)  (warn "Unknown option $1"; usage) 1>&2; exit 1
 esac
 shift
@@ -222,10 +212,21 @@ done
 
 
 git_branches="$1"
-WORKSPACE=`pwd`
-export DECISIONENGINE_SRC=$WORKSPACE/decisionengine
 
-source $DECISIONENGINE_SRC/build/scripts/utils.sh
+if [ -z $work_dir ]; then
+    WORKSPACE=`pwd`
+else
+    WORKSPACE=$work_dir
+fi
+
+my_full_path=`readlink -f $0`
+my_parent_dir=`dirname $my_full_path`
+export DE_MODULES_SRC="$my_parent_dir/../.."
+
+export DECISIONENGINE_SRC=$WORKSPACE/dependencies/decisionengine
+
+
+source $DE_MODULES_SRC/build/scripts/utils.sh
 setup_python_venv $WORKSPACE
 
 setup_dependencies $WORKSPACE
@@ -249,6 +250,9 @@ init_results_logging $RESULTS_MAIL
 
 [ -z $git_branches ] && git_branches=`get_current_git_branch`
 
+# This is required. Putting modules link in $DECISIONENGINE_SRC does not work
+[ -e $DE_MODULES_SRC/framework ] || ln -s $DECISIONENGINE_SRC/framework $DE_MODULES_SRC
+
 for gb in `echo $git_branches | sed -e 's/,/ /g'`
 do
     if [ -n "$gb" ]; then
@@ -269,6 +273,8 @@ do
         fi
     done
 done
+
+[ -L $DE_MODULES_SRC/framework ] && rm $DE_MODULES_SRC/framework
 
 finalize_results_logging $RESULTS_MAIL
 
