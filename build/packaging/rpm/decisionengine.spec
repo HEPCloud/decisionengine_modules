@@ -12,8 +12,6 @@
 %define de_lockdir %{_localstatedir}/lock/decisionengine
 %define systemddir %{_prefix}/lib/systemd/system
 
-%define le_builddir %{_builddir}/decisionengine/framework/logicengine/cxx/build
-
 # From http://fedoraproject.org/wiki/Packaging:Python
 # Define python_sitelib
 %if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
@@ -56,7 +54,7 @@ of cycles.
 %package testcase
 Summary:        The HEPCloud Decision Engine Test Case
 Group:          System Environment/Daemons
-Requires:       decisionengine = %{version}-%{release}
+Requires:       decisionengine
 
 %description testcase
 The testcase used to try out the Decision Engine.
@@ -65,7 +63,7 @@ The testcase used to try out the Decision Engine.
 %package standard-library
 Summary:        The HEPCloud Decision Engine Modules in Standard Library
 Group:          System Environment/Daemons
-Requires:       decisionengine = %{version}-%{release}
+Requires:       decisionengine
 
 %description standard-library
 The modules in the Decision Engine Standard Library.
@@ -76,15 +74,6 @@ The modules in the Decision Engine Standard Library.
 
 
 %build
-pwd
-mkdir %{le_builddir}
-cd %{le_builddir}
-cmake ..
-make
-[ -e ../../RE.so ] && rm ../../RE.so
-[ -e ../../libLogicEngine.so ] && rm ../../libLogicEngine.so
-cp ErrorHandler/RE.so ../..
-cp ErrorHandler/libLogicEngine.so ../..
 
 
 %install
@@ -105,44 +94,13 @@ install -d $RPM_BUILD_ROOT%{python_sitelib}
 cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
 
 mkdir -p $RPM_BUILD_ROOT%{de_confdir}/config.d
-install -m 0644 build/packaging/rpm/decision_engine_template.conf $RPM_BUILD_ROOT%{de_confdir}/decision_engine.conf
-install -m 0644 build/packaging/rpm/decisionengine.service $RPM_BUILD_ROOT%{systemddir}/decision-engine.service
-install -m 0644 build/packaging/rpm/decisionengine_initd_template $RPM_BUILD_ROOT%{_initrddir}/decision-engine
 # BUILDING testcase RPM: Uncomment following 1 line
 #install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/build
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/tests
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/cxx
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/framework/logicengine/tests
 # BUILDING testcase RPM: Comment following line
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
-
-%files
-%{python_sitelib}/decisionengine/framework/configmanager
-%{python_sitelib}/decisionengine/framework/dataspace
-%{python_sitelib}/decisionengine/framework/engine
-%{python_sitelib}/decisionengine/framework/logicengine
-%{python_sitelib}/decisionengine/framework/modules
-%{python_sitelib}/decisionengine/framework/taskmanager
-%{python_sitelib}/decisionengine/framework/__init__.py
-%{python_sitelib}/decisionengine/framework/__init__.pyo
-%{python_sitelib}/decisionengine/framework/__init__.pyc
-%{python_sitelib}/decisionengine/util/
-%{python_sitelib}/decisionengine/__init__.py
-%{python_sitelib}/decisionengine/__init__.pyo
-%{python_sitelib}/decisionengine/__init__.pyc
-%{python_sitelib}/decisionengine/LICENSE.txt
-%{de_confdir}/config.d
-
-%{systemddir}/decision-engine.service
-%{_initrddir}/decision-engine
-%attr(-, %{de_user}, %{de_group}) %{de_logdir}
-%attr(-, %{de_user}, %{de_group}) %{de_lockdir}
-%config(noreplace) %{de_confdir}/decision_engine.conf
-
 
 # BUILDING testcase RPM: Uncomment following 3 lines
 #%files testcase
@@ -151,49 +109,19 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 
 
 %files standard-library
+%{python_sitelib}/decisionengine/__init__.py
+%{python_sitelib}/decisionengine/__init__.pyo
+%{python_sitelib}/decisionengine/__init__.pyc
+%{python_sitelib}/decisionengine/LICENSE.txt
 %{python_sitelib}/decisionengine/modules
 
 
 %pre
-# Add the "decisionengine" user and group if they do not exist
-getent group %{de_group} >/dev/null ||
-    groupadd -r  %{de_group}
-getent passwd  %{de_user} >/dev/null || \
-    useradd -r -g  %{de_user} -d /var/lib/decisionengine \
-    -c "Decision Engine user" -s /sbin/nologin -m %{de_user}
-# If the decisionengine user already exists make sure it is part of
-# the decisionengine group
-usermod --append --groups  %{de_group}  %{de_user} >/dev/null
 
 
 %post
-# $1 = 1 - Installation
-# $1 = 2 - Upgrade
-/sbin/chkconfig --add decision-engine
-if [ ! -e /usr/bin/de-client ]; then
-   ln -s %{python_sitelib}/decisionengine/framework/engine/de_client.py /usr/bin/de-client
-fi
-if [ ! -e /usr/sbin/decision-engine ]; then
-   ln -s %{python_sitelib}/decisionengine/framework/engine/DecisionEngine.py /usr/sbin/decision-engine
-fi
-
-# Change the ownership of log and lock dir if they already exist
-if [ -d %{de_logdir} ]; then
-    chown -R %{de_user}.%{de_group} %{de_logdir}
-fi
-if [ -d %{de_lockdir} ]; then
-    chown -R %{de_user}.%{de_group} %{de_lockdir}
-fi
-
 
 %preun
-# $1 = 0 - Action is uninstall
-# $1 = 1 - Action is upgrade
-
-if [ "$1" = "0" ] ; then
-    /sbin/chkconfig --del decision-engine
-fi
-
 
 %changelog
 * Tue Dec 12 2017 Parag Mhashilkar <parag@fnal.gov> - 0.3.1-0.1
