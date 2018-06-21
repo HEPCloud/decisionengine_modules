@@ -33,9 +33,8 @@ class NerscJobInfo(Source.Source):
         self.raw_results = []
 
         # default, query edison and cori
-        if not self.constraints.get('machines'):
-            self.constraints['machines'] = ['edison', 'cori']
-
+        self.constraints('machines') = self.constraints.get('machines',
+                                                            ['edison', 'cori'])
 
         # get all systems that are up
 
@@ -50,8 +49,6 @@ class NerscJobInfo(Source.Source):
 
         machines = filter(lambda x: x in [ y["system"] for y in up_machines],
                           self.constraints.get('machines'))
-
-
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
             self.raw_results = []
