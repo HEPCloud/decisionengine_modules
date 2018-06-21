@@ -104,7 +104,7 @@ def module_config_template():
                              'constraints' : {
                                  'machines': ["edison", "cori"],
                                  'newt_keys' : {
-                                     'user': ["hufnagel", "timm"],
+                                     'user': ["user1", "user2"],
                                      'repo': ['m2612','m2696'],
                                      'features': ["knl&quad&cache",]
                                  }
