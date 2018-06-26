@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 0.3.1
-%define release 0.2
+%define release 0.3
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -30,7 +30,7 @@ Group:          System Environment/Daemons
 License:        Fermitools Software Legal Information (Modified BSD License)
 URL:            http://hepcloud.fnal.gov
 
-Source0:        decisionengine.tar.gz
+Source0:        decisionengine_modules.tar.gz
 
 BuildArch:      x86_64
 BuildRequires:  cmake numpy numpy-f2py python-pandas
@@ -41,8 +41,6 @@ Requires:       python-pandas >= 0.17.1
 Requires:       boost-python >= 1.53.0
 Requires:       boost-regex >= 1.53.0
 Requires:       boost-system >= 1.53.0
-Requires(post): /sbin/service
-Requires(post): /usr/sbin/useradd
 
 
 %description
@@ -51,13 +49,13 @@ provides the functionality of resource scheduling for disparate resource
 providers, including those which may have a cost or a restricted allocation
 of cycles.
 
-%package testcase
-Summary:        The HEPCloud Decision Engine Test Case
-Group:          System Environment/Daemons
-Requires:       decisionengine
+#%package testcase
+#Summary:        The HEPCloud Decision Engine Test Case
+#Group:          System Environment/Daemons
+#Requires:       decisionengine
 
-%description testcase
-The testcase used to try out the Decision Engine.
+#%description testcase
+#The testcase used to try out the Decision Engine.
 
 
 %package standard-library
@@ -66,11 +64,11 @@ Group:          System Environment/Daemons
 Requires:       decisionengine
 
 %description standard-library
-The modules in the Decision Engine Standard Library.
+Modules in the Decision Engine Standard Library.
 
 
 %prep
-%setup -q -n decisionengine
+%setup -q -n decisionengine_modules
 
 
 %build
@@ -80,27 +78,28 @@ The modules in the Decision Engine Standard Library.
 rm -rf $RPM_BUILD_ROOT
 
 # Create the system directories
-install -d $RPM_BUILD_ROOT%{_sbindir}
-install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{_initddir}
-install -d $RPM_BUILD_ROOT%{de_confdir}
+#install -d $RPM_BUILD_ROOT%{_sbindir}
+#install -d $RPM_BUILD_ROOT%{_bindir}
+#install -d $RPM_BUILD_ROOT%{_initddir}
+#install -d $RPM_BUILD_ROOT%{de_confdir}
 install -d $RPM_BUILD_ROOT%{de_channel_confdir}
-install -d $RPM_BUILD_ROOT%{de_logdir}
-install -d $RPM_BUILD_ROOT%{de_lockdir}
-install -d $RPM_BUILD_ROOT%{systemddir}
+#install -d $RPM_BUILD_ROOT%{de_logdir}
+#install -d $RPM_BUILD_ROOT%{de_lockdir}
+#install -d $RPM_BUILD_ROOT%{systemddir}
 install -d $RPM_BUILD_ROOT%{python_sitelib}
 
 # Copy files in place
-cp -r ../decisionengine $RPM_BUILD_ROOT%{python_sitelib}
+cp -r ../decisionengine_modules $RPM_BUILD_ROOT%{python_sitelib}
 
-mkdir -p $RPM_BUILD_ROOT%{de_confdir}/config.d
+#mkdir -p $RPM_BUILD_ROOT%{de_confdir}/config.d
 # BUILDING testcase RPM: Uncomment following 1 line
 #install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/build
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/build
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/tests
 # BUILDING testcase RPM: Comment following line
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 
 # BUILDING testcase RPM: Uncomment following 3 lines
 #%files testcase
@@ -109,11 +108,20 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 
 
 %files standard-library
-%{python_sitelib}/decisionengine/__init__.py
-%{python_sitelib}/decisionengine/__init__.pyo
-%{python_sitelib}/decisionengine/__init__.pyc
-%{python_sitelib}/decisionengine/LICENSE.txt
-%{python_sitelib}/decisionengine/modules
+%{python_sitelib}/decisionengine_modules/__init__.py
+%{python_sitelib}/decisionengine_modules/__init__.pyo
+%{python_sitelib}/decisionengine_modules/__init__.pyc
+%{python_sitelib}/decisionengine_modules/graphite_client.py
+%{python_sitelib}/decisionengine_modules/graphite_client.pyo
+%{python_sitelib}/decisionengine_modules/graphite_client.pyc
+%{python_sitelib}/decisionengine_modules/load_config.py
+%{python_sitelib}/decisionengine_modules/load_config.pyo
+%{python_sitelib}/decisionengine_modules/load_config.pyc
+%{python_sitelib}/decisionengine_modules/LICENSE.txt
+%{python_sitelib}/decisionengine_modules/AWS
+%{python_sitelib}/decisionengine_modules/glideinwms
+%{python_sitelib}/decisionengine_modules/htcondor
+%{python_sitelib}/decisionengine_modules/NERSC
 
 
 %pre
@@ -124,6 +132,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine/testcases
 %preun
 
 %changelog
+* Tue Jun 26 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.1-0.3
+- Splitting framework and modules codebase and Directory restructuring
+
 * Tue Dec 12 2017 Parag Mhashilkar <parag@fnal.gov> - 0.3.1-0.1
 - Minor bug fixes
 

@@ -5,14 +5,14 @@ id=`whoami`
 echo $#
 
 if [ $# -eq 0 ] ; then
-    source_dir=/cloud/login/parag/wspace/de/decisionengine
+    source_dir=/cloud/login/parag/wspace/decisionengine_modules
 else
     source_dir=$1
 fi
 
 echo "Using source dir: $source_dir"
 
-export RPM_TOPDIR=/var/tmp/$id/rpm/decisionengine
+export RPM_TOPDIR=/var/tmp/$id/rpm/decisionengine_modules
 mkdir -p $RPM_TOPDIR
 
 rpm_macros=~/.rpmmacros
@@ -28,10 +28,10 @@ cat > $rpm_macros << RPM_MACROS
 RPM_MACROS
 
 release_dir=/var/tmp/$id/release/v0.1
-release_tar=$release_dir/decisionengine.tar.gz
+release_tar=$release_dir/decisionengine_modules.tar.gz
 
-spec_template=$source_dir/build/packaging/rpm/decisionengine.spec
-spec_file=$RPM_TOPDIR/SPECS/decisionengine.spec
+spec_template=$source_dir/build/packaging/rpm/decisionengine_modules.spec
+spec_file=$RPM_TOPDIR/SPECS/decisionengine_modules.spec
 
 rpm_dirs="BUILD RPMS SOURCES SPECS SRPMS"
 
@@ -49,7 +49,7 @@ cp -r $source_dir  $release_dir
 cd $release_dir
 tar --exclude=.git --exclude=.gitignore --exclude=doc --exclude=cxx/build \
     --exclude=readme --exclude=.cache \
-    -czf $release_tar decisionengine
+    -czf $release_tar decisionengine_modules
 
 cp $release_tar $RPM_TOPDIR/SOURCES
 cp $spec_template $RPM_TOPDIR/SPECS
@@ -62,3 +62,24 @@ rpmbuild -bb $spec_file
 
 #mock --macro-file=$rpm_macros -i python
 #mock --no-clean --macro-file=$rpm_macros --resultdir=$RPM_TOPDIR/RPMS rebuild $spec_file
+
+echo "========================================================================="
+echo "RESULTS"
+echo "========================================================================="
+echo
+echo "DIRECTORY:"
+echo "---------"
+ls -latrd $RPM_TOPDIR
+echo
+echo "SOURCES:"
+echo "-------"
+ls -latrh $RPM_TOPDIR/SOURCES
+echo
+echo "SRPMS:"
+echo "-----"
+ls -latrh $RPM_TOPDIR/SRPMS
+echo
+echo "RPMS:"
+echo "----"
+ls -latrh $RPM_TOPDIR/RPMS/x86_64
+echo "_________________________________________________________________________"
