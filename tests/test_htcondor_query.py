@@ -4,7 +4,7 @@ import mock
 import pprint
 import classad
 import utils
-from decisionengine.modules.htcondor import htcondor_query
+from decisionengine_modules.htcondor import htcondor_query
 
 
 config_cq = {

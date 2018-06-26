@@ -8,11 +8,11 @@ import copy
 import pprint
 import pandas as pd
 
-from decisionengine.modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
+from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
 import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.dataspace.dataspace as dataspace
-import decisionengine.modules.graphite_client as graphite
+import decisionengine_modules.graphite_client as graphite
 
 DEFAULT_GRAPHITE_CONTEXT="hepcloud.aws"
 CONSUMES=['AWS_Price_Performance']

@@ -5,7 +5,7 @@ import pandas
 import numpy
 
 from decisionengine.framework.modules import Source
-from decisionengine.modules.htcondor import htcondor_query
+from decisionengine_modules.htcondor import htcondor_query
 
 
 PRODUCES = ['job_manifests']

@@ -12,7 +12,7 @@ import pandas as pd
 
 from decisionengine.framework.modules import Source
 import decisionengine.framework.modules.de_logger as de_logger
-import decisionengine.modules.load_config as load_config
+import decisionengine_modules.load_config as load_config
 
 PRODUCES = ['Job_Limits']
 RETRIES = 5

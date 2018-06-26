@@ -2,8 +2,8 @@ import pytest
 import mock
 import pprint
 import utils
-from decisionengine.modules.NERSC.sources import newt_query
-from decisionengine.modules.NERSC.sources import nersc_allocation_info
+from decisionengine_modules.NERSC.sources import newt_query
+from decisionengine_modules.NERSC.sources import nersc_allocation_info
 
 config_cs = {
 

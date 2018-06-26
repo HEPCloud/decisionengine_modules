@@ -5,7 +5,7 @@ import pprint
 import pandas
 import numpy
 
-from decisionengine.modules.htcondor.sources import source
+from decisionengine_modules.htcondor.sources import source
 from glideinwms.frontend import glideinFrontendConfig
 
 

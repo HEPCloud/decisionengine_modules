@@ -15,7 +15,9 @@ process_branch() {
 
     echo "===================================================================="
     echo "GIT BRANCH: $git_branch"
+    echo "python bin: `which python`"
     echo "PYTHONPATH: $PYTHONPATH"
+    echo "PYTHONHOME: $PYTHONHOME"
     echo "===================================================================="
     # Initialize logs
     > $pylint_log
@@ -39,14 +41,14 @@ process_branch() {
     # Consider success if no git checkout was done
     echo "GIT_CHECKOUT=\"PASSED\"" >> $results
 
-    #cd $WORKSPACE
-    cd $DECISIONENGINE_SRC
+    cd $WORKSPACE
+    #cd $DECISIONENGINE_SRC
 
     # pylint related variables
     PYLINT_RCFILE=/dev/null
     #PYLINT_RCFILE=$WORKSPACE/pylint.cfg
     #PYLINT_OPTIONS="--errors-only --msg-template=\"{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}\" --rcfile=$PYLINT_RCFILE"
-    PYLINT_OPTIONS="--contextmanager-decorators=contextlib.contextmanager,tf_contextlib.contextmanager --errors-only --rcfile=$PYLINT_RCFILE --disable=no-member"
+    PYLINT_OPTIONS="--contextmanager-decorators=contextlib.contextmanager,tf_contextlib.contextmanager --errors-only --rcfile=$PYLINT_RCFILE --disable=no-member --disable=no-name-in-module"
 
     # pep8 related variables
     # default: E121,E123,E126,E226,E24,E704
@@ -72,7 +74,9 @@ process_branch() {
 
     # get list of python scripts without .py extension
     #scripts=`find $DECISIONENGINE_SRC/framework $DECISIONENGINE_SRC/modules $DECISIONENGINE_SRC/util -name "*.py"`
-    scripts=`find $DE_MODULES_SRC/modules -name "*.py"`
+    #scripts=`find $DE_MODULES_SRC/modules -name "*.py"`
+    scripts=`find $DE_MODULES_SRC -type d \( -path $DE_MODULES_SRC/testcases -o -path $DE_MODULES_SRC/doc -o -path $DE_MODULES_SRC/build \) -prune -o -name "*.py" -print`
+
     currdir=`pwd`
     files_checked=""
     for file in $scripts
@@ -81,6 +85,7 @@ process_branch() {
         pylint $PYLINT_OPTIONS $file >> $pylint_log || log_nonzero_rc "pylint" $?
         pycodestyle $PEP8_OPTIONS $file >> $pep8_log || log_nonzero_rc "pep8" $?
     done
+    exit
     echo "FILES_CHECKED=\"$files_checked\"" >> $results
     echo "FILES_CHECKED_COUNT=`echo $files_checked | wc -w | tr -d " "`" >> $results
     echo "PYLINT_ERROR_FILES_COUNT=`grep '^\*\*\*\*\*\*' $pylint_log | wc -l | tr -d " "`" >> $results
@@ -251,7 +256,9 @@ init_results_logging $RESULTS_MAIL
 [ -z $git_branches ] && git_branches=`get_current_git_branch`
 
 # This is required. Putting modules link in $DECISIONENGINE_SRC does not work
-[ -e $DE_MODULES_SRC/framework ] || ln -s $DECISIONENGINE_SRC/framework $DE_MODULES_SRC
+#[ -e $DE_MODULES_SRC/framework ] || ln -s $DECISIONENGINE_SRC/framework $DE_MODULES_SRC
+
+export PYTHONPATH=$PYTHONPATH:$DE_MODULES_SRC/..
 
 for gb in `echo $git_branches | sed -e 's/,/ /g'`
 do
@@ -274,7 +281,7 @@ do
     done
 done
 
-[ -L $DE_MODULES_SRC/framework ] && rm $DE_MODULES_SRC/framework
+#[ -L $DE_MODULES_SRC/framework ] && rm $DE_MODULES_SRC/framework
 
 finalize_results_logging $RESULTS_MAIL
 

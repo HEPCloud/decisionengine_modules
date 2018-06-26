@@ -19,9 +19,9 @@ from glideinwms.frontend import glideinFrontendPlugins
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
-from decisionengine.modules.glideinwms import classads
-from decisionengine.modules.glideinwms.security import Credential
-from decisionengine.modules.glideinwms.security import CredentialCache
+from decisionengine_modules.glideinwms import classads
+from decisionengine_modules.glideinwms.security import Credential
+from decisionengine_modules.glideinwms.security import CredentialCache
 
 pandas.options.mode.chained_assignment = None  # default='warn'
 

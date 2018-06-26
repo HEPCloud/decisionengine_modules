@@ -12,7 +12,7 @@ from decisionengine.framework.modules import Publisher
 import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.dataspace.dataspace as dataspace
-import decisionengine.modules.graphite_client as graphite
+import decisionengine_modules.graphite_client as graphite
 
 DEFAULT_GRAPHITE_HOST='fermicloud399.fnal.gov'
 DEFAULT_GRAPHITE_PORT=2004

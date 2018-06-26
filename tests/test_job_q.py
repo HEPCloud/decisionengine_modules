@@ -3,8 +3,8 @@ import pytest
 import mock
 import pprint
 import utils
-from decisionengine.modules.htcondor import htcondor_query
-from decisionengine.modules.htcondor.sources import job_q
+from decisionengine_modules.htcondor import htcondor_query
+from decisionengine_modules.htcondor.sources import job_q
 
 
 config_cq = {

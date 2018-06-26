@@ -4,7 +4,7 @@ import pprint
 import pandas
 import numpy
 
-from decisionengine.modules.htcondor.publishers import publisher
+from decisionengine_modules.htcondor.publishers import publisher
 
 CONSUMES = ['glideclientglobal_manifests']
 

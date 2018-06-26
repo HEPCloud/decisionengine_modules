@@ -7,7 +7,7 @@ import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-from decisionengine.modules.NERSC.util import newt
+from decisionengine_modules.NERSC.util import newt
 import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Allocation_Info']

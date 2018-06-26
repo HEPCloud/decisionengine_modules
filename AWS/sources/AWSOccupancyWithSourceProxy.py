@@ -12,7 +12,7 @@ import pandas as pd
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
 import decisionengine.framework.modules.de_logger as de_logger
-import decisionengine.modules.load_config as load_config
+import decisionengine_modules.load_config as load_config
 
 # default values
 REGION = 'us-west-2'

@@ -7,7 +7,7 @@ import pandas
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
-from decisionengine.modules.glideinwms.glide_frontend_element import GlideFrontendElement
+from decisionengine_modules.glideinwms.glide_frontend_element import GlideFrontendElement
 
 PRODUCES = ['glideclientglobal_manifests', 'glideclient_manifests']
 

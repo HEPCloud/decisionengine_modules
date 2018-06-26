@@ -3,8 +3,8 @@ import pytest
 import mock
 import pprint
 import utils
-from decisionengine.modules.glideinwms.sources import factory_entries
-from decisionengine.modules.htcondor import htcondor_query
+from decisionengine_modules.glideinwms.sources import factory_entries
+from decisionengine_modules.htcondor import htcondor_query
 
 
 config_factory_entries = {
