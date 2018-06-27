@@ -48,7 +48,7 @@ class NerscAllocationInfo(Source.Source):
             if values:
                 results = filter(lambda x : x[key] in values, results)
 
-        self.raw_result = results
+        self.raw_results = results
 
 
     def raw_results_to_pandas_frame(self):
@@ -87,8 +87,8 @@ def module_config_template():
             'module': 'framework.modules.NERSC.sources.NerscAllocationInfo',
             'name': 'NerscAllocationInfo',
             'parameters': {
+                'passwd_file' : '/path/to/password_file',
                 'constraints': {
-                    'passwd_file' : '/path/to/password_file',
                     'usernames': [ 'user1', 'user2' ],
                     'newt_keys' : {
                         'rname': ['m2612', 'm2696'],
