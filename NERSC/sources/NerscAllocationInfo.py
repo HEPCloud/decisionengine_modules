@@ -12,6 +12,7 @@ import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Allocation_Info']
 
+
 class NerscAllocationInfo(Source.Source):
 
     """
@@ -19,6 +20,7 @@ class NerscAllocationInfo(Source.Source):
     """
 
     def __init__(self, config):
+        super(NerscAllocationInfo, self).__init__(config)
 
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
@@ -34,22 +36,16 @@ class NerscAllocationInfo(Source.Source):
         Send queries and then filter the results based on user constraints
         """
         results = []
-
-        for username in self.constraints.get("usernames",[]):
+        for username in self.constraints.get("usernames", []):
             values = self.newt.get_usage(username)
             if values:
                 results.extend(values['items'])
-
         # filter results based on constraints specified in newt_keys dictionary
-
-        newt_keys = self.constraints.get("newt_keys",{})
-
+        newt_keys = self.constraints.get("newt_keys", {})
         for key, values in newt_keys.iteritems():
             if values:
-                results = filter(lambda x : x[key] in values, results)
-
+                results = filter(lambda x: x[key] in values, results)
         self.raw_results = results
-
 
     def raw_results_to_pandas_frame(self):
         """
@@ -57,7 +53,7 @@ class NerscAllocationInfo(Source.Source):
         """
         self.pandas_frame = pd.DataFrame(self.raw_results)
 
-    def produces(self):
+    def produces(self, name_schema_id_list=None):
         """
         Method to be called from Task Manager.
         Copied from Source.py
@@ -77,30 +73,30 @@ class NerscAllocationInfo(Source.Source):
         self.raw_results_to_pandas_frame()
         return {PRODUCES[0]: self.pandas_frame}
 
+
 def module_config_template():
     """
     Print template for this module configuration
     """
-
     template = {
         'nersc_allocation_info': {
             'module': 'framework.modules.NERSC.sources.NerscAllocationInfo',
             'name': 'NerscAllocationInfo',
             'parameters': {
-                'passwd_file' : '/path/to/password_file',
+                'passwd_file': '/path/to/password_file',
                 'constraints': {
-                    'usernames': [ 'user1', 'user2' ],
-                    'newt_keys' : {
+                    'usernames': ['user1', 'user2'],
+                    'newt_keys': {
                         'rname': ['m2612', 'm2696'],
-                        'repo_type': ["STR",],
+                        'repo_type': ["STR", ],
                     }
                 }
             }
         }
     }
-
     print 'Entry in channel configuration'
     pprint.pprint(template)
+
 
 def module_config_info():
     """
@@ -109,8 +105,8 @@ def module_config_info():
     print 'produces %s' % PRODUCES
     module_config_template()
 
-def main():
 
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--configtemplate',
