@@ -86,7 +86,7 @@ def module_config_template():
 
     template = {
         'nersc_job_info': {
-            'module': 'framework.modules.NERSC.sources.NerscJobInfo',
+            'module': 'decisionengine_modules.NERSC.sources.NerscJobInfo',
             'name': 'NerscJobInfo',
             'parameters': {
                 'passwd_file': '/path/to/password_file',

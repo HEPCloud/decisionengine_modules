@@ -80,7 +80,7 @@ def module_config_template():
     """
     template = {
         'nersc_allocation_info': {
-            'module': 'framework.modules.NERSC.sources.NerscAllocationInfo',
+            'module': 'decisionengine_modules.NERSC.sources.NerscAllocationInfo',
             'name': 'NerscAllocationInfo',
             'parameters': {
                 'passwd_file': '/path/to/password_file',
