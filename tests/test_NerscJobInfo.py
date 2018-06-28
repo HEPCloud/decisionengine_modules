@@ -1,7 +1,10 @@
-import pytest
 import mock
+import pandas
 import pprint
+import pytest
+
 import utils
+
 from decisionengine_modules.NERSC.util import newt
 from decisionengine_modules.NERSC.sources import NerscJobInfo
 
@@ -16,10 +19,21 @@ config = {
     }
 }
 
+produces = ['Nersc_Job_Info']
+
+"""
+expected correctly filtered results
+"""
+
+d = None
+with open("newt_jobs.cs.test.fixture", "r") as f:
+    d = eval(f.read())
+
+expected_pandas_dframe = pandas.DataFrame(d)
+
 class TestNerscJobInfo:
 
     def test_produces(self):
-        produces = ['Nersc_Job_Info']
         nersc_job_info = NerscJobInfo.NerscJobInfo(config)
         assert nersc_job_info.produces() == produces
 
@@ -28,7 +42,8 @@ class TestNerscJobInfo:
 
         with mock.patch.object(newt.Newt, 'get_status') as f:
             f.return_value = utils.input_from_file('newt_status.cs.fixture')
-            print f.return_value, type(f.return_value)
             with mock.patch.object(newt.Newt, 'get_queue') as f1:
                 f1.return_value = utils.input_from_file('newt_jobs.cs.fixture')
-                pprint.pprint(nersc_job_info.acquire())
+                res = nersc_job_info.acquire()
+                assert produces == res.keys()
+                assert  expected_pandas_dframe.equals(res[produces[0]])
