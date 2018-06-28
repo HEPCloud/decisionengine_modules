@@ -12,13 +12,14 @@ import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Job_Info']
 
-class NerscJobInfo(Source.Source):
 
+class NerscJobInfo(Source.Source):
     """
     Information of jobs on NERSC machines
     """
 
     def __init__(self, config):
+        super(NerscJobInfo, self).__init__(config)
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
@@ -27,35 +28,24 @@ class NerscJobInfo(Source.Source):
         self.pandas_frame = None
         self.logger = de_logger.get_logger()
 
-
     def send_query(self):
-
         self.raw_results = []
-
         # default, query edison and cori
         self.constraints['machines'] = self.constraints.get('machines',
                                                             ['edison', 'cori'])
-
         # get all systems that are up
-
         up_machines = filter(lambda x: x['status'] == 'up', self.newt.get_status())
-
         if not up_machines:
             self.logger.info("All machines at NERSC are down")
             return
-
         # filter machines that are up
-
-        machines = filter(lambda x: x in [ y["system"] for y in up_machines],
+        machines = filter(lambda x: x in [y["system"] for y in up_machines],
                           self.constraints.get('machines'))
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
             return
-
         # filter results based on constraints specified in newt_keys dictionary
-
-        newt_keys = self.constraints.get("newt_keys",{})
-
+        newt_keys = self.constraints.get("newt_keys", {})
         for m in machines:
             values = self.newt.get_queue(m)
             for k, v in newt_keys.iteritems():
@@ -70,7 +60,7 @@ class NerscJobInfo(Source.Source):
         """
         self.pandas_frame = pd.DataFrame(self.raw_results)
 
-    def produces(self):
+    def produces(self, name_schema_id_list=None):
         """
         Method to be called from Task Manager.
         Copied from Source.py
@@ -98,15 +88,16 @@ def module_config_template():
         'nersc_job_info': {
             'module': 'framework.modules.NERSC.sources.NerscJobInfo',
             'name': 'NerscJobInfo',
-            'parameters' : { 'passwd_file' : '/path/to/password_file',
-                             'constraints' : {
-                                 'machines': ["edison", "cori"],
-                                 'newt_keys' : {
-                                     'user': ["user1", "user2"],
-                                     'repo': ['m2612','m2696'],
-                                     'features': ["knl&quad&cache",]
-                                 }
-                             }
+            'parameters': {
+                'passwd_file': '/path/to/password_file',
+                'constraints': {
+                    'machines': ["edison", "cori"],
+                    'newt_keys': {
+                    'user': ["user1", "user2"],
+                    'repo': ['m2612', 'm2696'],
+                    'features': ["knl&quad&cache", ]
+                    }
+                }
             }
         }
     }
@@ -114,15 +105,16 @@ def module_config_template():
     print 'Entry in channel configuration'
     pprint.pprint(template)
 
+
 def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % (PRODUCES)
+    print 'produces %s' % PRODUCES
     module_config_template()
 
-def main():
 
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--configtemplate',
