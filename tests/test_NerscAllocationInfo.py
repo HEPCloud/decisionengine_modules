@@ -23,9 +23,6 @@ expected_pandas_dframe = pandas.DataFrame([{u'repo_type': u'STR', u'repo_id': 45
 
 class TestNerscAllocationInfo:
 
-    def __init__(self):
-        pass
-
     def test_produces(self):
         nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(config)
         assert nersc_allocations.produces() == produces

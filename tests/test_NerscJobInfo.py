@@ -31,9 +31,6 @@ expected_pandas_dframe = pandas.DataFrame(d)
 
 class TestNerscJobInfo:
 
-    def __init__(self):
-        pass
-
     def test_produces(self):
         nersc_job_info = NerscJobInfo.NerscJobInfo(config)
         assert nersc_job_info.produces() == produces

@@ -1,0 +1,5 @@
+InstanceType,AvailabilityZone,OnDemandPrice,PerfTtbarTotal
+haswell,cori,0.576,0.96
+haswell_shared,cori,0.081,0.137
+knl,cori,0.612,0.255
+haswell,edison,0.432,0.658
