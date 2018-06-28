@@ -42,7 +42,6 @@ class NerscJobInfo(Source.Source):
 
         if not up_machines:
             self.logger.info("All machines at NERSC are down")
-            self.raw_results = []
             return
 
         # filter machines that are up
@@ -51,7 +50,6 @@ class NerscJobInfo(Source.Source):
                           self.constraints.get('machines'))
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
-            self.raw_results = []
             return
 
         # filter results based on constraints specified in newt_keys dictionary
