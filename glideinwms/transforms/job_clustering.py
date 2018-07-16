@@ -87,7 +87,7 @@ class JobClustering(Transform.Transform):
         buckets = list(itertools.product(*job_category_config))
 
         # Append tuple into single query string
-        bucket_list = [ " and ".join(x) for x in buckets ]
+        bucket_list = [" and ".join(x) for x in buckets]
         self.logger.debug("Buckets created: %s" % bucket_list)
 
         # Create bucket dataframe and extend with totals
