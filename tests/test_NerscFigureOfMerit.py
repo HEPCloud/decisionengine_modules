@@ -2,7 +2,12 @@ import pandas as pd
 
 from decisionengine_modules.NERSC.transforms import NerscFigureOfMerit
 
+"""
+IMPORTANT: Please do not change order of these keys and always 
+           append new keys rather than pre-pend or insert:
+"""
 produces = ['Nersc_Price_Performance', 'Nersc_Figure_Of_Merit']
+
 
 config = {
     "entry_name_mapping": {
@@ -57,10 +62,7 @@ class TestNerscFigureOfMerit:
         res = nersc_figure_of_merit.transform(data_block)
         assert produces == res.keys()
         for key, value in res.items():
-            try:
-                assert expected_transform_output[key].equals(value)
-            except:
-                print key, " fail\n", expected_transform_output[key], "\n", value
+            assert expected_transform_output[key].equals(value)
 
 if __name__ == "__main__":
     t = TestNerscFigureOfMerit()

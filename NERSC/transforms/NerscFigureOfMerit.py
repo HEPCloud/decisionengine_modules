@@ -14,6 +14,10 @@ import sys
 from decisionengine.framework.modules import Transform
 import decisionengine.framework.modules.de_logger as de_logger
 
+"""
+IMPORTANT: Please do not change order of these keys and always 
+           append new keys rather than pre-pend or insert.
+"""
 CONSUMES = ["Nersc_Instance_Performance", "Factory_Entries_LCF"]
 
 PRODUCES = ["Nersc_Price_Performance", "Nersc_Figure_Of_Merit"]
@@ -79,12 +83,21 @@ class NerscFigureOfMerit(Transform.Transform):
 
         factory_entries_lcf = data_block[CONSUMES[1]]
 
-        entry_name_mapping = self.config["entry_name_mapping"]
+        try:
+            entry_name_mapping = self.config["entry_name_mapping"]
+        except KeyError:
+            raise RuntimeError("Transform {} is misconfigured. Configuration is missing \"entry_name_mapping\" key.".
+                                   format(self.__class__.__name__))
+
         figures_of_merit = []
         for i, row in factory_entries_lcf.iterrows():
             entry_name = row["EntryName"]
             key = re.sub("^[^_]*_", "", entry_name)
-            instance_type, availability_zone = entry_name_mapping.get(key).split(",")
+            try:
+                instance_type, availability_zone = entry_name_mapping.get(key).split(",")
+            except AttributeError:
+                raise RuntimeError("Transform {} is misconfigured. Configuration \"entry_name_mapping\" is missing key = {}.".
+                                   format(self.__class__.__name__, key))
             perf_df = performance[(performance.InstanceType == instance_type) &
                                   (performance.AvailabilityZone == availability_zone)]
 
