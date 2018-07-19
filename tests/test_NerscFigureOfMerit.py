@@ -63,7 +63,3 @@ class TestNerscFigureOfMerit:
         assert produces == res.keys()
         for key, value in res.items():
             assert expected_transform_output[key].equals(value)
-
-if __name__ == "__main__":
-    t = TestNerscFigureOfMerit()
-    t.test_transform()
