@@ -1,9 +1,6 @@
 import os
-import pytest
-import mock
 import pprint
 import pandas
-from decisionengine.framework.dataspace import datablock
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
 config_test_job_categories = { 
@@ -14,16 +11,16 @@ config_test_job_categories = {
   ]
 }
 
-valid_q = {
+# input with valid job_q data
+valid_q_datablock = {
   'job_manifests': pandas.DataFrame({
       "VO_Name": ['cms', 'cms', 'cms', 'des', 'des'],
       "RequestCpus": [1, 2, 2, 2, 2],
       "MaxWallTimeMins": [500, 500, 1000, 500, 1000]
     })
 }
-
 # expected output
-jc_valid_output = pandas.DataFrame({
+jc_valid_output_dataframe = pandas.DataFrame({
   'Bucket_Criteria_Expr': [
     "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
     "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
@@ -43,12 +40,11 @@ jc_valid_output = pandas.DataFrame({
   columns=['Bucket_Criteria_Expr', 'Totals'])
 
 # input with invalid job_q data 
-invalid_q = {
+invalid_q_datablock = {
   'job_manifests': pandas.DataFrame({})
 }
-
 # expected output
-jc_invalid_output = pandas.DataFrame({
+jc_invalid_output_dataframe = pandas.DataFrame({
   'Bucket_Criteria_Expr': [''],
   'Totals': [0]
   },
@@ -74,15 +70,16 @@ class TestJobClustering:
 
     def test_transform_valid(self):
         job_clusters = job_clustering.JobClustering(config_test_job_categories)
-        output = job_clusters.transform(valid_q)
+        output = job_clusters.transform(valid_q_datablock)
         pprint.pprint(output)
         db = output.get('job_clusters')
         assert db['Totals'].sum() == 5
         assert db.shape[0] == 12
 
+# Leaving in as a ref, unsure what will be an invalid input to module
 #    def test_transform_invalid(self):
 #        job_clusters = job_clustering.JobClustering(config_test_job_categories)
-#        output = job_clusters.transform(invalid_q)
+#        output = job_clusters.transform(invalid_q_datablock)
 #        pprint.pprint(output)
 #        db = output.get('job_clusters')
 #        assert output['Totals'].sum() == 0
