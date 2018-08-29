@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.1
-%define release 0.3
+%define version 0.3.2
+%define release 0.1
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -132,6 +132,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+* Tue Aug 28 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.2-0.1
+- Added Nersc and Job clustering modules
+
 * Tue Jun 26 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.1-0.3
 - Splitting framework and modules codebase and Directory restructuring
 
