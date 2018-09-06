@@ -10,19 +10,11 @@ from systemd import journal
 
 from glideinwms.creation.lib import cvWParams
 from glideinwms.creation.lib import cvWDictFile
-from glideinwms.creation.lib import cvWConsts,cWConsts
-from glideinwms.creation.lib import cvWCreate
+from glideinwms.creation.lib import cvWConsts, cWConsts
 from glideinwms.creation.lib import cvWParamDict
 from glideinwms.creation.lib import xslt
 from glideinwms.frontend import glideinFrontendLib
 import glideinwms_config_lib
-
-import pprint
-pp = pprint.PrettyPrinter()
-
-def print2(message):
-    print(message)
-    journal.send(str(message))
 
 
 def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):
@@ -34,7 +26,7 @@ def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):
 def main(args):
 
     # Load params from frontend configuration file
-    print2('Loading frontend configuration from %s ...' % args.frontend_config)
+    print('...Loading frontend configuration from %s ...' % args.frontend_config)
     params = load_params_from_config(args, usage=usage)
 
     # Create dictionaries for new params
@@ -61,29 +53,29 @@ def main(args):
     # This is the current working version of the frontend in the
     # frontend instance dir
     params.save_into_file_wbackup(cfgfile, set_ro=True)
-    print2("...Saved the current config file into the working dir")
+    print("...Saved the current config file into the working dir")
 
     # make backup copy that does not get overwritten on further reconfig
     # This file is has a hash on the extension and is located in the
     # frontend instance dir
     cfgfile = cWConsts.insert_timestr(cfgfile)
     params.save_into_file(cfgfile, set_ro=True)
-    print2("...Saved the backup config file into the working dir")
+    print("...Saved the backup config file into the working dir")
 
     fe_configuration = glideinwms_config_lib.FrontendConfiguration()
     fe_configuration.save(args.de_frontend_config, set_ro=True)
 
-    print2("...Saved frontend config for decision engine into the working dir")
+    print("...Saved frontend config for decision engine into the working dir")
 
-    print2("...Reconfigured frontend '%s'" % params.frontend_name)
-    print2("...Active groups are:")
+    print("...Reconfigured frontend '%s'" % params.frontend_name)
+    print("...Active groups are:")
     for entry in frontend_dicts_obj.active_sub_list:
-        print2("     %s"%entry)
+        print("     %s"%entry)
 
-    print2("...Work files are in %s" % frontend_dicts_obj.main_dicts.work_dir)
+    print("...Work files are in %s" % frontend_dicts_obj.main_dicts.work_dir)
 
 
-def parse_args(usage):
+def get_arg_parser():
     """
     Parse command line options
     """
@@ -91,7 +83,7 @@ def parse_args(usage):
     description = 'Read the frontend configuration, update the web staging area and generate intermediate configuration that can be consumed by the decision engine'
 
     parser = argparse.ArgumentParser(
-                 usage=usage, description=description,
+                 description=description,
                  formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         '--frontend-config', action='store', dest='frontend_config',
@@ -113,7 +105,7 @@ def parse_args(usage):
         default='/var/lib/gwms-frontend/web-base',
         help='Location of the web base directory')
 
-    return parser.parse_args()
+    return parser
 
 
 def load_params_from_config(args, usage=''):
@@ -124,7 +116,7 @@ def load_params_from_config(args, usage=''):
                           xslt_plugin_dir=args.xslt_plugin_dir))
         transformed_xmlfile.flush()
     except RuntimeError as e:
-        print2(e)
+        print(e)
         sys.exit(1)
 
     params = cvWParams.VOFrontendParams(
@@ -147,8 +139,8 @@ def get_old_params(params, args):
         except RuntimeError as e:
             raise RuntimeError('Failed to load %s' % old_config_file)
     else:
-        print2('Warning: Cannot find %s' % old_config_file)
-        print2('Ignore above warning if this is the first reconfig')
+        print('Warning: Cannot find %s' % old_config_file)
+        print('Ignore above warning if this is the first reconfig')
         old_params = None
 
     return old_params
@@ -164,22 +156,15 @@ if __name__ == '__main__':
     noroot_msg = 'NOTE: Executing this command as user root is not allowed. Use the decisionengine user instead.'
 
     if os.geteuid() == 0:
-        print2(noroot_msg)
+        print(noroot_msg)
 
-    usage = 'configure_gwms_frontend.py [options]'
-    args = parse_args(usage)
-
-    print2('Parsing arguments ...')
-    print2('ARGS: %s' % args)
+    parser = get_arg_parser()
+    args = parser.parse_args()
+    usage = parser.format_usage()
 
     try:
-        #old_params = get_old_params(params, args)
-        #pp.pprint(old_params.subparams.data)
-        #sys.exit()
-        #main(params, old_params, args.update_scripts)
         main(args)
     except RuntimeError as e:
-        print2(usage)
         print('\nError processing the configuration %s:' % args.frontend_config)
-        print2(e)
+        print(e)
         sys.exit(1)
