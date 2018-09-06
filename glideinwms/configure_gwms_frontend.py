@@ -6,14 +6,14 @@ import sys
 import tempfile
 import os.path
 import argparse
-from systemd import journal
 
-from glideinwms.creation.lib import cvWParams
-from glideinwms.creation.lib import cvWDictFile
-from glideinwms.creation.lib import cvWConsts, cWConsts
-from glideinwms.creation.lib import cvWParamDict
-from glideinwms.creation.lib import xslt
-from glideinwms.frontend import glideinFrontendLib
+import glideinwms.creation.lib.cvWParams
+import glideinwms.creation.lib.cvWDictFile
+import glideinwms.creation.lib.cWConsts
+import glideinwms.creation.lib.cvWConsts
+import glideinwms.creation.lib.cvWParamDict
+import glideinwms.creation.lib.xslt
+
 import glideinwms_config_lib
 
 
@@ -30,7 +30,7 @@ def main(args):
     params = load_params_from_config(args, usage=usage)
 
     # Create dictionaries for new params
-    frontend_dicts_obj = cvWParamDict.frontendDicts(params)
+    frontend_dicts_obj = glideinwms.creation.lib.cvWParamDict.frontendDicts(params)
     frontend_dicts_obj.populate()
 
     if args.update_scripts == 'yes':
@@ -47,7 +47,7 @@ def main(args):
     frontend_dicts_obj.save()
     frontend_dicts_obj.set_readonly(True)
     cfgfile = os.path.join(frontend_dicts_obj.main_dicts.work_dir,
-                           cvWConsts.XML_CONFIG_FILE)
+                           glideinwms.creation.lib.cvWConsts.XML_CONFIG_FILE)
 
     # save config into file (with backup, since the old one already exists)
     # This is the current working version of the frontend in the
@@ -58,7 +58,7 @@ def main(args):
     # make backup copy that does not get overwritten on further reconfig
     # This file is has a hash on the extension and is located in the
     # frontend instance dir
-    cfgfile = cWConsts.insert_timestr(cfgfile)
+    cfgfile = glideinwms.creation.lib.cWConsts.insert_timestr(cfgfile)
     params.save_into_file(cfgfile, set_ro=True)
     print("...Saved the backup config file into the working dir")
 
@@ -112,14 +112,15 @@ def load_params_from_config(args, usage=''):
     try:
         transformed_xmlfile = tempfile.NamedTemporaryFile()
         transformed_xmlfile.write(
-            xslt.xslt_xml(old_xmlfile=args.frontend_config,
-                          xslt_plugin_dir=args.xslt_plugin_dir))
+            glideinwms.creation.lib.xslt.xslt_xml(
+                old_xmlfile=args.frontend_config,
+                xslt_plugin_dir=args.xslt_plugin_dir))
         transformed_xmlfile.flush()
     except RuntimeError as e:
         print(e)
         sys.exit(1)
 
-    params = cvWParams.VOFrontendParams(
+    params = glideinwms.creation.lib.cvWParams.VOFrontendParams(
                  usage, args.web_base_dir,
                  [sys.argv[0], transformed_xmlfile.name])
     params.cfg_name = args.frontend_config
@@ -128,12 +129,12 @@ def load_params_from_config(args, usage=''):
 
 def get_old_params(params, args):
     # This is the current running version, saved in the frontend work dir
-    old_config_file = os.path.join(params.work_dir,
-                                   cvWConsts.XML_CONFIG_FILE)
+    old_config_file = os.path.join(
+        params.work_dir, glideinwms.creation.lib.cvWConsts.XML_CONFIG_FILE)
     # print old_config_file
     if os.path.exists(old_config_file):
         try:
-            old_params = cvWParams.VOFrontendParams(
+            old_params = glideinwms.creation.lib.cvWParams.VOFrontendParams(
                              args.usage, args.web_base_dir,
                              [sys.argv[0], old_config_file])
         except RuntimeError as e:
