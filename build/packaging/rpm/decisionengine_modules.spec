@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.2
+%define version 0.3.3
 %define release 0.1
 
 %define de_user decisionengine
@@ -132,6 +132,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+* Fri Sep 14 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.3-0.1
+- Added tool to create and update glidein infrastructure
+
 * Tue Aug 28 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.2-0.1
 - Added Nersc and Job clustering modules
 
