@@ -1,5 +1,6 @@
-InstanceType,AvailabilityZone,OnDemandPrice,PerfTtbarTotal
-haswell,cori,0.576,0.96
-haswell_shared,cori,0.081,0.137
-knl,cori,0.612,0.255
-haswell,edison,0.432,0.658
+InstanceType,AvailabilityZone,OnDemandPrice,PerfTtbarTotal,EntryName
+haswell,cori,0.576,0.96,"CMSHTPC_T3_US_NERSC_Cori"
+haswell_shared,cori,0.081,0.137,"CMSHTPC_T3_US_NERSC_Cori_shared"
+knl,cori,0.612,0.255,"CMSHTPC_T3_US_NERSC_Cori_KNL"
+haswell,edison,0.432,0.658,"CMSHTPC_T3_US_NERSC_Edison"
+haswell_shared,edison,0.108,0.164,"CMSHTPC_T3_US_NERSC,Edison_shared"
