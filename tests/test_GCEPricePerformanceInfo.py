@@ -3,12 +3,12 @@ import pandas as pd
 from decisionengine_modules.GCE.sources import GCEPricePerformance
 
 config = {
-    "csv_file": "price_performance_gce.csv",
+    "csv_file": "instance_performance_gce.csv",
 }
 
 expected_pandas_df = pd.read_csv(config.get("csv_file"))
 
-produces = ['GCE_Price_Performance']
+produces = ['GCE_Instance_Performance']
 
 
 class TestGCEPricePerformance:
