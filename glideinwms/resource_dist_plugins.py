@@ -18,7 +18,7 @@ class ResourceOrderPlugin(object):
 
 
     def __init__(self, resources):
-        # ordered_resources if a list of tuple (entry_name, ordering_criteria)
+        # ordered_resources if a list of tuple (EntryName, ordering_criteria)
         # list is ordered in descending order of preferred resources
         self.resources = resources
         self._ordered_resources = []
@@ -42,7 +42,7 @@ class ResourceOrderPlugin(object):
 
 
     @abc.abstractmethod
-    def eligible_resources(self, constraint=None):
+    def eligible_resources(self, constraint=None, limit=None):
         """
         max_count can be integer or string
         """
@@ -68,8 +68,8 @@ class FOMOrderPlugin(ResourceOrderPlugin):
         for rss in self.resource_fom_column_map:
             fom_df = self.resources.get(rss)
             if (fom_df is not None) and (fom_df.empty is False):
-                # Create a new dataframe with just entry name and FOM
-                df = fom_df[['entry_name', self.resource_fom_column_map[rss]]]
+                # Create a new dataframe with just EntryName and FOM
+                df = fom_df[['EntryName', self.resource_fom_column_map[rss]]]
                 # Rename the entry type specific FOM columns to just 'fom'
                 df = df.rename(columns={self.resource_fom_column_map[rss]: 'fom'})
                 # Append the results

@@ -16,7 +16,7 @@ class TestGridFigureOfMerit():
 
     def test_eligible_resources_with_constraints(self):
         test_df = pandas.DataFrame({
-            'GLIDEIN_Entry_Name': ['g1', 'g2', 'g3', 'g4', 'g5'],
+            'EntryName': ['g1', 'g2', 'g3', 'g4', 'g5'],
             'Grid_Figure_Of_Merit': [0, 0, 0, 0, 0]
             })
         fom = GridFigureOfMerit({})
