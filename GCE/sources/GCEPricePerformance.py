@@ -1,5 +1,5 @@
 """
-This source takes input from price_performance_gce.csv
+This source takes input from instance_performance_gce.csv
 and adds it to data block
 """
 import argparse
@@ -10,7 +10,7 @@ import pandas as pd
 from decisionengine.framework.modules import Source
 import decisionengine.framework.modules.de_logger as de_logger
 
-PRODUCES = ['GCE_Price_Performance']
+PRODUCES = ['GCE_Instance_Performance']
 
 
 class GCEPricePerformance(Source.Source):
