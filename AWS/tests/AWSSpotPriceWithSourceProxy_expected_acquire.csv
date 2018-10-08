@@ -1,0 +1,6 @@
+AccountName,AvailabilityZone,InstanceType,ProductDescription,SpotPrice,Timestamp
+HEPCloud_CMS,us-east-1d,m3.xlarge,Linux/UNIX,0.061700,2018-10-04T11:36:38
+HEPCloud_CMS,us-east-1c,m3.xlarge,Linux/UNIX,0.061700,2018-10-03T21:27:14
+HEPCloud_CMS,us-east-1e,m3.xlarge,Linux/UNIX,0.061700,2018-10-03T21:27:14
+HEPCloud_CMS,us-east-1b,m3.xlarge,Linux/UNIX,0.061700,2018-10-03T21:27:14
+HEPCloud_CMS,us-east-1a,m3.xlarge,Linux/UNIX,0.266000,2018-09-19T23:08:24

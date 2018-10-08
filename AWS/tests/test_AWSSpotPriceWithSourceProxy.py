@@ -27,20 +27,6 @@ def fix_spot_price(df):
             out_df.loc[r,'SpotPrice'] = numpy.float64(row['SpotPrice'])
     return out_df
 
-def compare_dfs(df1, df2):
-    # for some reason df.equals does not work here, but if I compare cell by cell it works
-    if df1.shape[0] != df2.shape[0]:
-        return False
-    if df1.shape[1] != df2.shape[1]:
-        return False
-    rc = True
-    for i in range(df1.shape[0]):
-        for j in range(df1.shape[1]):
-            if (df1.iloc[i,j] != df2.iloc[i,j]):
-                rc = False
-                break
-    return rc
-
 class SessionMock(object):
     def client(self, service = None, region_name = None):
         return None
@@ -62,4 +48,4 @@ class TestAWSSpotPriceWithSourceProxy:
                     res = aws_s_p.acquire()
                     assert produces == res.keys()
                     new_df = fix_spot_price(res[produces[0]])
-                    assert compare_dfs(expected_pandas_df, new_df)
+                    assert utils.compare_dfs(expected_pandas_df, new_df)
