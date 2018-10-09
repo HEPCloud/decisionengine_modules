@@ -13,10 +13,10 @@ import decisionengine.framework.modules.de_logger as de_logger
 PRODUCES = ['GCE_Instance_Performance']
 
 
-class GCEPricePerformance(Source.Source):
+class GCEInstancePerformance(Source.Source):
 
     def __init__(self, config):
-        super(GCEPricePerformance, self).__init__(config)
+        super(GCEInstancePerformance, self).__init__(config)
         self.csv_file = config.get('csv_file')
         if not self.csv_file:
             raise RuntimeError("No csv file found in configuration")
@@ -35,8 +35,8 @@ def module_config_template():
     """
     template = {
         'gce_instance_performance': {
-            'module': 'decisionengine_modules.GCE.sources.GCEPricePerformance',
-            'name': 'GCEPricePerformance',
+            'module': 'decisionengine_modules.GCE.sources.GCEInstancePerformance',
+            'name': 'GCEInstancePerformance',
             'parameters': {
                 'csv_file': '/path/to/csv_file',
             }

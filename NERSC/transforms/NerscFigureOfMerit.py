@@ -71,8 +71,7 @@ class NerscFigureOfMerit(Transform.Transform):
                 figures_of_merit.append({"EntryName": entry_name,
                                          "FigureOfMerit": fom})
 
-        return {PRODUCES[0]: performance.filter(["InstanceType",
-                                                 "AvailabilityZone",
+        return {PRODUCES[0]: performance.filter(["EntryName",
                                                  "PricePerformance"]),
                 PRODUCES[1]: pd.DataFrame(figures_of_merit)}
 
@@ -90,15 +89,9 @@ def module_config_template():
 
     d = {
         "NerscFigureOfMerit": {
-           "module":  "modules.AWS.transforms.NerscFigureOfMerit",
+           "module":  "modules.NERSC.transforms.NerscFigureOfMerit",
            "name":  "NerscFigureOfMerit",
            "parameters": {
-               "entry_name_mapping" : {
-                   "T3_US_NERSC_Cori" : "haswell,cori",
-                   "T3_US_NERSC_Cori_shared" : "haswell_shared,cori",
-                   "T3_US_NERSC_Cori_KNL" : "knl,cori",
-                   "T3_US_NERSC_Edison" : "haswell,edison",
-               },
            }
         }
     }

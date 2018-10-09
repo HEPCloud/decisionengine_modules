@@ -122,7 +122,7 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %{python_sitelib}/decisionengine_modules/glideinwms
 %{python_sitelib}/decisionengine_modules/htcondor
 %{python_sitelib}/decisionengine_modules/NERSC
-
+%{python_sitelib}/decisionengine_modules/GCE
 
 %pre
 
