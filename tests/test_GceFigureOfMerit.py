@@ -62,3 +62,8 @@ class TestGceFigureOfMerit:
             except:
                 print key, " fail\n", expected_transform_output[key], "\n", value
 
+
+if __name__ == "__main__":
+    t  = TestGceFigureOfMerit()
+    t.test_produces()
+    t.test_transform()
