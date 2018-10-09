@@ -103,7 +103,7 @@ class FrontendConfiguration():
         prefix = '%s.' % os.path.basename(cfgfile)
         dirname = os.path.dirname(cfgfile)
         tmpfile_fd, tmpfile_name = tempfile.mkstemp(prefix=prefix,
-                                                    dir=dirname)  
+                                                    dir=dirname)
         with os.fdopen(tmpfile_fd, 'w') as fd:
             pprint.pprint(fd)
             pprint.pprint(self.frontend_config, stream=fd)
