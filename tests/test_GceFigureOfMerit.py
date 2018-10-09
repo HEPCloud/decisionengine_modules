@@ -1,4 +1,7 @@
+import math 
 import pandas as pd
+from pandas.util.testing import assert_frame_equal
+import numpy as np
 
 from decisionengine_modules.GCE.transforms import GceFigureOfMerit
 
@@ -34,14 +37,14 @@ data_block = {
 
 gce_price_performance_df = pd.DataFrame([
     {"EntryName" : "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
-     "PricePerformance" : 0.67 },])
+     "PricePerformance" : 1.498423 },])
 
 expected_transform_output = {
     produces[0] : gce_price_performance_df.reindex(columns = ("EntryName",
                                               "PricePerformance")),
     produces[1] : pd.DataFrame([
-        {"EntryName" : "CMSHTPC_T3_US_GCE_Cori",
-         "FigureOfMerit" : 0.33
+        {"EntryName" : "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
+         "FigureOfMerit" : 0.749211
         },]),
 }
 
@@ -55,15 +58,20 @@ class TestGceFigureOfMerit:
     def test_transform(self):
         gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(config)
         res = gce_figure_of_merit.transform(data_block)
-        assert produces == res.keys()
-        for key, value in res.items():
-            try:
-                assert expected_transform_output[key].equals(value)
-            except:
-                print key, " fail\n", expected_transform_output[key], "\n", value
+        assert produces.sort() == res.keys().sort()
+        
+        expected_df  =  expected_transform_output[produces[0]]
+        expected_fom  = expected_df['FigureOfMerit']
 
+        res_df = res[produces[0]]
+        res_fom = res_df['FigureOfMerit']
+        
+        assert  np.isclose(expected_fom, res_fom)
+        
+        expected_df  =  expected_transform_output[produces[1]]
+        expected_pp  = expected_df['PricePerformance']
 
-if __name__ == "__main__":
-    t  = TestGceFigureOfMerit()
-    t.test_produces()
-    t.test_transform()
+        res_df = res[produces[1]]
+        res_pp = res_df['PricePerformance']
+        
+        assert  np.isclose(expected_pp, res_pp)
