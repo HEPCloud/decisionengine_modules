@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os.path
 import argparse
 import pprint
 import pandas
@@ -8,12 +9,16 @@ from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
 from decisionengine_modules.glideinwms.glide_frontend_element import GlideFrontendElement
+from decisionengine_modules.glideinwms import resource_dist_plugins
+
 
 PRODUCES = ['glideclientglobal_manifests', 'glideclient_manifests']
 
 CONSUMES = [
-    'gwms_fe_config', 'factoryglobal_manifests', 'job_manifests',
-    'Factory_Entries_LCF', 'startd_manifests', 'Factory_Entries_AWS'
+    'factoryglobal_manifests', 'job_manifests', 'job_clusters',
+    'Factory_Entries_LCF', 'startd_manifests', 'Factory_Entries_AWS',
+    'Grid_Figure_Of_Merit', 'GCE_Figure_Of_Merit', 'AWS_Figure_Of_Merit',
+    'Nersc_Figure_Of_Merit',
 ]
 
 SUPPORTED_ENTRY_TYPES = [
@@ -41,6 +46,13 @@ class GlideinRequestManifests(Transform.Transform):
         self.job_filter = config.get('job_filter', 'ClusterId > 0')
         # FE config group to get settings from
         self.fe_group = config.get('fe_config_group', 'CMS')
+        # FOM Plugin
+        self.fom_resource_constraint = config.get('fom_resource_constraint')
+        self.fom_resource_limit = config.get('fom_resource_limit')
+        # Get the place where translated frontend config is located
+        self.de_frontend_configfile = config.get(
+            'de_frontend_config',
+            '/var/lib/gwms-frontend/vofrontend/de_frontend_config')
 
         self.logger = de_logger.get_logger()
 
@@ -70,7 +82,7 @@ class GlideinRequestManifests(Transform.Transform):
         """
 
         # Get the frontend config dict
-        fe_cfg = datablock.get('gwms_fe_config')
+        fe_cfg = self.read_fe_config()
         # Get factory global classad dataframe
         factory_globals = datablock.get('factoryglobal_manifests')
         # Initialize an empty DataFrame so we can copy factory entries
@@ -79,18 +91,49 @@ class GlideinRequestManifests(Transform.Transform):
         for et in SUPPORTED_ENTRY_TYPES:
             entries = entries.append(datablock.get(et), ignore_index=True)
 
+        # Shortlisted entries using Figure of Merit
+        # TODO: This will be influenced once we can configure different
+        #       resource selection plugins. Currently supports FOM only.
+        foms = {
+            'Grid_Figure_Of_Merit': datablock.get('Grid_Figure_Of_Merit'),
+            'GCE_Figure_Of_Merit': datablock.get('GCE_Figure_Of_Merit'),
+            'AWS_Figure_Of_Merit': datablock.get('AWS_Figure_Of_Merit'),
+            'Nersc_Figure_Of_Merit': datablock.get('Nersc_Figure_Of_Merit')
+        }
+        fom_entries = shortlist_entries(foms)
+        self.logger.debug('Figure of Merits')
+        self.logger.debug(fom_entries)
+
         # Get the jobs dataframe
         jobs_df = datablock.get('job_manifests')
+        # Get the job clusters dataframe
+        job_clusters_df = datablock.get('job_clusters')
         # Get HTCondor slots dataframe
         slots_df = datablock.get('startd_manifests')
 
         glide_frontend_element = GlideFrontendElement(self.fe_group,
                                                       self.acct_group, fe_cfg)
         manifests = glide_frontend_element.generate_glidein_requests(
-            jobs_df, slots_df, entries, factory_globals,
-            job_filter=self.job_filter)
+            jobs_df, job_clusters_df, slots_df, entries, factory_globals,
+            job_filter=self.job_filter, fom_entries=fom_entries)
 
         return manifests
+
+
+    def read_fe_config(self):
+        if not os.path.isfile(self.de_frontend_configfile):
+            raise RuntimeError('Error reading Frontend config for DE %s. Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' % self.de_frontend_configfile)
+        fe_cfg = eval(open(self.de_frontend_configfile, 'r').read())
+        if not isinstance(fe_cfg, dict):
+            raise ValueError('Frontend config for DE in %s is invalid' % self.de_frontend_configfile)
+        return fe_cfg
+
+
+    def shortlist_entries(self, foms):
+        fom_plugin = resource_dist_plugins.FOMOrderPlugin(foms)
+        return fom_plugin.eligible_resources(
+                   constraint=self.fom_resource_constraint,
+                   limit=self.fom_resource_limit)
 
 
 def module_config_template():
