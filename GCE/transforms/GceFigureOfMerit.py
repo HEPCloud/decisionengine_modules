@@ -41,9 +41,7 @@ class GceFigureOfMerit(Transform.Transform):
         figures_of_merit = []
         for i, row in factory_entries_lcf.iterrows():
             entry_name = row["EntryName"]
-            perf_df = performance[performance.EntryName == entry_name) &
-                                  (performance.AvailabilityZone == availability_zone)]
-
+            perf_df = performance[performance.EntryName == entry_name]
             for j, perf_row in perf_df.iterrows():
                 running = float(row["GlideinMonitorTotalStatusRunning"])
                 max_allowed = float(row["GlideinConfigPerEntryMaxGlideins"])
