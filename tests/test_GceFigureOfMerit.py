@@ -21,7 +21,7 @@ gce_instance_performance_df.reindex(columns = ("EnryName",
                                                 "PerfTtbarTotal"))
 
 data_block = {
-    "Gce_Instance_Performance" : gce_instance_performance_df.reindex(columns = ("EntryName",
+    "GCE_Instance_Performance" : gce_instance_performance_df.reindex(columns = ("EntryName",
                                                  "InstanceType",
                                                  "AvailabilityZone",
                                                  "OnDemandPrice",
