@@ -18,7 +18,7 @@ import decisionengine.framework.modules.de_logger as de_logger
 IMPORTANT: Please do not change order of these keys and always
            append new keys rather than pre-pend or insert.
 """
-CONSUMES = ["GCE_Instance_Performance", "Factory_Entries_LCF"]
+CONSUMES = ["GCE_Instance_Performance", "Factory_Entries_GCE"]
 
 PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 
@@ -36,10 +36,10 @@ class GceFigureOfMerit(Transform.Transform):
                                                    performance["OnDemandPrice"] / performance["PerfTtbarTotal"],
                                                    sys.float_info.max)
 
-        factory_entries_lcf = data_block[CONSUMES[1]]
+        factory_entries = data_block[CONSUMES[1]]
 
         figures_of_merit = []
-        for i, row in factory_entries_lcf.iterrows():
+        for i, row in factory_entries.iterrows():
             entry_name = row["EntryName"]
             perf_df = performance[performance.EntryName == entry_name]
             for j, perf_row in perf_df.iterrows():
