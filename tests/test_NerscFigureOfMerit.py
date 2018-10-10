@@ -2,52 +2,47 @@ import pandas as pd
 
 from decisionengine_modules.NERSC.transforms import NerscFigureOfMerit
 
-"""
-IMPORTANT: Please do not change order of these keys and always 
-           append new keys rather than pre-pend or insert:
-"""
 produces = ['Nersc_Price_Performance', 'Nersc_Figure_Of_Merit']
 
-
 config = {
-    "entry_name_mapping": {
-        "T3_US_NERSC_Cori": "haswell,cori",
-        "T3_US_NERSC_Cori_shared": "haswell_shared,cori",
-        "T3_US_NERSC_Cori_KNL": "knl,cori",
-        "T3_US_NERSC_Edison": "haswell,edison",
-    },
 }
 
 nersc_instance_performance_df =  pd.DataFrame([
-        {"InstanceType": "haswell",
-         "AvailabilityZone": "cori",
-         "OnDemandPrice": 0.576,
-         "PerfTtbarTotal": 0.96}, ])
+        {"EntryName" : "CMSHTPC_T3_US_NERSC_Cori",
+         "InstanceType" : "haswell",
+         "AvailabilityZone" : "cori" ,
+         "OnDemandPrice" : 0.576,
+         "PerfTtbarTotal" : 0.96 },])
+
+nersc_instance_performance_df.reindex(columns = ("EnryName",
+                                                 "InstanceType",
+                                                 "AvailabilityZone",
+                                                 "OnDemandPrice",
+                                                 "PerfTtbarTotal"))
 
 data_block = {
-    "Nersc_Instance_Performance": nersc_instance_performance_df.reindex(columns=("InstanceType",
-                                                                                 "AvailabilityZone",
-                                                                                 "OnDemandPrice",
-                                                                                 "PerfTtbarTotal")),
-    "Factory_Entries_LCF": pd.DataFrame([
-        {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",
-         "GlideinConfigPerEntryMaxGlideins": 200,
-         "GlideinMonitorTotalStatusRunning": 100}, ]),
+    "Nersc_Instance_Performance" : nersc_instance_performance_df.reindex(columns = ("EntryName",
+                                                 "InstanceType",
+                                                 "AvailabilityZone",
+                                                 "OnDemandPrice",
+                                                 "PerfTtbarTotal")),
+    "Factory_Entries_LCF" : pd.DataFrame([
+        {"EntryName" : "CMSHTPC_T3_US_NERSC_Cori",
+         "GlideinConfigPerEntryMaxGlideins" : 200,
+         "GlideinMonitorTotalStatusRunning" : 100},]),
 }
 
 nersc_price_performance_df = pd.DataFrame([
-    {"InstanceType": "haswell",
-     "AvailabilityZone": "cori",
-     "PricePerformance": 0.6}, ])
+    {"EntryName" : "CMSHTPC_T3_US_NERSC_Cori",
+     "PricePerformance" : 0.6 },])
 
 expected_transform_output = {
-    produces[0]: nersc_price_performance_df.reindex(columns=("InstanceType",
-                                                             "AvailabilityZone",
-                                                             "PricePerformance")),
-    produces[1]: pd.DataFrame([
-        {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",
-         "FigureOfMerit": 0.3
-        }, ]),
+    produces[0] : nersc_price_performance_df.reindex(columns = ("EntryName",
+                                              "PricePerformance")),
+    produces[1] : pd.DataFrame([
+        {"EntryName" : "CMSHTPC_T3_US_NERSC_Cori",
+         "FigureOfMerit" : 0.3
+        },]),
 }
 
 
@@ -62,4 +57,7 @@ class TestNerscFigureOfMerit:
         res = nersc_figure_of_merit.transform(data_block)
         assert produces == res.keys()
         for key, value in res.items():
-            assert expected_transform_output[key].equals(value)
+            try:
+                assert expected_transform_output[key].equals(value)
+            except:
+                print key, " fail\n", expected_transform_output[key], "\n", value
