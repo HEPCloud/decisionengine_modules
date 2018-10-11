@@ -16,7 +16,8 @@ config={"channel_name": "channel_aws_config_data",
 
 account = {'spot_occupancy_config': pd.read_csv('account_config.csv')}
 
-expected_pandas_df = pd.read_csv('AWSSpotPriceWithSourceProxy_expected_acquire.csv', float_precision='high').drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)
+#expected_pandas_df = pd.read_csv('AWSSpotPriceWithSourceProxy_expected_acquire.csv', float_precision='high').drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)
+expected_pandas_df = pd.read_csv('AWSSpotPriceWithSourceProxy_expected_acquire.csv', float_precision='high')
 
 produces = ['provisioner_resource_spot_prices']
 
