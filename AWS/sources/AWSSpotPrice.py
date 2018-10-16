@@ -167,11 +167,12 @@ class AWSSpotPriceForRegion(object):
         return l
 
 class AWSSpotPrice(Source.Source):
-    def __init__(self, *args, **kwargs):
-        self.config_file = args[0]['spot_price_configuration']
+    def __init__(self, config_dict):
+        self.config_file = config_dict['spot_price_configuration']
         self.account_dict = {}
 
-    def produces(self,schema_id_list): return PRODUCES
+    def produces(self): 
+        return PRODUCES
 
     def acquire(self):
         """
