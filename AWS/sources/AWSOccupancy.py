@@ -30,15 +30,15 @@ class OccupancyData(object):
         :arg occupancy_data: occupancy data
         """
         self.data = occupancy_data
-        #self.data['Timestamp'] = occupancy_data['Timestamp'].isoformat()
 
     def __cmp__(self, other = None):
         """
         overrides comparison method
         """
         try:
-            if (self.data['AvailabilityZone'])  == (other.data['AvailabilityZone']):
+            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
+                
         except:
             pass
 
@@ -79,14 +79,14 @@ class OccupancyForRegion(object):
         instances = self.ec2_resource.instances.all()
         d ={}
         for instance in instances:
+            running_vms = 0
+            if instance.state['Name'] == 'running':
+                running_vms = 1
             d[instance.id] = {'AccountName': self.account_name,
-                              'InstanceId': instance.id,
                               'InstanceType' : instance.instance_type,
-                              'InstanceState': instance.state['Name'],
                               'AvailabilityZone': instance.placement['AvailabilityZone'],
-                              'RunningVms': 0,
+                              'RunningVms': running_vms,
             }
-
         return d
 
     def capacity(self, instances):
@@ -106,8 +106,7 @@ class OccupancyForRegion(object):
                 if not occ_data in l:
                     l.append(occ_data)
                 i = l.index(occ_data)
-                if l[i].data['InstanceState'] == 'running':
-                    l[i].data['RunningVms'] += 1
+                l[i].data['RunningVms'] += occ_data.data['RunningVms']
         return l
 
 
@@ -131,9 +130,10 @@ class OccupancyForRegion(object):
   '''
 
 class AWSOccupancy(Source.Source):
-    def __init__(self, *args, **kwargs):
-        self.config_file = args[0]['occupancy_configuration']
+    def __init__(self, configdict):
+        self.config_file = configdict['occupancy_configuration']
         self.account_dict = {}
+        self.logger = de_logger.get_logger()
 
     def produces(self,schema_id_list): return PRODUCES
 
@@ -148,6 +148,7 @@ class AWSOccupancy(Source.Source):
         # Load kown accounts configuration
         self.account_dict = load_config.load(self.config_file, 5, 20) # account configuration is dynamic
         occupancy_data = []
+        self.logger.debug('account_dict %s'%(self.account_dict,))
         for account in self.account_dict:
             for region in self.account_dict[account]:
                 occcupancy = OccupancyForRegion(region, profile_name=account)
