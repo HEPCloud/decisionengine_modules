@@ -30,14 +30,13 @@ class OccupancyData(object):
         :arg occupancy_data: occupancy data
         """
         self.data = occupancy_data
-        #self.data['Timestamp'] = occupancy_data['Timestamp'].isoformat()
 
     def __cmp__(self, other = None):
         """
         overrides comparison method
         """
         try:
-            if (self.data['AvailabilityZone'])  == (other.data['AvailabilityZone']):
+            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
         except:
             pass
@@ -79,13 +78,14 @@ class OccupancyForRegion(object):
         instances = self.ec2_resource.instances.all()
         d ={}
         for instance in instances:
+            running_vms = 0
+            if instance.state['Name'] == 'running':
+                running_vms = 1
             d[instance.id] = {'AccountName': self.account_name,
-                              'InstanceId': instance.id,
                               'InstanceType' : instance.instance_type,
-                              'InstanceState': instance.state['Name'],
                               'AvailabilityZone': instance.placement['AvailabilityZone'],
-                              'RunningVms': 0,
-            }
+                              'RunningVms': running_vms,
+                          }
 
         return d
 
@@ -105,9 +105,9 @@ class OccupancyForRegion(object):
                 occ_data = OccupancyData(data)
                 if not occ_data in l:
                     l.append(occ_data)
-                i = l.index(occ_data)
-                if l[i].data['InstanceState'] == 'running':
-                    l[i].data['RunningVms'] += 1
+                else:
+                    i = l.index(occ_data)
+                    l[i].data['RunningVms'] += occ_data.data['RunningVms']
         return l
 
 
@@ -133,8 +133,10 @@ class OccupancyForRegion(object):
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, *args, **kwargs):
         super(AWSOccupancy, self).__init__(*args, **kwargs)
+        self.logger = de_logger.get_logger()
 
-    def produces(self,schema_id_list): return PRODUCES
+    def produces(self): 
+        return PRODUCES
 
     def acquire(self):
         """
@@ -151,6 +153,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         self.account_dict = {}
         for k in account_conf:
             self.account_dict = account_conf[k].to_dict()
+        self.logger.debug('account_dict %s'%(self.account_dict,))
         occupancy_data = []
         for account in self.account_dict:
             for region in self.account_dict[account]:
