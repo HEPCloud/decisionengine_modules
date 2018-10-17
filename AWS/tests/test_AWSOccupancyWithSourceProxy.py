@@ -14,7 +14,7 @@ config={"channel_name": "channel_aws_config_data",
                                "retry_timeout": 20,
     }
 
-account = {'spot_occupancy_config': pd.read_csv('occupancy_config.csv')}
+account = {'spot_occupancy_config': pd.read_csv('account_config.csv')}
 
 expected_pandas_df = pd.read_csv('AWSOcupancyWithSourceProxy_expected_acquire.csv')
 
@@ -42,4 +42,5 @@ class TestAWSOccupancyWithSourceProxy:
                     assert produces == res.keys()
                     df1 = expected_pandas_df.sort_values(['AvailabilityZone', 'InstanceType'])
                     new_df = res.get(produces[0]).sort_values(['AvailabilityZone', 'InstanceType'])
+                    new_df.reindex()
                     assert utils.compare_dfs(df1, new_df)
