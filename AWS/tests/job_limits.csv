@@ -1,0 +1,3 @@
+InstanceType,AvailabilityZone,MaxLimit,AWSProfile
+m3.xlarge,us-east-1a,2,HEPCloud_CMS
+m3.xlarge,us-east-1a,2,HEPCloud_FERMILAB
