@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.3
+%define version 0.3.4
 %define release 0.1
 
 %define de_user decisionengine
@@ -98,6 +98,7 @@ cp -r ../decisionengine_modules $RPM_BUILD_ROOT%{python_sitelib}
 # Remove unwanted files
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/build
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/tests
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/AWS/tests
 # BUILDING testcase RPM: Comment following line
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 
@@ -132,6 +133,10 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+* Mon Oct 22 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.4-0.1
+- Added few GCE modules
+- Bug fixes to AWS modules
+
 * Fri Sep 14 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.3-0.1
 - Added tool to create and update glidein infrastructure
 
