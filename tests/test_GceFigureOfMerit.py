@@ -2,6 +2,8 @@ import math
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
 import numpy as np
+from tabulate import tabulate
+
 
 from decisionengine_modules.GCE.transforms import GceFigureOfMerit
 
@@ -29,7 +31,7 @@ data_block = {
                                                  "AvailabilityZone",
                                                  "OnDemandPrice",
                                                  "PerfTtbarTotal")),
-    "Factory_Entries_LCF" : pd.DataFrame([
+    "Factory_Entries_GCE" : pd.DataFrame([
         {"EntryName" : "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
          "GlideinConfigPerEntryMaxGlideins" : 200,
          "GlideinMonitorTotalStatusRunning" : 100},]),
@@ -75,3 +77,8 @@ class TestGceFigureOfMerit:
         res_pp = res_df['PricePerformance']
         
         assert  np.isclose(expected_pp, res_pp)
+
+
+if __name__ == "__main__":
+    t = TestGceFigureOfMerit()
+    t.test_transform()
