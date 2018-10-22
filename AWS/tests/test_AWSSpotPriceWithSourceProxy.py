@@ -3,6 +3,7 @@ import mock
 import datetime
 import boto3
 import numpy
+import os
 
 import utils
 import decisionengine.framework.modules.SourceProxy as SourceProxy
@@ -33,19 +34,21 @@ class SessionMock(object):
                     
 class TestAWSSpotPriceWithSourceProxy:
     def test_produces(self):
-        aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
-        assert (aws_s_p.produces() == produces)
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+            aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
+            assert (aws_s_p.produces('a') == produces)
     
     def test_acquire(self):
-        aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
-        with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
-            acquire.return_value = account
-            with mock.patch.object(boto3.session, 'Session') as s:
-                s.return_value = SessionMock()
-                with mock.patch.object(AWSSpotPrice.AWSSpotPriceForRegion, 'get_price') as get_price:
-                    sp_d = utils.input_from_file('spot_price.fixture')
-                    get_price.return_value = sp_d
-                    res = aws_s_p.acquire()
-                    assert produces == res.keys()
-                    new_df = fix_spot_price(res[produces[0]])
-                    assert utils.compare_dfs(expected_pandas_df, new_df)
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+            aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
+            with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
+                acquire.return_value = account
+                with mock.patch.object(boto3.session, 'Session') as s:
+                    s.return_value = SessionMock()
+                    with mock.patch.object(AWSSpotPrice.AWSSpotPriceForRegion, 'get_price') as get_price:
+                        sp_d = utils.input_from_file('spot_price.fixture')
+                        get_price.return_value = sp_d
+                        res = aws_s_p.acquire()
+                        assert produces == res.keys()
+                        new_df = fix_spot_price(res[produces[0]])
+                        assert utils.compare_dfs(expected_pandas_df, new_df)

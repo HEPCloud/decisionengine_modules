@@ -23,24 +23,27 @@ produces = ['AWS_Occupancy']
 class SessionMock(object):
     def resource(self, service = None, region_name = None):
         return None
+
                     
 class TestAWSOccupancyWithSourceProxy:
     def test_produces(self):
-        aws_occ = Occupancy.AWSOccupancy(config)
-        assert (aws_occ.produces() == produces)
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+            aws_occ = Occupancy.AWSOccupancy(config)
+            assert (aws_occ.produces() == produces)
     
     def test_acquire(self):
-        aws_occ = Occupancy.AWSOccupancy(config)
-        with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
-            acquire.return_value = account
-            with mock.patch.object(boto3.session, 'Session') as s:
-                s.return_value = SessionMock()
-                with mock.patch.object(Occupancy.OccupancyForRegion, 'get_ec2_instances') as get_instances:
-                    cap = utils.input_from_file('occupancy.fixture')
-                    get_instances.return_value = cap
-                    res = aws_occ.acquire()
-                    assert produces == res.keys()
-                    df1 = expected_pandas_df.sort_values(['AvailabilityZone', 'InstanceType'])
-                    new_df = res.get(produces[0]).sort_values(['AvailabilityZone', 'InstanceType'])
-                    new_df.reindex()
-                    assert utils.compare_dfs(df1, new_df)
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+            aws_occ = Occupancy.AWSOccupancy(config)
+            with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
+                acquire.return_value = account
+                with mock.patch.object(boto3.session, 'Session') as s:
+                    s.return_value = SessionMock()
+                    with mock.patch.object(Occupancy.OccupancyForRegion, 'get_ec2_instances') as get_instances:
+                        cap = utils.input_from_file('occupancy.fixture')
+                        get_instances.return_value = cap
+                        res = aws_occ.acquire()
+                        assert produces == res.keys()
+                        df1 = expected_pandas_df.sort_values(['AvailabilityZone', 'InstanceType'])
+                        new_df = res.get(produces[0]).sort_values(['AvailabilityZone', 'InstanceType'])
+                        new_df.reindex()
+                        assert utils.compare_dfs(df1, new_df)
