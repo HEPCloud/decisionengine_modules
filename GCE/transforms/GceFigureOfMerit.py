@@ -36,15 +36,16 @@ class GceFigureOfMerit(Transform.Transform):
                                                    performance["OnDemandPrice"] / performance["PerfTtbarTotal"],
                                                    sys.float_info.max)
 
-        factory_entries = data_block[CONSUMES[1]]
+        factory_entries = data_block[CONSUMES[1]].fillna(0)
 
         figures_of_merit = []
         for i, row in factory_entries.iterrows():
             entry_name = row["EntryName"]
             perf_df = performance[performance.EntryName == entry_name]
             for j, perf_row in perf_df.iterrows():
-                running = float(row["GlideinMonitorTotalStatusRunning"])
+                running = float(row.get("GlideinMonitorTotalStatusRunning",0))
                 max_allowed = float(row["GlideinConfigPerEntryMaxGlideins"])
+                print "running max_allowed", running, max_allowed
                 fom = perf_row["PricePerformance"] * running / max_allowed if max_allowed > 0 else sys.float_info.max
 
                 figures_of_merit.append({"EntryName": entry_name,
