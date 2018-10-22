@@ -105,8 +105,9 @@ class OccupancyForRegion(object):
                 occ_data = OccupancyData(data)
                 if not occ_data in l:
                     l.append(occ_data)
-                i = l.index(occ_data)
-                l[i].data['RunningVms'] += occ_data.data['RunningVms']
+                else:
+                    i = l.index(occ_data)
+                    l[i].data['RunningVms'] += occ_data.data['RunningVms']
         return l
 
 
