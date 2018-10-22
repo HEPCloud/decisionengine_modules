@@ -3,39 +3,43 @@ import pprint
 import pandas
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
-config_test_job_categories = { 
-  'job_categories': [
-      ["VO_Name=='cms'", "VO_Name=='des'", "VO_Name=='nova'"],
-      ["RequestCpus==1", "RequestCpus==2"],
-      ["(MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "(MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)"]
-  ]
+config_test_match_exprs = { 
+  'match_expressions': { 
+    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+    "VO_Name=='nova'" : ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+  },
+  'job_q_expr': "JobStatus==1"
 }
 
 # input with valid job_q data
 valid_q_datablock = {
   'job_manifests': pandas.DataFrame({
-      "VO_Name": ['cms', 'cms', 'cms', 'des', 'des'],
-      "RequestCpus": [1, 2, 2, 2, 2],
-      "MaxWallTimeMins": [500, 500, 1000, 500, 1000]
+    "VO_Name": ['cms', 'cms', 'cms', 'cms', 'cms', 'cms', 'nova', 'nova', 'des'],
+    "RequestCpus": [1, 1, 1, 1, 2, 2, 1, 2, 1],
+    "MaxWallTimeMins": [240, 240, 1080, 720, 240, 1080, 720, 240, 240],
+    "JobStatus": [1, 5, 1, 1, 1, 1, 1, 1, 1]
     })
 }
 # expected output
-jc_valid_output_dataframe = pandas.DataFrame({
-  'Bucket_Criteria_Expr': [
+jme_valid_output_dataframe = pandas.DataFrame({
+  'Job_Match_Expr': [
     "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
     "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
     "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
     "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='des' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='des' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='des' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='des' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='nova' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='nova' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='nova' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='nova' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)"
+    "VO_Name=='nova'"
   ],
-  'Totals': [1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0]
+  'Factory_Match_Epxr': [
+  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+  ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+  ],
+  'Totals': [2, 1, 2, 1, 1]
   },
   columns=['Bucket_Criteria_Expr', 'Totals'])
 
@@ -44,7 +48,7 @@ invalid_q_datablock = {
   'job_manifests': pandas.DataFrame({})
 }
 # expected output
-jc_invalid_output_dataframe = pandas.DataFrame({
+jme_invalid_output_dataframe = pandas.DataFrame({
   'Bucket_Criteria_Expr': [''],
   'Totals': [0]
   },
@@ -60,25 +64,25 @@ class TestJobClustering:
 
     def test_produces(self):
         produces = ['job_clusters']
-        job_clusters = job_clustering.JobClustering(config_test_job_categories)
+        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
         assert job_clusters.produces() == produces
 
     def test_consumes(self):
         consumes = ['job_manifests']
-        job_clusters = job_clustering.JobClustering(config_test_job_categories)
+        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
         assert job_clusters.consumes() == consumes
 
     def test_transform_valid(self):
-        job_clusters = job_clustering.JobClustering(config_test_job_categories)
+        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
         output = job_clusters.transform(valid_q_datablock)
         pprint.pprint(output)
         db = output.get('job_clusters')
-        assert db['Totals'].sum() == 5
-        assert db.shape[0] == 12
+        assert db['Totals'].sum() == 7 
+        assert db.shape[0] == 5
 
 # Leaving in as a ref, unsure what will be an invalid input to module
 #    def test_transform_invalid(self):
-#        job_clusters = job_clustering.JobClustering(config_test_job_categories)
+#        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
 #        output = job_clusters.transform(invalid_q_datablock)
 #        pprint.pprint(output)
 #        db = output.get('job_clusters')
