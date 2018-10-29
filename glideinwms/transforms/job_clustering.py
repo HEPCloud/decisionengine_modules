@@ -13,6 +13,14 @@ PRODUCES = ['job_clusters']
 
 CONSUMES = ['job_manifests']
 
+EMPTY_JOB_CLUSTER = pandas.DataFrame({
+                'Job_Bucket_Criteria_Expr': [""],
+                'Site_Bucket_Criteria_Expr': [""],
+                'Totals': [0],
+                'Frontend_Group': ""
+                },
+                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
+
 # Expects a named list of expressions
 # Expects a list of expressions to apply for each category type, 
 # each category corresponds to a job classad attr and expressions to apply to it for buckets 
@@ -58,30 +66,35 @@ class JobClustering(Transform.Transform):
         # Get job queue datablock
         try:
             df_full_q = datablock.get('job_manifests')
-            df_q = df_full_q.query(self.job_q_expr)
         except KeyError, ValueError:
             self.logger.error("Unable to retrieve job manifests data block")
-            return pandas.DataFrame({
-                'Job_Bucket_Criteria_Expr': [""],
-                'Site_Bucket_Criteria_Expr': [""],
-                'Totals': [0]
-                },
-                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
+            return {'job_clusters': EMPTY_JOB_CLUSTER}
+
+        # Return empty block if no job data
+        if df_full_q.empty:
+            self.logger.debug("Empty job manifests data block found")
+            return {'job_clusters': EMPTY_JOB_CLUSTER}
 
         totals = []
+        # VERSION WITHOUT FRONTEND
+#        try:
+#            df_q = df_full_q.query(self.job_q_expr)
+#            # Query job q and populate bucket totals
+#            totals = [[job_expr, self.match_exprs.get(job_expr), df_q.query(job_expr).shape[0]] for job_expr in self.match_exprs.keys()]
+#            df_job_clusters = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
+#            self.logger.debug("Job category totals: %s" % df_job_clusters)
+
+        # VERSION WITH FRONTEND, DELETE AND USE ABOVE WHEN FRONTEND IS GONE
         try:
+            df_q = df_full_q.query(self.job_q_expr)
             # Query job q and populate bucket totals
-            totals = [[job_expr, self.match_exprs.get(job_expr), df_q.query(job_expr).shape[0]] for job_expr in self.match_exprs.keys()]
-            df_job_clusters = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
+            totals = [[job_expr[0], self.match_exprs.get(job_expr), df_q.query(job_expr[0]).shape[0], job_expr[1]] for job_expr in self.match_exprs.keys()]
+            df_job_clusters = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
             self.logger.debug("Job category totals: %s" % df_job_clusters)
+
         except KeyError, ValueError:
             self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
-            return pandas.DataFrame({
-                'Job_Bucket_Criteria_Expr': [""],
-                'Site_Bucket_Criteria_Expr': [""],
-                'Totals': [0]
-                },
-                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
+            return {'job_clusters': EMPTY_JOB_CLUSTER}
 
         self.logger.info("*** Ending job clustering ***")
 
