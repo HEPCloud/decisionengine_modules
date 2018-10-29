@@ -5,11 +5,11 @@ from decisionengine_modules.glideinwms.transforms import job_clustering
 
 config_test_match_exprs = { 
   'match_expressions': { 
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    "VO_Name=='nova'" : ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_1"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+    ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_2"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+    ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_3"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+    ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_4"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+    ("VO_Name=='nova'", "group_5"): ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
   },
   'job_q_expr': "JobStatus==1"
 }
@@ -33,15 +33,23 @@ jme_valid_output_dataframe = pandas.DataFrame({
     "VO_Name=='nova'"
   ],
   'Factory_Match_Epxr': [
-  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-  ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-  ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+    ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
   ],
-  'Totals': [2, 1, 2, 1, 1]
+  'Totals': [2, 1, 2, 1, 1],
+  'Frontend_Group': [
+    "group_1",
+    "group_2",
+    "group_3",
+    "group_4",
+    "group_5"
+  ]
   },
-  columns=['Bucket_Criteria_Expr', 'Totals'])
+  columns=['Job_Match_Expr', 'Factory_Match_Epxr', 'Totals', 'Frontend_Group']
+)
 
 # input with invalid job_q data 
 invalid_q_datablock = {
@@ -49,11 +57,17 @@ invalid_q_datablock = {
 }
 # expected output
 jme_invalid_output_dataframe = pandas.DataFrame({
-  'Bucket_Criteria_Expr': [''],
-  'Totals': [0]
+  'Job_Match_Expr': [''],
+  'Factory_Match_Expr': [''],
+  'Totals': [0],
+  'Frontend_Group': ''
   },
-  columns=['Bucket_Criteria_Expr', 'Totals'])
+  columns=['Job_Match_Expr', 'Factory_Match_Epxr', 'Totals', 'Frontend_Group']
+)
 
+# ***NOTE***
+# This test must be updated to remove 'Frontend_Group' from test data when the
+# frontend is no longer used in the decision engine
 
 class TestJobClustering:
 
@@ -80,11 +94,10 @@ class TestJobClustering:
         assert db['Totals'].sum() == 7 
         assert db.shape[0] == 5
 
-# Leaving in as a ref, unsure what will be an invalid input to module
-#    def test_transform_invalid(self):
-#        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-#        output = job_clusters.transform(invalid_q_datablock)
-#        pprint.pprint(output)
-#        db = output.get('job_clusters')
-#        assert output['Totals'].sum() == 0
-#        assert output.shape[0] == 1
+    def test_transform_invalid(self):
+        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+        output = job_clusters.transform(invalid_q_datablock)
+        pprint.pprint(output)
+        db = output.get('job_clusters')
+        assert db['Totals'].sum() == 0
+        assert db.shape[0] == 1
