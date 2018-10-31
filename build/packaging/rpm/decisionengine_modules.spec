@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.4
+%define version 0.3.5
 %define release 0.1
 
 %define de_user decisionengine
@@ -124,6 +124,7 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %{python_sitelib}/decisionengine_modules/htcondor
 %{python_sitelib}/decisionengine_modules/NERSC
 %{python_sitelib}/decisionengine_modules/GCE
+%{python_sitelib}/decisionengine_modules/graphite
 
 %pre
 
@@ -133,6 +134,11 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+* Wed Oct 31 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.5-0.1
+- Added GCE publishers
+- Changes to Job clustering config
+- Bug fixes
+
 * Mon Oct 22 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.4-0.1
 - Added few GCE modules
 - Bug fixes to AWS modules
