@@ -18,7 +18,12 @@ import decisionengine.framework.modules.de_logger as de_logger
 IMPORTANT: Please do not change order of these keys and always
            append new keys rather than pre-pend or insert.
 """
-CONSUMES = ["GCE_Instance_Performance", "Factory_Entries_GCE"]
+
+#CONSUMES = ["GCE_Instance_Performance", "Factory_Entries_GCE"]
+
+CONSUMES = ["GCE_Instance_Performance", 
+            "Factory_Entries_GCE", 
+            "GCE_Occupancy" ]
 
 PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 
@@ -38,18 +43,27 @@ class GceFigureOfMerit(Transform.Transform):
 
         factory_entries = data_block[CONSUMES[1]].fillna(0)
 
-        figures_of_merit = []
-        for i, row in factory_entries.iterrows():
-            entry_name = row["EntryName"]
-            perf_df = performance[performance.EntryName == entry_name]
-            for j, perf_row in perf_df.iterrows():
-                running = float(row.get("GlideinMonitorTotalStatusRunning",0))
-                max_allowed = float(row["GlideinConfigPerEntryMaxGlideins"])
-                print "running max_allowed", running, max_allowed
-                fom = perf_row["PricePerformance"] * running / max_allowed if max_allowed > 0 else sys.float_info.max
+        gce_occupancy = data_block[CONSUMES[2]].fillna(0)
 
-                figures_of_merit.append({"EntryName": entry_name,
-                                         "FigureOfMerit": fom})
+        figures_of_merit = []
+
+        for i, row in performance.iterrows():
+            az = row["AvailabilityZone"]
+            it = row["InstanceType"]
+            entry_name = row["EntryName"]
+
+            occupancy_df = gce_occupancy[(gce_occupancy.AvailabilityZone == az) & 
+                                         (gce_occupancy.InstanceType == it)]
+            occupancy = float(occupancy_df["Occupancy"].values[0]) if not occupancy_df.empty else 0
+
+            factory_df = factory_entries[factory_entries.EntryName == entry_name]
+            max_allowed = float(factory_df["GlideinConfigPerEntryMaxGlideins"].values[0]) if not factory_df.empty else 0
+            """
+            occupancy is incremented by one to avoid having 0 fom
+            """
+            fom = row["PricePerformance"] * ( occupancy + 1 ) / max_allowed if max_allowed > 0 else sys.float_info.max
+            figures_of_merit.append({"EntryName": entry_name,
+                                     "FigureOfMerit": fom})
 
         return {PRODUCES[0]: performance.filter(["EntryName",
                                                  "PricePerformance"]),
