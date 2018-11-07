@@ -29,13 +29,13 @@ class GceOccupancy(Source.Source):
         zones = []
         pageToken = None
         while True:
-            result =  self.client.zones().list(project=self.project,
-                                               pageToken=pageToken).execute()
+            result = self.client.zones().list(project=self.project,
+                                              pageToken=pageToken).execute()
             pageToken = result.pop("nextPageToken", None)
             if "items" not in result:
                 break
             zones +=  [x.get("name") for x in result.get("items",{})]
-            if pageToken == None:
+            if pageToken is None:
                 break
         return zones
 
@@ -62,7 +62,7 @@ class GceOccupancy(Source.Source):
                                   "AvailabilityZone" : zone,
                                   "Running" : 0})
 
-                if pageToken == None:
+                if pageToken is None:
                     break
 
         df =  pd.DataFrame(d)
