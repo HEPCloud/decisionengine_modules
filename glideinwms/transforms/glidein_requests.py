@@ -8,7 +8,7 @@ import pandas
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
-from decisionengine_modules.glideinwms.glide_frontend_element import GlideFrontendElement
+from decisionengine_modules.glideinwms import glide_frontend_element
 from decisionengine_modules.glideinwms import resource_dist_plugins
 
 
@@ -22,7 +22,7 @@ CONSUMES = [
 ]
 
 SUPPORTED_ENTRY_TYPES = [
-    'Factory_Entries_LCF', 'Factory_Entries_AWS', 'Factory_Entries_Grid'
+    'Factory_Entries_LCF', 'Factory_Entries_AWS', 'Factory_Entries_Grid', 'Factory_Entries_GCE'
 ]
 
 # TODO: Extend to use following in future
@@ -81,6 +81,9 @@ class GlideinRequestManifests(Transform.Transform):
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
+        # Dict to be returned
+        manifests = {}
+
         # Get the frontend config dict
         fe_cfg = self.read_fe_config()
         # Get factory global classad dataframe
@@ -111,13 +114,50 @@ class GlideinRequestManifests(Transform.Transform):
         # Get HTCondor slots dataframe
         slots_df = datablock.get('startd_manifests')
 
-        glide_frontend_element = GlideFrontendElement(self.fe_group,
-                                                      self.acct_group, fe_cfg)
-        manifests = glide_frontend_element.generate_glidein_requests(
-            jobs_df, job_clusters_df, slots_df, entries, factory_globals,
-            job_filter=self.job_filter, fom_entries=fom_entries)
+        for index, row in job_clusters_df.iterrows():
+            # Each job bucket represents a frontend group equivalent
+            # For every job bucket figure out how many glideins to request at
+            # which entry (i.e entries matching entry query expressions)
+
+            fe_group = row.get('frontend_group')
+            job_query = row.get('job_bucket_query')
+            match_exp = ' or '.join(row.get('job_bucket_query'))
+
+            self.logger.log('-------------------------------------------------')
+            self.logger.log('Processing FE Group: %s' % fe_group)
+            self.logger.log('Processing job query: %s' % job_query)
+            self.logger.log('Matching expression : %s' % match_exp)
+            self.logger.log('-------------------------------------------------')
+
+            matched_entries = entries.query(match_exp)
+
+            # Get the Frontend element object. Currently FOM.
+            gfe = glide_frontend_element.get_gfe_obj(
+                fe_group, self.acct_group, fe_cfg)
+
+            # Generate glideclient and glideclientglobal manifests
+            # for this bucket/frontend group
+            group_manifests = glide_frontend_element.generate_glidein_requests(
+                jobs_df, job_clusters_df, slots_df, matched_entries,
+                factory_globals,
+                job_filter=job_query, fom_entries=fom_entries)
+            manifests = merge_requests(manifests, group_manifests)
 
         return manifests
+
+
+    def merge_requests(self, manifests, group_manifests):
+        merged_manifests = {}
+        if manifests and group_manifests:
+            m_keys = set(manifests.keys())
+            g_keys = set(group_manifests.keys())
+            if m_keys != g_keys:
+                raise RuntimeError('Mismatch in manifest keys: %s, %s' % (m_keys, g_keys))
+            for key in m_keys:
+                merged_manifests[key] = manifests[key].append(group_manifests[key], ignore_index=True)
+        else:
+            merged_manifests = group_manifests
+        return merged_manifests
 
 
     def read_fe_config(self):
