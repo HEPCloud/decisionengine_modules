@@ -30,7 +30,7 @@ class NoCredentialException(Exception):
     pass
 
 
-def get_gfe_obj(fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom')
+def get_gfe_obj(fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom'):
     """
     Return glide frontend object of right type based on request
     """
@@ -1188,7 +1188,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             if glidein_requests:
                 # FIXME: dict + dataframe merging
                 glidein_requests = glidein_requests + partial_glidein_requests
-            else
+            else:
                 glidein_requests = partial_glidein_requests
         return glidein_requests
 
