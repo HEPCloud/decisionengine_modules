@@ -26,7 +26,7 @@ class GceFigureOfMerit(SourceProxy.SourceProxy):
         fom = super(GceFigureOfMerit, self).acquire()
         if set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
-        return {'GCE_Figure_Of_Merit': fom.get('GCE_Figure_Of_Merit')
+        return {'GCE_Figure_Of_Merit': fom.get('GCE_Figure_Of_Merit')}
 
 
     def produces(self, name_schema_id_list=None):
