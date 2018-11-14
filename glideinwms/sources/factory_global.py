@@ -36,12 +36,11 @@ def module_config_template():
 
     template = {
         'factoryglobal_manifests': {
-            'module': 'modules.htcondor.s_factory_client',
-            'name': 'StartdManifests',
+            'module': 'decisionengine_modules.glideinwms.sources.factory_client',
+            'name': 'FactoryGlobalManifests',
             'parameters': {
                 'collector_host': 'factory_collector.com',
                 'condor_config': '/path/to/condor_config',
-                'constraints': 'HTCondor collector query constraints',
                 'classad_attrs': [],
             }
         }

@@ -86,7 +86,7 @@ def module_config_template():
             'name': 'GceOccupancy',
             'parameters': {
                 'project': 'hepcloud-fnal',
-                'credengtial' : '/etc/gwms-frontend/credentials/monitoring.json',
+                'credential' : '/etc/gwms-frontend/credentials/monitoring.json',
             }
         }
     }
