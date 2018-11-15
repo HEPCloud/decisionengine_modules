@@ -29,7 +29,7 @@ def module_config_template():
 
     template = {
         'glideclientglobal_manifests': {
-            'module': 'modules.glideinwms.p_glideclientglobal',
+            'module': 'decisionengine_modules.glideinwms.publishers.glideclientglobal',
             'name': 'GlideClientGlobalManifests',
             'parameters': {
                 'collector_host': 'factory_collector.com',

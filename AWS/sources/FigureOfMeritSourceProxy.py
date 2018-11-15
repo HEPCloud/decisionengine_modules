@@ -40,20 +40,20 @@ def module_config_template():
     print a template for this module configuration data
     """
 
-    d = {
+    template = {
         'FigureOfMerit': {
-        'module':  'decisionengine_modules.AWS.sources.FigureOfMeritSourceProxy',
-        'name':  'FigureOfMerit',
-        },
+            'module': 'decisionengine_modules.AWS.sources.FigureOfMeritSourceProxy',
+            'name': 'FigureOfMerit',
             'parameters': {
                 'channel_name': 'source_channel_name',
-                'Dataproducts': '%s' % PRODUCES,
+                'Dataproducts': PRODUCES,
                 'retries': '<number of retries to acquire data>',
                 'retry_timeout': '<retry timeout>'
             }
+        },
     }
     print "Entry in channel cofiguration"
-    pprint.pprint(d)
+    pprint.pprint(template)
 
 
 def module_config_info():

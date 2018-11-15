@@ -74,7 +74,7 @@ def module_config_template():
 
     template = {
         'factory_entries': {
-            'module': 'modules.glideinwms.factory_entries',
+            'module': 'decisionengine_modules.glideinwms.sources.factory_entries',
             'name': 'FactoryEntries',
             'parameters': {
                 'collector_host': 'factory_collector.com',

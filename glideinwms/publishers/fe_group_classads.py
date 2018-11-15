@@ -31,7 +31,7 @@ def module_config_template():
 
     template = {
         'glideinwms_manifests': {
-            'module': 'modules.glideinwms.p_glideinwms_classads',
+            'module': 'decisionengine_modules.glideinwms.publishers.fe_group_classads',
             'name': 'GlideinWMSManifests',
             'parameters': {
                 'condor_config': '/path/to/condor_config',

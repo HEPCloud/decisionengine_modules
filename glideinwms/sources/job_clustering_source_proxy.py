@@ -43,11 +43,11 @@ def module_config_template():
 
     template = {
         'job_categorization': {
-            'module': 'decisionengine_modules.glideinwms.souces/job_clustering_source_proxy',
+            'module': 'decisionengine_modules.glideinwms.sources.job_clustering_source_proxy',
             'name': 'JobClustering',
             'parameters': {
                 'channel_name': 'source_channel_name',
-                'Dataproducts': '%s' % PRODUCES,
+                'Dataproducts': PRODUCES,
                 'retries': '<number of retries to acquire data>',
                 'retry_timeout': '<retry timeout>'
             },

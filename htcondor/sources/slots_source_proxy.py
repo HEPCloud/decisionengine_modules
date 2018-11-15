@@ -40,7 +40,7 @@ def module_config_template():
             'name': 'StartdManifests',
             'parameters': {
                 'channel_name': 'source_channel_name',
-                'Dataproducts': '%s' % PRODUCES,
+                'Dataproducts': PRODUCES,
                 'retries': '<number of retries to acquire data>',
                 'retry_timeout': '<retry timeout>'
             }
