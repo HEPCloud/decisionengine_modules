@@ -40,11 +40,11 @@ def module_config_template():
 
     template = {
         'GceFigureOfMerit': {
-            'module':  'decisionengine_modules.GCE.sources.GceFigureOfMeritSourceProxy',
-            'name':  'GceFigureOfMerit',
+            'module': 'decisionengine_modules.GCE.sources.GceFigureOfMeritSourceProxy',
+            'name': 'GceFigureOfMerit',
             'parameters': {
                 'channel_name': 'source_channel_name',
-                'Dataproducts': '%s' % PRODUCES,
+                'Dataproducts': PRODUCES,
                 'retries': '<number of retries to acquire data>',
                 'retry_timeout': '<retry timeout>'
             }

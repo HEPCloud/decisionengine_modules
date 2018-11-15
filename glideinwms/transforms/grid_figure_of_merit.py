@@ -47,7 +47,7 @@ def module_config_template():
 
     template = {
         "GridFigureOfMerit": {
-           "module":  "modules.glideinwms.transforms.grid_figure_of_merit",
+           "module":  "decisionengine_modules.glideinwms.transforms.grid_figure_of_merit",
            "name":  "GridFigureOfMerit",
            "parameters": { },
         }

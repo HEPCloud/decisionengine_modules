@@ -40,11 +40,11 @@ def module_config_template():
 
     template = {
         'NerscFigureOfMerit': {
-            'module':  'modules.NERSC.sources.NerscFigureOfMerit',
-            'name':  'NerscFigureOfMerit',
+            'module': 'decisionengine_modules.NERSC.sources.NerscFigureOfMerit',
+            'name': 'NerscFigureOfMerit',
             'parameters': {
                 'channel_name': 'source_channel_name',
-                'Dataproducts': '%s' % PRODUCES,
+                'Dataproducts': PRODUCES,
                 'retries': '<number of retries to acquire data>',
                 'retry_timeout': '<retry timeout>'
             }
@@ -60,7 +60,6 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
     print "produces", PRODUCES
     module_config_template()
 
