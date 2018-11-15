@@ -24,7 +24,7 @@ class StartdManifests(SourceProxy.SourceProxy):
 
     def acquire(self):
         startd_manifests = super(StartdManifests, self).acquire()
-        if set(PRODUCES).issubset(set(startd_manifests.keys())):
+        if not set(PRODUCES).issubset(set(startd_manifests.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return startd_manifests
 

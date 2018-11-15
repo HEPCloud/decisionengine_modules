@@ -30,7 +30,7 @@ class FigureOfMerit(SourceProxy.SourceProxy):
         """
 
         fom = super(FigureOfMerit, self).acquire()
-        if set(PRODUCES).issubset(set(fom.keys())):
+        if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'AWS_Figure_Of_Merit': fom.get('AWS_Figure_Of_Merit')}
 

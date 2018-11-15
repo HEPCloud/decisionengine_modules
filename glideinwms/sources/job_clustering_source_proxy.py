@@ -31,7 +31,7 @@ class JobClustering(SourceProxy.SourceProxy):
         """
 
         job_clusters = super(JobClustering, self).acquire()
-        if set(PRODUCES).issubset(set(job_clusters.keys())):
+        if not set(PRODUCES).issubset(set(job_clusters.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return job_clusters
 
