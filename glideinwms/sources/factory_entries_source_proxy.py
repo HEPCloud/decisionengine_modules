@@ -34,7 +34,7 @@ class FactoryEntries(SourceProxy.SourceProxy):
         """
 
         entries = super(FactoryEntries, self).acquire()
-        if set(PRODUCES).issubset(set(entries.keys())):
+        if not set(PRODUCES).issubset(set(entries.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return entries
 

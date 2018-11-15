@@ -27,8 +27,8 @@ class NerscFigureOfMerit(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(FactoryEntries, self).acquire()
-        if set(PRODUCES).issubset(set(fom.keys())):
+        fom = super(NerscFigureOfMerit, self).acquire()
+        if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'Nersc_Figure_Of_Merit': fom.get('Nersc_Figure_Of_Merit')}
 
