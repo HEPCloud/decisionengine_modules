@@ -27,7 +27,7 @@ class JobQ(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
         job_manifests = super(JobQ, self).acquire()
-        if set(PRODUCES).issubset(set(job_manifests.keys())):
+        if not set(PRODUCES).issubset(set(job_manifests.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return job_manifests
 
