@@ -78,7 +78,6 @@ class FigureOfMerit(Transform.Transform):
                r3 = job_limits_data
            else:
                r3 = job_limits_data[(job_limits_data.AWSProfile == row['AccountName']) & (job_limits_data['AvailabilityZone'] == row['AvailabilityZone']) & (job_limits_data['InstanceType'] == row['InstanceType'])]
-
            price_perf_row = copy.copy(row)
            fom_row = copy.copy(row)
 
@@ -87,7 +86,9 @@ class FigureOfMerit(Transform.Transform):
                fom_row['PerfTtbarTotal'] = 0.
            else:
                price_perf_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
+               price_perf_row['EntryName'] = r1['EntryName'].values[0]
                fom_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
+               fom_row['EntryName'] = r1['EntryName'].values[0]
         
            if r2.empty:
                running_vms = 0
@@ -178,10 +179,10 @@ def main():
         #                                 '6D596F43-B4DB-4418-812A-79869001E72B',
         #                                 1)
         data_block = datablock.DataBlock(ds,
-                                         "AWS_Calculations",
-                                         "B183F454-5E7D-45B3-B4D2-E3D26392578B",
+                                         "AWS_Calculations_with_source_proxy",
+                                         "F70B4110-E66D-49CA-9333-4A983A679F37",
                                          1,
-                                         151)
+                                         109)
 
         fm_info = FigureOfMerit()
         rc = fm_info.transform(data_block)
