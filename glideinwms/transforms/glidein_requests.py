@@ -103,7 +103,7 @@ class GlideinRequestManifests(Transform.Transform):
             'AWS_Figure_Of_Merit': datablock.get('AWS_Figure_Of_Merit'),
             'Nersc_Figure_Of_Merit': datablock.get('Nersc_Figure_Of_Merit')
         }
-        fom_entries = shortlist_entries(foms)
+        fom_entries = self.shortlist_entries(foms)
         self.logger.debug('Figure of Merits')
         self.logger.debug(fom_entries)
 
