@@ -27,7 +27,7 @@ class GridFigureOfMerit(Transform.Transform):
         """
 
         entries = datablock.get('Factory_Entries_Grid', default=pandas.DataFrame({ATTR_ENTRYNAME: []}))
-        fom_df = pandas.DataFrame({ATTR_ENTRYNAME: entries['GLIDEIN_Entry_Name']})
+        fom_df = pandas.DataFrame({ATTR_ENTRYNAME: entries['EntryName']})
         # FOM for grid entries is 0
         fom_df['Grid_Figure_Of_Merit'] = 0
         return {PRODUCES[0]: fom_df}
