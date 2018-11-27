@@ -11,6 +11,7 @@ import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['GCE_Resource_Limits']
 
+
 class GCEResourceLimits(SourceProxy.SourceProxy):
     """
     Consumes factory data to find GCE entry limits 

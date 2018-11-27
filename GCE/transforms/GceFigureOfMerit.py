@@ -8,7 +8,6 @@ from __future__ import division
 import pandas as pd
 import numpy as np
 import pprint
-import re
 import sys
 
 from decisionengine.framework.modules import Transform
@@ -18,8 +17,6 @@ import decisionengine.framework.modules.de_logger as de_logger
 IMPORTANT: Please do not change order of these keys and always
            append new keys rather than pre-pend or insert.
 """
-
-#CONSUMES = ["GCE_Instance_Performance", "Factory_Entries_GCE"]
 
 CONSUMES = ["GCE_Instance_Performance", 
             "Factory_Entries_GCE", 
@@ -61,7 +58,7 @@ class GceFigureOfMerit(Transform.Transform):
             """
             occupancy is incremented by one to avoid having 0 fom
             """
-            fom = row["PricePerformance"] * ( occupancy + 1 ) / max_allowed if max_allowed > 0 else sys.float_info.max
+            fom = row["PricePerformance"] * (occupancy + 1) / max_allowed if max_allowed > 0 else sys.float_info.max
             figures_of_merit.append({"EntryName": entry_name,
                                      "FigureOfMerit": fom})
 
@@ -104,7 +101,6 @@ def module_config_info():
     print "consumes", CONSUMES
     print "produces", PRODUCES
     module_config_template()
-
 
 
 def main():

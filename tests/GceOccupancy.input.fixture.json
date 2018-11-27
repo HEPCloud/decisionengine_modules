@@ -1,0 +1,181 @@
+{
+    "id": "projects/hepcloud-fnal/zones/us-central1-a/instances", 
+    "items": [
+        {
+            "cpuPlatform": "Unknown CPU Platform", 
+            "creationTimestamp": "2018-11-02T07:59:47.027-07:00", 
+            "deletionProtection": false, 
+            "disks": [
+                {
+                    "autoDelete": true, 
+                    "boot": true, 
+                    "deviceName": "persistent-disk-0", 
+                    "index": 0, 
+                    "interface": "SCSI", 
+                    "kind": "compute#attachedDisk", 
+                    "mode": "READ_WRITE", 
+                    "source": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/disks/condor-1549a5a5-4d15-4cb8-a1a2-2490d9cdc836", 
+                    "type": "PERSISTENT"
+                }, 
+                {
+                    "autoDelete": true, 
+                    "boot": false, 
+                    "deviceName": "persistent-disk-1", 
+                    "index": 1, 
+                    "interface": "SCSI", 
+                    "kind": "compute#attachedDisk", 
+                    "mode": "READ_WRITE", 
+                    "source": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/disks/condor-1549a5a5-4d15-4cb8-a1a2-2490d9cdc836-1", 
+                    "type": "PERSISTENT"
+                }
+            ], 
+            "id": "2259372173979408525", 
+            "kind": "compute#instance", 
+            "labelFingerprint": "42WmSpB8rSM=", 
+            "machineType": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/machineTypes/custom-16-32768", 
+            "metadata": {
+                "fingerprint": "dByp80yadb8=", 
+                "items": [
+                    {
+                        "key": "glidein_credentials", 
+                        "value": "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"
+                    }, 
+                    {
+                        "key": "glideinwms_metadata", 
+                        "value": "W2dsaWRlaW5fc3RhcnR1cF0KYXJncyA9IC12IHN0ZCAtbmFtZSBnZmFjdG9yeV9pbnN0YW5jZV9jbXNzcnYyODAgLWVudHJ5IEZOQUxfSEVQQ0xPVURfR09PR0xFX3VzLWNlbnRyYWwxLWFfY3VzdG9tLTE2LTMyNzY4IC1jbGllbnRuYW1lIGNtc3NydjI2Ni1mbmFsLWdvdl9PU0dfZ1dNU0Zyb250ZW5kLmNtc19hbGwgLXNjaGVkZCBjbXNzcnYyODAuZm5hbC5nb3YgLXByb3h5IE5vbmUgLWZhY3RvcnkgZ2ZhY3Rvcnlfc2VydmljZV9jbXNzcnYyODAgLXdlYiBodHRwOi8vY21zc3J2MjgwLmZuYWwuZ292OjgzMTkvZmFjdG9yeS9zdGFnZSAtc2lnbiA1NzQwNWM2MTE2YWRmNWVhNWJjMmQ3OTcyMmYyODZhZjY1MTE5ODgxIC1zaWduZW50cnkgODU0MzA1MzRkYmE0OWM3MDA5MzAyMDAwM2YzNGY4MGRiMjdiYTE2MiAtc2lnbnR5cGUgc2hhMSAtZGVzY3JpcHQgZGVzY3JpcHRpb24uaWIxamNNLmNmZyAtZGVzY3JpcHRlbnRyeSBkZXNjcmlwdGlvbi5pYjFqY00uY2ZnIC1kaXIgQVVUTyAtcGFyYW1fR0xJREVJTl9DbGllbnQgY21zc3J2MjY2LWZuYWwtZ292X09TR19nV01TRnJvbnRlbmQuY21zX2FsbCAtc3VibWl0Y3JlZGlkIDU4OTUwMiAtc2xvdHNsYXlvdXQgcGFydGlvbmFibGUgLWNsaWVudHdlYiBodHRwOi8vY21zc3J2MjY2LmZuYWwuZ292OjgzMTkvdm9mcm9udGVuZC9zdGFnZSAtY2xpZW50c2lnbiBlYjNlYmI2NTgxODExZTExODJmN2JjM2U2NDE3NjkzMTdmMGNkNjM1IC1jbGllbnRzaWdudHlwZSBzaGExIC1jbGllbnRkZXNjcmlwdCBkZXNjcmlwdGlvbi5pYjFqNUEuY2ZnIC1jbGllbnRncm91cCBjbXNfYWxsIC1jbGllbnR3ZWJncm91cCBodHRwOi8vY21zc3J2MjY2LmZuYWwuZ292OjgzMTkvdm9mcm9udGVuZC9zdGFnZS9ncm91cF9jbXNfYWxsIC1jbGllbnRzaWduZ3JvdXAgZTk3ZTBkYjEzYzU0ZmEyY2ZhYTE2NzZlZjg0YjJhZTllOTU4NzZkYSAtY2xpZW50ZGVzY3JpcHRncm91cCBkZXNjcmlwdGlvbi5pYjFqNUEuY2ZnIC1wYXJhbV9DT05ET1JfVkVSU0lPTiA4LmRvdCw2LmRvdCwzIC1wYXJhbV9HTElERUlOX0pvYl9NYXhfVGltZSAzNDgwMCAtcGFyYW1fR0xJREVDTElFTlRfUmVxTm9kZSBjbXNzcnYyODAuZG90LGZuYWwuZG90LGdvdiAtcGFyYW1fVk1fTUFYX0xJRkVUSU1FIDI2MDAwMDAgLXBhcmFtX0dMSURFQ0xJRU5UX1JhbmsgMSAtcGFyYW1fR0xJREVJTl9SZXBvcnRfRmFpbGVkIE5FVkVSIC1wYXJhbV9NSU5fRElTS19HQlMgMSAtcGFyYW1fR0xJREVJTl9DQ0IgaGVwY3N2YzAyLmRvdCxmbmFsLmRvdCxnb3YuY29sb24sOTYyMC5taW51cyw5NzMwLnNlbWljb2xvbixoZXBjc3ZjMDQuZG90LGZuYWwuZG90LGdvdi5jb2xvbiw5NjIwLm1pbnVzLDk3MzAgLXBhcmFtX0dMSURFSU5fTWF4X1dhbGx0aW1lIDI2MDAwMDAgLXBhcmFtX1ZNX0RJU0FCTEVfU0hVVERPV04gRmFsc2UgLXBhcmFtX0NPTkRPUl9BUkNIIGRlZmF1bHQgLXBhcmFtX1VQREFURV9DT0xMRUNUT1JfV0lUSF9UQ1AgVHJ1ZSAtcGFyYW1fVVNFX0NDQiBUcnVlIC1wYXJhbV9VU0VfTUFUQ0hfQVVUSCBUcnVlIC1wYXJhbV9DT05ET1JfT1MgZGVmYXVsdCAtcGFyYW1fR0xJREVJTl9Db2xsZWN0b3IgY21zc3J2Mjc0LmRvdCxmbmFsLmRvdCxnb3YuY29sb24sOTYyMC5taW51cyw5NzMwLnNlbWljb2xvbixjbXNzcnYyNzYuZG90LGZuYWwuZG90LGdvdi5jb2xvbiw5NjIwLm1pbnVzLDk3MzAKcHJveHlfZmlsZV9uYW1lID0gcGlsb3RfcHJveHkKd2ViYmFzZT0gaHR0cDovL2Ntc3NydjI4MC5mbmFsLmdvdjo4MzE5L2ZhY3Rvcnkvc3RhZ2UKClt2bV9wcm9wZXJ0aWVzXQptYXhfbGlmZXRpbWUgPSAyNjAwMDAwCmNvbnRleHR1YWxpemF0aW9uX3R5cGUgPSBHQ0UKZGlzYWJsZV9zaHV0ZG93biA9IEZhbHNlCmFkbWluX2VtYWlsID0gVU5TVVBQT1JURUQKZW1haWxfbG9ncyA9IEZhbHNlCg==#### -cluster 522 -subcluster 0####"
+                    }
+                ], 
+                "kind": "compute#metadata"
+            }, 
+            "name": "condor-1549a5a5-4d15-4cb8-a1a2-2490d9cdc836", 
+            "networkInterfaces": [
+                {
+                    "accessConfigs": [
+                        {
+                            "kind": "compute#accessConfig", 
+                            "name": "External NAT", 
+                            "networkTier": "PREMIUM", 
+                            "type": "ONE_TO_ONE_NAT"
+                        }
+                    ], 
+                    "fingerprint": "rwCQvWuGaGw=", 
+                    "kind": "compute#networkInterface", 
+                    "name": "nic0", 
+                    "network": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/global/networks/usaonly", 
+                    "networkIP": "10.128.0.14", 
+                    "subnetwork": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/regions/us-central1/subnetworks/usc1a"
+                }
+            ], 
+            "scheduling": {
+                "automaticRestart": false, 
+                "onHostMaintenance": "TERMINATE", 
+                "preemptible": true
+            }, 
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/instances/condor-1549a5a5-4d15-4cb8-a1a2-2490d9cdc836", 
+            "serviceAccounts": [
+                {
+                    "email": "1064112369590-compute@developer.gserviceaccount.com", 
+                    "scopes": [
+                        "https://www.googleapis.com/auth/servicecontrol", 
+                        "https://www.googleapis.com/auth/service.management.readonly", 
+                        "https://www.googleapis.com/auth/logging.write", 
+                        "https://www.googleapis.com/auth/monitoring.write", 
+                        "https://www.googleapis.com/auth/trace.append", 
+                        "https://www.googleapis.com/auth/devstorage.read_write"
+                    ]
+                }
+            ], 
+            "startRestricted": false, 
+            "status": "TERMINATED", 
+            "tags": {
+                "fingerprint": "42WmSpB8rSM="
+            }, 
+            "zone": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a"
+        }, 
+        {
+            "canIpForward": false, 
+            "cpuPlatform": "Intel Sandy Bridge", 
+            "creationTimestamp": "2018-11-12T15:00:46.429-08:00", 
+            "deletionProtection": false, 
+            "disks": [
+                {
+                    "autoDelete": true, 
+                    "boot": true, 
+                    "deviceName": "squid-template-usc1a", 
+                    "index": 0, 
+                    "interface": "SCSI", 
+                    "kind": "compute#attachedDisk", 
+                    "mode": "READ_WRITE", 
+                    "source": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/disks/fsquidigm18a-276z", 
+                    "type": "PERSISTENT"
+                }, 
+                {
+                    "autoDelete": true, 
+                    "boot": false, 
+                    "deviceName": "persistent-disk-1", 
+                    "index": 1, 
+                    "interface": "SCSI", 
+                    "kind": "compute#attachedDisk", 
+                    "mode": "READ_WRITE", 
+                    "source": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/disks/fsquidigm18a-276z-1", 
+                    "type": "PERSISTENT"
+                }
+            ], 
+            "id": "8651432109233649906", 
+            "kind": "compute#instance", 
+            "labelFingerprint": "42WmSpB8rSM=", 
+            "machineType": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/machineTypes/n1-standard-1", 
+            "metadata": {
+                "fingerprint": "YDWr-HttZUM=", 
+                "items": [
+                    {
+                        "key": "instance-template", 
+                        "value": "projects/1064112369590/global/instanceTemplates/fsquidit18a"
+                    }, 
+                    {
+                        "key": "created-by", 
+                        "value": "projects/1064112369590/zones/us-central1-a/instanceGroupManagers/fsquidigm18a"
+                    }
+                ], 
+                "kind": "compute#metadata"
+            }, 
+            "name": "fsquidigm18a-276z", 
+            "networkInterfaces": [
+                {
+                    "accessConfigs": [
+                        {
+                            "kind": "compute#accessConfig", 
+                            "name": "External NAT", 
+                            "natIP": "35.202.250.153", 
+                            "networkTier": "PREMIUM", 
+                            "type": "ONE_TO_ONE_NAT"
+                        }
+                    ], 
+                    "fingerprint": "PpUB3mIt3yc=", 
+                    "kind": "compute#networkInterface", 
+                    "name": "nic0", 
+                    "network": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/global/networks/usaonly", 
+                    "networkIP": "10.128.0.2", 
+                    "subnetwork": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/regions/us-central1/subnetworks/usc1a"
+                }
+            ], 
+            "scheduling": {
+                "automaticRestart": true, 
+                "onHostMaintenance": "MIGRATE", 
+                "preemptible": false
+            }, 
+            "selfLink": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/instances/fsquidigm18a-276z", 
+            "startRestricted": false, 
+            "status": "RUNNING", 
+            "tags": {
+                "fingerprint": "UAz_MPQFxnQ=", 
+                "items": [
+                    "squidserver"
+                ]
+            }, 
+            "zone": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a"
+        }
+    ], 
+    "kind": "compute#instanceList", 
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/hepcloud-fnal/zones/us-central1-a/instances"
+}
