@@ -13,17 +13,14 @@ PRODUCES = ['job_clusters']
 
 CONSUMES = ['job_manifests']
 
-EMPTY_JOB_CLUSTER = pandas.DataFrame({
-                'Job_Bucket_Criteria_Expr': [""],
-                'Site_Bucket_Criteria_Expr': [""],
-                'Totals': [0],
-                'Frontend_Group': ""
-                },
-                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
+#EMPTY_JOB_CLUSTER = pandas.DataFrame({
+#                'Job_Bucket_Criteria_Expr': [""],
+#                'Site_Bucket_Criteria_Expr': [""],
+#                'Totals': [0],
+#                'Frontend_Group': ""
+#                },
+#                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
 
-# Expects a named list of expressions
-# Expects a list of expressions to apply for each category type, 
-# each category corresponds to a job classad attr and expressions to apply to it for buckets 
 
 # TODO 
 # - what debugging logs are needed?
@@ -40,6 +37,10 @@ class JobClustering(Transform.Transform):
 
         self.match_exprs = config.get('match_expressions')
         self.job_q_expr = config.get('job_q_expr')
+
+        # Creating dataframe with config info but all totals are zero
+        totals = [[job_expr[0], self.match_exprs.get(job_expr), 0, job_expr[1]] for job_expr in self.match_exprs.keys()]
+        self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
 
         self.logger = de_logger.get_logger()
 
@@ -66,14 +67,20 @@ class JobClustering(Transform.Transform):
         # Get job queue datablock
         try:
             df_full_q = datablock.get('job_manifests')
-        except KeyError, ValueError:
+        except KeyError:
             self.logger.error("Unable to retrieve job manifests data block")
-            return {'job_clusters': EMPTY_JOB_CLUSTER}
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
+        except ValueError:
+            self.logger.error("Unable to retrieve job manifests data block")
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
+        except pandas.computation.ops.UndefinedVariableError:
+            self.logger.error("Unable to retrieve job manifests data block")
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
 
         # Return empty block if no job data
         if df_full_q.empty:
             self.logger.debug("Empty job manifests data block found")
-            return {'job_clusters': EMPTY_JOB_CLUSTER}
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
 
         totals = []
         # VERSION WITHOUT FRONTEND
@@ -92,9 +99,15 @@ class JobClustering(Transform.Transform):
             df_job_clusters = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
             self.logger.debug("Job category totals: %s" % df_job_clusters)
 
-        except KeyError, ValueError:
+        except KeyError:
             self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
-            return {'job_clusters': EMPTY_JOB_CLUSTER}
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
+        except ValueError:
+            self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
+        except pandas.computation.ops.UndefinedVariableError:
+            self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
+            return {'job_clusters': self.EMPTY_JOB_CLUSTER}
 
         self.logger.info("*** Ending job clustering ***")
 
