@@ -19,12 +19,6 @@ class Newt(object):
         if not os.path.exists(password_file):
             raise RuntimeError("password file '{}' does not exist".
                                format(password_file))
-
-        stat = os.stat(password_file)
-        pm = oct(stat.st_mode&0777)
-        if pm != '0600':
-            raise RuntimeError("access to password file '{}' is too permissive {}, has to be 0600".
-                               format(password_file,pm))
         self.password_file = password_file
         self.newt_base_url = newt_base_url if newt_base_url else NEWT_BASE_URL
         if not self.newt_base_url.endswith("/"):
