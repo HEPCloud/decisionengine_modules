@@ -16,12 +16,12 @@ import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 from decisionengine.framework.modules import de_logger
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.gce"
-CONSUMES=['GCE_Figure_Of_Merit']
+DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.glideinwms"
+CONSUMES=['job_clusters']
 
-class GCEFigureOfMeritPublisher(publisher):
+class JobClusteringPublisher(publisher):
     def __init__(self, config):
-        super(GCEFigureOfMeritPublisher, self).__init__(config)
+        super(JobClusteringPublisher, self).__init__(config)
         self.logger = de_logger.get_logger()
 
     def consumes(self):
@@ -30,8 +30,8 @@ class GCEFigureOfMeritPublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.fig_of_merit'%(graphite.sanitize_key(row['EntryName'])))
-            d[key] = row['FigureOfMerit']
+            key = ('%s.job_cluster'%(graphite.sanitize_key(row['Job_Bucket_Criteria_Expr'])))
+            d[key] = row['Totals']
         return self.graphite_context_header, d
 
 
@@ -40,9 +40,9 @@ def module_config_template():
     print a template for this module configuration data
     """
 
-    d = {"GCEFigureOfMeritPublisher": {
-         "module": "modules.GCE.publishers.GCEFigureOfMerit_publisher",
-         "name": "GCEFigureOfMeritPublisher",
+    d = {"JobClusteringPublisher": {
+         "module": "modules.glideinwms.publishers.JobClustering_publisher",
+         "name": "JobClusteringPublisher",
          },}
     print "Entry in channel cofiguration"
     pprint.pprint(d)
