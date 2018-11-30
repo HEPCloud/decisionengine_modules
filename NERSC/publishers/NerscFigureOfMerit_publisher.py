@@ -16,12 +16,12 @@ import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 from decisionengine.framework.modules import de_logger
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.gce"
-CONSUMES=['GCE_Figure_Of_Merit']
+DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.nersc"
+CONSUMES=['Nersc_Figure_Of_Merit']
 
-class GCEFigureOfMeritPublisher(publisher):
+class NerscFigureOfMeritPublisher(publisher):
     def __init__(self, config):
-        super(GCEFigureOfMeritPublisher, self).__init__(config)
+        super(NerscFigureOfMeritPublisher, self).__init__(config)
         self.logger = de_logger.get_logger()
 
     def consumes(self):
@@ -40,9 +40,9 @@ def module_config_template():
     print a template for this module configuration data
     """
 
-    d = {"GCEFigureOfMeritPublisher": {
-         "module": "modules.GCE.publishers.GCEFigureOfMerit_publisher",
-         "name": "GCEFigureOfMeritPublisher",
+    d = {"NerscFigureOfMeritPublisher": {
+         "module": "modules.NERSC.publishers.NerscFigureOfMerit_publisher",
+         "name": "NerscFigureOfMeritPublisher",
          },}
     print "Entry in channel cofiguration"
     pprint.pprint(d)
