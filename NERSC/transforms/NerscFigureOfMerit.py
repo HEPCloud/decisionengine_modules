@@ -8,7 +8,6 @@ from __future__ import division
 import pandas as pd
 import numpy as np
 import pprint
-import re
 import sys
 
 from decisionengine.framework.modules import Transform
@@ -66,7 +65,8 @@ class NerscFigureOfMerit(Transform.Transform):
             for j, perf_row in perf_df.iterrows():
                 running = float(row["GlideinMonitorTotalStatusRunning"])
                 max_allowed = float(row["GlideinConfigPerEntryMaxGlideins"])
-                fom = perf_row["PricePerformance"] * running / max_allowed if max_allowed > 0 else sys.float_info.max
+                fom = perf_row["PricePerformance"] * (running + 1.) / max_allowed \
+                    if max_allowed > 0 else sys.float_info.max
 
                 figures_of_merit.append({"EntryName": entry_name,
                                          "FigureOfMerit": fom})
@@ -110,7 +110,6 @@ def module_config_info():
     print "consumes", CONSUMES
     print "produces", PRODUCES
     module_config_template()
-
 
 
 def main():
