@@ -7,7 +7,9 @@ import numpy
 from decisionengine_modules.htcondor.publishers import publisher
 
 CONSUMES = [
-    'glideclient_manifests', 'glideresource_manifests',
+    # TODO: Enable publishing of glideresource_manifests
+    #'glideclient_manifests', 'glideresource_manifests',
+    'glideclient_manifests',
 ]
 
 
