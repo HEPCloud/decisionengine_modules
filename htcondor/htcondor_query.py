@@ -6,6 +6,9 @@ import abc
 
 import htcondor
 
+from decisionengine.framework.modules import de_logger
+
+logger = de_logger.get_logger()
 
 class QueryError(RuntimeError):
     """
@@ -124,7 +127,7 @@ class CondorQ(CondorQuery):
                                      self.schedd_name))
             classads = schedd.query(constraint, attrs)
             #results_dict = list2dict(results, self.group_attr)
-            results = eval_classad_expr(classads)
+            results = eval_classad_expr(classads, format_list=format_list)
         except Exception as ex:
             s = 'default'
             if self.schedd_name is not None:
@@ -179,7 +182,7 @@ class CondorStatus(CondorQuery):
                 collector = htcondor.Collector()
 
             classads = collector.query(adtype, constraint, attrs)
-            results = eval_classad_expr(classads)
+            results = eval_classad_expr(classads, format_list=format_list)
         except Exception as ex:
             p = 'default'
             if self.pool_name is not None:
@@ -307,14 +310,19 @@ def list2dict(list_data, attr_name):
     return dict_data
 
 
-def eval_classad_expr(classads):
+def eval_classad_expr(classads, format_list=None):
     """
     Convert the classads into list of classads
+    Guarantees any attribute in format_list to be added with default value None
     """
 
     classad_list = []
     for classad in classads:
-        dict_el = {}
+        # Initialize the required attributes from format_list
+        if format_list and isinstance(format_list, list):
+            dict_el = {key: None for key in format_list}
+        else:
+            dict_el = {}
         for attr in classad:
             if attr in ('Requirements', 'START'):
                 # Requirements and START cannot be evaluated until the
