@@ -25,6 +25,7 @@ class GlideClientClassad(classadSupport.Classad):
                                         'INVALIDATE_ADS_GENERIC')
 
         name = "%s@%s" % (factory_ref, frontend_ref)
+        # TODO: Identify version dynamically
         self.adParams['GlideinWMSVersion'] = 'Decision Engine - v0.01'
         self.adParams['FactoryName'] = "%s" % factory_ref
         self.adParams['ClientName'] = "%s" % frontend_ref

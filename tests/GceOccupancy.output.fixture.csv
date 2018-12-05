@@ -1,0 +1,9 @@
+InstanceType,AvailabilityZone,Occupancy
+custom-16-32768,us-central1-a,0
+n1-standard-1,us-central1-a,1
+custom-16-32768,us-central1-b,0
+n1-standard-1,us-central1-b,1
+custom-16-32768,us-central1-c,0
+n1-standard-1,us-central1-c,1
+custom-16-32768,us-central1-f,0
+n1-standard-1,us-central1-f,1

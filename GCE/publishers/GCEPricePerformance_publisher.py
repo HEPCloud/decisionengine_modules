@@ -3,6 +3,7 @@
 Publishes price / performance data
 
 """
+import argparse
 import os
 import copy
 import pprint

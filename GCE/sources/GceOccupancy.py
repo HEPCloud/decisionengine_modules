@@ -13,6 +13,7 @@ from decisionengine.framework.modules import Source
 
 PRODUCES = ["GCE_Occupancy"]
 
+
 class GceOccupancy(Source.Source):
 
     def __init__(self, config):
@@ -25,17 +26,20 @@ class GceOccupancy(Source.Source):
     def produces(self, name_schema_id_list=None):
         return PRODUCES
 
+    def get_client(self):
+        return self.client
+
     def get_zones(self):
         zones = []
-        pageToken = None
+        page_token = None
         while True:
             result = self.client.zones().list(project=self.project,
-                                              pageToken=pageToken).execute()
-            pageToken = result.pop("nextPageToken", None)
+                                              pageToken=page_token).execute()
+            page_token = result.pop("nextPageToken", None)
             if "items" not in result:
                 break
-            zones +=  [x.get("name") for x in result.get("items",{})]
-            if pageToken is None:
+            zones += [x.get("name") for x in result.get("items", {})]
+            if page_token is None:
                 break
         return zones
 
@@ -43,38 +47,39 @@ class GceOccupancy(Source.Source):
         d = []
         zones = self.get_zones()
         for zone in zones:
-            pageToken = None
+            page_token = None
             while True:
-                result = self.client.instances().list(project=self.project,
-                                                      zone=zone,
-                                                      pageToken=pageToken).execute()
-                pageToken = result.pop("nextPageToken", None)
+                result = self.get_client().instances().list(project=self.project,
+                                                            zone=zone,
+                                                            pageToken=page_token).execute()
+                page_token = result.pop("nextPageToken", None)
                 if "items" not in result:
                     break
-                for instance in result.get("items",[]):
-                    InstanceType = instance.get("machineType").split('/').pop()
+                for instance in result.get("items", []):
+                    instance_type = instance.get("machineType").split('/').pop()
                     if instance.get("status") == "RUNNING":
-                        d.append({"InstanceType" : InstanceType,
-                                  "AvailabilityZone" : zone,
-                                  "Running" : 1})
+                        d.append({"instance_type": instance_type,
+                                  "AvailabilityZone": zone,
+                                  "Running": 1})
                     else:
-                        d.append({"InstanceType" : InstanceType,
-                                  "AvailabilityZone" : zone,
-                                  "Running" : 0})
+                        d.append({"instance_type": instance_type,
+                                  "AvailabilityZone": zone,
+                                  "Running": 0})
 
-                if pageToken is None:
+                if page_token is None:
                     break
 
-        df =  pd.DataFrame(d)
-        df['Occupancy'] = df.groupby(['InstanceType',
+        df = pd.DataFrame(d)
+        df['Occupancy'] = df.groupby(['instance_type',
                                       'AvailabilityZone'])['Running'].transform('sum')
 
-        df = df.drop_duplicates(subset=['InstanceType',
+        df = df.drop_duplicates(subset=['instance_type',
                                         'AvailabilityZone'])
 
-        return { PRODUCES[0] : df.filter(['InstanceType',
-                                          'AvailabilityZone',
-                                          'Occupancy']) }
+        return {PRODUCES[0]: df.filter(['instance_type',
+                                        'AvailabilityZone',
+                                        'Occupancy'])}
+
 
 def module_config_template():
     """
@@ -86,19 +91,20 @@ def module_config_template():
             'name': 'GceOccupancy',
             'parameters': {
                 'project': 'hepcloud-fnal',
-                'credential' : '/etc/gwms-frontend/credentials/monitoring.json',
+                'credential': '/etc/gwms-frontend/credentials/monitoring.json',
             }
         }
     }
     print 'Entry in channel configuration'
     pprint.pprint(template)
 
+
 def module_config_info():
     """
     Print module information
     """
     print 'produces %s' % PRODUCES
-    module_config_template()
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -123,4 +129,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -4,6 +4,7 @@ import os.path
 import argparse
 import pprint
 import pandas
+import traceback
 
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Transform
@@ -84,64 +85,77 @@ class GlideinRequestManifests(Transform.Transform):
         # Dict to be returned
         manifests = {}
 
-        # Get the frontend config dict
-        fe_cfg = self.read_fe_config()
-        # Get factory global classad dataframe
-        factory_globals = datablock.get('factoryglobal_manifests')
-        # Initialize an empty DataFrame so we can copy factory entries
-        entries = pandas.DataFrame()
-        # Get factory entries dataframe for different type of entries
-        for et in SUPPORTED_ENTRY_TYPES:
-            entries = entries.append(datablock.get(et), ignore_index=True)
+        try:
+            # Get the frontend config dict
+            fe_cfg = self.read_fe_config()
+            # Get factory global classad dataframe
+            factory_globals = datablock.get('factoryglobal_manifests')
+            # Initialize an empty DataFrame so we can copy factory entries
+            entries = pandas.DataFrame()
+            # Get factory entries dataframe for different type of entries
+            #for et in SUPPORTED_ENTRY_TYPES:
+            #    entries = entries.append(datablock.get(et), ignore_index=True)
+            #    pandas.concat(datablock.get(et), ignore_index=True)
+            entries = pandas.DataFrame(pandas.concat([datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True))
+            # Shortlisted entries using Figure of Merit
+            # TODO: This will be influenced once we can configure different
+            #       resource selection plugins. Currently supports FOM only.
+            foms = {
+                'Grid_Figure_Of_Merit': datablock.get('Grid_Figure_Of_Merit'),
+                'GCE_Figure_Of_Merit': datablock.get('GCE_Figure_Of_Merit'),
+                'AWS_Figure_Of_Merit': datablock.get('AWS_Figure_Of_Merit'),
+                'Nersc_Figure_Of_Merit': datablock.get('Nersc_Figure_Of_Merit')
+            }
+            fom_entries = self.shortlist_entries(foms)
+            self.logger.debug('Figure of Merits')
+            self.logger.debug(fom_entries)
 
-        # Shortlisted entries using Figure of Merit
-        # TODO: This will be influenced once we can configure different
-        #       resource selection plugins. Currently supports FOM only.
-        foms = {
-            'Grid_Figure_Of_Merit': datablock.get('Grid_Figure_Of_Merit'),
-            'GCE_Figure_Of_Merit': datablock.get('GCE_Figure_Of_Merit'),
-            'AWS_Figure_Of_Merit': datablock.get('AWS_Figure_Of_Merit'),
-            'Nersc_Figure_Of_Merit': datablock.get('Nersc_Figure_Of_Merit')
-        }
-        fom_entries = self.shortlist_entries(foms)
-        self.logger.debug('Figure of Merits')
-        self.logger.debug(fom_entries)
+            # Get the jobs dataframe
+            jobs_df = datablock.get('job_manifests')
+            # Get the job clusters dataframe
+            job_clusters_df = datablock.get('job_clusters')
+            # Get HTCondor slots dataframe
+            slots_df = datablock.get('startd_manifests')
 
-        # Get the jobs dataframe
-        jobs_df = datablock.get('job_manifests')
-        # Get the job clusters dataframe
-        job_clusters_df = datablock.get('job_clusters')
-        # Get HTCondor slots dataframe
-        slots_df = datablock.get('startd_manifests')
+            #self.logger.info(job_clusters_df)
+            for index, row in job_clusters_df.iterrows():
+                # Each job bucket represents a frontend group equivalent
+                # For every job bucket figure out how many glideins to request
+                # at which entry (i.e entries matching entry query expressions)
 
-        for index, row in job_clusters_df.iterrows():
-            # Each job bucket represents a frontend group equivalent
-            # For every job bucket figure out how many glideins to request at
-            # which entry (i.e entries matching entry query expressions)
+                self.logger.info('--------------------------------------------')
+                fe_group = row.get('Frontend_Group')
 
-            fe_group = row.get('frontend_group')
-            job_query = row.get('job_bucket_query')
-            match_exp = ' or '.join(row.get('job_bucket_query'))
+                self.logger.info('Processing glidein requests for the FE Group: %s' % fe_group)
+                job_query = row.get('Job_Bucket_Criteria_Expr')
+                self.logger.info('Frontend Group %s job query: %s' % (fe_group, job_query))
+                match_exp = ' or '.join(row.get('Site_Bucket_Criteria_Expr'))
+                self.logger.info('Frontend Group %s site matching expression : %s' % (fe_group, match_exp))
+                self.logger.info('--------------------------------------------')
 
-            self.logger.log('-------------------------------------------------')
-            self.logger.log('Processing FE Group: %s' % fe_group)
-            self.logger.log('Processing job query: %s' % job_query)
-            self.logger.log('Matching expression : %s' % match_exp)
-            self.logger.log('-------------------------------------------------')
+                #self.logger.info(jobs_df.columns.values)
+                #self.logger.info('----> Name: %s' % entries.get('Name'))
+                #self.logger.info('----> GLIDEIN_Max_Walltime: %s' % entries.get('GLIDEIN_Max_Walltime'))
+                #self.logger.info('----> GLIDEIN_CPUS: %s' % entries.get('GLIDEIN_CPUS'))
+                #self.logger.info('----> GLIDEIN_Supported_VOs: %s' % entries.get('GLIDEIN_Supported_VOs'))
+                #matched_entries = pandas.DataFrame(entries).query(match_exp)
+                matched_entries = entries.query(match_exp)
 
-            matched_entries = entries.query(match_exp)
+                # Get the Frontend element object. Currently FOM.
+                gfe = glide_frontend_element.get_gfe_obj(
+                    fe_group, self.acct_group, fe_cfg)
 
-            # Get the Frontend element object. Currently FOM.
-            gfe = glide_frontend_element.get_gfe_obj(
-                fe_group, self.acct_group, fe_cfg)
-
-            # Generate glideclient and glideclientglobal manifests
-            # for this bucket/frontend group
-            group_manifests = glide_frontend_element.generate_glidein_requests(
-                jobs_df, job_clusters_df, slots_df, matched_entries,
-                factory_globals,
-                job_filter=job_query, fom_entries=fom_entries)
-            manifests = merge_requests(manifests, group_manifests)
+                # Generate glideclient and glideclientglobal manifests
+                # for this bucket/frontend group
+                group_manifests = \
+                    gfe.generate_glidein_requests(
+                        #jobs_df, job_clusters_df, slots_df, matched_entries,
+                        jobs_df, slots_df, matched_entries, factory_globals,
+                        job_filter=job_query, fom_entries=fom_entries)
+                manifests = self.merge_requests(manifests, group_manifests)
+        except:
+            self.logger.error('Error generating glidein requests: %s' % traceback.format_exc())
+            raise
 
         return manifests
 
