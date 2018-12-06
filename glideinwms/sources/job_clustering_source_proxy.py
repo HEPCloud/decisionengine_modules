@@ -1,21 +1,19 @@
 #!/usr/bin/python
+
 import argparse
 import pprint
-import pandas
-import numpy
 
-from decisionengine_modules.htcondor.sources import source
+from decisionengine.framework.modules import SourceProxy
 
 
-PRODUCES = ['factoryglobal_manifests']
+PRODUCES = ['job_clusters']
 
 
-class FactoryGlobalManifests(source.ResourceManifests):
+class JobClusteringSourceProxy(SourceProxy.SourceProxy):
 
-    def __init__(self, *args, **kwargs):
-        super(FactoryGlobalManifests, self).__init__(*args, **kwargs)
-        self.constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % self.constraint
-        self.subsystem_name = 'any'
+
+    def __init__(self, config):
+        super(JobClusteringSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -26,7 +24,16 @@ class FactoryGlobalManifests(source.ResourceManifests):
 
 
     def acquire(self):
-        return {PRODUCES[0]: self.load()}
+        """
+        Acquire factory entries from the factory collector
+        and return as pandas frame
+        :rtype: :obj:`~pd.DataFrame`
+        """
+
+        job_clusters = super(JobClusteringSourceProxy, self).acquire()
+        if not set(PRODUCES).issubset(set(job_clusters.keys())):
+            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
+        return job_clusters
 
 
 def module_config_template():
@@ -35,14 +42,15 @@ def module_config_template():
     """
 
     template = {
-        'factoryglobal_manifests': {
-            'module': 'decisionengine_modules.glideinwms.sources.factory_client',
-            'name': 'FactoryGlobalManifests',
+        'job_categorization': {
+            'module': 'decisionengine_modules.glideinwms.sources.job_clustering_source_proxy',
+            'name': 'JobClusteringSourceProxy',
             'parameters': {
-                'collector_host': 'factory_collector.com',
-                'condor_config': '/path/to/condor_config',
-                'classad_attrs': [],
-            }
+                'channel_name': 'source_channel_name',
+                'Dataproducts': PRODUCES,
+                'retries': '<number of retries to acquire data>',
+                'retry_timeout': '<retry timeout>'
+            },
         }
     }
     print('Entry in channel configuration')

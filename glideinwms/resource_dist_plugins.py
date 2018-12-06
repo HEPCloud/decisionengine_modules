@@ -54,9 +54,9 @@ class FOMOrderPlugin(ResourceOrderPlugin):
     def __init__(self, resources):
         self.resource_fom_column_map = {
             'Grid_Figure_Of_Merit': 'Grid_Figure_Of_Merit',
-            'GCE_Figure_Of_Merit': 'GCE_Figure_Of_Merit',
+            'GCE_Figure_Of_Merit': 'FigureOfMerit',
             'AWS_Figure_Of_Merit': 'AWS_Figure_Of_Merit',
-            'Nersc_Figure_Of_Merit': 'Nersc_Figure_Of_Merit'
+            'Nersc_Figure_Of_Merit': 'FigureOfMerit'
         }
         ResourceOrderPlugin.__init__(self, resources)
 
@@ -67,18 +67,21 @@ class FOMOrderPlugin(ResourceOrderPlugin):
 
         for rss in self.resource_fom_column_map:
             fom_df = self.resources.get(rss)
+            logger.info('Ordering resources based on %s' % rss)
             if (fom_df is not None) and (fom_df.empty is False):
                 # Create a new dataframe with just EntryName and FOM
                 df = fom_df[['EntryName', self.resource_fom_column_map[rss]]]
                 # Rename the entry type specific FOM columns to just 'fom'
-                df = df.rename(columns={self.resource_fom_column_map[rss]: 'fom'})
+                df = df.rename(columns={self.resource_fom_column_map[rss]: 'FOM'})
                 # Append the results
                 rss_foms = rss_foms.append(df)
+            else:
+                logger.info('%s does not have any entries to order' % rss)
         try:
             self._ordered_resources = rss_foms.sort_values(
-                by=['fom'], ascending=ascending).reset_index(drop=True)
+                by=['FOM'], ascending=ascending).reset_index(drop=True)
         except KeyError as e:
-            logger.error('Unable to find Figure of Merrit "fom" in the dataframe columns %s' % list(self.resources.columns))
+            logger.error('Unable to find Figure of Merrit "FOM" in the dataframe columns %s' % list(self.resources.columns))
 
 
     def eligible_resources(self, constraint=None, limit=None):

@@ -1,21 +1,17 @@
 #!/usr/bin/python
 import argparse
 import pprint
-import pandas
-import numpy
 
-from decisionengine_modules.htcondor.sources import source
+from decisionengine.framework.modules import SourceProxy
 
 
-PRODUCES = ['factoryglobal_manifests']
+PRODUCES = ['job_manifests']
 
 
-class FactoryGlobalManifests(source.ResourceManifests):
+class JobQSourceProxy(SourceProxy.SourceProxy):
 
-    def __init__(self, *args, **kwargs):
-        super(FactoryGlobalManifests, self).__init__(*args, **kwargs)
-        self.constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % self.constraint
-        self.subsystem_name = 'any'
+    def __init__(self, config):
+        super(JobQSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -26,7 +22,15 @@ class FactoryGlobalManifests(source.ResourceManifests):
 
 
     def acquire(self):
-        return {PRODUCES[0]: self.load()}
+        """
+        Acquire jobs from the HTCondor Schedd
+        :rtype: :obj:`~pd.DataFrame`
+        """
+        job_manifests = super(JobQSourceProxy, self).acquire()
+        if not set(PRODUCES).issubset(set(job_manifests.keys())):
+            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
+        return job_manifests
+
 
 
 def module_config_template():
@@ -35,13 +39,14 @@ def module_config_template():
     """
 
     template = {
-        'factoryglobal_manifests': {
-            'module': 'decisionengine_modules.glideinwms.sources.factory_client',
-            'name': 'FactoryGlobalManifests',
+        'job_manifests': {
+            'module': 'decisionengine_modules.htcondor.sources.job_q_source_proxy',
+            'name': 'JobQSourceProxy',
             'parameters': {
-                'collector_host': 'factory_collector.com',
-                'condor_config': '/path/to/condor_config',
-                'classad_attrs': [],
+                'channel_name': 'source_channel_name',
+                'Dataproducts': PRODUCES,
+                'retries': '<number of retries to acquire data>',
+                'retry_timeout': '<retry timeout>'
             }
         }
     }

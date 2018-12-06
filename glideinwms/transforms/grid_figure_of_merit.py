@@ -10,6 +10,7 @@ CONSUMES = ['Factory_Entries_Grid']
 
 PRODUCES = ['Grid_Figure_Of_Merit']
 
+ATTR_ENTRYNAME = 'EntryName'
 
 class GridFigureOfMerit(Transform.Transform):
 
@@ -25,8 +26,8 @@ class GridFigureOfMerit(Transform.Transform):
         Grid sites FOM are straight up assumed as 0 for now
         """
 
-        entries = datablock.get('Factory_Entries_Grid', pandas.Series())
-        fom_df = pandas.DataFrame({'EntryName': entries['GLIDEIN_Entry_Name']})
+        entries = datablock.get('Factory_Entries_Grid', default=pandas.DataFrame({ATTR_ENTRYNAME: []}))
+        fom_df = pandas.DataFrame({ATTR_ENTRYNAME: entries['EntryName']})
         # FOM for grid entries is 0
         fom_df['Grid_Figure_Of_Merit'] = 0
         return {PRODUCES[0]: fom_df}
@@ -47,7 +48,7 @@ def module_config_template():
 
     template = {
         "GridFigureOfMerit": {
-           "module":  "modules.glideinwms.transforms.grid_figure_of_merit",
+           "module":  "decisionengine_modules.glideinwms.transforms.grid_figure_of_merit",
            "name":  "GridFigureOfMerit",
            "parameters": { },
         }

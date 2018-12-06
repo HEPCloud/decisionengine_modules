@@ -1,23 +1,29 @@
 #!/usr/bin/python
 
+import os.path
 import argparse
 import pprint
 import pandas
+import traceback
 
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
-from decisionengine_modules.glideinwms.glide_frontend_element import GlideFrontendElement
+from decisionengine_modules.glideinwms import glide_frontend_element
+from decisionengine_modules.glideinwms import resource_dist_plugins
+
 
 PRODUCES = ['glideclientglobal_manifests', 'glideclient_manifests']
 
 CONSUMES = [
-    'gwms_fe_config', 'factoryglobal_manifests', 'job_manifests',
-    'Factory_Entries_LCF', 'startd_manifests', 'Factory_Entries_AWS'
+    'factoryglobal_manifests', 'job_manifests', 'job_clusters',
+    'Factory_Entries_LCF', 'startd_manifests', 'Factory_Entries_AWS',
+    'Grid_Figure_Of_Merit', 'GCE_Figure_Of_Merit', 'AWS_Figure_Of_Merit',
+    'Nersc_Figure_Of_Merit',
 ]
 
 SUPPORTED_ENTRY_TYPES = [
-    'Factory_Entries_LCF', 'Factory_Entries_AWS', 'Factory_Entries_Grid'
+    'Factory_Entries_LCF', 'Factory_Entries_AWS', 'Factory_Entries_Grid', 'Factory_Entries_GCE'
 ]
 
 # TODO: Extend to use following in future
@@ -41,6 +47,13 @@ class GlideinRequestManifests(Transform.Transform):
         self.job_filter = config.get('job_filter', 'ClusterId > 0')
         # FE config group to get settings from
         self.fe_group = config.get('fe_config_group', 'CMS')
+        # FOM Plugin
+        self.fom_resource_constraint = config.get('fom_resource_constraint')
+        self.fom_resource_limit = config.get('fom_resource_limit')
+        # Get the place where translated frontend config is located
+        self.de_frontend_configfile = config.get(
+            'de_frontend_config',
+            '/var/lib/gwms-frontend/vofrontend/de_frontend_config')
 
         self.logger = de_logger.get_logger()
 
@@ -69,28 +82,112 @@ class GlideinRequestManifests(Transform.Transform):
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
-        # Get the frontend config dict
-        fe_cfg = datablock.get('gwms_fe_config')
-        # Get factory global classad dataframe
-        factory_globals = datablock.get('factoryglobal_manifests')
-        # Initialize an empty DataFrame so we can copy factory entries
-        entries = pandas.DataFrame()
-        # Get factory entries dataframe for different type of entries
-        for et in SUPPORTED_ENTRY_TYPES:
-            entries = entries.append(datablock.get(et), ignore_index=True)
+        # Dict to be returned
+        manifests = {}
 
-        # Get the jobs dataframe
-        jobs_df = datablock.get('job_manifests')
-        # Get HTCondor slots dataframe
-        slots_df = datablock.get('startd_manifests')
+        try:
+            # Get the frontend config dict
+            fe_cfg = self.read_fe_config()
+            # Get factory global classad dataframe
+            factory_globals = datablock.get('factoryglobal_manifests')
+            # Initialize an empty DataFrame so we can copy factory entries
+            entries = pandas.DataFrame()
+            # Get factory entries dataframe for different type of entries
+            #for et in SUPPORTED_ENTRY_TYPES:
+            #    entries = entries.append(datablock.get(et), ignore_index=True)
+            #    pandas.concat(datablock.get(et), ignore_index=True)
+            entries = pandas.DataFrame(pandas.concat([datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True))
+            # Shortlisted entries using Figure of Merit
+            # TODO: This will be influenced once we can configure different
+            #       resource selection plugins. Currently supports FOM only.
+            foms = {
+                'Grid_Figure_Of_Merit': datablock.get('Grid_Figure_Of_Merit'),
+                'GCE_Figure_Of_Merit': datablock.get('GCE_Figure_Of_Merit'),
+                'AWS_Figure_Of_Merit': datablock.get('AWS_Figure_Of_Merit'),
+                'Nersc_Figure_Of_Merit': datablock.get('Nersc_Figure_Of_Merit')
+            }
+            fom_entries = self.shortlist_entries(foms)
+            self.logger.debug('Figure of Merits')
+            self.logger.debug(fom_entries)
 
-        glide_frontend_element = GlideFrontendElement(self.fe_group,
-                                                      self.acct_group, fe_cfg)
-        manifests = glide_frontend_element.generate_glidein_requests(
-            jobs_df, slots_df, entries, factory_globals,
-            job_filter=self.job_filter)
+            # Get the jobs dataframe
+            jobs_df = datablock.get('job_manifests')
+            # Get the job clusters dataframe
+            job_clusters_df = datablock.get('job_clusters')
+            # Get HTCondor slots dataframe
+            slots_df = datablock.get('startd_manifests')
+
+            #self.logger.info(job_clusters_df)
+            for index, row in job_clusters_df.iterrows():
+                # Each job bucket represents a frontend group equivalent
+                # For every job bucket figure out how many glideins to request
+                # at which entry (i.e entries matching entry query expressions)
+
+                self.logger.info('--------------------------------------------')
+                fe_group = row.get('Frontend_Group')
+
+                self.logger.info('Processing glidein requests for the FE Group: %s' % fe_group)
+                job_query = row.get('Job_Bucket_Criteria_Expr')
+                self.logger.info('Frontend Group %s job query: %s' % (fe_group, job_query))
+                match_exp = ' or '.join(row.get('Site_Bucket_Criteria_Expr'))
+                self.logger.info('Frontend Group %s site matching expression : %s' % (fe_group, match_exp))
+                self.logger.info('--------------------------------------------')
+
+                #self.logger.info(jobs_df.columns.values)
+                #self.logger.info('----> Name: %s' % entries.get('Name'))
+                #self.logger.info('----> GLIDEIN_Max_Walltime: %s' % entries.get('GLIDEIN_Max_Walltime'))
+                #self.logger.info('----> GLIDEIN_CPUS: %s' % entries.get('GLIDEIN_CPUS'))
+                #self.logger.info('----> GLIDEIN_Supported_VOs: %s' % entries.get('GLIDEIN_Supported_VOs'))
+                #matched_entries = pandas.DataFrame(entries).query(match_exp)
+                matched_entries = entries.query(match_exp)
+
+                # Get the Frontend element object. Currently FOM.
+                gfe = glide_frontend_element.get_gfe_obj(
+                    fe_group, self.acct_group, fe_cfg)
+
+                # Generate glideclient and glideclientglobal manifests
+                # for this bucket/frontend group
+                group_manifests = \
+                    gfe.generate_glidein_requests(
+                        #jobs_df, job_clusters_df, slots_df, matched_entries,
+                        jobs_df, slots_df, matched_entries, factory_globals,
+                        job_filter=job_query, fom_entries=fom_entries)
+                manifests = self.merge_requests(manifests, group_manifests)
+        except:
+            self.logger.error('Error generating glidein requests: %s' % traceback.format_exc())
+            raise
 
         return manifests
+
+
+    def merge_requests(self, manifests, group_manifests):
+        merged_manifests = {}
+        if manifests and group_manifests:
+            m_keys = set(manifests.keys())
+            g_keys = set(group_manifests.keys())
+            if m_keys != g_keys:
+                raise RuntimeError('Mismatch in manifest keys: %s, %s' % (m_keys, g_keys))
+            for key in m_keys:
+                merged_manifests[key] = manifests[key].append(group_manifests[key], ignore_index=True)
+        else:
+            merged_manifests = group_manifests
+        return merged_manifests
+
+
+    def read_fe_config(self):
+        if not os.path.isfile(self.de_frontend_configfile):
+            raise RuntimeError('Error reading Frontend config for DE %s. Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' % self.de_frontend_configfile)
+        fe_cfg = eval(open(self.de_frontend_configfile, 'r').read())
+        if not isinstance(fe_cfg, dict):
+            raise ValueError('Frontend config for DE in %s is invalid' % self.de_frontend_configfile)
+        return fe_cfg
+
+
+    def shortlist_entries(self, foms):
+        fom_plugin = resource_dist_plugins.FOMOrderPlugin(foms)
+        return fom_plugin.eligible_resources(
+                   constraint=self.fom_resource_constraint,
+                   limit=self.fom_resource_limit)
 
 
 def module_config_template():
