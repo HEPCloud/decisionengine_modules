@@ -8,10 +8,10 @@ from decisionengine.framework.modules import SourceProxy
 PRODUCES = ['job_manifests']
 
 
-class JobQ(SourceProxy.SourceProxy):
+class JobQSourceProxy(SourceProxy.SourceProxy):
 
     def __init__(self, config):
-        super(JobQ, self).__init__(config)
+        super(JobQSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -26,7 +26,7 @@ class JobQ(SourceProxy.SourceProxy):
         Acquire jobs from the HTCondor Schedd
         :rtype: :obj:`~pd.DataFrame`
         """
-        job_manifests = super(JobQ, self).acquire()
+        job_manifests = super(JobQSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(job_manifests.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return job_manifests
@@ -41,7 +41,7 @@ def module_config_template():
     template = {
         'job_manifests': {
             'module': 'decisionengine_modules.htcondor.sources.job_q_source_proxy',
-            'name': 'JobQ',
+            'name': 'JobQSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,

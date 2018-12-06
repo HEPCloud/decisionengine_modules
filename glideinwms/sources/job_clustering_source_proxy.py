@@ -9,11 +9,11 @@ from decisionengine.framework.modules import SourceProxy
 PRODUCES = ['job_clusters']
 
 
-class JobClustering(SourceProxy.SourceProxy):
+class JobClusteringSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(JobClustering, self).__init__(config)
+        super(JobClusteringSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -30,7 +30,7 @@ class JobClustering(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        job_clusters = super(JobClustering, self).acquire()
+        job_clusters = super(JobClusteringSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(job_clusters.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return job_clusters
@@ -44,7 +44,7 @@ def module_config_template():
     template = {
         'job_categorization': {
             'module': 'decisionengine_modules.glideinwms.sources.job_clustering_source_proxy',
-            'name': 'JobClustering',
+            'name': 'JobClusteringSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,

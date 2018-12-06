@@ -12,11 +12,11 @@ PRODUCES = [
 ]
 
 
-class FactoryEntries(SourceProxy.SourceProxy):
+class FactoryEntriesSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(FactoryEntries, self).__init__(config)
+        super(FactoryEntriesSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -33,7 +33,7 @@ class FactoryEntries(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        entries = super(FactoryEntries, self).acquire()
+        entries = super(FactoryEntriesSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(entries.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return entries
@@ -47,7 +47,7 @@ def module_config_template():
     template = {
         'factory_entries_source_proxy': {
             'module': 'decisionengine_modules.glideinwms.sources.factory_entries_source_proxy',
-            'name': 'FactoryEntries',
+            'name': 'FactoryEntriesSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,
