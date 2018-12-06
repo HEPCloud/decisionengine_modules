@@ -58,11 +58,11 @@ class GceOccupancy(Source.Source):
                 for instance in result.get("items", []):
                     instance_type = instance.get("machineType").split('/').pop()
                     if instance.get("status") == "RUNNING":
-                        d.append({"instance_type": instance_type,
+                        d.append({"InstanceType": instance_type,
                                   "AvailabilityZone": zone,
                                   "Running": 1})
                     else:
-                        d.append({"instance_type": instance_type,
+                        d.append({"InstanceType": instance_type,
                                   "AvailabilityZone": zone,
                                   "Running": 0})
 
@@ -70,13 +70,13 @@ class GceOccupancy(Source.Source):
                     break
 
         df = pd.DataFrame(d)
-        df['Occupancy'] = df.groupby(['instance_type',
+        df['Occupancy'] = df.groupby(['InstanceType',
                                       'AvailabilityZone'])['Running'].transform('sum')
 
-        df = df.drop_duplicates(subset=['instance_type',
+        df = df.drop_duplicates(subset=['InstanceType',
                                         'AvailabilityZone'])
 
-        return {PRODUCES[0]: df.filter(['instance_type',
+        return {PRODUCES[0]: df.filter(['InstanceType',
                                         'AvailabilityZone',
                                         'Occupancy'])}
 
