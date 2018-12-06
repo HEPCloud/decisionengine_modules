@@ -4,20 +4,15 @@ Publishes price / performance data
 
 """
 import argparse
-import os
-import copy
 import pprint
-import pandas as pd
 
 from decisionengine_modules.graphite.publishers.generic_publisher import GenericPublisher as publisher
-import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.dataspace.datablock as datablock
-import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 from decisionengine.framework.modules import de_logger
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.glideinwms"
-CONSUMES=['job_clusters']
+DEFAULT_GRAPHITE_CONTEXT = "hepcloud.de.glideinwms"
+CONSUMES = ['job_clusters']
 
 class JobClusteringPublisher(publisher):
     def __init__(self, config):
@@ -30,7 +25,7 @@ class JobClusteringPublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.job_cluster'%(graphite.sanitize_key(row['Job_Bucket_Criteria_Expr'])))
+            key = ('%s.job_cluster' % (graphite.sanitize_key(row['Frontend_Group'])))
             d[key] = row['Totals']
         return self.graphite_context_header, d
 
