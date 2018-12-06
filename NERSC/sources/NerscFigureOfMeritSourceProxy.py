@@ -9,11 +9,11 @@ from decisionengine.framework.modules import SourceProxy
 PRODUCES = ['Nersc_Figure_Of_Merit']
 
 
-class NerscFigureOfMerit(SourceProxy.SourceProxy):
+class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(NerscFigureOfMerit, self).__init__(config)
+        super(NerscFigureOfMeritSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -27,7 +27,7 @@ class NerscFigureOfMerit(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(NerscFigureOfMerit, self).acquire()
+        fom = super(NerscFigureOfMeritSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'Nersc_Figure_Of_Merit': fom.get('Nersc_Figure_Of_Merit')}
@@ -39,9 +39,9 @@ def module_config_template():
     """
 
     template = {
-        'NerscFigureOfMerit': {
-            'module': 'decisionengine_modules.NERSC.sources.NerscFigureOfMerit',
-            'name': 'NerscFigureOfMerit',
+        'NerscFigureOfMeritSourceProxy': {
+            'module': 'decisionengine_modules.NERSC.sources.NerscFigureOfMeritSourceProxy',
+            'name': 'NerscFigureOfMeritSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,

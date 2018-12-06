@@ -11,11 +11,11 @@ from decisionengine.framework.modules import SourceProxy
 PRODUCES = ['AWS_Figure_Of_Merit']
 
 
-class FigureOfMerit(SourceProxy.SourceProxy):
+class FigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(FigureOfMerit, self).__init__(config)
+        super(FigureOfMeritSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -29,7 +29,7 @@ class FigureOfMerit(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(FigureOfMerit, self).acquire()
+        fom = super(FigureOfMeritSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'AWS_Figure_Of_Merit': fom.get('AWS_Figure_Of_Merit')}
@@ -41,9 +41,9 @@ def module_config_template():
     """
 
     template = {
-        'FigureOfMerit': {
+        'FigureOfMeritSourceProxy': {
             'module': 'decisionengine_modules.AWS.sources.FigureOfMeritSourceProxy',
-            'name': 'FigureOfMerit',
+            'name': 'FigureOfMeritSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,

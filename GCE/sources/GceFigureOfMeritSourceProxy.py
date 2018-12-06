@@ -9,11 +9,11 @@ from decisionengine.framework.modules import SourceProxy
 PRODUCES = ['GCE_Figure_Of_Merit']
 
 
-class GceFigureOfMerit(SourceProxy.SourceProxy):
+class GceFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(GceFigureOfMerit, self).__init__(config)
+        super(GceFigureOfMeritSourceProxy, self).__init__(config)
 
 
     def acquire(self):
@@ -23,7 +23,7 @@ class GceFigureOfMerit(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(GceFigureOfMerit, self).acquire()
+        fom = super(GceFigureOfMeritSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'GCE_Figure_Of_Merit': fom.get('GCE_Figure_Of_Merit')}
@@ -39,9 +39,9 @@ def module_config_template():
     """
 
     template = {
-        'GceFigureOfMerit': {
+        'GceFigureOfMeritSourceProxy': {
             'module': 'decisionengine_modules.GCE.sources.GceFigureOfMeritSourceProxy',
-            'name': 'GceFigureOfMerit',
+            'name': 'GceFigureOfMeritSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,

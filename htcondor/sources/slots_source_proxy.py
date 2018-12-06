@@ -8,11 +8,11 @@ from decisionengine.framework.modules import SourceProxy
 PRODUCES = ['startd_manifests']
 
 
-class StartdManifests(SourceProxy.SourceProxy):
+class StartdManifestsSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(StartdManifests, self).__init__(config)
+        super(StartdManifestsSourceProxy, self).__init__(config)
 
 
     def produces(self):
@@ -23,7 +23,7 @@ class StartdManifests(SourceProxy.SourceProxy):
 
 
     def acquire(self):
-        startd_manifests = super(StartdManifests, self).acquire()
+        startd_manifests = super(StartdManifestsSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(startd_manifests.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return startd_manifests
@@ -37,7 +37,7 @@ def module_config_template():
     template = {
         'startd_manifests': {
             'module': 'decisionengine_modules.htcondor.sources.slots_source_proxy',
-            'name': 'StartdManifests',
+            'name': 'StartdManifestsSourceProxy',
             'parameters': {
                 'channel_name': 'source_channel_name',
                 'Dataproducts': PRODUCES,
