@@ -5,6 +5,7 @@ import argparse
 import os
 import pprint
 import pandas as pd
+import time
 
 from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
@@ -13,72 +14,66 @@ from decisionengine.framework.modules import Source
 
 PRODUCES = ["GCE_Occupancy"]
 
+_MAX_RETRIES = 10
+_RETRY_TIMEOUT = 10
+
 
 class GceOccupancy(Source.Source):
 
     def __init__(self, config):
         super(GceOccupancy, self).__init__(config)
-        self.project = config.get("project")
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config.get("credential")
+        self.project = config["project"]
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config["credential"]
         credentials = GoogleCredentials.get_application_default()
         self.client = discovery.build("compute", "v1", credentials=credentials)
+        self.max_retries = config.get("max_retries", _MAX_RETRIES)
+        self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 
     def produces(self, name_schema_id_list=None):
         return PRODUCES
 
-    def get_client(self):
+    def _get_client(self):
         return self.client
 
-    def get_zones(self):
-        zones = []
-        page_token = None
-        while True:
-            result = self.client.zones().list(project=self.project,
-                                              pageToken=page_token).execute()
-            page_token = result.pop("nextPageToken", None)
-            if "items" not in result:
-                break
-            zones += [x.get("name") for x in result.get("items", {})]
-            if page_token is None:
-                break
-        return zones
-
     def acquire(self):
-        d = []
-        zones = self.get_zones()
-        for zone in zones:
-            page_token = None
-            while True:
-                result = self.get_client().instances().list(project=self.project,
-                                                            zone=zone,
-                                                            pageToken=page_token).execute()
-                page_token = result.pop("nextPageToken", None)
-                if "items" not in result:
-                    break
-                for instance in result.get("items", []):
-                    instance_type = instance.get("machineType").split('/').pop()
-                    if instance.get("status") == "RUNNING":
-                        d.append({"InstanceType": instance_type,
-                                  "AvailabilityZone": zone,
-                                  "Running": 1})
-                    else:
-                        d.append({"InstanceType": instance_type,
-                                  "AvailabilityZone": zone,
-                                  "Running": 0})
+        tries = 0
+        while True:
+            try:
+                return self._acquire()
+            except RuntimeError:
+                raise
+            except Exception as e:
+                if tries < self.max_retries:
+                    tries += 1
+                    time.sleep(self.retry_timeout)
+                    continue
+                else:
+                    raise RuntimeError(str(e))
 
-                if page_token is None:
-                    break
+    def _acquire(self):
+        d = {}
+        request = self._get_client().instances().aggregatedList(project=self.project)
+        while request is not None:
+            response = request.execute()
+            for name, instances_scoped_list in response["items"].items():
+                if "instances" in instances_scoped_list:
+                    instances = instances_scoped_list.get("instances", [])
+                    for instance in instances:
+                        instance_type = instance.get("machineType").split("/").pop()
+                        zone = instance.get("zone").split("/").pop()
+                        status = instance.get("status")
+                        key = "{}:{}".format(instance_type,
+                                                zone)
+                        if status == "RUNNING":
+                            data = d.setdefault(key, {"InstanceType": instance_type,
+                                                      "AvailabilityZone": zone,
+                                                      "Occupancy": 0})
+                            data["Occupancy"] += 1
 
-        df = pd.DataFrame(d)
-        df['Occupancy'] = df.groupby(['InstanceType',
-                                      'AvailabilityZone'])['Running'].transform('sum')
-
-        df = df.drop_duplicates(subset=['InstanceType',
-                                        'AvailabilityZone'])
-
-        return {PRODUCES[0]: df.filter(['InstanceType',
-                                        'AvailabilityZone',
-                                        'Occupancy'])}
+            request = self._get_client().instances().aggregatedList_next(previous_request=request,
+                                                                         previous_response=response)
+        df = pd.DataFrame(d.values())
+        return {PRODUCES[0]: df}
 
 
 def module_config_template():

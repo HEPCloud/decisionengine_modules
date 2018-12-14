@@ -2,31 +2,43 @@
 Newt API interface
 """
 
-
-import json
-import logging
 import os
 import time
 import requests
 
-NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
+"""
+Newt base URL. When not specified in constructor this 
+URL will be used. 
+"""
+_NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
+
 
 class Newt(object):
 
-    def __init__(self, password_file, newt_base_url = None):
+    def __init__(self, password_file, newt_base_url=None):
+        """
+        Constructor that takes path to password file and 
+        optional Newt base URL
+        :param password_file: path to password file
+        :param newt_base_url: Newt base URL (default will be _NEWT_BASE_URL)
+        """
         if not password_file:
             raise RuntimeError("No password file specified")
         if not os.path.exists(password_file):
             raise RuntimeError("password file '{}' does not exist".
                                format(password_file))
         self.password_file = password_file
-        self.newt_base_url = newt_base_url if newt_base_url else NEWT_BASE_URL
+        self.newt_base_url = newt_base_url if newt_base_url else _NEWT_BASE_URL
         if not self.newt_base_url.endswith("/"):
             self.newt_base_url += "/"
         self.session = requests.Session()
         self.expiration_time = time.time()
 
-    def login(self):
+    def _login(self):
+        """
+        Establishes newt Session 
+        :return: void
+        """
         if self.expiration_time < time.time() + 3600:
             login_url = self.newt_base_url + "login/"
             postfields = None
@@ -37,19 +49,27 @@ class Newt(object):
             response_dict = r.json()
             if not response_dict.get("auth"):
                 raise RuntimeError("Failed to establish session to {}".format(login_url))
-            self.expiration_time  = response_dict.get('session_lifetime') + time.time()
+            self.expiration_time = response_dict.get('session_lifetime') + time.time()
 
     def get_usage(self, username):
-        if self.expiration_time < time.time() + 3600:
-            self.login()
+        """
+        Returns allocation and usage for the given user
+        :param username: string username 
+        :return: json containing allocation and usage information for a given user 
+        """
+        self._login()
         user_url = self.newt_base_url + "account/usage/user/" + username
         r = self.session.get(user_url)
         r.raise_for_status()
         return r.json()
 
-    def get_status(self, system = None):
-        if self.expiration_time < time.time() + 3600:
-            self.login()
+    def get_status(self, system=None):
+        """
+        Returns system status for a given system (if provided) or all systems
+        :param system: string name of the system (optional)
+        :return: json containing system status 
+        """
+        self._login()
         status_url = self.newt_base_url + "status/"
         if system:
             status_url += system
@@ -58,9 +78,15 @@ class Newt(object):
         return r.json()
 
     def get_queue(self, system, query=None):
-        if self.expiration_time < time.time() + 3600:
-            self.login()
-        queue_url = self.newt_base_url + "queue/"  + system + "/"
+        """
+        Returns information about queues controlled by 
+        optional query name parameter
+        :param system: string system name (like 'cori', 'edison' ..)
+        :param query: string query (optional)
+        :return: json containing queue information
+        """
+        self._login()
+        queue_url = self.newt_base_url + "queue/" + system + "/"
         if query:
             queue_url += query
         r = self.session.get(queue_url)
