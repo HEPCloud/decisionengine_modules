@@ -3,14 +3,17 @@ Get job info from Nersc
 """
 import argparse
 import pprint
-
 import pandas as pd
+import time
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.NERSC.util import newt
 import decisionengine.framework.modules.de_logger as de_logger
 
 PRODUCES = ['Nersc_Job_Info']
+
+_MAX_RETRIES = 10
+_RETRY_TIMEOUT = 10
 
 
 class NerscJobInfo(Source.Source):
@@ -24,26 +27,29 @@ class NerscJobInfo(Source.Source):
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
         self.newt = newt.Newt(config.get('passwd_file'))
-        self.raw_results = None
-        self.pandas_frame = None
         self.logger = de_logger.get_logger()
+        self.max_retries = config.get("max_retries", _MAX_RETRIES)
+        self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 
-    def send_query(self):
-        self.raw_results = []
-        # default, query edison and cori
+    def _acquire(self):
+        """
+        Helper method that does heavy lifting. 
+        Called from acquire 
+        :return: `dict`
+        """
+        raw_results = []
+        # By default, query edison and cori
         self.constraints['machines'] = self.constraints.get('machines',
                                                             ['edison', 'cori'])
         # get all systems that are up
         up_machines = filter(lambda x: x['status'] == 'up', self.newt.get_status())
         if not up_machines:
             self.logger.info("All machines at NERSC are down")
-            return
         # filter machines that are up
         machines = filter(lambda x: x in [y["system"] for y in up_machines],
                           self.constraints.get('machines'))
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
-            return
         # filter results based on constraints specified in newt_keys dictionary
         newt_keys = self.constraints.get("newt_keys", {})
         for m in machines:
@@ -52,13 +58,9 @@ class NerscJobInfo(Source.Source):
                 if v:
                     values = filter(lambda x: x[k] in v, values)
             if values:
-                self.raw_results.extend(values)
-
-    def raw_results_to_pandas_frame(self):
-        """
-        Convert the acquired external info into Pandas Frame format
-        """
-        self.pandas_frame = pd.DataFrame(self.raw_results)
+                raw_results.extend(values)
+        pandas_frame = pd.DataFrame(raw_results)
+        return {PRODUCES[0]: pandas_frame}
 
     def produces(self, name_schema_id_list=None):
         """
@@ -74,9 +76,19 @@ class NerscJobInfo(Source.Source):
         Acquire NERSC job info and return as pandas frame
         :rtype: :obj:`~pd.DataFrame`
         """
-        self.send_query()
-        self.raw_results_to_pandas_frame()
-        return {PRODUCES[0]: self.pandas_frame}
+        tries = 0
+        while True:
+            try:
+                return self._acquire()
+            except RuntimeError:
+                raise
+            except Exception as e:
+                if tries < self.max_retries:
+                    tries += 1
+                    time.sleep(self.retry_timeout)
+                    continue
+                else:
+                    raise RuntimeError(str(e))
 
 
 def module_config_template():
@@ -90,6 +102,8 @@ def module_config_template():
             'name': 'NerscJobInfo',
             'parameters': {
                 'passwd_file': '/path/to/password_file',
+                'max_retries': 10,
+                'retry_timeout': 10,
                 'constraints': {
                     'machines': ["edison", "cori"],
                     'newt_keys': {
