@@ -7,8 +7,8 @@ import pprint
 import pandas as pd
 import time
 
-from oauth2client.client import GoogleCredentials
-from googleapiclient import discovery
+import google.auth
+import googleapiclient.discovery
 
 from decisionengine.framework.modules import Source
 
@@ -22,10 +22,9 @@ class GceOccupancy(Source.Source):
 
     def __init__(self, config):
         super(GceOccupancy, self).__init__(config)
-        self.project = config["project"]
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config["credential"]
-        credentials = GoogleCredentials.get_application_default()
-        self.client = discovery.build("compute", "v1", credentials=credentials)
+        credentials, self.project = google.auth.default()
+        self.client = googleapiclient.discovery.build("compute", "v1", credentials=credentials)
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 
@@ -85,8 +84,9 @@ def module_config_template():
             'module': 'decisionengine_modules.GCE.sources.GceOccupancy',
             'name': 'GceOccupancy',
             'parameters': {
-                'project': 'hepcloud-fnal',
-                'credential': '/etc/gwms-frontend/credentials/monitoring.json',
+               'credential': '/etc/gwms-frontend/credentials/monitoring.json',
+               'max_retries': 10,
+               'retry_timeout': 10,
             }
         }
     }
