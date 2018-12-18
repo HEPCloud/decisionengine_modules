@@ -10,12 +10,13 @@ import os
 import copy
 import numpy as np
 import pandas as pd
+import decisionengine.framework.modules.de_logger as de_logger
 
 from decisionengine.framework.modules import Source
 import DEAccountContants
 import pprint
 
-PRODUCES = ['AWS_Billing_Info']
+PRODUCES = ['AWS_Billing_Info', 'AWS_Billing_Rate']
 
 class AWSBillCalculator(object):
     """
@@ -24,6 +25,7 @@ class AWSBillCalculator(object):
 
     def __init__(self, accountName, accountProfileName, accountNumber, lastKnownBillDate, balanceAtDate, applyDiscount, sumToDate = None, tmpDirForBuillingFiles = '.', verboseFlag = True, debugFlag = False):
         # Configuration parameters
+        self.logger = de_logger.get_logger()
         self.accountName = accountName
         self.accountProfileName = accountProfileName
         self.accountNumber = accountNumber
@@ -589,6 +591,7 @@ class AWSBillCalculator(object):
 class BillingInfo(Source.Source):
     def __init__(self, *args, **kwargs):
         acconts_config_file = args[0]['billing_configuration']
+        self.logger = de_logger.get_logger()
         self.billing_files_location = args[0]['dst_dir_for_s3_files']
         # Load kown accounts configuration
         account_dict = DEAccountContants.load_constants(acconts_config_file)
@@ -617,8 +620,13 @@ class BillingInfo(Source.Source):
 
         # get data for all accounts
         d = {}
+       
+#       S. Timm move the data initialization statement outside the for loop
+        data = []
+        datarate = []
         for i in self.accounts:
-            data = []
+#           S. timm move the data = [] statement outside the for loop.
+#            data = []
             try:
                 calculator = AWSBillCalculator(accountName = i.accountName,
                                                accountProfileName = i.credentialsProfileName,
@@ -628,15 +636,62 @@ class BillingInfo(Source.Source):
                                                balanceAtDate = i.balanceAtDate,
                                                applyDiscount = i.applyDiscount,
                                                tmpDirForBuillingFiles = self.billing_files_location,
-                                               verboseFlag = False)
+                                               verboseFlag = True)
                 lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
-                data += calculator.CorrectedMonthlyBillSummaryList
+                self.logger.debug('lastStartDateBilledConsideredDatetime \n : %s' %(lastStartDateBilledConsideredDatetime))
+                self.logger.debug('CorrectedBillSummaryDict \n : %s' %(CorrectedBillSummaryDict))
+                self.logger.debug('CorrectedMonthlyBillSummaryList \n  : %s' %(calculator.CorrectedMonthlyBillSummaryList,))
+#               S. Timm
+#               The information in CorrectedBillSummaryDict above is what we need, now it is only a matter of plumbing to get it into pandas
+#               data is a list, CorrectedBillSummaryDict is a dict, so we have to append it as a list of dict.
+#               data += calculator.CorrectedMonthlyBillSummaryList
+                data += [CorrectedBillSummaryDict]               
+##
+##              This is the code to calculate 6hr and 24hr spend rate
+                dateNow = datetime.datetime.today() 
+#               Get cost in the last 6 hours
+                sixHoursBeforeLastDateBilledDatetime = lastStartDateBilledConsideredDatetime - datetime.timedelta(hours=6)
+                calculator.setLastKnownBillDate(sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M'))
+                newLastStartDateBilledDatetime, CorrectedBillSummarySixHoursBeforeDict = calculator.CalculateBill()
+           
+                costInLastSixHours = CorrectedBillSummarySixHoursBeforeDict['Total']
+                costRatePerHourInLastSixHours = costInLastSixHours / 6
+#               Get cost in the last 24 hours
+                oneDayBeforeLastDateBilledDatetime = lastStartDateBilledConsideredDatetime - datetime.timedelta(hours=24)
+                calculator.setLastKnownBillDate(oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M'))
+                newLastStartDateBilledDatetime, CorrectedBillSummaryOneDayBeforeDict = calculator.CalculateBill()
+
+                costInLastDay = CorrectedBillSummaryOneDayBeforeDict['Total']
+                costRatePerHourInLastDay = costInLastDay / 24
+                dataDelay = int((time.mktime(dateNow.timetuple()) - time.mktime(lastStartDateBilledConsideredDatetime.timetuple())) / 3600)
+
+                dataratedict= { 'accountName': i.accountName, 'lastStartDateBilledConsideredDatetime': lastStartDateBilledConsideredDatetime, 'dataDelay': dataDelay, 'costInLastSixHours': costInLastSixHours, 'costInLastDay': costInLastDay, 'costRatePerHourInLastSixHours': costRatePerHourInLastSixHours, 'costRatePerHourInLastDay': costRatePerHourInLastDay}
+                datarate+= [dataratedict]
+                if calculator.verboseFlag:
+                    print '---'
+                    print 'Alarm Computation for %s Account Finished at %s' % ( calculator.accountName, time.strftime("%c") )
+                    print
+                    print 'Last Start Date Billed Considered: ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M')
+                    print 'Now', dateNow.strftime('%m/%d/%y %H:%M')
+                    print 'delay between now and Last Start Date Billed Considered in hours', dataDelay
+                    print 'Six hours before that: ' + sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')
+                    print 'One day before that: ' + oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')
+                    print 'Adjusted Total Now from Date of Last Known Balance: $', CorrectedBillSummaryDict['Total']
+                    print
+                    print 'Cost In the Last Six Hours: $', costInLastSixHours
+                    print 'Cost Rate Per Hour In the Last Six Hours: $', costRatePerHourInLastSixHours, ' / h'
+                    print
+                    print 'Cost In the Last Day: $', costInLastDay
+                    print 'Cost Rate Per Hour In the Last Day: $', costRatePerHourInLastDay, ' / h'
+                    print '---'
+                    print
+
             except Exception, detail:
                 print detail
             except:
                 pass
 
-        return { PRODUCES[0]: pd.DataFrame(data) }
+        return { PRODUCES[0]: pd.DataFrame(data), PRODUCES[1]: pd.DataFrame(datarate) }
 
 def module_config_template():
     """
