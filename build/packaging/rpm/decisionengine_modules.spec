@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 0.3.6
-%define release 0.5.rc5
+%define release 1
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -119,6 +119,7 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %{python_sitelib}/decisionengine_modules/load_config.pyo
 %{python_sitelib}/decisionengine_modules/load_config.pyc
 %{python_sitelib}/decisionengine_modules/LICENSE.txt
+%{python_sitelib}/decisionengine_modules/util
 %{python_sitelib}/decisionengine_modules/AWS
 %{python_sitelib}/decisionengine_modules/glideinwms
 %{python_sitelib}/decisionengine_modules/htcondor
@@ -134,6 +135,11 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+* Wed Dec 19 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.6-1
+- Replace deprecated API oauth2client with google-auth
+- Bug fixes
+- Improved code quality
+
 * Wed Oct 31 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.5-0.1
 - Added GCE publishers
 - Changes to Job clustering config
