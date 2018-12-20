@@ -122,29 +122,29 @@ class AWSBillCalculator(object):
         CorrectedBillSummaryDict = self._applyBillCorrections(BillSummaryDict);
 
         if self.verboseFlag:
-            print '---'
-            print 'Bill Computation for %s Account Finished at %s' % ( self.accountName, time.strftime("%c") )
-            print
-            print 'Last Start Date Billed Considered : ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M')
-            print 'Last Known Balance :' + str(self.balanceAtDate)
-            print
-            print 'BillSummaryDict:'
-            print BillSummaryDict
-            print
-            print 'CorrectedBillSummaryDict'
-            print CorrectedBillSummaryDict
+            self.logger.debug( '---' )
+            self.logger.debug( 'Bill Computation for %s Account Finished at %s' % ( self.accountName, time.strftime("%c") ) )
+            self.logger.debug()
+            self.logger.debug( 'Last Start Date Billed Considered : ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M')) 
+            self.logger.debug( 'Last Known Balance :' + str(self.balanceAtDate)
+            self.logger.debug()
+            self.logger.debug( 'BillSummaryDict:' )
+            self.logger.debug( BillSummaryDict )
+            self.logger.debug()
+            self.logger.debug( 'CorrectedBillSummaryDict' )
+            self.logger.debug( CorrectedBillSummaryDict )
         if self.debugFlag:
-            print '---'
-            print 'Bill Computation for %s Account Finished at %s' % ( self.accountName, time.strftime("%c") )
-            print
-            print 'Last Start Date Billed Considered : ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M')
-            print 'Last Known Balance :' + str(self.balanceAtDate)
-            print
-            print 'BillSummaryDict:'
-            print BillSummaryDict
-            print
-            print 'CorrectedBillSummaryDict'
-            print CorrectedBillSummaryDict
+            self.logger.debug( '---' )
+            self.logger.debug( 'Bill Computation for %s Account Finished at %s' % ( self.accountName, time.strftime("%c") ) )
+            self.logger.debug()
+            self.logger.debug( 'Last Start Date Billed Considered : ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M'))
+            self.logger.debug( 'Last Known Balance :' + str(self.balanceAtDate))
+            self.logger.debug()
+            self.logger.debug( 'BillSummaryDict:')
+            self.logger.debug( BillSummaryDict )
+            self.logger.debug()
+            self.logger.debug( 'CorrectedBillSummaryDict')
+            self.logger.debug( CorrectedBillSummaryDict )
 
 
         return lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict
@@ -245,8 +245,8 @@ class AWSBillCalculator(object):
         role_AK_tk = response['Credentials']['SessionToken']
 
         if self.verboseFlag:
-            print
-            print 'Opening Role-based Session for account %s with temporary key for role %s' % (self.accountName, fullRoleNameString)
+            self.logger.debug()
+            self.logger.debug( 'Opening Role-based Session for account %s with temporary key for role %s' % (self.accountName, fullRoleNameString))
         session = Session(aws_access_key_id=role_AK_id, aws_secret_access_key=role_AK_sc, aws_session_token=role_AK_tk)
         return session
 
@@ -283,14 +283,14 @@ class AWSBillCalculator(object):
             lastKnownBillDateDatetime = self.lastKnownBillDate
 
         if self.verboseFlag or self.debugFlag:
-             print 'lastKnownBillDate ' +  self.lastKnownBillDate
+             self.logger.debug ( 'lastKnownBillDate ' +  self.lastKnownBillDate ) 
         fileNameForDownloadList = []
         previousFileForDownloadListDateTime = None
         previousFileNameForDownloadListString = None
         noFileNameMatchesFileNameIdentifier = True
         for filesDict in filesDictList:
            if self.verboseFlag or self.debugFlag:
-               print 'File in bucket ' + self.bucketBillingName + ' : ' +  filesDict['Key']
+               self.logger.debug ( 'File in bucket ' + self.bucketBillingName + ' : ' +  filesDict['Key'] )
            # Is the file a billing file?
            if billingFileMatch.search(filesDict['Key']) is None:
                continue
@@ -303,20 +303,20 @@ class AWSBillCalculator(object):
            date = dateMatch.group(0)
            billDateDatetime = datetime.datetime(*(time.strptime(date, '%Y-%m')[0:6]))
            if self.verboseFlag or self.debugFlag:
-               print 'Date extracted from file: ' + billDateDatetime.strftime('%m/%d/%y %H:%M')
+               self.logger.debug ( 'Date extracted from file: ' + billDateDatetime.strftime('%m/%d/%y %H:%M') )
 
            # Start by putting the current file and file start date in the previous list
            if not previousFileNameForDownloadListString:
                previousFileNameForDownloadListString = filesDict['Key']
                previousFileForDownloadListDateTime = billDateDatetime
                if self.debugFlag:
-                   print 'previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M')
-                   print 'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString
-                   print fileNameForDownloadList
-                   print 'previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M')
-                   print 'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString
-                   print fileNameForDownloadList
-                   print
+                   self.logger.debug ( 'previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
+                   self.logger.debug ( 'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString )
+                   self.logger.debug ( fileNameForDownloadList )
+                   self.logger.debug ( 'previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M') )
+                   self.logger.debug ( 'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString )
+                   self.logger.debug (  fileNameForDownloadList )
+                   self.logger.debug ()
                continue
 
            # if the last known bill date is past the start date of the previous file...
@@ -324,20 +324,20 @@ class AWSBillCalculator(object):
               lastKnownBillDateDatetime = previousFileForDownloadListDateTime
            if lastKnownBillDateDatetime > previousFileForDownloadListDateTime:
                if self.debugFlag:
-                   print 'lastKnownBillDateDatetime > previousFileForDownloadListDateTime: ' + lastKnownBillDateDatetime.strftime('%m/%d/%y %H:%M') + ' > ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M')
+                   self.logger.debug ( 'lastKnownBillDateDatetime > previousFileForDownloadListDateTime: ' + lastKnownBillDateDatetime.strftime('%m/%d/%y %H:%M') + ' > ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
                # if the previous file starts and end around the last known bill date,
                # add previous and current file name to the list
                if lastKnownBillDateDatetime < billDateDatetime:
                    fileNameForDownloadList = [ previousFileNameForDownloadListString, filesDict['Key'] ];
                    if self.debugFlag:
-                       print 'lastKnownBillDateDatetime < billDateDatetime: ' + lastKnownBillDateDatetime.strftime('%m/%d/%y %H:%M') + ' < ' + billDateDatetime.strftime('%m/%d/%y %H:%M')
-                       print 'fileNameForDownloadList:'
-                       print fileNameForDownloadList
+                       self.logger.debug ( 'lastKnownBillDateDatetime < billDateDatetime: ' + lastKnownBillDateDatetime.strftime('%m/%d/%y %H:%M') + ' < ' + billDateDatetime.strftime('%m/%d/%y %H:%M')) 
+                       self.logger.debug ( 'fileNameForDownloadList:' )
+                       self.logger.debug (  fileNameForDownloadList )
                previousFileForDownloadListDateTime = billDateDatetime
                previousFileNameForDownloadListString = filesDict['Key']
                if self.debugFlag:
-                   print 'previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M')
-                   print 'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString
+                   self.logger.debug ( 'previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M') )
+                   self.logger.debug ( 'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString )
                    print
 
            else:
@@ -346,8 +346,8 @@ class AWSBillCalculator(object):
                # at this point, all the files have a start date past the last known bill date: we want those files
                fileNameForDownloadList.append(filesDict['Key'])
                if self.debugFlag:
-                   print 'fileNameForDownloadList:'
-                   print fileNameForDownloadList
+                   self.logger.debug ( 'fileNameForDownloadList:')
+                   self.logger.debug ( fileNameForDownloadList )
 
         if noFileNameMatchesFileNameIdentifier:
            raise Exception('No billing files found in bucket ' + self.bucketBillingName + ' looking for patterns containing ' + billingFileNameIdentifier)
@@ -358,8 +358,8 @@ class AWSBillCalculator(object):
             fileNameForDownloadList = [ filesDict['Key'] ]
 
         if self.verboseFlag or self.debugFlag:
-            print 'fileNameForDownloadList:'
-            print fileNameForDownloadList
+            self.logger.debug ( 'fileNameForDownloadList:' )
+            self.logger.debug ( fileNameForDownloadList )
 
         if len(self.tmpDirForBuillingFiles) and not os.path.exists(self.tmpDirForBuillingFiles):
             os.makedirs(self.tmpDirForBuillingFiles)
@@ -428,8 +428,8 @@ class AWSBillCalculator(object):
          # aggregate data
          billCVSAggregateStr = billCVSAggregateStr + billCSVStr
        if self.debugFlag:
-          print billCVSAggregateStr
-          print
+          self.logger.debug ( billCVSAggregateStr )
+          self.logger.debug ()
        return billCVSAggregateStr
 
 #       return list(csv.DictReader(StringIO.StringIO(billCVSAggregateStr)));
@@ -495,7 +495,7 @@ class AWSBillCalculator(object):
         lastStartDateBilledConsideredDatetime = sumFromDateDatetime
         if sumToDate != None:
             sumToDateDatetime = datetime.datetime(*(time.strptime(sumToDate, '%m/%d/%y %H:%M')[0:6]))
-        BillSummaryDict = { totalCsvHeaderString : 0.0 , totalDataOutCsvHeaderString : 0.0, estimatedTotalDataOutCsvHeaderString : 0.0}
+        BillSummaryDict = {totalCsvHeaderString : 0.0 , totalDataOutCsvHeaderString : 0.0, estimatedTotalDataOutCsvHeaderString : 0.0}
 
         # The seek(0) resets the csv iterator, in case of multiple passes e.g. in alarm calculations
         billCVSAggregateStrStringIO = StringIO.StringIO(billCVSAggregateStr)
@@ -621,12 +621,9 @@ class BillingInfo(Source.Source):
         # get data for all accounts
         d = {}
        
-#       S. Timm move the data initialization statement outside the for loop
         data = []
         datarate = []
         for i in self.accounts:
-#           S. timm move the data = [] statement outside the for loop.
-#            data = []
             try:
                 calculator = AWSBillCalculator(accountName = i.accountName,
                                                accountProfileName = i.credentialsProfileName,
@@ -636,28 +633,26 @@ class BillingInfo(Source.Source):
                                                balanceAtDate = i.balanceAtDate,
                                                applyDiscount = i.applyDiscount,
                                                tmpDirForBuillingFiles = self.billing_files_location,
-                                               verboseFlag = True)
+                                               verboseFlag = False )
                 lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
-                self.logger.debug('lastStartDateBilledConsideredDatetime \n : %s' %(lastStartDateBilledConsideredDatetime))
-                self.logger.debug('CorrectedBillSummaryDict \n : %s' %(CorrectedBillSummaryDict))
-                self.logger.debug('CorrectedMonthlyBillSummaryList \n  : %s' %(calculator.CorrectedMonthlyBillSummaryList,))
-#               S. Timm
-#               The information in CorrectedBillSummaryDict above is what we need, now it is only a matter of plumbing to get it into pandas
-#               data is a list, CorrectedBillSummaryDict is a dict, so we have to append it as a list of dict.
-#               data += calculator.CorrectedMonthlyBillSummaryList
+                self.logger.debug('lastStartDateBilledConsideredDatetime: %s' % (lastStartDateBilledConsideredDatetime))
+                self.logger.debug('CorrectedBillSummaryDict: %s' % (CorrectedBillSummaryDict))
+                self.logger.debug('CorrectedMonthlyBillSummaryList: %s' % (calculator.CorrectedMonthlyBillSummaryList,))
+                #data is a list, CorrectedBillSummaryDict is a dict, so we have to append it as a list of dict.
+                data += calculator.CorrectedMonthlyBillSummaryList
                 data += [CorrectedBillSummaryDict]               
-##
-##              This is the code to calculate 6hr and 24hr spend rate
+                #
+                #This is the code to calculate 6hr and 24hr spend rate
                 dateNow = datetime.datetime.today() 
-#               Get cost in the last 6 hours
-                sixHoursBeforeLastDateBilledDatetime = lastStartDateBilledConsideredDatetime - datetime.timedelta(hours=6)
+                #Get cost in the last 6 hours
+                sixHoursBeforeLastDateBilledDatetime = lastStartDateBilledConsideredDatetime - datetime.timedelta(hours = 6)
                 calculator.setLastKnownBillDate(sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M'))
                 newLastStartDateBilledDatetime, CorrectedBillSummarySixHoursBeforeDict = calculator.CalculateBill()
            
                 costInLastSixHours = CorrectedBillSummarySixHoursBeforeDict['Total']
                 costRatePerHourInLastSixHours = costInLastSixHours / 6
-#               Get cost in the last 24 hours
-                oneDayBeforeLastDateBilledDatetime = lastStartDateBilledConsideredDatetime - datetime.timedelta(hours=24)
+                #Get cost in the last 24 hours
+                oneDayBeforeLastDateBilledDatetime = lastStartDateBilledConsideredDatetime - datetime.timedelta(hours = 24)
                 calculator.setLastKnownBillDate(oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M'))
                 newLastStartDateBilledDatetime, CorrectedBillSummaryOneDayBeforeDict = calculator.CalculateBill()
 
@@ -665,33 +660,33 @@ class BillingInfo(Source.Source):
                 costRatePerHourInLastDay = costInLastDay / 24
                 dataDelay = int((time.mktime(dateNow.timetuple()) - time.mktime(lastStartDateBilledConsideredDatetime.timetuple())) / 3600)
 
-                dataratedict= { 'accountName': i.accountName, 'lastStartDateBilledConsideredDatetime': lastStartDateBilledConsideredDatetime, 'dataDelay': dataDelay, 'costInLastSixHours': costInLastSixHours, 'costInLastDay': costInLastDay, 'costRatePerHourInLastSixHours': costRatePerHourInLastSixHours, 'costRatePerHourInLastDay': costRatePerHourInLastDay}
-                datarate+= [dataratedict]
+                dataratedict = {'accountName': i.accountName, 'lastStartDateBilledConsideredDatetime': lastStartDateBilledConsideredDatetime, 'dataDelay': dataDelay, 'costInLastSixHours': costInLastSixHours, 'costInLastDay': costInLastDay, 'costRatePerHourInLastSixHours': costRatePerHourInLastSixHours, 'costRatePerHourInLastDay': costRatePerHourInLastDay}
+                datarate += [dataratedict]
                 if calculator.verboseFlag:
-                    print '---'
-                    print 'Alarm Computation for %s Account Finished at %s' % ( calculator.accountName, time.strftime("%c") )
-                    print
-                    print 'Last Start Date Billed Considered: ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M')
-                    print 'Now', dateNow.strftime('%m/%d/%y %H:%M')
-                    print 'delay between now and Last Start Date Billed Considered in hours', dataDelay
-                    print 'Six hours before that: ' + sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')
-                    print 'One day before that: ' + oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')
-                    print 'Adjusted Total Now from Date of Last Known Balance: $', CorrectedBillSummaryDict['Total']
-                    print
-                    print 'Cost In the Last Six Hours: $', costInLastSixHours
-                    print 'Cost Rate Per Hour In the Last Six Hours: $', costRatePerHourInLastSixHours, ' / h'
-                    print
-                    print 'Cost In the Last Day: $', costInLastDay
-                    print 'Cost Rate Per Hour In the Last Day: $', costRatePerHourInLastDay, ' / h'
-                    print '---'
-                    print
+                    self.logger.debug('---')
+                    self.logger.debug('Alarm Computation for %s Account Finished at %s' % ( calculator.accountName, time.strftime("%c") ))
+                    self.logger.debug()
+                    self.logger.debug( 'Last Start Date Billed Considered: ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M'))
+                    self.logger.debug( 'Now', dateNow.strftime('%m/%d/%y %H:%M'))
+                    self.logger.debug( 'delay between now and Last Start Date Billed Considered in hours', dataDelay )
+                    self.logger.debug( 'Six hours before that: ' + sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M') )
+                    self.logger.debug( 'One day before that: ' + oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M') )
+                    self.logger.debug( 'Adjusted Total Now from Date of Last Known Balance: $', CorrectedBillSummaryDict['Total'] )
+                    self.logger.debug()
+                    self.logger.debug( 'Cost In the Last Six Hours: $', costInLastSixHours )
+                    self.logger.debug( 'Cost Rate Per Hour In the Last Six Hours: $', costRatePerHourInLastSixHours, ' / h' )
+                    self.logger.debug()
+                    self.logger.debug( 'Cost In the Last Day: $', costInLastDay) 
+                    self.logger.debug( 'Cost Rate Per Hour In the Last Day: $', costRatePerHourInLastDay, ' / h' )
+                    self.logger.debug( '---' )
+                    self.logger.debug() 
 
             except Exception, detail:
                 print detail
             except:
                 pass
 
-        return { PRODUCES[0]: pd.DataFrame(data), PRODUCES[1]: pd.DataFrame(datarate) }
+        return {PRODUCES[0]: pd.DataFrame(data), PRODUCES[1]: pd.DataFrame(datarate) }
 
 def module_config_template():
     """
