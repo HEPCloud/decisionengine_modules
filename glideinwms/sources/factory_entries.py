@@ -3,7 +3,6 @@
 import argparse
 import pprint
 import pandas
-import numpy
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.htcondor import htcondor_query
@@ -25,10 +24,11 @@ class FactoryEntries(Source.Source):
 
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
-        self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
-        self.constraint = config.get('constraint', True)
-        self.classad_attrs = config.get('classad_attrs')
+        self.factories = config.get('factories', [])
+        #self.collector_host = config.get('collector_host')
+        #self.constraint = config.get('constraint', True)
+        #self.classad_attrs = config.get('classad_attrs')
         self._entry_gridtype_map = {
             ('gt2', 'condor'): 'Factory_Entries_Grid',
             ('ec2',): 'Factory_Entries_AWS',
@@ -51,19 +51,28 @@ class FactoryEntries(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        condor_status = htcondor_query.CondorStatus(
-            subsystem_name='any',
-            pool_name=self.collector_host,
-            group_attr=['GLIDEIN_GridType'])
+        dataframe = None
 
-        constraint = '(%s)&&(glideinmytype=="glidefactory")' % self.constraint
-        condor_status.load(constraint, self.classad_attrs, self.condor_config)
+        for factory in self.factories:
+            collector_host = factory.get('collector_host')
+            constraint = '(%s)&&(glideinmytype=="glidefactory")' % factory.get('constraint', True)
+            classad_attrs = factory.get('classad_attrs')
+
+            condor_status = htcondor_query.CondorStatus(
+                subsystem_name='any', pool_name=collector_host,
+                group_attr=['GLIDEIN_GridType'])
+
+            condor_status.load(constraint, classad_attrs, self.condor_config)
+            df = pandas.DataFrame(condor_status.stored_data)
+            if not df.empty:
+                df['CollectorHost'] = [collector_host] * len(df)
+
+            dataframe = pandas.concat([dataframe, df], ignore_index=True)
 
         results = {}
-        dataframe = pandas.DataFrame(condor_status.stored_data)
-        dataframe['CollectorHost'] = [self.collector_host] * len(dataframe)
-        for key, value in self._entry_gridtype_map.iteritems():
-            results[value] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(key)))]
+        if not dataframe.empty:
+            for key, value in self._entry_gridtype_map.iteritems():
+                results[value] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(key)))]
         return results
 
 
