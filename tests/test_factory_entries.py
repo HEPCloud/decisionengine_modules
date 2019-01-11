@@ -9,8 +9,12 @@ from decisionengine_modules.htcondor import htcondor_query
 
 config_factory_entries = {
     'condor_config': 'condor_config',
-    'collector_host': 'fermicloud122.fnal.gov:8618',
-    #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
+    'factories': [
+        {
+            'collector_host': 'fermicloud122.fnal.gov:8618',
+            #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
+        },
+    ]
 }
 
 
