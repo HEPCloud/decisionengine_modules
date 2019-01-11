@@ -3,14 +3,16 @@
 import pandas
 import pprint
 
-from decisionengine.framework.modules import Transform
 import decisionengine.framework.modules.de_logger as de_logger
+from decisionengine.framework.modules import Transform
+from decisionengine_modules.util.figure_of_merit import figure_of_merit
 
 CONSUMES = ['Factory_Entries_Grid']
 
 PRODUCES = ['Grid_Figure_Of_Merit']
 
 ATTR_ENTRYNAME = 'EntryName'
+ATTR_FOM = 'Grid_Figure_Of_Merit'
 
 class GridFigureOfMerit(Transform.Transform):
 
@@ -19,6 +21,7 @@ class GridFigureOfMerit(Transform.Transform):
         super(GridFigureOfMerit, self).__init__(config)
         self.config = config
         self.logger = de_logger.get_logger()
+        self.price_performance = self.config.get('price_performance', 1)
 
 
     def transform(self, datablock):
@@ -26,11 +29,24 @@ class GridFigureOfMerit(Transform.Transform):
         Grid sites FOM are straight up assumed as 0 for now
         """
 
-        entries = datablock.get('Factory_Entries_Grid', default=pandas.DataFrame({ATTR_ENTRYNAME: []}))
-        fom_df = pandas.DataFrame({ATTR_ENTRYNAME: entries['EntryName']})
-        # FOM for grid entries is 0
-        fom_df['Grid_Figure_Of_Merit'] = 0
-        return {PRODUCES[0]: fom_df}
+        entries = datablock.get('Factory_Entries_Grid',
+                                pandas.DataFrame({ATTR_ENTRYNAME: []}))
+        foms = []
+        if not entries.empty:
+            for index, entry in entries.iterrows():
+                running = float(entry['GlideinMonitorTotalStatusRunning'])
+                max_allowed = float(entry['GlideinConfigPerEntryMaxGlideins'])
+                max_idle = float(entry['GlideinConfigPerEntryMaxIdle'])
+                idle = float(entry['GlideinMonitorTotalStatusIdle'])
+                f = {
+                    ATTR_ENTRYNAME: entry[ATTR_ENTRYNAME],
+                    ATTR_FOM: figure_of_merit(self.price_performance,
+                                              running, max_allowed,
+                                              idle, max_idle)
+                }
+                foms.append(f)
+
+        return {PRODUCES[0]: pandas.DataFrame(foms)}
 
 
     def consumes(self, name_list=None):
