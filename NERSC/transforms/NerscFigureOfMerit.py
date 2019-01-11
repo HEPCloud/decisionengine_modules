@@ -67,14 +67,13 @@ class NerscFigureOfMerit(Transform.Transform):
                 max_allowed = float(row["GlideinConfigPerEntryMaxGlideins"])
                 max_idle = float(row["GlideinConfigPerEntryMaxIdle"])
                 idle = float(row["GlideinMonitorTotalStatusIdle"])
-
-                FOM = fom.figure_of_merit(perf_row["PricePerformance"],
-                                          running,
-                                          max_allowed,
-                                          idle,
-                                          max_idle)
                 figures_of_merit.append({"EntryName": entry_name,
-                                         "FigureOfMerit": FOM})
+                                         "FigureOfMerit": fom.figure_of_merit(perf_row["PricePerformance"],
+                                                                              running,
+                                                                              max_allowed,
+                                                                              idle,
+                                                                              max_idle)
+                                         })
 
         return {PRODUCES[0]: performance.filter(["EntryName",
                                                  "PricePerformance"]),
