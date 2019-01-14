@@ -11,7 +11,7 @@ def figure_of_merit(performance,
                     allowed,
                     idle=None,
                     max_idle=None):
-    if running >= allowed:
+    if running >= allowed or allowed == 0:
         return _INFINITY
     if idle is not None and max_idle is not None:
         if idle >= max_idle:
