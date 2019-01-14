@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.6
+%define version 0.3.7
 %define release 1
 
 %define de_user decisionengine
@@ -135,6 +135,12 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Mon Jan 15 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.7-1
+- GCE/Nersc/Grid FOMs take into account idle, max idle, running jobs
+- Updated AWS billing
+- Bug fixes
+
 * Wed Dec 19 2018 Parag Mhashilkar <parag@fnal.gov> - 0.3.6-1
 - Replace deprecated API oauth2client with google-auth
 - Bug fixes
