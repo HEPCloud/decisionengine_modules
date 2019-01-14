@@ -448,8 +448,8 @@ class GlideFrontendElement(object):
             else:
                 glidein_params_to_encrypt = copy.deepcopy(glidein_params_to_encrypt)
             req_idle, req_max_run = cred.get_usage_details()
-            #self.logger.info.debug('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
-            self.logger.info('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
+            # TODO: Need to print this somewhere but currently logging this is interleaved with stats
+            #self.logger.info('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
 
             glidein_monitors_this_cred = params_obj.glidein_monitors_per_cred.get(cred.get_id(), {})
 
@@ -573,7 +573,7 @@ class GlideFrontendElement(object):
             cred.create_if_not_exist()
             cred.loaded_data = []
             for cred_file in (cred.filename, cred.key_fname, cred.pilot_fname):
-                self.logger.info('Loading credential file %s' % str(cred_file))
+                self.logger.debug('Loading credential file %s' % str(cred_file))
                 if cred_file:
                     cred_data = cred.get_string(cred_file)
                     if cred_data:
@@ -795,9 +795,9 @@ class GlideFrontendElement(object):
 
             total_entry_slots = pandas.DataFrame()
             if not slot_types['Total']['dataframe'].empty:
-                self.logger.info('------- CHECK ---------------------------------------')
-                self.logger.info(slot_types['Total']['dataframe'].columns.values)
-                self.logger.info('----------------------------------------------')
+                #self.logger.info('------- CHECK ---------------------------------------')
+                #self.logger.info(slot_types['Total']['dataframe'].columns.values)
+                #self.logger.info('----------------------------------------------')
                 total_entry_slots = slot_types['Total']['dataframe'].query('(GLIDEIN_Entry_Name == "%s") and (GLIDEIN_Name == "%s") and (GLIDEIN_FACTORY == "%s")' % (req_entry, req_name, req_fact))
 
             entry_slot_types = {
@@ -1460,14 +1460,22 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                               count_slots['RunningCores'],
                               glidein_min_idle, glidein_max_run)
 
+            # Extract FOM for this entry
+            ent_list = entry_info.get('EntryName', []).tolist()
+            ent_name = ent_list[0] if ent_list else "-"
+            fom_info = self.fom_entries.query('EntryName=="%s"' % ent_name)
+            fom = fom_info.get('FOM').tolist()[0]
+
             if entry_in_downtime:
                 total_down_stats_arr = log_and_sum_factory_line(
                     glideid_str, entry_in_downtime,
-                    this_stats_arr, total_down_stats_arr)
+                    this_stats_arr, total_down_stats_arr,
+                    fom=fom)
             else:
                 total_up_stats_arr = log_and_sum_factory_line(
                     glideid_str, entry_in_downtime,
-                    this_stats_arr, total_up_stats_arr)
+                    this_stats_arr, total_up_stats_arr,
+                    fom=fom)
 
             # Get the parameters from the frontend config
             glidein_params = copy.deepcopy(self.params_descript.const_data)
@@ -1576,7 +1584,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         count direct matches and proportionate matches
         """
 
-        self.logger.info('-------> count_match called with job_type = %s' % job_type)
         # TODO: This needs to be expanded to use more attrs and not just
         #       RequestCpus. Similar to glideFrontendLib.countMatch()
 
@@ -1623,37 +1630,73 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 else:
                     fom_matches = self.sort_matches_by_fom(matches, entries)
 
-                    # How many jobs have be considered so far
-                    # Start with entries with lowest FOM and feel them first
+                    # How many jobs have been considered so far
+                    # Start with entries with lowest FOM and fill them first
                     job_count_matched = 0
 
                     for (fom, fom_group_entries) in fom_matches:
                         match_entry_count = len(fom_group_entries)
+                        # Find the entries that are up i.e not in Downtime
+                        #self.logger.info('------ ALL ENTRIES --------')
+                        #self.logger.info(list(fom_group_entries.get('Name')))
+                        #self.logger.info(list(fom_group_entries.get('GLIDEIN_In_Downtime')))
+                        fom_group_entries_up = fom_group_entries.query('GLIDEIN_In_Downtime != True')
+                        match_entry_count = len(fom_group_entries_up)
+                        #self.logger.info('------ UP ENTRIES --------')
+                        #self.logger.info(list(fom_group_entries_up.get('Name')))
+                        #self.logger.info(list(fom_group_entries_up.get('GLIDEIN_In_Downtime')))
                         job_count_unmatched = job_count - job_count_matched
-                        if job_count_unmatched < 1:
-                            # If we considered all jobs in thejob_count,
-                            # break now and do not go to next fom group
-                            break
-                        # Distribute the jobs equally among this entry group
-                        # TODO: Currently this will only consider first
-                        #       FOM group. Need to spill over to other groups
-                        #       by looking at the entries max capacity
-                        # TODO: Check if we need to really go depth first
-                        #       or fill all FOM groups but in ratio of their
-                        #       FOMs
-                        for key in matches:
-                            this_entry_df = fom_group_entries.query('Name=="%s"' % key[1])
-                            if len(this_entry_df):
-                                direct_match[key] = direct_match.get(key, 0) + job_count
+                        if job_count_unmatched > 0:
+                            # Distribute the jobs equally among this entry group
+                            # TODO: Currently this will only consider first
+                            #       FOM group. Need to spill over to other groups
+                            #       by looking at the entries max capacity
+                            # TODO: Check if we need to really go depth first
+                            #       or fill all FOM groups but in ratio of their
+                            #       FOMs
+                            for key in matches:
+                                #self.logger.info('-------> key <--------')
+                                #self.logger.info(key)
+                                #self.logger.info('-------> key <--------')
+                                this_entry_df = fom_group_entries.query('(Name=="%s") and (GLIDEIN_In_Downtime != True)' % key[1])
+                                if len(this_entry_df):
+                                    if (job_count - job_count_matched) > 0:
+                                        direct_match[key] = direct_match.get(key, 0) + job_count
+                                        fraction = math.ceil(float(job_count_unmatched)/match_entry_count)
+                                        prop_match[key] = prop_match.get(key, 0) + fraction
+                                        job_count_matched = job_count_matched + fraction
+                                        #glidein_cpus = 1 # default to 1 if not defined
+                                        for index, row in this_entry_df.iterrows():
+                                            glidein_cpus = int(row.get('GLIDEIN_CPUS', 1))
+                                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
+                                    else:
+                                        # We already matched everything
+                                        # Just populate the stats
+                                        direct_match[key] = direct_match.get(key, 0)
+                                        prop_match[key] = prop_match.get(key, 0)
+                                    # hereonly_match remains same
+                                    hereonly_match[key] = hereonly_match.get(key, 0)
+                            # Populate info for entries that are in downtime
+                            #down_entries_df = fom_group_entries.query('(GLIDEIN_In_Downtime == True)')
+                        else:
+                            # Consider other FOM groups that also matched
+                            # We already matched everything to other FOM groups
+                            # Populate the stats as downtime doesnt mattter
+                            for key in matches:
+                                this_entry_df = fom_group_entries.query('(Name=="%s")' % key[1])
+                                direct_match[key] = direct_match.get(key, 0)
                                 hereonly_match[key] = hereonly_match.get(key, 0)
-                                fraction = math.ceil(float(job_count_unmatched)/match_entry_count)
-                                prop_match[key] = prop_match.get(key, 0) + fraction
-                                job_count_matched = job_count_matched + fraction
-                                #glidein_cpus = 1 # default to 1 if not defined
-                                for index, row in this_entry_df.iterrows():
-                                    glidein_cpus = int(row.get('GLIDEIN_CPUS', 1))
-                                prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
-
+                                prop_match[key] = prop_match.get(key, 0)
+                        # Add stats for all entries in downtime
+                        # in case they are not considered above
+                        fom_group_entries_down = fom_group_entries.query('(GLIDEIN_In_Downtime == True)')
+                        for index, row in fom_group_entries_down.iterrows():
+                            key = (row['CollectorHost'], row['Name'])
+                            direct_match[key] = direct_match.get(key, 0)
+                            hereonly_match[key] = hereonly_match.get(key, 0)
+                            prop_match[key] = prop_match.get(key, 0)
+        #self.logger.info('---------- count_match return keys ----------')
+        #self.logger.info('---------- count_match return keys ----------')
         total = job_types[job_type]['abs']
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
 
@@ -1665,7 +1708,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         Return a dataframe groupby object with FOM and entries dataframe with
         that FOM sorted by the FOM
         """
-
 
         #self.logger.info('---------- %s ----------' % 'sort_matches_by_fom')
         # ASSUMTION: Entry names are unique
@@ -1790,7 +1832,7 @@ def append_running_on(jobs, slots):
 
 
 def log_and_sum_factory_line(factory, is_down, factory_stat_arr,
-                             old_factory_stat_arr):
+                             old_factory_stat_arr, fom='-'):
     """
     Will log the factory_stat_arr (tuple composed of 17 numbers)
     and return a sum of factory_stat_arr+old_factory_stat_arr
@@ -1810,7 +1852,10 @@ def log_and_sum_factory_line(factory, is_down, factory_stat_arr,
     else:
         down_str = "Up  "
 
-    logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(form_arr)) + ('%s %s' % (down_str, factory)))
+    if isinstance(fom, (float, int)):
+        logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(form_arr)) + ('%s %14.4f %s' % (down_str, fom, factory)))
+    else:
+        logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(form_arr)) + ('%s %14s %s' % (down_str, fom, factory)))
 
     new_arr = []
     for i in range(len(factory_stat_arr)):
@@ -1823,8 +1868,8 @@ def init_factory_stats_arr():
 
 
 def log_factory_header():
-    logger.info('            Jobs in schedd queues                 |           Slots         |       Cores       | Glidein Req | Factory/Entry Information')
-    logger.info('Idle (match  eff   old  uniq )  Run ( here  max ) | Total  Idle   Run  Fail | Total  Idle   Run | Idle MaxRun | State Factory')
+    logger.info('            Jobs in schedd queues                 |           Slots         |       Cores       | Glidein Req | Factory Entry Information')
+    logger.info('Idle (match  eff   old  uniq )  Run ( here  max ) | Total  Idle   Run  Fail | Total  Idle   Run | Idle MaxRun | State FigureOfMerit EntryName')
 
 
 def get_idle_slots(slots_df):
