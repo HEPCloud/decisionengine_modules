@@ -896,7 +896,7 @@ class GlideFrontendElement(object):
                         this_entry = entries.query('Name =="%s"' % key[1])
                         #glidein_cpus = 1 # default to 1 if not defined
                         for index, row in this_entry.iterrows():
-                            glidein_cpus = int(row.get('GLIDEIN_CPUS', 1))
+                            glidein_cpus = row.get('GLIDEIN_CPUS', 1)
 
                         prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
         total = job_types[job_type]['abs']
@@ -1619,8 +1619,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 for index, row in entries_with_cpus.iterrows():
                     matches.add((row.get('CollectorHost'), row.get('Name')))
 
-                #matches = entries.query('(GLIDEIN_CPUS>=%i) and (GLIDEIN_In_Downtime!=True)' % req_cpus).reset_index()
-
                 if len(matches) == 0:
                     # These jobs do not match anywhere
                     # Represented by a special entry (None, None)
@@ -1635,9 +1633,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     prop_match[key] = prop_match.get(key, 0) + job_count
                     this_entry = entries.query('Name=="%s"' % key[1])
                     #glidein_cpus = 1 # default to 1 if not defined
-                    glidein_cpus = glidein_cpus_toi(
-                        this_entry.get('GLIDEIN_CPUS', 1),
-                        this_entry.get('GLIDEIN_ESTIMATED_CPUS'))
+                    glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
                     prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
                 else:
                     # Append FOM for all matches that are not in downtime
@@ -1658,9 +1654,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         direct_match[key] = direct_match.get(key, 0) + job_count
                         fraction = row.get('ResourceRequests', 0)
                         prop_match[key] = prop_match.get(key, 0) + fraction
-                        glidein_cpus = glidein_cpus_toi(
-                            row.get('GLIDEIN_CPUS', 1),
-                            row.get('GLIDEIN_ESTIMATED_CPUS'))
+                        glidein_cpus = row.get('GLIDEIN_CPUS', 1)
                         prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
                         hereonly_match[key] = hereonly_match.get(key, 0)
 
@@ -1727,7 +1721,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     prop_match[key] = prop_match.get(key, 0) + job_count
                     this_entry = entries.query('Name=="%s"' % key[1])
                     #glidein_cpus = 1 # default to 1 if not defined
-                    glidein_cpus = int(this_entry.get('GLIDEIN_CPUS', 1))
+                    glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
                     prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
                 else:
                     fom_matches = self.group_matches_by_fom(matches, entries)
@@ -1769,7 +1763,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                                         job_count_matched = job_count_matched + fraction
                                         #glidein_cpus = 1 # default to 1 if not defined
                                         for index, row in this_entry_df.iterrows():
-                                            glidein_cpus = int(row.get('GLIDEIN_CPUS', 1))
+                                            glidein_cpus = row.get('GLIDEIN_CPUS', 1)
                                         prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
                                     else:
                                         # We already matched everything
@@ -2019,13 +2013,3 @@ def compute_weighted_share(n, n_total, req_total):
 
 def compute_nth(n):
     return float(1)/n
-
-
-def glidein_cpus_toi(glidein_cpus, estimated_glidein_cpus, default=1):
-    cpus = glidein_cpus
-    if str(glidein_cpus).lower() == 'auto':
-       if estimated_glidein_cpus is None:
-           cpus = default
-       else:
-           cpus = estimated_glidein_cpus
-    return int(cpus)

@@ -4,6 +4,7 @@ import os.path
 import argparse
 import pprint
 import pandas
+import numpy
 import traceback
 
 from decisionengine.framework.modules import de_logger
@@ -97,6 +98,8 @@ class GlideinRequestManifests(Transform.Transform):
             #    entries = entries.append(datablock.get(et), ignore_index=True)
             #    pandas.concat(datablock.get(et), ignore_index=True)
             entries = pandas.DataFrame(pandas.concat([datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True))
+            # Sanitize 'auto' in GLIDEIN_CPUS and convert it to a valid int
+            entries = self.sanitize_entries(entries)
             # Shortlisted entries using Figure of Merit
             # TODO: This will be influenced once we can configure different
             #       resource selection plugins. Currently supports FOM only.
@@ -160,6 +163,23 @@ class GlideinRequestManifests(Transform.Transform):
         return manifests
 
 
+    def sanitize_entries(self, entries):
+        """
+        Sanitize values of columns like GLIDEIN_CPUS and return sanitized
+        dataframe with original columns copied to COL_DE_ORIGINAL
+        """
+        tag = 'DE_ORIGINAL'
+
+        entries['GLIDEIN_CPUS_%s'%tag] = entries['GLIDEIN_CPUS']
+        if 'GLIDEIN_ESTIMATED_CPUS' in entries.columns:
+            entries['GLIDEIN_ESTIMATED_CPUS_%s'%tag] = entries['GLIDEIN_ESTIMATED_CPUS']
+            entries = entries.fillna(value={'GLIDEIN_ESTIMATED_CPUS': 1})
+        else:
+             entries['GLIDEIN_ESTIMATED_CPUS_%s'%tag] = pandas.Series([numpy.nan]*len(entries))
+             entries['GLIDEIN_ESTIMATED_CPUS'] = pandas.Series([1]*len(entries))
+        return entries.apply(sanitize_glidein_cpus, axis=1)
+
+
     def merge_requests(self, manifests, group_manifests):
         merged_manifests = {}
         if manifests and group_manifests:
@@ -213,6 +233,13 @@ def module_config_info():
     """
     print('produces %s' % PRODUCES)
     module_config_template()
+
+
+def sanitize_glidein_cpus(row):
+    if str(row['GLIDEIN_CPUS']).lower() == 'auto':
+        row['GLIDEIN_CPUS'] = row['GLIDEIN_ESTIMATED_CPUS']
+    row['GLIDEIN_CPUS'] = int(row['GLIDEIN_CPUS'])
+    return row
 
 
 def main():
