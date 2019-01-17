@@ -1577,11 +1577,113 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         }
 
 
-    # IDEA: pass the site buckets and use it as match expr. should work
     def count_match(self, job_types, job_type, entries):
+        return self.count_match_fom_bff(job_types, job_type, entries)
+
+
+    def count_match_fom_bff(self, job_types, job_type, entries):
         """
         Count the matches. This will use FOM for calculations to
-        count direct matches and proportionate matches
+        count direct matches and proportionate matches and do breadth first fill
+        Requests are made in proportion to the fom values
+
+        Algorithm:
+        1. Lower FOM is better, so inverse the FOM values ie calculate 1/FOM
+        2. Find out what percentage each 1/FOM value is wrt others
+        3. Request resources based on the percentage of the site's 1/FOM
+        NOTE: This expects that FOM values are linear for good results
+        """
+
+        # TODO: This needs to be expanded to use more attrs and not just
+        #       RequestCpus. Similar to glideFrontendLib.countMatch()
+
+        direct_match = {}    # Number of direct job matches
+        prop_match = {}      #
+        hereonly_match = {}  # Jobs that can only run here
+        prop_match_cpu = {}  # Total Cpus: prop_match * GLIDEIN_CPUS
+
+        jobs = job_types[job_type]['dataframe']
+        if not jobs.empty:
+            # Get group of jobs based on request cpus
+            job_groups = jobs.groupby('RequestCpus')
+
+            for (req_cpus, job_group) in job_groups:
+                # Group jobs by matching criteria: RequestCpus for now
+                # We only care about job counts for each group
+                job_count = len(job_group)
+
+                matches = set()
+                #TODO: Handle auto here
+                entries_with_cpus = entries.query('GLIDEIN_CPUS>=%i' % req_cpus)
+
+                for index, row in entries_with_cpus.iterrows():
+                    matches.add((row.get('CollectorHost'), row.get('Name')))
+
+                #matches = entries.query('(GLIDEIN_CPUS>=%i) and (GLIDEIN_In_Downtime!=True)' % req_cpus).reset_index()
+
+                if len(matches) == 0:
+                    # These jobs do not match anywhere
+                    # Represented by a special entry (None, None)
+                    direct_match[(None, None)] = direct_match.get((None, None), 0) + job_count
+                    prop_match[(None, None)] = prop_match.get((None, None), 0) + job_count
+                    hereonly_match[(None, None)] = hereonly_match.get((None, None), 0) + job_count
+                    prop_match_cpu[(None, None)] = prop_match_cpu.get((None, None), 0) + (job_count * req_cpus)
+                elif len(matches) == 1:
+                    # These jobs can only run here
+                    key = matches[0]
+                    direct_match[key] = direct_match.get(key, 0) + job_count
+                    prop_match[key] = prop_match.get(key, 0) + job_count
+                    this_entry = entries.query('Name=="%s"' % key[1])
+                    #glidein_cpus = 1 # default to 1 if not defined
+                    glidein_cpus = glidein_cpus_toi(
+                        this_entry.get('GLIDEIN_CPUS', 1),
+                        this_entry.get('GLIDEIN_ESTIMATED_CPUS'))
+                    prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
+                else:
+                    # Append FOM for all matches that are not in downtime
+                    fom_matches = self.matches_with_fom(matches, entries_with_cpus)
+                    # Get entries not in downtime and FOM not INFINITY
+                    fom_matches_up = fom_matches.query(
+                        '(GLIDEIN_In_Downtime!=True) and (FOM != %f)' % sys.float_info.max)
+                    # Compute 1/FOM for each match
+                    inv_fom_series = fom_matches_up['FOM'].apply(compute_nth)
+                    inv_fom_total = inv_fom_series.sum()
+                    # Calculate requests based on % value of 1/FOM
+                    fom_reqs = inv_fom_series.apply(
+                        compute_weighted_share, args=(inv_fom_total, job_count))
+                    fom_matches_up['ResourceRequests'] = fom_reqs
+
+                    for index, row in fom_matches_up.iterrows():
+                        key = (row.get('CollectorHost'), row.get('Name'))
+                        direct_match[key] = direct_match.get(key, 0) + job_count
+                        fraction = row.get('ResourceRequests', 0)
+                        prop_match[key] = prop_match.get(key, 0) + fraction
+                        glidein_cpus = glidein_cpus_toi(
+                            row.get('GLIDEIN_CPUS', 1),
+                            row.get('GLIDEIN_ESTIMATED_CPUS'))
+                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
+                        hereonly_match[key] = hereonly_match.get(key, 0)
+
+                # Add stats for all entries in downtime or FOM == INFINITY
+                fom_matches_down = entries_with_cpus.query('GLIDEIN_In_Downtime==True')
+                fom_matches_inf = fom_matches.query('FOM==%f' % sys.float_info.max)
+                for rejected_matches in (fom_matches_down, fom_matches_inf):
+                    for index, row in rejected_matches.iterrows():
+                        key = (row['CollectorHost'], row['Name'])
+                        direct_match[key] = direct_match.get(key, 0)
+                        hereonly_match[key] = hereonly_match.get(key, 0)
+                        prop_match[key] = prop_match.get(key, 0)
+
+        #self.logger.info('---------- count_match return keys ----------')
+        #self.logger.info('---------- count_match return keys ----------')
+        total = job_types[job_type]['abs']
+        return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
+
+
+    def count_match_fom_dff(self, job_types, job_type, entries):
+        """
+        Count the matches. This will use FOM for calculations to
+        count direct matches and proportionate matches and do depth first fill
         """
 
         # TODO: This needs to be expanded to use more attrs and not just
@@ -1628,7 +1730,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     glidein_cpus = int(this_entry.get('GLIDEIN_CPUS', 1))
                     prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
                 else:
-                    fom_matches = self.sort_matches_by_fom(matches, entries)
+                    fom_matches = self.group_matches_by_fom(matches, entries)
 
                     # How many jobs have been considered so far
                     # Start with entries with lowest FOM and fill them first
@@ -1701,15 +1803,13 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
 
 
-
-    def sort_matches_by_fom(self, matches, entries):
+    def matches_with_fom(self, matches, entries):
         """
-        Given the entries and matches, group entries by their respective FOM
-        Return a dataframe groupby object with FOM and entries dataframe with
-        that FOM sorted by the FOM
+        Given the entries and matches, return matches with entire entry
+        classad and FOM series added to the df
         """
 
-        #self.logger.info('---------- %s ----------' % 'sort_matches_by_fom')
+        #self.logger.info('---------- %s ----------' % 'group_matches_by_fom')
         # ASSUMTION: Entry names are unique
         # Get all the classad names for the entries from the matches
         entry_classad_names = [x[1] for x in matches]
@@ -1719,9 +1819,17 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         # Get the intersection of matches_df and fom_entries
         # Following will give all the matches with entire entry classad and FOM
         matches_fom_entries_df = pandas.merge(self.fom_entries, matches_df, on=['EntryName'], how='inner')
-        # Group the results by FOM which sorts them by default and return
         #self.logger.info('----------> %s' % matches_fom_entries_df.columns.values)
-        return matches_fom_entries_df.groupby(['FOM'])
+        return matches_fom_entries_df
+
+
+    def group_matches_by_fom(self, matches, entries):
+        """
+        Given the entries and matches, group entries by their respective FOM
+        Return a dataframe groupby object with FOM and entries dataframe with
+        that FOM sorted by the FOM
+        """
+        return self.matches_matches_with_fom(matches, entries).groupby(['FOM'])
 
 
 ###############################################################################
@@ -1852,6 +1960,9 @@ def log_and_sum_factory_line(factory, is_down, factory_stat_arr,
     else:
         down_str = "Up  "
 
+    if fom == sys.float_info.max:
+        fom = 'INFINITY'
+
     if isinstance(fom, (float, int)):
         logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(form_arr)) + ('%s %14.4f %s' % (down_str, fom, factory)))
     else:
@@ -1900,3 +2011,21 @@ def get_failed_slots(slots_df):
     if slots_df.empty:
         return slots_df
     return slots_df.query('(State == "Drained") and (Activity == "Retiring")')
+
+
+def compute_weighted_share(n, n_total, req_total):
+    return int(math.ceil(float(n)*req_total/n_total))
+
+
+def compute_nth(n):
+    return float(1)/n
+
+
+def glidein_cpus_toi(glidein_cpus, estimated_glidein_cpus, default=1):
+    cpus = glidein_cpus
+    if str(glidein_cpus).lower() == 'auto':
+       if estimated_glidein_cpus is None:
+           cpus = default
+       else:
+           cpus = estimated_glidein_cpus
+    return int(cpus)
