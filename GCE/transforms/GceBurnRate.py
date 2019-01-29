@@ -30,15 +30,15 @@ class GceBurnRate(Transform.Transform):
 
         performance = data_block[CONSUMES[0]].fillna(0)
         occupancy = data_block[CONSUMES[1]].fillna(0)
-        
+
         burn_df = pd.DataFrame([{"BurnRate" : 0.}])
-        if not occupancy.empty: 
+        if not occupancy.empty:
             df = pd.merge(occupancy,
                           performance,
                           how='inner',
                           on=['AvailabilityZone', 'InstanceType'])
-            if not df.empty: 
-                df["BurnRate"] = df["Occupancy"]*df["PreemptiblePrice"]
+            if not df.empty:
+                df["BurnRate"] = pd.to_numeric(df["Occupancy"])*pd.to_numeric(df["PreemptiblePrice"])
                 burn_df = pd.DataFrame([{"BurnRate": df["BurnRate"].sum()}])
 
         return {PRODUCES[0]: burn_df }

@@ -32,16 +32,16 @@ class AwsBurnRate(Transform.Transform):
         occupancy = data_block[CONSUMES[1]].fillna(0)
 
         burn_df = pd.DataFrame([{"BurnRate": 0.}])
-        if not occupancy.empty: 
+        if not occupancy.empty:
             df = pd.merge(occupancy,
                           spot_prices,
                           how ="inner",
                           on=["AccountName", "AvailabilityZone", "InstanceType"])
             if not df.empty:
-                df["BurnRate"] = df["RunningVms"]*df["SpotPrice"]
+                df["BurnRate"] = pd.to_numeric(df["RunningVms"])*pd.to_numeric(df["SpotPrice"])
                 burn_df = pd.DataFrame([{"BurnRate": df["BurnRate"].sum()}])
 
-        return {PRODUCES[0]: burn_df} 
+        return {PRODUCES[0]: burn_df}
 
     def consumes(self, name_list=None):
         return CONSUMES
