@@ -101,24 +101,28 @@ class HTCondorManifests(Publisher.Publisher):
         :type datablock: :obj:`DataBlock`
         """
         for key in self.consumes():
-            try:
-                dataframe = datablock.get(key)
-                # TODO: How can we do this pandas way rather than interative?
-                if not dataframe.empty:
-                    # Iterate over sub dataframes with same CollectorHost value
-                    for collector in pandas.unique(dataframe.CollectorHost.ravel()):
-                        # Convert dataframe -> dict -> classads
-                        ads = dataframe_to_classads(
-                            dataframe[(dataframe['CollectorHost'] == collector)])
-                        # Advertise the classad to given collector
-                        self.condor_advertise(ads, collector_host=collector)
-                else:
-                    self.logger.info('No %s classads found to advertise' % key)
-            except:
-                tb = traceback.format_exception(sys.exc_info()[0],
-                                                sys.exc_info()[1],
-                                                sys.exc_info()[2])
-                self.logger.error(tb)
+            dataframe = datablock.get(key)
+            self.publish_to_htcondor(dataframe)
+
+
+    def publish_to_htcondor(self, dataframe):
+        try:
+            # TODO: How can we do this pandas way rather than interative?
+            if not dataframe.empty:
+                # Iterate over sub dataframes with same CollectorHost value
+                for collector in pandas.unique(dataframe.CollectorHost.ravel()):
+                    # Convert dataframe -> dict -> classads
+                    ads = dataframe_to_classads(
+                        dataframe[(dataframe['CollectorHost'] == collector)])
+                    # Advertise the classad to given collector
+                    self.condor_advertise(ads, collector_host=collector)
+            else:
+                self.logger.info('No %s classads found to advertise' % key)
+        except:
+            tb = traceback.format_exception(sys.exc_info()[0],
+                                            sys.exc_info()[1],
+                                            sys.exc_info()[2])
+            self.logger.error(tb)
 
 
 def dataframe_to_classads(dataframe):
