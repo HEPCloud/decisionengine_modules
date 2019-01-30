@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.7
-%define release 2
+%define version 0.3.8
+%define release 1
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -135,6 +135,11 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Wed Jan 30 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.8-1
+- New transforms: AWSBurnRate and GCEBurnRate
+- Breadth first filling of resources using FOM
+- Resource request publishers takes into account Logic Engine facts
 
 * Tue Jan 15 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.7-2
 - Remove dependency on python-pandas and numpy rpms as we get latest from pip
