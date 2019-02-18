@@ -1,11 +1,12 @@
 #!/usr/bin/python
 import abc
+import traceback
 import argparse
 import pprint
 import pandas
-import numpy
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules import de_logger
 from decisionengine_modules.htcondor import htcondor_query
 
 
@@ -23,6 +24,8 @@ class ResourceManifests(Source.Source):
 
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
+
+        self.logger = de_logger.get_logger()
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
@@ -62,15 +65,29 @@ class ResourceManifests(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        condor_status = htcondor_query.CondorStatus(
-            subsystem_name=self.subsystem_name,
-            pool_name=self.collector_host,
-            group_attr=self.group_attr)
+        dataframe = pandas.DataFrame()
+        try:
+            condor_status = htcondor_query.CondorStatus(
+                subsystem_name=self.subsystem_name,
+                pool_name=self.collector_host,
+                group_attr=self.group_attr)
 
-        condor_status.load(self.constraint, self.classad_attrs,
-                           self.condor_config)
+            condor_status.load(self.constraint, self.classad_attrs,
+                               self.condor_config)
 
-        dataframe = pandas.DataFrame(condor_status.stored_data)
-        if not dataframe.empty:
-            dataframe['CollectorHost'] = [self.collector_host] * len(dataframe)
+            dataframe = pandas.DataFrame(condor_status.stored_data)
+            if not dataframe.empty:
+                (collector_host, secondary_collectors) = htcondor_query.split_collector_host(self.collector_host)
+                dataframe['CollectorHost'] = [collector_host] * len(dataframe)
+                if secondary_collectors != '':
+                    dataframe['CollectorHosts'] = ['%s,%s' % (collector_host, secondary_collectors)] * len(dataframe)
+                else:
+                    dataframe['CollectorHosts'] = [collector_host] * len(dataframe)
+        except htcondor_query.QueryError:
+            self.logger.warning('Query error fetching classads from collector host(s) "%s"' % self.collector_host)
+            self.logger.error('Query error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
+        except Exception:
+            self.logger.warning('Unexpected error fetching classads from collector host(s) "%s"' % self.collector_host)
+            self.logger.error('Unexpected error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
+
         return dataframe

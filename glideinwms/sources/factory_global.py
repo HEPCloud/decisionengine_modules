@@ -1,10 +1,11 @@
 #!/usr/bin/python
 import argparse
+import traceback
 import pprint
 import pandas
-import numpy
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules import de_logger
 from decisionengine_modules.htcondor import htcondor_query
 
 
@@ -24,6 +25,7 @@ class FactoryGlobalManifests(Source.Source):
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
         self.subsystem_name = 'any'
+        self.logger = de_logger.get_logger()
 
 
     def produces(self):
@@ -47,16 +49,30 @@ class FactoryGlobalManifests(Source.Source):
             constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % factory.get('constraint', True)
             classad_attrs = []
 
-            condor_status = htcondor_query.CondorStatus(
-                subsystem_name=self.subsystem_name, pool_name=collector_host,
-                group_attr=['Name'])
+            try:
+                condor_status = htcondor_query.CondorStatus(
+                    subsystem_name=self.subsystem_name,
+                    pool_name=collector_host,
+                    group_attr=['Name'])
 
-            condor_status.load(constraint, classad_attrs, self.condor_config)
-            df = pandas.DataFrame(condor_status.stored_data)
-            if not df.empty:
-                df['CollectorHost'] = [collector_host] * len(df)
+                condor_status.load(constraint, classad_attrs, self.condor_config)
+                df = pandas.DataFrame(condor_status.stored_data)
+                if not df.empty:
+                    (col_host, sec_cols) = htcondor_query.split_collector_host(collector_host)
+                    df['CollectorHost'] = [col_host] * len(df)
+                    if sec_cols != '':
+                        df['CollectorHosts'] = ['%s,%s' % (col_host, sec_cols)] * len(df)
+                    else:
+                        df['CollectorHosts'] = [col_host] * len(df)
 
-            dataframe = pandas.concat([dataframe, df], ignore_index=True)
+                    dataframe = pandas.concat([dataframe, df], ignore_index=True)
+            except htcondor_query.QueryError:
+                self.logger.warning('Failed to get glidefactoryglobal classads from collector host(s) "%s"' % collector_host)
+                self.logger.error('Failed to get glidefactoryglobal classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
+            except Exception:
+                self.logger.warning('Unexpected error fetching glidefactoryglobal classads from collector host(s) "%s"' % collector_host)
+                self.logger.error('Unexpected error fetching glidefactoryglobal classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
+
 
         return {PRODUCES[0]: dataframe}
 

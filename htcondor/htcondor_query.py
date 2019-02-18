@@ -369,3 +369,21 @@ def eval_classad_expr(classads, format_list=None):
 
         classad_list.append(dict_el)
     return classad_list
+
+
+def split_collector_host(collector_host):
+    """
+    Given the collector_host string extract primary collector_host
+    which is the first collector host in the list and sort the secondary
+    collectors. Return a tuple of primary collector and CSV secondary
+    collector.
+    """
+
+    if isinstance(collector_host, str):
+        hosts = collector_host.replace(',', ' ').split()
+        primary = hosts[0]
+        secondary = hosts[1:]
+        secondary.sort()
+        return (hosts[0], ','.join(secondary))
+    else:
+        RuntimeError('collector_host should be a comman or space separated string but found %s' % collector_host)

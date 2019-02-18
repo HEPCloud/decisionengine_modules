@@ -11,7 +11,18 @@ config_factory_entries = {
     'condor_config': 'condor_config',
     'factories': [
         {
-            'collector_host': 'fermicloud122.fnal.gov:8618',
+            'collector_host': 'cmssrv280.fnal.gov',
+            #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
+        },
+    ]
+}
+
+
+config_factory_entries_bad = {
+    'condor_config': 'condor_config',
+    'factories': [
+        {
+            'collector_host': 'dummy_collector.fnal.gov',
             #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
         },
     ]
@@ -39,3 +50,8 @@ class TestFactoryEntries:
     def test_acquire_live(self):
         entries = factory_entries.FactoryEntries(config_factory_entries)
         pprint.pprint(entries.acquire())
+
+
+    def test_acquire_bad(self):
+        entries = factory_entries.FactoryEntries(config_factory_entries_bad)
+        assert(len(entries.acquire()) == 0)
