@@ -9,7 +9,14 @@ from decisionengine_modules.htcondor import htcondor_query
 
 config = {
     'condor_config': 'condor_config',
-    'collector_host': 'fermicloud122.fnal.gov:8618',
+    'collector_host': 'cmssrv280.fnal.gov',
+    #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
+}
+
+
+config_bad = {
+    'condor_config': 'condor_config',
+    'collector_host': 'dummy_collector.fnal.gov',
     #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
 }
 
@@ -32,3 +39,9 @@ class TestFactoryClientManifests:
     def test_acquire_live(self):
         fc = factory_client.FactoryClientManifests(config)
         pprint.pprint(fc.acquire())
+
+
+    def test_acquire_bad(self):
+        fc = factory_client.FactoryClientManifests(config_bad)
+        fc_df = fc.acquire()
+        assert(len(fc_df['factoryclient_manifests']) == 0)

@@ -1,10 +1,12 @@
 #!/usr/bin/python
 
 import argparse
+import traceback
 import pprint
 import pandas
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules import de_logger
 from decisionengine_modules.htcondor import htcondor_query
 
 
@@ -26,15 +28,14 @@ class FactoryEntries(Source.Source):
             raise RuntimeError('parameters for module config should be a dict')
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
-        #self.collector_host = config.get('collector_host')
-        #self.constraint = config.get('constraint', True)
-        #self.classad_attrs = config.get('classad_attrs')
         self._entry_gridtype_map = {
             ('gt2', 'condor'): 'Factory_Entries_Grid',
             ('ec2',): 'Factory_Entries_AWS',
             ('gce',): 'Factory_Entries_GCE',
             ('batch slurm',): 'Factory_Entries_LCF',
         }
+        self.subsystem_name = 'any'
+        self.logger = de_logger.get_logger()
 
 
     def produces(self):
@@ -51,23 +52,36 @@ class FactoryEntries(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        dataframe = None
+        dataframe = pandas.DataFrame()
 
         for factory in self.factories:
             collector_host = factory.get('collector_host')
             constraint = '(%s)&&(glideinmytype=="glidefactory")' % factory.get('constraint', True)
             classad_attrs = factory.get('classad_attrs')
 
-            condor_status = htcondor_query.CondorStatus(
-                subsystem_name='any', pool_name=collector_host,
-                group_attr=['GLIDEIN_GridType'])
+            try:
+                condor_status = htcondor_query.CondorStatus(
+                    subsystem_name=self.subsystem_name,
+                    pool_name=collector_host,
+                    group_attr=['GLIDEIN_GridType'])
 
-            condor_status.load(constraint, classad_attrs, self.condor_config)
-            df = pandas.DataFrame(condor_status.stored_data)
-            if not df.empty:
-                df['CollectorHost'] = [collector_host] * len(df)
+                condor_status.load(constraint, classad_attrs, self.condor_config)
+                df = pandas.DataFrame(condor_status.stored_data)
+                if not df.empty:
+                    (col_host, sec_cols) = htcondor_query.split_collector_host(collector_host)
+                    df['CollectorHost'] = [col_host] * len(df)
+                    if sec_cols != '':
+                        df['CollectorHosts'] = ['%s,%s' % (col_host, sec_cols)] * len(df)
+                    else:
+                        df['CollectorHosts'] = [col_host] * len(df)
 
-            dataframe = pandas.concat([dataframe, df], ignore_index=True)
+                    dataframe = pandas.concat([dataframe, df], ignore_index=True)
+            except htcondor_query.QueryError:
+                self.logger.warning('Query error fetching glidefactory classads from collector host(s) "%s"' % collector_host)
+                self.logger.error('Query error fetching glidefactory classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
+            except Exception:
+                self.logger.warning('Unexpected error fetching glidefactory classads from collector host(s) "%s"' % collector_host)
+                self.logger.error('Unexpected error fetching glidefactory classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
 
         results = {}
         if not dataframe.empty:

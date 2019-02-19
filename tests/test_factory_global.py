@@ -11,7 +11,18 @@ config = {
     'condor_config': 'condor_config',
     'factories': [
         {
-            'collector_host': 'fermicloud122.fnal.gov:8618',
+            'collector_host': 'cmssrv280.fnal.gov',
+            #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
+        },
+    ]
+}
+
+
+config_bad = {
+    'condor_config': 'condor_config',
+    'factories': [
+        {
+            'collector_host': 'dummy_collector.fnal.gov',
             #'classad_attrs': ['Name', 'EntryName', 'GLIDEIN_Gatekeeper', 'GLIDEIN_GridType'],
         },
     ]
@@ -36,3 +47,9 @@ class TestFactoryGlobalManifests:
     def test_acquire_live(self):
         fg = factory_global.FactoryGlobalManifests(config)
         pprint.pprint(fg.acquire())
+
+
+    def test_acquire_bad(self):
+        fg = factory_global.FactoryGlobalManifests(config_bad)
+        fg_df = fg.acquire()
+        assert((fg_df['factoryglobal_manifests'] is None) or (len(fg_df['factoryglobal_manifests']) == 0))
