@@ -7,6 +7,7 @@ import pandas
 import htcondor
 import classad
 import traceback
+import weakref
 
 from decisionengine.framework.modules import de_logger
 from decisionengine.framework.modules import Publisher
@@ -37,6 +38,8 @@ class HTCondorManifests(Publisher.Publisher):
         self.logger = de_logger.get_logger()
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
+        self.classad_type = 'generic'
+        self.invalidate_ads_constraint = {}
 
 
     def __repr__(self):
@@ -47,6 +50,23 @@ class HTCondorManifests(Publisher.Publisher):
         return '%s' % vars(self)
 
 
+    def __del__(self):
+        for collector_host in self.invalidate_ads_constraint:
+            constraint = self.invalidate_ads_constraint[collector_host]
+            if constraint:
+                ads = [{
+                    'MyType': 'Query',
+                    'TargetType': self.classad_type,
+                    'Requirements': constraint
+                }]
+                try:
+                    self.logger.info('Invalidating %s classads from collector_host %s with constraint %s' % (self.classad_type, collector_host, constraint))
+                    self.condor_advertise(ads, collector_host=collector_host,
+                        update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND)
+                except Exception as ex:
+                    self.logger.error('Error running invalidating %s classads from collector_host %s' % (self.classad_type, collector_host))
+
+
     @abc.abstractmethod
     def consumes(self):
         """
@@ -55,7 +75,7 @@ class HTCondorManifests(Publisher.Publisher):
         return None
 
 
-    def condor_advertise(self, ads, collector_host=None,
+    def condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
         Advertise list of classads to the HTCondor Collector
@@ -63,6 +83,8 @@ class HTCondorManifests(Publisher.Publisher):
         :type ads: :obj:`list`
         :type collector_host: :obj:`string`
         """
+
+        ads = classads
 
         old_condor_config_env = os.environ.get('CONDOR_CONFIG')
         try:
@@ -76,17 +98,20 @@ class HTCondorManifests(Publisher.Publisher):
             if collector_host:
                 collector = htcondor.Collector(collector_host)
             else:
+                collector_host = 'default'
                 collector = htcondor.Collector()
+            self.logger.info('Advertising %s classads to collector_host %s' % (self.classad_type, collector_host))
             collector.advertise(ads, update_ad_command, True)
         except Exception as ex:
-            raise
             # TODO: We need to be more specific about the errors/exception
             #       For now just raise to get more info logged
-            #p = 'default'
-            #if collector_host:
-            #    p = collector_host
-            #err_str = 'Error advertising with command %s to pool %s: %s' % (self.update_ad_command, p, ex)
+            col = 'default'
+            if collector_host:
+                col = collector_host
+            self.logger.error('Error running %s for %s classads to collector_host %s' % (update_ad_command, self.classad_type, col))
+            #err_str = 'Error advertising with command %s to pool %s: %s' % (self.update_ad_command, col, ex)
             #raise QueryError(err_str), None, sys.exc_info()[2]
+            raise
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -102,10 +127,19 @@ class HTCondorManifests(Publisher.Publisher):
         """
         for key in self.consumes():
             dataframe = datablock.get(key)
-            self.publish_to_htcondor(dataframe)
+            self.publish_to_htcondor(key, dataframe)
+            self.create_invalidate_constraint(dataframe)
 
 
-    def publish_to_htcondor(self, dataframe):
+    def create_invalidate_constraint(self, dataframe):
+        """
+        Derived classes should override the constraint creation else no
+        classads will be deleted
+        """
+        pass
+
+
+    def publish_to_htcondor(self, key, dataframe):
         try:
             # TODO: How can we do this pandas way rather than interative?
             if not dataframe.empty:
