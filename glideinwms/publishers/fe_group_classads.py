@@ -26,6 +26,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
             'allow_gce_requests': 'Factory_Entries_GCE',
             'allow_lcf_requests': 'Factory_Entries_LCF'
         }
+        self.classad_type = 'glideclient'
 
 
     def consumes(self):
@@ -69,7 +70,17 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                 allow_type_req_dfs[fact_name]['ReqIdleGlideins'] = [0] * len(allow_type_req_dfs[fact_name])
 
         publish_requests_df = pandas.DataFrame(pandas.concat(allow_type_req_dfs.values(), ignore_index=True))
-        self.publish_to_htcondor(publish_requests_df)
+        self.publish_to_htcondor(self.classad_type, publish_requests_df)
+        self.create_invalidate_constraint(publish_requests_df)
+
+
+    def create_invalidate_constraint(self, requests_df):
+        if not requests_df.empty:
+            for collector_host, request_group in requests_df.groupby(['CollectorHost']):
+                client_names = set(request_group['ClientName'])
+                if client_names:
+                    constraint = '(glideinmytype == "%s") && (stringlistmember(ClientName, "%s"))' % (self.classad_type, ','.join(client_names))
+                    self.invalidate_ads_constraint[collector_host] = constraint
 
 
 def module_config_template():
