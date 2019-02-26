@@ -2,15 +2,21 @@
 
 import argparse
 import pprint
-import pandas
+import pandas as pd
 
 from decisionengine.framework.modules import Transform
-from decisionengine.framework.dataspace.datablock import DataBlock
-
 
 PRODUCES = ['aws_instance_limits', 'spot_occupancy_config']
 
 CONSUMES = ['Factory_Entries_AWS']
+
+_ATTR_TRANSLATION_MAP = {
+    'GLIDEIN_Supported_VOs': 'AWSProfile',
+    'INSTANCE_TYPE': 'InstanceType',
+    'AVAILABILITY_ZONE': 'AvailabilityZone',
+    'GlideinConfigPerEntryMaxGlideins': 'MaxLimit',
+}
+
 
 class AWSFactoryEntryData(Transform.Transform):
 
@@ -26,13 +32,11 @@ class AWSFactoryEntryData(Transform.Transform):
             raise RuntimeError('parameters for module config should be a dict')
     """
 
-
     def consumes(self):
         """
         Return list of items consumed
         """
         return CONSUMES
-
 
     def produces(self):
         """
@@ -40,23 +44,23 @@ class AWSFactoryEntryData(Transform.Transform):
         """
         return PRODUCES
 
-
     def transform(self, datablock):
-        attr_translation_map = {
-            'GLIDEIN_Supported_VOs': 'AWSProfile',
-            'INSTANCE_TYPE': 'InstanceType',
-            'AVAILABILITY_ZONE': 'AvailabilityZone',
-            'GlideinConfigPerEntryMaxGlideins': 'MaxLimit',
-        }
+
         # Get the dataframe containing AWS entries
-        aws_entries = datablock.get('Factory_Entries_AWS')
+        aws_entries = datablock.get(CONSUMES[0])
 
         # Get relevant columns from the dataframe
-        sub_df = aws_entries[attr_translation_map.keys()]
+        sub_df = aws_entries[_ATTR_TRANSLATION_MAP.keys()]
 
-        # Get unique supported vos
-        vos = ','.join(list(sub_df.GLIDEIN_Supported_VOs.unique()))
-        vo_set = set(vos.split(','))
+        """
+        GLIDEIN_Supported_VOs can be list of comma separated strings.
+        Convert it into flat list of string 
+        """
+        vos = [i for sublist in
+               map(lambda x: x.split(","), list(sub_df.GLIDEIN_Supported_VOs))
+               for i in sublist]
+        # unique VOs
+        vo_set = set(vos)
 
         limits_df = None
         so_config_dict = {}
@@ -78,10 +82,11 @@ class AWSFactoryEntryData(Transform.Transform):
                     it = az_it.loc[az_it['AVAILABILITY_ZONE'].str.contains(region)].INSTANCE_TYPE.unique().tolist()
                     so_config_dict[vo][region] = it
                 
-        limits_df = limits_df.rename(columns=attr_translation_map)
+        limits_df = limits_df.rename(columns=_ATTR_TRANSLATION_MAP)
 
         return {'aws_instance_limits': limits_df,
-                'spot_occupancy_config': so_config_dict}
+                'spot_occupancy_config': pd.DataFrame.from_dict(so_config_dict,
+                                                                orient='index')}
 
 
 def module_config_template():

@@ -1,14 +1,11 @@
 #!/usr/bin/python
 
-import os
 import argparse
 import pprint
 import tempfile
 import shutil
-import pandas
 
 from decisionengine.framework.modules import Publisher
-from decisionengine.framework.dataspace.datablock import DataBlock
 
 
 CONSUMES = ['aws_instance_limits', 'spot_occupancy_config']
@@ -35,17 +32,15 @@ class AWSFactoryEntryDataPublisher(Publisher.Publisher):
         if None in (self.aws_instance_limits, self.spot_occupancy_config):
             raise RuntimeError('parameters for module config is missing spot_occupancy_config or aws_instance_limits')
 
-
     def consumes(self):
         """
         Return list of items consumed
         """
         return CONSUMES
 
-
     def publish(self, datablock):
         limits_df = datablock.get('aws_instance_limits')
-        so_config = datablock.get('spot_occupancy_config')
+        so_config = datablock.get('spot_occupancy_config').to_dict()[0]
 
         fname = None
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as fd:
