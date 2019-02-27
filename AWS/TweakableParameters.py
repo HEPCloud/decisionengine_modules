@@ -13,11 +13,10 @@ class TweakableParameters(Source.Source):
     def acquire(self):
         return {
             "params": {
-                "overflow_permitted":        True,
-                "overflow_threshold":        1,
-                "overflow_cloud_permitted":  True,
-                "overflow_hpc_permitted":    False,
-                "overflow_osg_permitted":    False,
-                "target_burn_rate":          2.5,
+                "target_aws_vm_burn_rate":      1.0,
+                "target_aws_bill_burn_rate":    2.0,
+                "target_aws_balance":        1000.0,
+                "target_gce_vm_burn_rate":      1.0,
+                "target_gce_balance":        1000.0,
             }
         }
