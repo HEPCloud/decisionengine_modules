@@ -85,8 +85,7 @@ class AWSFactoryEntryData(Transform.Transform):
         limits_df = limits_df.rename(columns=_ATTR_TRANSLATION_MAP)
 
         return {'aws_instance_limits': limits_df,
-                'spot_occupancy_config': pd.DataFrame.from_dict(so_config_dict,
-                                                                orient='index')}
+                'spot_occupancy_config': pd.DataFrame.from_dict(so_config_dict)}
 
 
 def module_config_template():
