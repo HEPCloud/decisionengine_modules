@@ -40,7 +40,7 @@ class AWSFactoryEntryDataPublisher(Publisher.Publisher):
 
     def publish(self, datablock):
         limits_df = datablock.get('aws_instance_limits')
-        so_config = datablock.get('spot_occupancy_config').to_dict()[0]
+        so_config = datablock.get('spot_occupancy_config').to_dict()
 
         fname = None
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as fd:
