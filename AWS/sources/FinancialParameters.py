@@ -20,7 +20,7 @@ class FinancialParameters(Source.Source):
 
     # The DataBlock given to the source is t=0
     def acquire(self):
-	financial_params=pandas.DataFrame(self.financial_parameters_dict)
+        financial_params=pandas.DataFrame(self.financial_parameters_dict)
         return {PRODUCES[0]: financial_params}
 
 def module_config_template():
@@ -32,7 +32,7 @@ def module_config_template():
         "module" :  "modules.AWS.sources.FinancialParameters",
         "name"   :  "FinancialParameters",
                     "parameters": { 
-			"financial_parameters": {
+                        "financial_parameters": {
                         "target_aws_vm_burn_rate":     [ 9.0 ],
                         "target_aws_bill_burn_rate":  [ 10.0 ],
                         "target_aws_balance":       [ 1000.0 ],
@@ -79,13 +79,13 @@ def main():
         module_config_info()
     else:
         myparams= {
-                   "financial_parameters": {
-            		"target_aws_vm_burn_rate":     [ 9.0 ],
-            		"target_aws_bill_burn_rate":  [ 10.0 ],
-            		"target_aws_balance":       [ 1000.0 ],
-            		"target_gce_vm_burn_rate":   [   9.0 ],
-            		"target_gce_balance":       [ 1000.0 ],
-                        }
+            "financial_parameters": {
+                "target_aws_vm_burn_rate":     [ 9.0 ],
+                "target_aws_bill_burn_rate":  [ 10.0 ],
+                "target_aws_balance":       [ 1000.0 ],
+                "target_gce_vm_burn_rate":   [   9.0 ],
+                "target_gce_balance":       [ 1000.0 ],
+            }
         }
         MyFP=FinancialParameters(myparams)
         mydf=MyFP.acquire()
