@@ -11,11 +11,6 @@ PRODUCES = ['Nersc_Allocation_Info']
 
 class NerscAllocationInfoSourceProxy(SourceProxy.SourceProxy):
 
-
-    def __init__(self, config):
-        super(NerscAllocationInfoSourceProxy, self).__init__(config)
-
-
     def produces(self):
         return PRODUCES
 
@@ -28,7 +23,7 @@ class NerscAllocationInfoSourceProxy(SourceProxy.SourceProxy):
         """
 
         nerscai = super(NerscAllocationInfoSourceProxy, self).acquire()
-        if not set(PRODUCES).issubset(set(fom.keys())):
+        if not set(PRODUCES).issubset(set(nerscai.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'Nersc_Allocation_Info': nerscai.get('Nersc_Allocation_Info')}
 
@@ -51,7 +46,7 @@ def module_config_template():
         }
     }
 
-    print('Entry in channel configuration')
+    print 'Entry in channel configuration'
     pprint.pprint(template)
 
 
@@ -69,7 +64,6 @@ def main():
     """
     Call this a a test unit or use as CLI of this module
     """
-    import argparse
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--configtemplate",

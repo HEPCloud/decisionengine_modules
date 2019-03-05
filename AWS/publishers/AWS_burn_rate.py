@@ -3,33 +3,25 @@
 Publishes AWS VM burn rate
 
 """
-import os
-import copy
 import pprint
-import pandas as pd
 
-from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
-import decisionengine.framework.configmanager.ConfigManager as configmanager
-import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.dataspace.dataspace as dataspace
-import decisionengine_modules.graphite_client as graphite
+import decisionengine.framework.configmanager.ConfigManager as configmanager
+from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud_priv.de.aws"
-CONSUMES=['AWS_Burn_Rate']
+DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.aws"
+CONSUMES = ['AWS_Burn_Rate']
 
 class AWSBurnRatePublisher(publisher):
-    def __init__(self, *args, **kwargs):
-        super(AWSBurnRatePublisher, self).__init__(*args, **kwargs)
 
     def consumes(self):
         return CONSUMES
 
-    def graphite_context(self, datablock):
+    def graphite_context(self, data_block):
         d = {}
-#       there should be only one row [0] in the AWS_Burn_Rate data block
-        for i, row in datablock.iterrows():
-            key = ('FERMILAB.BurnRate')
-            d[key] = row['BurnRate']
+        # there should be only one row [0] in the AWS_Burn_Rate data block
+        for i, row in data_block.iterrows():
+            d['FERMILAB.BurnRate'] = row['BurnRate']
         return self.graphite_context_header, d
 
 def module_config_template():
@@ -37,10 +29,12 @@ def module_config_template():
     print a template for this module configuration data
     """
 
-    d = {"AWSBurnRatePublisher": {
-         "module": "modules.AWS.publishers.AWS_burn_rate",
-         "name": "AWSBurnRatePublisher",
-         },}
+    d = {
+        "AWSBurnRatePublisher": {
+            "module": "modules.AWS.publishers.AWS_burn_rate",
+            "name": "AWSBurnRatePublisher",
+        },
+    }
     print "Entry in channel configuration"
     pprint.pprint(d)
     print "where"
@@ -83,18 +77,6 @@ def main():
         global_config = config_manager.get_global_config()
         print "GLOBAL CONF", global_config
         ds = dataspace.DataSpace(global_config)
-
-#        data_block = datablock.DataBlock(ds,
-#                                         #'5CC840DD-88B9-45CE-9DA2-FF531289AC66',
-#                                         'C56E0AAF-99D3-42A8-88A3-921E30C1879C',
-#                                         1)
-#
-#        pp_info = AWSPricePerformancePublisher({"publish_to_graphite": True,
-#                                                "graphite_host": "hepcmetrics.fnal.gov",
-#                                                "graphite_port": 2004,
-#                                                "graphite_context":"hepcloud_priv.de.aws",
-#                                                "output_file": "%s/de_data/AWS_price_perf.csv"%(os.environ.get('HOME'),)})
-#        rc = pp_info.publish(data_block)
 
 if __name__ == '__main__':
     main()

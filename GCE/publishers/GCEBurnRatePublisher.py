@@ -4,20 +4,13 @@ Publishes GCE VM Burn Rates
 
 """
 import argparse
-import os
-import copy
 import pprint
-import pandas as pd
 
 from decisionengine_modules.graphite.publishers.generic_publisher import GenericPublisher as publisher
-import decisionengine.framework.configmanager.ConfigManager as configmanager
-import decisionengine.framework.dataspace.datablock as datablock
-import decisionengine.framework.dataspace.dataspace as dataspace
-import decisionengine_modules.graphite_client as graphite
 from decisionengine.framework.modules import de_logger
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud_priv.de.gce"
-CONSUMES=['GCE_Burn_Rate']
+DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.gce"
+CONSUMES = ['GCE_Burn_Rate']
 
 class GCEBurnRatePublisher(publisher):
     def __init__(self, config):
@@ -27,12 +20,12 @@ class GCEBurnRatePublisher(publisher):
     def consumes(self):
         return CONSUMES
 
-    def graphite_context(self, datablock):
+    def graphite_context(self, data_block):
         d = {}
-#   Only one row in this data frame but we borrow the iteration method from other publishers
-        for i, row in datablock.iterrows():
-            key = ('hepcloud-fnal.BurnRate')
-            d[key] = row['BurnRate']
+        # Only one row in this data frame but we borrow
+        # the iteration method from other publishers
+        for i, row in data_block.iterrows():
+            d['hepcloud-fnal.BurnRate'] = row['BurnRate']
         return self.graphite_context_header, d
 
 def module_config_template():
@@ -40,16 +33,19 @@ def module_config_template():
     print a template for this module configuration data
     """
 
-    d = {"GCEBurnRatePublisher": {
-         "module": "modules.GCE.publishers.GCEBurnRate_publisher",
-         "name": "GCEBurnRatePublisher",
-         },}
+    d = {
+        "GCEBurnRatePublisher": {
+            "module": "modules.GCE.publishers.GCEBurnRate_publisher",
+            "name": "GCEBurnRatePublisher",
+        },
+    }
     print "Entry in channel configuration"
     pprint.pprint(d)
     print "where"
     print "\t name - name of the class to be instantiated by task manager"
     print "\t publish_to_graphite - publish to graphite if True"
     print "\t graphite_host - graphite host name"
+
 
 def module_config_info():
     """
@@ -58,7 +54,6 @@ def module_config_info():
 
     print "consumes", CONSUMES
     module_config_template()
-
 
 
 def main():
