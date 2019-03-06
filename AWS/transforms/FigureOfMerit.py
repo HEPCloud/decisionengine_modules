@@ -6,6 +6,7 @@ saves it into the output file acording to design document.
 """
 from __future__ import division
 import os
+import sys
 import copy
 import pprint
 import pandas as pd
@@ -22,9 +23,9 @@ CONSUMES=['provisioner_resource_spot_prices',
 PRODUCES=['AWS_Price_Performance',
           'AWS_Figure_Of_Merit']
 
-DEFAULT_MAX_LIMIT=20
-BIG_NUMBER=10000000.
-LARGE_NUMBER=100000000000.
+DEFAULT_MAX_LIMIT = 20
+BIG_NUMBER = sys.float_info.max
+LARGE_NUMBER = sys.float_info.max
 
 def price_performance(SpotPrice, PerfTtbarTotal):
     pp = 0.
@@ -42,9 +43,6 @@ def figure_of_merit(RunningVms, MaxLimit, PricePerf):
     return fm
 
 class FigureOfMerit(Transform.Transform):
-    def __init__(self, *args, **kwargs):
-        pass
-        # super(FigureOfMerit, self).__init__()
 
     def transform(self, data_block):
         """
