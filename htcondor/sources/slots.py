@@ -12,10 +12,6 @@ PRODUCES = ['startd_manifests']
 
 class StartdManifests(source.ResourceManifests):
 
-    def __init__(self, *args, **kwargs):
-        super(StartdManifests, self).__init__(*args, **kwargs)
-
-
     def produces(self):
         """
         Return list of items produced

@@ -17,8 +17,8 @@ CONSUMES = [
 class GlideinWMSManifests(publisher.HTCondorManifests):
 
 
-    def __init__(self, *args, **kwargs):
-        super(GlideinWMSManifests, self).__init__(*args, **kwargs)
+    def __init__(self, config):
+        super(GlideinWMSManifests, self).__init__(config)
         self.logger = de_logger.get_logger()
         self._fact_entrytype_map = {
             'allow_grid_requests': 'Factory_Entries_Grid',

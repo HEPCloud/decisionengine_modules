@@ -14,14 +14,12 @@ PRODUCES = ['factoryglobal_manifests']
 
 class FactoryGlobalManifests(Source.Source):
 
-    def __init__(self, *args, **kwargs):
-        if args:
-            config = args[0]
-        else:
+    def __init__(self, config):
+        if not config:
             config = {}
-
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
+
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
         self.subsystem_name = 'any'

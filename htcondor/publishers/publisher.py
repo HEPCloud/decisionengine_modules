@@ -24,12 +24,9 @@ class HTCondorManifests(Publisher.Publisher):
     __metaclass__ = abc.ABCMeta
 
 
-    def __init__(self, *args, **kwargs):
-        if args:
-            config = args[0]
-        else:
+    def __init__(self, config):
+        if not config:
             config = {}
-
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 

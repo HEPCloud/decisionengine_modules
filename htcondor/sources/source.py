@@ -15,13 +15,10 @@ class ResourceManifests(Source.Source):
     __metaclass__ = abc.ABCMeta
 
 
-    def __init__(self, *args, **kwargs):
-        super(ResourceManifests, self).__init__(*args, **kwargs)
-        if args:
-            config = args[0]
-        else:
+    def __init__(self, config):
+        super(ResourceManifests, self).__init__(config)
+        if not config:
             config = {}
-
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
@@ -30,8 +27,8 @@ class ResourceManifests(Source.Source):
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
         self.classad_attrs = config.get('classad_attrs')
-        self.group_attr = kwargs.get('group_attr', ['Name'])
-        self.subsystem_name = kwargs.get('subsystem_name')
+        self.group_attr = config.get('group_attr', ['Name'])
+        self.subsystem_name = config.get('subsystem_name')
 
 
     def __repr__(self):

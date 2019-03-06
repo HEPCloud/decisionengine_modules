@@ -13,21 +13,15 @@ CONSUMES = ['aws_instance_limits', 'spot_occupancy_config']
 
 class AWSFactoryEntryDataPublisher(Publisher.Publisher):
 
-    def __init__(self, *args, **kwargs):
-        super(AWSFactoryEntryDataPublisher, self).__init__(*args, **kwargs)
-        if args:
-            config = args[0]
-        else:
+    def __init__(self, config):
+        super(AWSFactoryEntryDataPublisher, self).__init__(config)
+        if not config:
             config = {}
-
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
         self.aws_instance_limits = config.get('aws_instance_limits')
         self.spot_occupancy_config = config.get('spot_occupancy_config')
-
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
 
         if None in (self.aws_instance_limits, self.spot_occupancy_config):
             raise RuntimeError('parameters for module config is missing spot_occupancy_config or aws_instance_limits')

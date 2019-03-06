@@ -20,18 +20,6 @@ _ATTR_TRANSLATION_MAP = {
 
 class AWSFactoryEntryData(Transform.Transform):
 
-    """
-    def __init__ (self, *args, **kwargs):
-        super(AWSFactoryEntryData, self).__init__(*args, **kwargs)
-        if args:
-            config = args[0]
-        else:
-            config = {}
-
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
-    """
-
     def consumes(self):
         """
         Return list of items consumed
