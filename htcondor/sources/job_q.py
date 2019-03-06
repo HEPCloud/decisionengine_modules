@@ -14,14 +14,12 @@ PRODUCES = ['job_manifests']
 
 class JobQ(Source.Source):
 
-    def __init__(self, *args, **kwargs):
-        if args:
-            config = args[0]
-        else:
+    def __init__(self, config):
+        if not config:
             config = {}
-
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
+
         self.collector_host = config.get('collector_host')
         self.schedds = config.get('schedds', [None])
         self.condor_config = config.get('condor_config')

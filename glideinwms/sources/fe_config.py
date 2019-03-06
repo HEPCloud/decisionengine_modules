@@ -14,14 +14,12 @@ PRODUCES = ['gwms_fe_config']
 
 class FrontendConfiguration():
 
-    def __init__(self, *args, **kwargs):
-        if args:
-            config = args[0]
-        else:
+    def __init__(self, config):
+        if not config:
             config = {}
-
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
+
         self.frontend_workdir = config.get('frontend_workdir', '/var/lib/gwms-frontend/vofrontend')
 
         glideinFrontendConfig.frontendConfig.frontend_descript_file = os.path.join(self.frontend_workdir, glideinFrontendConfig.frontendConfig.frontend_descript_file)

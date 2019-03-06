@@ -11,8 +11,9 @@ CONSUMES = ['decisionenginemonitor_manifests']
 
 class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
 
-    def __init__(self, *args, **kwargs):
-        super(DecisionEngineMonitorManifests, self).__init__(*args, **kwargs)
+    def __init__(self, config):
+        super(DecisionEngineMonitorManifests, self).__init__(config)
+        self.classad_type = 'glideclientmonitor'
 
 
     def consumes(self):
@@ -20,6 +21,14 @@ class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
         Return list of items produced
         """
         return CONSUMES
+
+
+    def create_invalidate_constraint(self, requests_df):
+        for collector_host, request_group in requests_df.groupby(['CollectorHost']):
+            client_names = set(request_group['GlideClientName'])
+            if client_names:
+                constraint = '(glideinmytype == "%s") && (stringlistmember(GlideClientName, "%s"))' % (self.classad_type, ','.join(client_names))
+                self.invalidate_ads_constraint[collector_host] = constraint
 
 
 def module_config_template():
