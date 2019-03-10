@@ -27,7 +27,8 @@ class AWSFOMPublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.%s.%s.FOM'%(row['AccountName'], row['AvailabilityZone'], graphite.sanitize_key(row['InstanceType'])))
+#            key = ('%s.%s.%s.FOM'%(row['AccountName'], row['AvailabilityZone'], graphite.sanitize_key(row['InstanceType'])))
+            key = ('%s.%s.FOM'%(row['AccountName'], row['EntryName']))
             d[key] = row['AWS_Figure_Of_Merit']
         return self.graphite_context_header, d
 
