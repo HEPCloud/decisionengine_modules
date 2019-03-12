@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.9
+%define version 0.3.10
 %define release 1
 
 %define de_user decisionengine
@@ -135,6 +135,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Mon Mar 11 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.10-1
+- Changes to AWS FOM publisher
 
 * Wed Mar 6 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.9-1
 - Fuctionality to remove classads (requires support in framework)
