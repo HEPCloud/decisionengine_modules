@@ -27,10 +27,10 @@ class FactoryEntries(Source.Source):
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
         self._entry_gridtype_map = {
-            ('gt2', 'condor'): 'Factory_Entries_Grid',
-            ('ec2',): 'Factory_Entries_AWS',
-            ('gce',): 'Factory_Entries_GCE',
-            ('batch slurm',): 'Factory_Entries_LCF',
+            'Factory_Entries_Grid': ('gt2', 'condor'),
+            'Factory_Entries_AWS': ('ec2',),
+            'Factory_Entries_GCE': ('gce',),
+            'Factory_Entries_LCF': ('batch slurm',)
         }
         self.subsystem_name = 'any'
         self.logger = de_logger.get_logger()
@@ -84,7 +84,13 @@ class FactoryEntries(Source.Source):
         results = {}
         if not dataframe.empty:
             for key, value in self._entry_gridtype_map.iteritems():
-                results[value] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(key)))]
+                results[key] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(value)))]
+        else:
+            # There were no entry classads in the factory collector or
+            # quering the collector failed
+            for entry_type in self.produces():
+                results[entry_type] = pandas.DataFrame()
+
         return results
 
 
