@@ -22,10 +22,8 @@ class GCEBurnRatePublisher(publisher):
 
     def graphite_context(self, data_block):
         d = {}
-        # Only one row in this data frame but we borrow
-        # the iteration method from other publishers
-        for i, row in data_block.iterrows():
-            d['hepcloud-fnal.BurnRate'] = row['BurnRate']
+        # Only one row in this data frame
+        d['hepcloud-fnal.BurnRate'] = data_block.loc[0,'BurnRate'].item()
         return self.graphite_context_header, d
 
 def module_config_template():
