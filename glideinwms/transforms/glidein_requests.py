@@ -96,6 +96,14 @@ class GlideinRequestManifests(Transform.Transform):
             #    entries = entries.append(datablock.get(et), ignore_index=True)
             #    pandas.concat(datablock.get(et), ignore_index=True)
             entries = pandas.DataFrame(pandas.concat([datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True))
+            if entries.empty:
+                # There are no entries to request resources from
+                self.logger.info('There are no entries to request resources from')
+                return {
+                    CONSUMES[0]: pandas.DataFrame(),
+                    CONSUMES[1]: pandas.DataFrame()
+                }
+
             # Sanitize 'auto' in GLIDEIN_CPUS and convert it to a valid int
             entries = self.sanitize_entries(entries)
             # Shortlisted entries using Figure of Merit
