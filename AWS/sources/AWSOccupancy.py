@@ -38,7 +38,7 @@ class OccupancyData(object):
         try:
             if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
-                
+
         except:
             pass
 

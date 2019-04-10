@@ -53,13 +53,14 @@ class GceFigureOfMerit(Transform.Transform):
                                          (gce_occupancy.InstanceType == it)]
             occupancy = float(occupancy_df["Occupancy"].values[0]) if not occupancy_df.empty else 0
 
-            factory_df = factory_entries[factory_entries.EntryName == entry_name]
-
             max_allowed = max_idle = idle = 0
-            if not factory_df.empty:
-                max_allowed = float(factory_df["GlideinConfigPerEntryMaxGlideins"].values[0])
-                max_idle = float(factory_df["GlideinConfigPerEntryMaxIdle"].values[0])
-                idle = float(factory_df["GlideinMonitorTotalStatusIdle"].values[0])
+
+            if (not factory_entries.empty) and ('EntryName' in factory_entries):
+                factory_df = factory_entries[factory_entries.EntryName == entry_name]
+                if not factory_df.empty:
+                    max_allowed = float(factory_df["GlideinConfigPerEntryMaxGlideins"].values[0])
+                    max_idle = float(factory_df["GlideinConfigPerEntryMaxIdle"].values[0])
+                    idle = float(factory_df["GlideinMonitorTotalStatusIdle"].values[0])
 
             fom = figure_of_merit(row["PricePerformance"],
                                   occupancy,
