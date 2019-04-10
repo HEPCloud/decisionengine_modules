@@ -19,9 +19,8 @@ class AWSBurnRatePublisher(publisher):
 
     def graphite_context(self, data_block):
         d = {}
-        # there should be only one row [0] in the AWS_Burn_Rate data block
-        for i, row in data_block.iterrows():
-            d['FERMILAB.BurnRate'] = row['BurnRate']
+        # There should be only one row [0] in the AWS_Burn_Rate data block
+        d['FERMILAB.BurnRate'] = data_block.loc[0,'BurnRate'].item()
         return self.graphite_context_header, d
 
 def module_config_template():
