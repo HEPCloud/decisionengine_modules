@@ -1146,58 +1146,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         self.total_glidein_requests = {}
 
 
-    def generate_glidein_requests_old(self, jobs_df, job_clusters_df,
-                                  slots_df, entries, factory_globals,
-                                  job_filter='ClusterId > 0',
-                                  fom_entries=None):
-        """
-        Given the dataframes for jobs, job_clusters, factory entries,cw
-        slots in pool and factory global classads, generate glidein requests.
-        Returns a dict of dataframes for glideclientglobal and glideclient
-        classads
-
-        jobs_df: Jobs dataframe
-                 columns = classad attributes
-        job_clusters_df: Job clusters dataframe
-                 columns = job cluster criteria, job cluster total,
-                           list of site bucket matches
-        slots_df: Slots/startd classad dataframe
-                 columns = classad attributes
-        entries: entry/glidefactory classad dataframe
-                 columns = classad attributes
-        factory_globals: dataframe of glidefactory_global classads
-        job_filter: job query expression (not required since this is in buckets)
-        fom_entries: entries ordered by figure of merit
-        """
-
-        self.fom_entries = fom_entries
-        glidein_requests = {}
-
-        # For every job cluster figure out how many glideins to request at
-        # which entry (i.e entries matching entry query expressions)
-        for index, row in job_clusters_df.iterrows():
-            job_query = row.get('job_bucket_query')
-            match_exp = ' or '.join(row.get('job_bucket_query'))
-            self.logger.info('Processing job query: %s' % job_query)
-            self.logger.info('Matching expression : %s' % match_exp)
-            # Get the slots that match this criteria
-            # sf is equivalent to the match_expr
-
-            matched_entries = entries.query(match_exp)
-
-            partial_glidein_requests = self.generate_glidein_requests_one(
-                   jobs_df, job_clusters_df, slots_df, matched_entries,
-                   factory_globals, job_filter=job_query)
-
-            # TODO: Adjust final requests based on the sum of requests
-            if glidein_requests:
-                # FIXME: dict + dataframe merging
-                glidein_requests = glidein_requests + partial_glidein_requests
-            else:
-                glidein_requests = partial_glidein_requests
-        return glidein_requests
-
-
     def generate_glidein_requests(self, jobs_df, slots_df,
                                   entries, factory_globals,
                                   job_filter='ClusterId > 0',
@@ -1284,7 +1232,22 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         job_types = self.categorize_jobs(jobs_df)
 
         # Categorize HTCondor slots for this group based on status criteria
-        slot_types = self.categorize_slots(slots_df)
+        group_slots_df = fe_slots_df = pandas.DataFrame()
+        if 'GLIDECLIENT_NAME' in slots_df:
+            non_na_slots_df = slots_df.dropna(subset=['GLIDECLIENT_NAME'])
+            group_slots_query_str = 'GLIDECLIENT_NAME=="%s.%s"' % (self.frontend_name, self.fe_group)
+            fe_slots_query_str = 'GLIDECLIENT_NAME.str.startswith("%s.")' % self.frontend_name
+            self.logger.debug('Finding group slots matching condition: %s' % group_slots_query_str)
+            self.logger.debug('Finding fe slots matching condition: %s' % fe_slots_query_str)
+            group_slots_df = non_na_slots_df.query(group_slots_query_str)
+            fe_slots_df = non_na_slots_df.query(fe_slots_query_str)
+        else:
+            self.logger.info('No slots found with attribute GLIDECLIENT_NAME')
+        slot_types = self.categorize_slots(group_slots_df)
+
+        # Find idle and total slot counts for frontend and global
+        fe_slots_count = count_slots_by_state(fe_slots_df)
+        global_slots_count = count_slots_by_state(slots_df)
 
         self.logger.info('Jobs found total %i idle %i (good %i, old(10min %s, 60min %i), grid %i, voms %i) running %i' % (
             len(jobs_df), job_types['IdleAll']['abs'],
@@ -1310,13 +1273,16 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         total_cores = slot_types['TotalCores']['abs']
         total_running_cores = slot_types['RunningCores']['abs']
         total_idle_cores = slot_types['IdleCores']['abs']
+        fe_total_slots = fe_slots_count['Total']
+        fe_total_idle_slots = fe_slots_count['Idle']
+        fe_total_running_slots = fe_slots_count['Running']
+        global_total_slots = global_slots_count['Total']
+        global_total_idle_slots = global_slots_count['Idle']
+        global_total_running_slots = global_slots_count['Running']
 
         self.logger.info('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
-        # TODO: Need to compute following
-        #       fe_[total_slots | total_idle_slots | total_running_slots]
-        #       global_[total_slots | total_idle_slots | total_running_slots]
-        self.logger.info('Frontend slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, total_running_slots))
-        self.logger.info('Overall slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.global_total_max_slots, self.global_total_curb_slots, total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, total_running_slots))
+        self.logger.info('Frontend slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (fe_total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, fe_total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, fe_total_running_slots))
+        self.logger.info('Overall slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (global_total_slots, self.global_total_max_slots, self.global_total_curb_slots, global_total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, global_total_running_slots))
 
         # Add entry info to each running slot's classad
         append_running_on(job_types['Running']['dataframe'],
@@ -1430,10 +1396,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             #       global_total_idle_slots,
             glidein_min_idle = self.compute_glidein_min_idle(
                 count_slots, total_slots, total_idle_slots,
-                # fe_total_slots, fe_total_idle_slots,
-                total_slots, total_idle_slots,
-                # global_total_slots, global_total_idle_slots,
-                total_slots, total_idle_slots,
+                fe_total_slots, fe_total_idle_slots,
+                global_total_slots, global_total_idle_slots,
                 effective_idle_mc, effective_oldidle_mc,
                 limits_triggered)
             # Compute maximum running glideins required for this request_name
@@ -2005,6 +1969,14 @@ def get_failed_slots(slots_df):
     if slots_df.empty:
         return slots_df
     return slots_df.query('(State == "Drained") and (Activity == "Retiring")')
+
+
+def count_slots_by_state(slots_df):
+    return {
+        'Idle': len(get_idle_slots(slots_df)),
+        'Running': len(get_running_slots(slots_df)),
+        'Total': len(slots_df)
+    }
 
 
 def compute_weighted_share(n, n_total, req_total):
