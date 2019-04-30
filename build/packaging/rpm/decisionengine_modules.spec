@@ -137,8 +137,10 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %changelog
 
 * Tue Apr 30 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.11-1
-- Fix slot calculations for group and frontend in the resource request channel
-- Handle collector downtimes gracefully
+- Bug Fix: Fix slot calculations for group and frontend in the resource request channel
+- Bug Fix: Handle collector downtimes gracefully
+- Bug Fix: Fix pickling error by using correct datatype npfloat64
+- Several other minor bug fixes and code improvements
 
 * Mon Mar 11 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.10-1
 - Changes to AWS FOM publisher
