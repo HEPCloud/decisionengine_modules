@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.10
+%define version 0.3.11
 %define release 1
 
 %define de_user decisionengine
@@ -135,6 +135,10 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Tue Apr 30 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.11-1
+- Fix slot calculations for group and frontend in the resource request channel
+- Handle collector downtimes gracefully
 
 * Mon Mar 11 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.10-1
 - Changes to AWS FOM publisher
