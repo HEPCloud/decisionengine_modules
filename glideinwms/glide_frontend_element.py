@@ -1428,7 +1428,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             ent_list = entry_info.get('EntryName', []).tolist()
             ent_name = ent_list[0] if ent_list else "-"
             fom_info = self.fom_entries.query('EntryName=="%s"' % ent_name)
-            #fom = fom_info.get('FOM').tolist()[0]
             try:
                 fom = fom_info.get('FOM').tolist()[0]
             except IndexError:
