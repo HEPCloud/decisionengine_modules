@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 0.3.11
+%define version 0.3.12
 %define release 1
 
 %define de_user decisionengine
@@ -135,6 +135,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Tue May 7 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.12-1
+- Bug Fix: Correctly handle usecases where entries are missing in the instance performance file
 
 * Tue Apr 30 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.11-1
 - Bug Fix: Fix slot calculations for group and frontend in the resource request channel
