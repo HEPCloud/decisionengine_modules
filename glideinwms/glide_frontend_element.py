@@ -1604,7 +1604,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         direct_match[key] = direct_match.get(key, 0) + job_count
                         prop_match[key] = prop_match.get(key, 0) + job_count
                         this_entry = entries.query('Name=="%s"' % key[1])
-                        #glidein_cpus = 1 # default to 1 if not defined
+                        # Default glidein_cpus to 1 if not defined
                         glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
                         prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
                         # Append FOM for all matches that are not in downtime
@@ -1642,8 +1642,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             hereonly_match[key] = hereonly_match.get(key, 0)
                             prop_match[key] = prop_match.get(key, 0)
 
-        #self.logger.info('---------- count_match return keys ----------')
-        #self.logger.info('---------- count_match return keys ----------')
         total = job_types[job_type]['abs']
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
 
