@@ -1597,47 +1597,50 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     prop_match[(None, None)] = prop_match.get((None, None), 0) + job_count
                     hereonly_match[(None, None)] = hereonly_match.get((None, None), 0) + job_count
                     prop_match_cpu[(None, None)] = prop_match_cpu.get((None, None), 0) + (job_count * req_cpus)
-                elif len(matches) == 1:
-                    # These jobs can only run here
-                    key = iter(matches).next()
-                    direct_match[key] = direct_match.get(key, 0) + job_count
-                    prop_match[key] = prop_match.get(key, 0) + job_count
-                    this_entry = entries.query('Name=="%s"' % key[1])
-                    #glidein_cpus = 1 # default to 1 if not defined
-                    glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
-                    prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
                 else:
-                    # Append FOM for all matches that are not in downtime
-                    fom_matches = self.matches_with_fom(matches, entries_with_cpus)
-                    # Get entries not in downtime and FOM not INFINITY
-                    fom_matches_up = fom_matches.query(
-                        '(GLIDEIN_In_Downtime!=True) and (FOM != %f)' % sys.float_info.max)
-                    # Compute 1/FOM for each match
-                    inv_fom_series = fom_matches_up['FOM'].apply(compute_nth)
-                    inv_fom_total = inv_fom_series.sum()
-                    # Calculate requests based on % value of 1/FOM
-                    fom_reqs = inv_fom_series.apply(
-                        compute_weighted_share, args=(inv_fom_total, job_count))
-                    fom_matches_up['ResourceRequests'] = fom_reqs
-
-                    for index, row in fom_matches_up.iterrows():
-                        key = (row.get('CollectorHost'), row.get('Name'))
+                    if len(matches) == 1:
+                        # These jobs can only run here
+                        key = iter(matches).next()
                         direct_match[key] = direct_match.get(key, 0) + job_count
-                        fraction = row.get('ResourceRequests', 0)
-                        prop_match[key] = prop_match.get(key, 0) + fraction
-                        glidein_cpus = row.get('GLIDEIN_CPUS', 1)
-                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
-                        hereonly_match[key] = hereonly_match.get(key, 0)
+                        prop_match[key] = prop_match.get(key, 0) + job_count
+                        this_entry = entries.query('Name=="%s"' % key[1])
+                        #glidein_cpus = 1 # default to 1 if not defined
+                        glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
+                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
+                        # Append FOM for all matches that are not in downtime
+                        fom_matches = self.matches_with_fom(matches, entries_with_cpus)
+                    else:
+                        # Append FOM for all matches that are not in downtime
+                        fom_matches = self.matches_with_fom(matches, entries_with_cpus)
+                        # Get entries not in downtime and FOM not INFINITY
+                        fom_matches_up = fom_matches.query(
+                            '(GLIDEIN_In_Downtime!=True) and (FOM != %f)' % sys.float_info.max)
+                        # Compute 1/FOM for each match
+                        inv_fom_series = fom_matches_up['FOM'].apply(compute_nth)
+                        inv_fom_total = inv_fom_series.sum()
+                        # Calculate requests based on % value of 1/FOM
+                        fom_reqs = inv_fom_series.apply(
+                            compute_weighted_share, args=(inv_fom_total, job_count))
+                        fom_matches_up['ResourceRequests'] = fom_reqs
 
-                # Add stats for all entries in downtime or FOM == INFINITY
-                fom_matches_down = entries_with_cpus.query('GLIDEIN_In_Downtime==True')
-                fom_matches_inf = fom_matches.query('FOM==%f' % sys.float_info.max)
-                for rejected_matches in (fom_matches_down, fom_matches_inf):
-                    for index, row in rejected_matches.iterrows():
-                        key = (row['CollectorHost'], row['Name'])
-                        direct_match[key] = direct_match.get(key, 0)
-                        hereonly_match[key] = hereonly_match.get(key, 0)
-                        prop_match[key] = prop_match.get(key, 0)
+                        for index, row in fom_matches_up.iterrows():
+                            key = (row.get('CollectorHost'), row.get('Name'))
+                            direct_match[key] = direct_match.get(key, 0) + job_count
+                            fraction = row.get('ResourceRequests', 0)
+                            prop_match[key] = prop_match.get(key, 0) + fraction
+                            glidein_cpus = row.get('GLIDEIN_CPUS', 1)
+                            prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
+                            hereonly_match[key] = hereonly_match.get(key, 0)
+
+                    # Add stats for all entries in downtime or FOM == INFINITY
+                    fom_matches_down = entries_with_cpus.query('GLIDEIN_In_Downtime==True')
+                    fom_matches_inf = fom_matches.query('FOM==%f' % sys.float_info.max)
+                    for rejected_matches in (fom_matches_down, fom_matches_inf):
+                        for index, row in rejected_matches.iterrows():
+                            key = (row['CollectorHost'], row['Name'])
+                            direct_match[key] = direct_match.get(key, 0)
+                            hereonly_match[key] = hereonly_match.get(key, 0)
+                            prop_match[key] = prop_match.get(key, 0)
 
         #self.logger.info('---------- count_match return keys ----------')
         #self.logger.info('---------- count_match return keys ----------')
