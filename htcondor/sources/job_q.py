@@ -61,8 +61,7 @@ class JobQ(Source.Source):
                     dataframe = dataframe.append(df, ignore_index=True)
             except htcondor_query.QueryError:
                 self.logger.warning('Query error fetching job classads from schedd "%s" in collector host(s) "%s"' % (schedd, collector_host))
-                self.logger.error('Query error fetching job classads from schedd "%s" in collector host(s) "%s". Traceback: %s' % (schedd, collector_host, traceback.format_exc()))
-            except Exception:
+              except Exception:
                 self.logger.warning('Unexpected error fetching job classads from schedd "%s" in collector host(s) "%s"' % (schedd, collector_host))
                 self.logger.error('Unexpected error fetching job classads from schedd "%s" in collector host(s) "%s". Traceback: %s' % (schedd, collector_host, traceback.format_exc()))
         return {'job_manifests': dataframe}
