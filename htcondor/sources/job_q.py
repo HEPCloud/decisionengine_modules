@@ -1,13 +1,13 @@
 #!/usr/bin/python
 import argparse
-import traceback
 import pprint
+import traceback
+
 import pandas
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules import de_logger
 from decisionengine_modules.htcondor import htcondor_query
-
 
 PRODUCES = ['job_manifests']
 
@@ -15,18 +15,19 @@ PRODUCES = ['job_manifests']
 class JobQ(Source.Source):
 
     def __init__(self, config):
-        if not config:
-            config = {}
-        if not isinstance(config, dict):
+        super(JobQ, self).__init__(config)
+ 
+        if not self.parameters:
+            self.parameters = {}
+        if not isinstance(self.parameters, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
-        self.collector_host = config.get('collector_host')
-        self.schedds = config.get('schedds', [None])
-        self.condor_config = config.get('condor_config')
-        self.constraint = config.get('constraint', True)
-        self.classad_attrs = config.get('classad_attrs')
+        self.collector_host = self.parameters.get('collector_host')
+        self.schedds = self.parameters.get('schedds', [None])
+        self.condor_config = self.parameters.get('condor_config')
+        self.constraint = self.parameters.get('constraint', True)
+        self.classad_attrs = self.parameters.get('classad_attrs')
         self.logger = de_logger.get_logger()
-
 
     def produces(self):
         """
@@ -34,13 +35,11 @@ class JobQ(Source.Source):
         """
         return PRODUCES
 
-
     def acquire(self):
         """
         Acquire jobs from the HTCondor Schedd
         :rtype: :obj:`~pd.DataFrame`
         """
-
         dataframe = pandas.DataFrame()
         (collector_host, secondary_collectors) = htcondor_query.split_collector_host(self.collector_host)
         for schedd in self.schedds:
@@ -50,20 +49,19 @@ class JobQ(Source.Source):
                 condor_q.load(constraint=self.constraint,
                               format_list=self.classad_attrs,
                               condor_config=self.condor_config)
-                jobs = []
-                for job in condor_q.stored_data:
-                    jobs.extend(job)
                 df = pandas.DataFrame(condor_q.stored_data)
                 if not df.empty:
-                    # Add schedd name and colector host to job records
+                    # Add schedd name and collector host to job records
                     df['ScheddName'] = pandas.Series([schedd]*len(condor_q.stored_data))
                     df['CollectorHost'] = pandas.Series([collector_host]*len(condor_q.stored_data))
                     dataframe = dataframe.append(df, ignore_index=True)
             except htcondor_query.QueryError:
-                self.logger.warning('Query error fetching job classads from schedd "%s" in collector host(s) "%s"' % (schedd, collector_host))
-              except Exception:
-                self.logger.warning('Unexpected error fetching job classads from schedd "%s" in collector host(s) "%s"' % (schedd, collector_host))
-                self.logger.error('Unexpected error fetching job classads from schedd "%s" in collector host(s) "%s". Traceback: %s' % (schedd, collector_host, traceback.format_exc()))
+                self.logger.warning('Query error fetching job classads from schedd "%s" in collector host(s) "%s".' %
+                                    (schedd, collector_host))
+            except Exception:
+                msg = 'Unexpected error fetching job classads from schedd "{}" in collector host(s) "{}".'
+                self.logger.warning(msg.format(schedd, collector_host))
+                self.logger.error(msg.format(schedd, collector_host) + " Traceback: {}".format(traceback.format_exc()))
         return {'job_manifests': dataframe}
 
 
