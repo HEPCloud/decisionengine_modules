@@ -3,9 +3,9 @@
 import abc
 import pandas
 
-from decisionengine.framework.modules import de_logger
+import logging
 
-logger = de_logger.get_logger()
+logger = logging.getLogger()
 
 
 class ResourceOrderPlugin(object):

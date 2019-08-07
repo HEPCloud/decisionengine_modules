@@ -6,7 +6,7 @@ import pprint
 import pandas
 
 from decisionengine.framework.modules import Source
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine_modules.htcondor import htcondor_query
 
 
@@ -22,7 +22,7 @@ class ResourceManifests(Source.Source):
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)

@@ -7,7 +7,7 @@ import pprint
 
 import pandas as pd
 
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 from decisionengine.framework.modules import Transform
 
 CONSUMES = ['job_manifests', 'Nersc_Job_Info']
@@ -21,7 +21,7 @@ class CompareNerscFactoryJobs(Transform.Transform):
 
     def __init__(self, param_dict):
         self.param_dict = param_dict
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def consumes(self):
         """

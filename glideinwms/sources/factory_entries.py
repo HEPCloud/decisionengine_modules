@@ -6,7 +6,7 @@ import pprint
 import pandas
 
 from decisionengine.framework.modules import Source
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine_modules.htcondor import htcondor_query
 
 
@@ -33,7 +33,7 @@ class FactoryEntries(Source.Source):
             'Factory_Entries_LCF': ('batch slurm',)
         }
         self.subsystem_name = 'any'
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
 
     def produces(self):

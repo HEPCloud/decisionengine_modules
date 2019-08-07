@@ -9,7 +9,7 @@ import pprint
 from decisionengine_modules.graphite.publishers.generic_publisher import GenericPublisher as publisher
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine_modules.graphite_client as graphite
-from decisionengine.framework.modules import de_logger
+import logging
 
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud.de.glideinwms"
 CONSUMES = ['job_clusters']
@@ -17,7 +17,7 @@ CONSUMES = ['job_clusters']
 class JobClusteringPublisher(publisher):
     def __init__(self, config):
         super(JobClusteringPublisher, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def consumes(self):
         return CONSUMES

@@ -3,7 +3,7 @@
 import pandas
 import pprint
 
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 from decisionengine.framework.modules import Transform
 from decisionengine_modules.util.figure_of_merit import figure_of_merit
 
@@ -20,7 +20,7 @@ class GridFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super(GridFigureOfMerit, self).__init__(config)
         self.config = config
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.price_performance = self.config.get('price_performance', 1)
 
 

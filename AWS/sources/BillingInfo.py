@@ -14,7 +14,7 @@ import boto3
 from boto3.session import Session
 import numpy as np
 import pandas as pd
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 from decisionengine.framework.modules import Source
 import DEAccountContants
@@ -30,7 +30,7 @@ class AWSBillCalculator(object):
     def __init__(self, accountName, accountProfileName, accountNumber, lastKnownBillDate, balanceAtDate, applyDiscount,
                  sumToDate=None, tmpDirForBuillingFiles='.', verboseFlag=True, debugFlag=False):
         # Configuration parameters
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.accountName = accountName
         self.accountProfileName = accountProfileName
         self.accountNumber = accountNumber
@@ -617,7 +617,7 @@ class AWSBillCalculator(object):
 class BillingInfo(Source.Source):
     def __init__(self, *args, **kwargs):
         acconts_config_file = args[0]['billing_configuration']
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.billing_files_location = args[0]['dst_dir_for_s3_files']
         # Load kown accounts configuration
         account_dict = DEAccountContants.load_constants(acconts_config_file)

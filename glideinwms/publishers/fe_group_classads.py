@@ -4,7 +4,7 @@ import pprint
 import pandas
 import numpy
 
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine_modules.htcondor.publishers import publisher
 
 # TODO: Enable publishing of glideresource_manifests
@@ -19,7 +19,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
         super(GlideinWMSManifests, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self._fact_entrytype_map = {
             'allow_grid_requests': 'Factory_Entries_Grid',
             'allow_aws_requests': 'Factory_Entries_AWS',

@@ -5,7 +5,7 @@ import pprint
 import pandas
 import itertools
 
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
 
@@ -42,7 +42,7 @@ class JobClustering(Transform.Transform):
         totals = [[job_expr[0], self.match_exprs.get(job_expr), 0, job_expr[1]] for job_expr in self.match_exprs.keys()]
         self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
 
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def consumes(self):
         """

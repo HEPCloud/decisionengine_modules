@@ -9,7 +9,7 @@ import classad
 import traceback
 import weakref
 
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.dataspace import datablock
 
@@ -32,7 +32,7 @@ class HTCondorManifests(Publisher.Publisher):
 
         self.condor_config = config.get('condor_config')
         self.x509_user_proxy = config.get('x509_user_proxy')
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
         self.classad_type = 'generic'

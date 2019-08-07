@@ -6,7 +6,7 @@ import argparse
 import pprint
 import logging
 
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 from decisionengine.framework.modules import Transform
 
 CONSUMES = ['startd_manifests', 'Factory_Entries_LCF', 'Nersc_Job_Info']
@@ -21,7 +21,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
     def __init__(self, param_dict):
         self.param_dict = param_dict
         self.entry_nersc_map = param_dict['entry_nersc_map']
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def consumes(self):
         """

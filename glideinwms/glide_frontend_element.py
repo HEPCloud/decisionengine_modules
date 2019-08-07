@@ -16,7 +16,7 @@ from glideinwms.frontend import glideinFrontendConfig
 from glideinwms.frontend import glideinFrontendInterface
 from glideinwms.frontend import glideinFrontendPlugins
 
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
 from decisionengine_modules.glideinwms import classads
@@ -26,7 +26,7 @@ from decisionengine_modules.glideinwms.security import CredentialCache
 pandas.options.mode.chained_assignment = None  # default='warn'
 
 # TODO: Need a better way of setting global logger
-logger = de_logger.get_logger()
+logger = logging.getLogger()
 
 class NoCredentialException(Exception):
     pass
@@ -52,7 +52,7 @@ class GlideFrontendElement(object):
     """
 
     def __init__(self, fe_group, acct_group, fe_cfg):
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.fe_group = fe_group
         self.acct_group = acct_group
         self.fe_cfg = fe_cfg

@@ -12,7 +12,7 @@ import sys
 
 from decisionengine.framework.modules import Transform
 from decisionengine_modules.util import figure_of_merit as fom
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 """
 IMPORTANT: Please do not change order of these keys and always
@@ -26,7 +26,7 @@ PRODUCES = ["Nersc_Price_Performance", "Nersc_Figure_Of_Merit"]
 class NerscFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super(NerscFigureOfMerit, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def transform(self, data_block):
         """

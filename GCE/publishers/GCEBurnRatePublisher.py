@@ -7,7 +7,7 @@ import argparse
 import pprint
 
 from decisionengine_modules.graphite.publishers.generic_publisher import GenericPublisher as publisher
-from decisionengine.framework.modules import de_logger
+import logging
 
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.gce"
 CONSUMES = ['GCE_Burn_Rate']
@@ -15,7 +15,7 @@ CONSUMES = ['GCE_Burn_Rate']
 class GCEBurnRatePublisher(publisher):
     def __init__(self, config):
         super(GCEBurnRatePublisher, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def consumes(self):
         return CONSUMES

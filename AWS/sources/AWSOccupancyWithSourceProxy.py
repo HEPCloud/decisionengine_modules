@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 import decisionengine_modules.load_config as load_config
 
 # default values
@@ -133,7 +133,7 @@ class OccupancyForRegion(object):
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, *args, **kwargs):
         super(AWSOccupancy, self).__init__(*args, **kwargs)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def produces(self): 
         return PRODUCES

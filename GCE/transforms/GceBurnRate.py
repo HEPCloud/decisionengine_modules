@@ -8,7 +8,7 @@ import pandas as pd
 import pprint
 
 from decisionengine.framework.modules import Transform
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 """
 IMPORTANT: Please do not change order of these keys and always
@@ -24,7 +24,7 @@ PRODUCES = ["GCE_Burn_Rate"]
 class GceBurnRate(Transform.Transform):
     def __init__(self, config):
         super(GceBurnRate, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def transform(self, data_block):
 
