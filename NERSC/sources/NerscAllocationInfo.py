@@ -8,7 +8,7 @@ import pandas as pd
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.NERSC.util import newt
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 PRODUCES = ['Nersc_Allocation_Info']
 
@@ -29,7 +29,7 @@ class NerscAllocationInfo(Source.Source):
         self.raw_results = None
         self.pandas_frame = None
         self.newt = newt.Newt(config.get('passwd_file'))
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def send_query(self):
         """

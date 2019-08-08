@@ -7,7 +7,7 @@ import pandas
 import numpy
 import traceback
 
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.dataspace.datablock import DataBlock
 from decisionengine_modules.glideinwms import glide_frontend_element
@@ -54,7 +54,7 @@ class GlideinRequestManifests(Transform.Transform):
             'de_frontend_config',
             '/var/lib/gwms-frontend/vofrontend/de_frontend_config')
 
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
 
     def consumes(self):

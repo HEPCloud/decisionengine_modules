@@ -12,7 +12,7 @@ import sys
 
 from decisionengine.framework.modules import Transform
 from decisionengine_modules.util.figure_of_merit import figure_of_merit
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 """
 IMPORTANT: Please do not change order of these keys and always
@@ -29,7 +29,7 @@ PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 class GceFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super(GceFigureOfMerit, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def transform(self, data_block):
 

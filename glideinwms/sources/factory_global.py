@@ -5,7 +5,7 @@ import pprint
 import pandas
 
 from decisionengine.framework.modules import Source
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine_modules.htcondor import htcondor_query
 
 
@@ -23,7 +23,7 @@ class FactoryGlobalManifests(Source.Source):
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
         self.subsystem_name = 'any'
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
 
     def produces(self):

@@ -7,7 +7,7 @@ import pandas as pd
 import argparse
 
 from decisionengine.framework.modules import SourceProxy
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 PRODUCES = ['GCE_Resource_Limits']
 
@@ -19,7 +19,7 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
     def __init__(self, config):
         super(GCEResourceLimits, self).__init__(config)
         self.entry_limit_attrs = config.get('entry_limit_attrs')
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def produces(self, name_schema_id_list=None):
         """

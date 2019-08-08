@@ -14,7 +14,7 @@ import os
 import pprint
 import pandas as pd
 
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine.framework.modules import Source
 from boto.exception import NoAuthHandlerFound
 
@@ -27,7 +27,7 @@ class GCEBillCalculator(object):
 
     def __init__(self, projectId, accountProfileName, accountNumber, lastKnownBillDate, balanceAtDate, applyDiscount, botoConfig, localFileDir, sumToDate = None):
 
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
         # Configuration parameters
         self.project_id = projectId
@@ -379,7 +379,7 @@ class GCEBillingInfo(Source.Source):
         self.botoConfig = config.get('botoConfig') # BOTO_CONFIG env
         self.localFileDir = config.get('localFileDir') # location for downloaded billing files
 
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def produces(self):
         """

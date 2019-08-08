@@ -6,7 +6,7 @@ import traceback
 import pandas
 
 from decisionengine.framework.modules import Source
-from decisionengine.framework.modules import de_logger
+import logging
 from decisionengine_modules.htcondor import htcondor_query
 
 PRODUCES = ['job_manifests']
@@ -16,7 +16,7 @@ class JobQ(Source.Source):
 
     def __init__(self, config):
         super(JobQ, self).__init__(config)
- 
+
         if not self.parameters:
             self.parameters = {}
         if not isinstance(self.parameters, dict):
@@ -27,7 +27,7 @@ class JobQ(Source.Source):
         self.condor_config = self.parameters.get('condor_config')
         self.constraint = self.parameters.get('constraint', True)
         self.classad_attrs = self.parameters.get('classad_attrs')
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def produces(self):
         """

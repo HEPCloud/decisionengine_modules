@@ -14,7 +14,7 @@ import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
-from decisionengine.framework.modules import de_logger
+import logging
 
 DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.nersc"
 CONSUMES=['Nersc_Figure_Of_Merit']
@@ -22,7 +22,7 @@ CONSUMES=['Nersc_Figure_Of_Merit']
 class NerscFigureOfMeritPublisher(publisher):
     def __init__(self, config):
         super(NerscFigureOfMeritPublisher, self).__init__(config)
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def consumes(self):
         return CONSUMES

@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 import decisionengine_modules.load_config as load_config
 
 PRODUCES = ['Performance_Data']

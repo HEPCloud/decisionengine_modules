@@ -8,7 +8,7 @@ import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 PRODUCES = ['GCE_Instance_Performance']
 
@@ -20,7 +20,7 @@ class GCEInstancePerformance(Source.Source):
         self.csv_file = config.get('csv_file')
         if not self.csv_file:
             raise RuntimeError("No csv file found in configuration")
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def produces(self, name_schema_id_list=None):
         return PRODUCES

@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 import decisionengine_modules.load_config as load_config
 
 # default values
@@ -134,7 +134,7 @@ class AWSOccupancy(Source.Source):
     def __init__(self, configdict):
         self.config_file = configdict['occupancy_configuration']
         self.account_dict = {}
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
 
     def produces(self,schema_id_list): return PRODUCES
 

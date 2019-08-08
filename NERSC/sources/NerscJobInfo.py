@@ -8,7 +8,7 @@ import time
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.NERSC.util import newt
-import decisionengine.framework.modules.de_logger as de_logger
+import logging
 
 PRODUCES = ['Nersc_Job_Info']
 
@@ -27,7 +27,7 @@ class NerscJobInfo(Source.Source):
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
         self.newt = newt.Newt(config.get('passwd_file'))
-        self.logger = de_logger.get_logger()
+        self.logger = logging.getLogger()
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 

@@ -6,9 +6,9 @@ import calendar
 from glideinwms.lib import x509Support
 from glideinwms.lib import condorExe
 
-from decisionengine.framework.modules import de_logger
+import logging
 
-logger = de_logger.get_logger()
+logger = logging.getLogger()
 
 class Credential:
 
