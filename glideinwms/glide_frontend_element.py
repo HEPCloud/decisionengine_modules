@@ -222,6 +222,9 @@ class GlideFrontendElement(object):
                     prop_jobs['Idle'] = prop_jobs['ProxyIdle']
                     self.logger.info('Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
 
+            # MMDB should be debug
+            self.logger.info("Request %s: prop jobs %s(mc %s, min %s), available slots %s " % (request_name, prop_jobs['Idle'], prop_mc_jobs['Idle'], self.entry_min_glideins_running, count_slots['Idle'], ))
+
             # effective idle is how much more we need
             # if there are idle slots, subtract them, they should match soon
             effective_idle = max(prop_jobs['Idle']-count_slots['Idle'], 0)
@@ -256,6 +259,9 @@ class GlideFrontendElement(object):
                 prop_mc_jobs,
                 self.count_real_glideins[glideid],
                 count_slots['Idle'])
+
+            # TODO: MMDB should be debug
+            #self.logger.info("Limits triggered: %s " % (', '.join(["%s: %s" % (k, v) for k, v in limits_triggered.items()]) ))
 
             # TODO: Figure out what to do with monitoring
             # Frontend groups logs stats here creating web monitoring xml files
@@ -874,6 +880,7 @@ class GlideFrontendElement(object):
                 job_count = len(group)
 
                 matches = set()
+                # TODO: how is this handling AUTO and GLIDEIN_ESTIMATED_CPUS?
                 for index, row in entries.query('GLIDEIN_CPUS >= %i' % req_cpus).iterrows():
                     matches.add((row.get('CollectorHost'), row.get('Name')))
 
@@ -986,6 +993,40 @@ class GlideFrontendElement(object):
         return glideid_list
 
 
+    def identify_limits_triggered(self, count_status,
+                                  total_glideins, total_idle_glideins,
+                                  fe_total_glideins, fe_total_idle_glideins,
+                                  global_total_glideins,
+                                  global_total_idle_glideins,
+                                  limits_triggered):
+
+        # Identify the limits triggered for advertising in glideresource
+        if count_status['Total'] >= self.entry_max_glideins:  # max_running
+            limits_triggered['TotalGlideinsPerEntry'] = 'count=%i, limit=%i' % (count_status['Total'],
+                                                                                self.entry_max_glideins)
+        if count_status['Idle'] >= self.entry_max_slots_idle:  # max_vms_idle
+            limits_triggered['IdleGlideinsPerEntry'] = 'count=%i, limit=%i' % (count_status['Idle'],
+                                                                               self.entry_max_slots_idle)
+        if total_glideins >= self.total_max_slots:   # was total_max_glideins
+            limits_triggered['TotalGlideinsPerGroup'] = 'count=%i, limit=%i' % (total_glideins,
+                                                                                self.total_max_slots)
+        if total_idle_glideins >= self.total_max_slots_idle:  # was total_max_vms_idle
+            limits_triggered['IdleGlideinsPerGroup'] = 'count=%i, limit=%i' % (total_idle_glideins,
+                                                                               self.total_max_slots_idle)
+        if fe_total_glideins >= self.fe_total_max_slots:  # fe_total_max_glideins
+            limits_triggered['TotalGlideinsPerFrontend'] = 'count=%i, limit=%i' % (fe_total_glideins,
+                                                                                   self.fe_total_max_slots)
+        if fe_total_idle_glideins >= self.fe_total_max_slots_idle:  # fe_total_max_vms_idle
+            limits_triggered['IdleGlideinsPerFrontend'] = 'count=%i, limit=%i' % (fe_total_idle_glideins,
+                                                                                  self.fe_total_max_slots_idle)
+        if global_total_glideins >= self.global_total_max_slots:  # global_total_max_glideins
+            limits_triggered['TotalGlideinsGlobal'] = 'count=%i, limit=%i' % (global_total_glideins,
+                                                                              self.global_total_max_slots)
+        if global_total_idle_glideins >= self.global_total_max_slots_idle:  # global_total_max_vms_idle
+            limits_triggered['IdleGlideinsGlobal'] = 'count=%i, limit=%i' % (global_total_idle_glideins,
+                                                                             self.global_total_max_slots_idle)
+
+
     def compute_glidein_min_idle(self, count_status, total_glideins,
                                  total_idle_glideins, fe_total_glideins,
                                  fe_total_idle_glideins,
@@ -1006,21 +1047,22 @@ class GlideFrontendElement(object):
             (fe_total_glideins >= self.fe_total_max_slots) or
             (fe_total_idle_glideins >= self.fe_total_max_slots_idle) or
             (global_total_glideins >= self.global_total_max_slots) or
-            (global_total_idle_glideins>=self.global_total_max_slots_idle)):
+            (global_total_idle_glideins >= self.global_total_max_slots_idle)):
 
             # Do not request more glideins under following conditions:
             # 1. Have all the running jobs I wanted
             # 2. Have enough idle vms/slots
             # 3. Reached the system-wide limit
-            glidein_min_idle=0
+            glidein_min_idle = 0
 
-            # TODO: Need to add following informaive funxtion
+            limits_triggered['ZeroLimitHit'] = 'glidein_min_idle set to 0'
+
             # Modifies limits_triggered dict
-            #self.identify_limits_triggered(
-            #    count_status, total_glideins, total_idle_glideins,
-            #    fe_total_glideins, fe_total_idle_glideins,
-            #    global_total_glideins, global_total_idle_glideins,
-            #    limits_triggered)
+            self.identify_limits_triggered(
+                count_status, total_glideins, total_idle_glideins,
+                fe_total_glideins, fe_total_idle_glideins,
+                global_total_glideins, global_total_idle_glideins,
+                limits_triggered)
 
         elif (effective_idle>0):
             # don't go over the system-wide max
@@ -1035,6 +1077,9 @@ class GlideFrontendElement(object):
                 self.fe_total_max_slots_idle-fe_total_idle_glideins,
                 self.global_total_max_slots-global_total_glideins,
                 self.global_total_max_slots_idle-global_total_idle_glideins)
+
+            if glidein_min_idle < effective_idle:
+                limits_triggered['MaxLimitHit'] = 'was=%i, min=%i' % (effective_idle, glidein_min_idle)
 
             # since it takes a few cycles to stabilize, ask for only one third
             glidein_min_idle=glidein_min_idle/3
@@ -1071,6 +1116,7 @@ class GlideFrontendElement(object):
                 glidein_min_idle=1
         else:
             # no idle, make sure the glideins know it
+            limits_triggered['NoEffectiveIdle'] = 'no glidein is needed'
             glidein_min_idle = 0
 
         return int(glidein_min_idle)
@@ -1373,6 +1419,11 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     prop_jobs['Idle'] = prop_jobs['ProxyIdle']
                     self.logger.info('Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
 
+            # MMDB should be debug
+            self.logger.info("Request %s: prop jobs %s(mc %s, min %s), available slots %s " % (
+                request_name, prop_jobs['Idle'], prop_mc_jobs['Idle'], self.entry_min_glideins_running,
+                count_slots['Idle'],))
+
             # effective idle is how much more we need
             # if there are idle slots, subtract them, they should match soon
             effective_idle = max(prop_jobs['Idle']-count_slots['Idle'], 0)
@@ -1405,6 +1456,9 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 prop_mc_jobs,
                 self.count_real_glideins[glideid],
                 count_slots['Idle'])
+
+            # MMDB should be debug
+            self.logger.info("Limits triggered: %s " % (', '.join(["%s: %s" % (k, v) for k, v in limits_triggered.items()])))
 
             # TODO: Figure out what to do with monitoring
             # Frontend groups logs stats here creating web monitoring xml files
@@ -1573,10 +1627,14 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         hereonly_match = {}  # Jobs that can only run here
         prop_match_cpu = {}  # Total Cpus: prop_match * GLIDEIN_CPUS
 
+        dbg_info = ['count_match_fom_bff']
+
         jobs = job_types[job_type]['dataframe']
         if not jobs.empty:
             # Get group of jobs based on request cpus
             job_groups = jobs.groupby('RequestCpus')
+
+            dbg_info.append('%i job groups' % len(job_groups))
 
             for (req_cpus, job_group) in job_groups:
                 # Group jobs by matching criteria: RequestCpus for now
@@ -1584,11 +1642,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 job_count = len(job_group)
 
                 matches = set()
-                #TODO: Handle auto here
+                # TODO: only entries w/ explicit numeric fixed GLIDEIN_CPUS are considered. Handle auto here
                 entries_with_cpus = entries.query('GLIDEIN_CPUS>=%i' % req_cpus)
 
                 for index, row in entries_with_cpus.iterrows():
                     matches.add((row.get('CollectorHost'), row.get('Name')))
+
 
                 if len(matches) == 0:
                     # These jobs do not match anywhere
@@ -1597,6 +1656,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     prop_match[(None, None)] = prop_match.get((None, None), 0) + job_count
                     hereonly_match[(None, None)] = hereonly_match.get((None, None), 0) + job_count
                     prop_match_cpu[(None, None)] = prop_match_cpu.get((None, None), 0) + (job_count * req_cpus)
+                    dbg_info.append('%i jobs requesting %i cpus not matching entries' % (job_count, req_cpus))
                 else:
                     if len(matches) == 1:
                         # These jobs can only run here
@@ -1606,9 +1666,14 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         this_entry = entries.query('Name=="%s"' % key[1])
                         # Default glidein_cpus to 1 if not defined
                         glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
-                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
+                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus*job_count))/glidein_cpus)
                         # Append FOM for all matches that are not in downtime
                         fom_matches = self.matches_with_fom(matches, entries_with_cpus)
+                        dbg_info.append('%i jobs requesting %i cpus matching 1 entry (fom %i) w/ %i cpus: (<%s>, <%s>, <%s, %s>) %s, %s' %
+                                        (job_count, req_cpus, len(fom_matches), glidein_cpus,
+                                         prop_match_cpu.get(key, 0), float(req_cpus)/glidein_cpus,
+                                         type(req_cpus), type(glidein_cpus),
+                                         prop_match_cpu[key], key))
                     else:
                         # Append FOM for all matches that are not in downtime
                         fom_matches = self.matches_with_fom(matches, entries_with_cpus)
@@ -1622,6 +1687,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         fom_reqs = inv_fom_series.apply(
                             compute_weighted_share, args=(inv_fom_total, job_count))
                         fom_matches_up['ResourceRequests'] = fom_reqs
+                        dbg_info.append('%i jobs requesting %i cpus matching %i entries (fom_up: %i):  ' %
+                                        (job_count, req_cpus, len(matches), len(fom_matches_up)))
 
                         for index, row in fom_matches_up.iterrows():
                             key = (row.get('CollectorHost'), row.get('Name'))
@@ -1631,6 +1698,9 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             glidein_cpus = row.get('GLIDEIN_CPUS', 1)
                             prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
                             hereonly_match[key] = hereonly_match.get(key, 0)
+                            dbg_info.append('  entry i %i: (%s, %s, fr: %s) %s, %s ' %
+                                            (len(matches), prop_match_cpu.get(key, 0),
+                                             (fraction * req_cpus)/glidein_cpus, fraction, prop_match_cpu[key], key))
 
                     # Add stats for all entries in downtime or FOM == INFINITY
                     fom_matches_down = entries_with_cpus.query('GLIDEIN_In_Downtime==True')
@@ -1643,6 +1713,9 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             prop_match[key] = prop_match.get(key, 0)
 
         total = job_types[job_type]['abs']
+        # TODO: MMDB should be debug
+        #logger.info('\n'.join(dbg_info))
+
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
 
 
