@@ -480,7 +480,7 @@ class GlideFrontendElement(object):
             #gc_classad.adParams['ReqIdleLifetime'] = params_obj.idle_lifetime
             gc_classad.adParams['WebMonitoringURL'] = self.monitoring_web_url
             gc_classad.adParams['WebSignType'] = self.signature_type
-            gc_classad.adParams['WebUrl'] = self.web_url
+            gc_classad.adParams['WebURL'] = self.web_url
             gc_classad.adParams['WebDescriptFile'] = self.descript_fname
             gc_classad.adParams['WebDescriptSign'] = self.descript_signature
             gc_classad.adParams['WebGroupURL'] = self.group_web_url
