@@ -1,0 +1,22 @@
+on: [pull_request]
+
+jobs:
+  pylint_job:
+    runs-on: ubuntu-latest
+    name: A job to build the decision engine rpm
+    steps:
+    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        path: 'decisionengine_modules'
+      id: checkout
+    - name: pylint action step
+      uses: ./.github/actions/pylint-in-sl7-docker
+      id: pylint
+    - name: Archive reports
+      if: always()
+      uses: actions/upload-artifact@v1
+      with:
+        name: reports
+        path: logs.tar.bz2
