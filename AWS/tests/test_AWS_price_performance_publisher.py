@@ -1,18 +1,22 @@
-import pandas as pd
-import numpy
 import os
 
-import utils
+import pandas as pd
+
 import decisionengine_modules.AWS.publishers.AWS_price_performance as AWSPPublisher
 
-expected_reply = pd.read_csv('expected_AWS_price_perf_pub.csv')
- 
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
+expected_reply =  pd.read_csv(os.path.join(DATA_DIR,
+                                           'expected_AWS_price_perf_pub.csv'))
+
 consumes = ['AWS_Price_Performance']
+
 
 def create_datablock():
     data_block = {}
-    data_block['AWS_Price_Performance'] =  pd.read_csv('expected_price_performance.csv')
+    data_block['AWS_Price_Performance'] = pd.read_csv(os.path.join(DATA_DIR, 'expected_price_performance.csv'))
     return data_block
+
 
 class TestAWSPPPublisher:
 
@@ -33,7 +37,7 @@ class TestAWSPPPublisher:
                                                 'output_file': 'AWS_price_perf_pub.csv'})
 
         data_block = create_datablock()
-        res = pp_p.publish(data_block)
+        pp_p.publish(data_block)
         opd = pd.read_csv('AWS_price_perf_pub.csv')
         assert opd.equals(expected_reply)
 

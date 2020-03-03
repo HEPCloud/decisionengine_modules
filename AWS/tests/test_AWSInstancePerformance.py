@@ -1,11 +1,18 @@
+import os
+
 import pandas as pd
 
 import decisionengine_modules.AWS.sources.AWSInstancePerformance as AWSInstancePerformance
 
-config={'data_file':'instance_performance_sample.csv'}
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
-expected_pandas_df = pd.read_csv(config.get("data_file")).drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)
+config={'data_file':os.path.join(DATA_DIR,
+                                 'instance_performance_sample.csv')}
+
+expected_pandas_df = pd.read_csv(config.get("data_file")).drop_duplicates(subset=['AvailabilityZone', 'InstanceType'],
+                                                                          keep='last').reset_index(drop=True)
 produces = ['Performance_Data']
+
 
 class TestAWSInstancePerformance:
 

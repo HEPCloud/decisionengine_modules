@@ -1,6 +1,0 @@
-AccountName,AvailabilityZone,InstanceType,ProductDescription,SpotPrice,Timestamp,PerfTtbarTotal,MaxLimit,AWS_Figure_Of_Merit
-HEPCloud_CMS,us-east-1d,m3.xlarge,Linux/UNIX,0.0617,2018-10-04T11:36:38,0.0557008,20,0.0553852009307
-HEPCloud_CMS,us-east-1c,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,20,0.0553852009307
-HEPCloud_CMS,us-east-1e,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,20,0.0553852009307
-HEPCloud_CMS,us-east-1b,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,20,0.110770401861
-HEPCloud_CMS,us-east-1a,m3.xlarge,Linux/UNIX,0.266,2018-09-19T23:08:24,0.0,20,0.0

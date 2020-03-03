@@ -62,4 +62,4 @@ class TestNerscFigureOfMerit:
             try:
                 assert expected_transform_output[key].equals(value)
             except:
-                print key, " fail\n", expected_transform_output[key], "\n", value
+                print (key, " fail\n", expected_transform_output[key], "\n", value)

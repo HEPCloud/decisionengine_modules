@@ -1,15 +1,18 @@
-#!/usr/bin/env python
-"""
-Fill in data from Job limits csv file
-"""
+import os
+
 import pandas as pd
 
 import decisionengine_modules.AWS.sources.AWSJobLimits as AWSJobLimits
 
-config = {'data_file':'job_limits_sample.csv'}
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
-expected_pandas_df = pd.read_csv(config.get("data_file")).drop_duplicates(subset=['AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop=True)
+config = {'data_file': os.path.join(DATA_DIR,
+                                    'job_limits_sample.csv')}
+
+expected_pandas_df = pd.read_csv(config.get("data_file")).drop_duplicates(subset=['AvailabilityZone', 'InstanceType'],
+                                                                          keep='last').reset_index(drop=True)
 produces = ['Job_Limits']
+
 
 class TestAWSJobLimits:
 
