@@ -1,6 +1,5 @@
-import os
-import pprint
 import pandas
+
 from decisionengine_modules.glideinwms.publishers import job_clustering_publisher
 
 config_pub = {"publish_to_graphite": True,
@@ -43,6 +42,7 @@ valid_output_dict = {"VO_Name=='cms'_and_RequestCpus==1_and_(MaxWallTimeMins>0_a
                      "VO_Name=='cms'_and_RequestCpus==2_and_(MaxWallTimeMins>60*12_and_MaxWallTimeMins<=_60*24).job_cluster": 1,
                      "VO_Name=='nova'.job_cluster": 1}
 
+
 class TestJobClusteringPublisher:
 
     def test_consumes(self):
@@ -53,9 +53,7 @@ class TestJobClusteringPublisher:
     def test_graphite_context(self):
         pub = job_clustering_publisher.JobClusteringPublisher(config_pub)
         output = pub.graphite_context(valid_datablock)
-        #pprint.pprint(output)
         assert output[0] == "hepcloud.de.glideinwms"
-        #assert output[1].get("VO_Name=='cms'_and_RequestCpus==1_and_(MaxWallTimeMins>0_and_MaxWallTimeMins<=_60*12).job_cluster") == 2
         assert output[1].get('group_1.job_cluster') == 2
         assert output[1].get('group_2.job_cluster') == 1
         assert output[1].get('group_3.job_cluster') == 2

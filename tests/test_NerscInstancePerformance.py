@@ -1,24 +1,29 @@
+import os
+
 import pandas as pd
 
 from decisionengine_modules.NERSC.sources import NerscInstancePerformance
 
-config = {
-    "csv_file": "instance_performance_nersc.csv",
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+CSV_FILE = os.path.join(DATA_DIR, "instance_performance_nersc.csv")
+
+CONFIG = {
+    "csv_file": CSV_FILE,
 }
 
-expected_pandas_df = pd.read_csv(config.get("csv_file"))
+EXPECTED_PANDAS_DF = pd.read_csv(CONFIG.get("csv_file"))
 
-produces = ['Nersc_Instance_Performance']
+PRODUCES = ['Nersc_Instance_Performance']
 
 
 class TestNerscInstancePerformance:
 
     def test_produces(self):
-        nersc_instance_performance = NerscInstancePerformance.NerscInstancePerformance(config)
-        assert nersc_instance_performance.produces() == produces
+        nersc_instance_performance = NerscInstancePerformance.NerscInstancePerformance(CONFIG)
+        assert nersc_instance_performance.produces() == PRODUCES
 
     def test_acquire(self):
-        nersc_instance_performance = NerscInstancePerformance.NerscInstancePerformance(config)
+        nersc_instance_performance = NerscInstancePerformance.NerscInstancePerformance(CONFIG)
         res = nersc_instance_performance.acquire()
-        assert produces == res.keys()
-        assert expected_pandas_df.equals(res.get(produces[0]))
+        assert PRODUCES == res.keys()
+        assert EXPECTED_PANDAS_DF.equals(res.get(PRODUCES[0]))

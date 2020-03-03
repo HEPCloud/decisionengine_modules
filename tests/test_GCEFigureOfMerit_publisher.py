@@ -1,6 +1,7 @@
-import os
 import pprint
+
 import pandas
+
 from decisionengine_modules.GCE.publishers import GCEFigureOfMerit_publisher
 
 config_fom_pub = {"publish_to_graphite": True,
@@ -39,4 +40,4 @@ class TestGCEFigureOfMeritPublisher:
         output = fom_pub.graphite_context(valid_datablock)
         pprint.pprint(output)
         assert output[0] == "hepcloud.de.gce"
-        assert output[1].get("FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit") == 0 
+        assert output[1].get("FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit") == 0

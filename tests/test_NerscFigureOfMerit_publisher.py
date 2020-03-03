@@ -1,6 +1,7 @@
-import os
 import pprint
+
 import pandas
+
 from decisionengine_modules.NERSC.publishers import NerscFigureOfMerit_publisher
 
 config_fom_pub = {"publish_to_graphite": True,
@@ -19,6 +20,7 @@ valid_datablock = pandas.DataFrame({
 valid_output_dict = {"CMSHTPC_T3_US_NERSC_Cori.fig_of_merit": 1.0,
                      "CMSHTPC_T3_US_NERSC_Cori2.fig_of_merit": 0.3}
 
+
 class TestNerscFigureOfMeritPublisher:
 
     def test_consumes(self):
@@ -31,4 +33,4 @@ class TestNerscFigureOfMeritPublisher:
         output = fom_pub.graphite_context(valid_datablock)
         pprint.pprint(output)
         assert output[0] == "hepcloud.de.nersc"
-        assert output[1].get("CMSHTPC_T3_US_NERSC_Cori.fig_of_merit") == 1.0 
+        assert output[1].get("CMSHTPC_T3_US_NERSC_Cori.fig_of_merit") == 1.0

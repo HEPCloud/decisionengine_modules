@@ -1,5 +1,6 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from decisionengine_modules.AWS.transforms import AwsBurnRate
 
 produces = ["AWS_Burn_Rate"]
@@ -8,13 +9,13 @@ config = {
 }
 
 occupancy = pd.DataFrame([
-    { 
+    {
         "AccountName": "FERMILAB",
         "AvailabilityZone": "us-east-1a",
         "InstanceType": "c3.xlarge",
         "RunningVms": 10,
-    }, 
-    { 
+    },
+    {
         "AccountName": "FERMILAB",
         "AvailabilityZone": "us-east-1a",
         "InstanceType": "t2.micro",
@@ -23,11 +24,11 @@ occupancy = pd.DataFrame([
     ])
 
 provisioner_resource_spot_prices = pd.DataFrame([
-    { 
+    {
         "AccountName": "CMS",
         "AvailabilityZone": "us-east-1c",
         "InstanceType": "m3.xlarge",
-        "ProductDescription" : "Linux/UNIX", 
+        "ProductDescription" : "Linux/UNIX",
         "SpotPrice": 0.0644,
         "Timestamp": pd.Timestamp("2019-01-25 11:15:22"),
     },
@@ -72,13 +73,13 @@ provisioner_resource_spot_prices = pd.DataFrame([
         "Timestamp": pd.Timestamp("2019-01-25 11:15:22"),
     },
     ])
-     
+
 df = pd.merge(occupancy,
               provisioner_resource_spot_prices,
               how="inner",
               on=["AccountName", "AvailabilityZone", "InstanceType"])
 
- 
+
 data_block = {
     "provisioner_resource_spot_prices": provisioner_resource_spot_prices,
     "AWS_Occupancy": occupancy,
@@ -87,7 +88,7 @@ data_block = {
 expected_transform_output = {
     produces[0]: pd.DataFrame([{
         "BurnRate": 0.7455}])
-}                           
+}
 
 
 class TestAwsBurnRate:

@@ -1,11 +1,11 @@
-import os
 import pprint
+
 import pandas
-import numpy
+
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
-config_test_match_exprs = { 
-  'match_expressions': { 
+config_test_match_exprs = {
+  'match_expressions': {
     ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_1"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
     ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_2"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
     ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_3"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
@@ -52,7 +52,7 @@ valid_output_dataframe = pandas.DataFrame({
   columns=['Job_Match_Expr', 'Factory_Match_Epxr', 'Totals', 'Frontend_Group']
 )
 
-# input with empty job_q data 
+# input with empty job_q data
 empty_q_datablock = {
   'job_manifests': pandas.DataFrame({})
 }
@@ -126,11 +126,12 @@ missing_q_output_dataframe = pandas.DataFrame({
 # This test must be updated to remove 'Frontend_Group' from test data when the
 # frontend is no longer used in the decision engine
 
+
 class TestJobClustering:
 
     # Test can create expected totals table based on known and valid input
-    # Test can handle missing job q data: missing column or missing attr, for all jobs or single job 
-    # Test uses defaults if no dataframe retrieved 
+    # Test can handle missing job q data: missing column or missing attr, for all jobs or single job
+    # Test uses defaults if no dataframe retrieved
     # Validate log messages
 
     def test_produces(self):
@@ -148,7 +149,7 @@ class TestJobClustering:
         output = job_clusters.transform(valid_q_datablock)
         pprint.pprint(output)
         db = output.get('job_clusters')
-        assert db['Totals'].sum() == 7 
+        assert db['Totals'].sum() == 7
         assert db.shape[0] == 5
 
     def test_transform_empty_q(self):
@@ -156,7 +157,7 @@ class TestJobClustering:
         output = job_clusters.transform(empty_q_datablock)
         pprint.pprint(output)
         db = output.get('job_clusters')
-        assert db['Totals'].sum() == 0 
+        assert db['Totals'].sum() == 0
         assert db.shape[0] == 5
         assert db.iloc[0,0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
 
@@ -165,6 +166,6 @@ class TestJobClustering:
         output = job_clusters.transform(missing_q_datablock)
         pprint.pprint(output)
         db = output.get('job_clusters')
-        assert db['Totals'].sum() == 0 
+        assert db['Totals'].sum() == 0
         assert db.shape[0] == 5
         assert db.iloc[0,0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"

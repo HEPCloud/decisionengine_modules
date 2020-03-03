@@ -1,13 +1,16 @@
 import os
-import pytest
-import mock
 import pprint
+
+import mock
+
 import utils
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.htcondor.sources import slots
 
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+FIXTURE_FILE = os.path.join(DATA_DIR, "cs.fixture")
 
-config_cs = {
+CONFIG = {
     'condor_config': 'condor_config',
     'collector_host': 'fermicloud122.fnal.gov',
 }
@@ -17,19 +20,11 @@ class TestStartdManifests:
 
     def test_produces(self):
         produces = ['startd_manifests']
-        s = slots.StartdManifests(config_cs)
+        s = slots.StartdManifests(CONFIG)
         assert(s.produces() == produces)
 
-
     def test_acquire(self):
-        s = slots.StartdManifests(config_cs)
+        s = slots.StartdManifests(CONFIG)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
-            f.return_value = utils.input_from_file('cs.fixture')
+            f.return_value = utils.input_from_file(FIXTURE_FILE)
             pprint.pprint(s.acquire())
-
-
-    """
-    def test_acquire_live(self):
-        s = slots.StartdManifests(config_cs)
-        pprint.pprint(s.acquire())
-    """

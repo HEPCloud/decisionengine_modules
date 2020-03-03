@@ -1,18 +1,22 @@
-import pandas as pd
+import os
+
 import numpy as np
+import pandas as pd
+import tabulate
+
 from decisionengine_modules.GCE.transforms import GceFigureOfMerit
-import tabulate 
 
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+CSV_FILE = os.path.join(DATA_DIR, "GceOccupancy.output.fixture.csv")
 
-produces = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
-
-config = {
+PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
+CONFIG = {
 }
 
 """
 GCE occupancy DF
 """
-gce_occupancy_df = pd.read_csv("GceOccupancy.output.fixture.csv")
+GCE_OCCUPANCY_DF = pd.read_csv(CSV_FILE)
 
 """
 GCE Instance Performance DF
@@ -44,9 +48,9 @@ data_block = {
          "GlideinConfigPerEntryMaxIdle": 100,
          "GlideinMonitorTotalStatusIdle": 10,
          "GlideinConfigPerEntryMaxGlideins": 200,
-         "GlideinMonitorTotalStatusRunning": 100},]),
+         "GlideinMonitorTotalStatusRunning": 100}]),
 
-    "GCE_Occupancy": gce_occupancy_df,
+    "GCE_Occupancy": GCE_OCCUPANCY_DF,
 }
 
 gce_price_performance_df = pd.DataFrame([
@@ -54,36 +58,36 @@ gce_price_performance_df = pd.DataFrame([
      "PricePerformance": 1.498423}, ])
 
 expected_transform_output = {
-    produces[0]: gce_price_performance_df.reindex(columns=("EntryName",
+    PRODUCES[0]: gce_price_performance_df.reindex(columns=("EntryName",
                                                            "PricePerformance")),
-    produces[1]: pd.DataFrame([
+    PRODUCES[1]: pd.DataFrame([
         {"EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
          "FigureOfMerit": 0.08241324921135648
         }, ]),
 }
 
 for k, value in data_block.items():
-    print tabulate.tabulate(value, headers='keys', tablefmt='psql')
+    print (tabulate.tabulate(value, headers='keys', tablefmt='psql'))
 
 
 class TestGceFigureOfMerit:
 
     def test_produces(self):
-        gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(config)
-        assert gce_figure_of_merit.produces() == produces
+        gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
+        assert gce_figure_of_merit.produces() == PRODUCES
 
     def test_transform(self):
-        gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(config)
+        gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
         res = gce_figure_of_merit.transform(data_block)
-        assert produces.sort() == res.keys().sort()
+        assert PRODUCES.sort() == res.keys().sort()
 
-        expected_df = expected_transform_output[produces[0]]
-        res_df = res[produces[0]]
+        expected_df = expected_transform_output[PRODUCES[0]]
+        res_df = res[PRODUCES[0]]
         assert np.isclose(expected_df["FigureOfMerit"],
                           res_df["FigureOfMerit"])
 
-        expected_df = expected_transform_output[produces[1]]
-        res_df = res[produces[1]]
+        expected_df = expected_transform_output[PRODUCES[1]]
+        res_df = res[PRODUCES[1]]
         assert np.isclose(expected_df["PricePerformance"],
                           res_df["PricePerformance"])
 

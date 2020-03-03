@@ -1,9 +1,7 @@
-import os
 import sys
-import pytest
-import mock
-import pprint
+
 import pandas
+
 from decisionengine_modules.glideinwms.transforms.grid_figure_of_merit import GridFigureOfMerit
 
 grid_entries = ['g1', 'g2', 'g3', 'g4', 'g5']

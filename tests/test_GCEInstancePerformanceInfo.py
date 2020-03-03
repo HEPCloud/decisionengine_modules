@@ -1,24 +1,29 @@
+import os
+
 import pandas as pd
 
 from decisionengine_modules.GCE.sources import GCEInstancePerformance
 
-config = {
-    "csv_file": "instance_performance_google.csv",
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+CSV_FILE = os.path.join(DATA_DIR, "instance_performance_google.csv")
+
+CONFIG = {
+    "csv_file": CSV_FILE,
 }
 
-expected_pandas_df = pd.read_csv(config.get("csv_file"))
+EXPECTED_PANDAS_DF = pd.read_csv(CONFIG.get("csv_file"))
 
-produces = ['GCE_Instance_Performance']
+PRODUCES = ['GCE_Instance_Performance']
 
 
 class TestGCEInstancePerformance:
 
     def test_produces(self):
-        gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(config)
-        assert gce_price_performance.produces() == produces
+        gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG)
+        assert gce_price_performance.produces() == PRODUCES
 
     def test_acquire(self):
-        gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(config)
+        gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG)
         res = gce_price_performance.acquire()
-        assert produces == res.keys()
-        assert expected_pandas_df.equals(res.get(produces[0]))
+        assert PRODUCES == res.keys()
+        assert EXPECTED_PANDAS_DF.equals(res.get(PRODUCES[0]))
