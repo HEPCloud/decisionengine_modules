@@ -32,7 +32,7 @@ class TestAWSPPPublisher(unittest.TestCase):
         try:
             os.unlink(OUTPUT_FILE)
         except OSError:
-            pass 
+            pass
 
     def test_consumes(self):
         self.assertTrue(self.publisher.consumes() == CONSUMES)
