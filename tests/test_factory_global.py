@@ -3,7 +3,7 @@ import pprint
 
 import mock
 
-import utils
+from decisionengine_modules.util import testutils as utils
 from decisionengine_modules.glideinwms.sources import factory_global
 from decisionengine_modules.htcondor import htcondor_query
 

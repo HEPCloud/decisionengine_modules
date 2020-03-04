@@ -3,7 +3,7 @@ import os
 import mock
 import pandas
 
-import utils
+from decisionengine_modules.util import testutils as utils
 from decisionengine_modules.NERSC.sources import NerscJobInfo
 from decisionengine_modules.NERSC.util import newt
 
