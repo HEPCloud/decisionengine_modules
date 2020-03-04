@@ -3,7 +3,7 @@ import os
 import mock
 import pandas
 
-import utils
+from decisionengine_modules.util import testutils as utils
 from decisionengine.framework.modules import SourceProxy
 from decisionengine_modules.GCE.sources import GCEResourceLimits
 
@@ -28,6 +28,7 @@ CONFIG = {
 }
 
 PRODUCES = ["GCE_Resource_Limits"]
+
 
 class TestGCEResourceLimits:
 

@@ -3,7 +3,7 @@ import pytest
 import mock
 import pprint
 import classad
-import utils
+from decisionengine_modules.util import testutils as utils
 from decisionengine_modules.htcondor import htcondor_query
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")

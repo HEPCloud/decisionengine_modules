@@ -3,9 +3,9 @@ import pprint
 
 import mock
 
-import utils
 from decisionengine_modules.glideinwms.sources import factory_client
 from decisionengine_modules.htcondor import htcondor_query
+from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "factory_client.cs.fixture")
@@ -28,18 +28,15 @@ class TestFactoryClientManifests:
         produces = ['factoryclient_manifests']
         assert(fc.produces() == produces)
 
-
     def test_acquire(self):
         fc = factory_client.FactoryClientManifests(CONFIG)
         with mock.patch.object(htcondor_query.CondorStatus, 'fetch') as f:
             f.return_value = utils.input_from_file(FIXTURE_FILE)
             pprint.pprint(fc.acquire())
 
-
     def test_acquire_live(self):
         fc = factory_client.FactoryClientManifests(CONFIG)
         pprint.pprint(fc.acquire())
-
 
     def test_acquire_bad(self):
         fc = factory_client.FactoryClientManifests(CONFIG_BAD)

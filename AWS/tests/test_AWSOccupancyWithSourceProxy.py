@@ -6,7 +6,7 @@ import pandas as pd
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
 import decisionengine_modules.AWS.sources.AWSOccupancyWithSourceProxy as Occupancy
-import utils
+from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
