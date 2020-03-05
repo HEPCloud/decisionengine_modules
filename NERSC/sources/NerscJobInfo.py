@@ -42,21 +42,24 @@ class NerscJobInfo(Source.Source):
         self.constraints['machines'] = self.constraints.get('machines',
                                                             ['edison', 'cori'])
         # get all systems that are up
-        up_machines = filter(lambda x: x['status'] == 'up', self.newt.get_status())
+#        up_machines = filter(lambda x: x['status'] == 'up', self.newt.get_status())
+        up_machines = [x for x in self.newt.get_status() if x['status'] == 'up']
         if not up_machines:
             self.logger.info("All machines at NERSC are down")
         # filter machines that are up
-        machines = filter(lambda x: x in [y["system"] for y in up_machines],
-                          self.constraints.get('machines'))
+#        machines = filter(lambda x: x in [y["system"] for y in up_machines],
+#                          self.constraints.get('machines'))
+        machines = [x for x in self.constraints.get('machines') if x in [y["system"] for y in up_machines]]
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
         # filter results based on constraints specified in newt_keys dictionary
         newt_keys = self.constraints.get("newt_keys", {})
         for m in machines:
             values = self.newt.get_queue(m)
-            for k, v in newt_keys.iteritems():
+            for k, v in newt_keys.tems():
                 if v:
-                    values = filter(lambda x: x[k] in v, values)
+#                    values = filter(lambda x: x[k] in v, values)
+                    values = [x for x in values if x[k] in v]
             if values:
                 raw_results.extend(values)
         pandas_frame = pd.DataFrame(raw_results)
@@ -116,7 +119,7 @@ def module_config_template():
         }
     }
 
-    print 'Entry in channel configuration'
+    print('Entry in channel configuration')
     pprint.pprint(template)
 
 
@@ -124,7 +127,7 @@ def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
     module_config_template()
 
 

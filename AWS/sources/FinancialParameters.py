@@ -49,16 +49,16 @@ def module_config_template():
         "schedule": 60*60,
     }
 
-    print "Entry in channel configuration"
+    print("Entry in channel configuration")
     pprint.pprint(d)
-    print "where"
-    print "\t params - are the desired burn rates and balances"
+    print("where")
+    print("\t params - are the desired burn rates and balances")
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 

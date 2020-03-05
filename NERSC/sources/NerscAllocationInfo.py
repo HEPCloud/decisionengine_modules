@@ -42,9 +42,10 @@ class NerscAllocationInfo(Source.Source):
                 results.extend(values['items'])
         # filter results based on constraints specified in newt_keys dictionary
         newt_keys = self.constraints.get("newt_keys", {})
-        for key, values in newt_keys.iteritems():
+        for key, values in newt_keys.items():
             if values:
-                results = filter(lambda x: x[key] in values, results)
+#                results = filter(lambda x: x[key] in values, results)
+                results = [x for x in results if x[key] in values]
         self.raw_results = results
 
     def raw_results_to_pandas_frame(self):
@@ -94,7 +95,7 @@ def module_config_template():
             }
         }
     }
-    print 'Entry in channel configuration'
+    print('Entry in channel configuration')
     pprint.pprint(template)
 
 
@@ -102,7 +103,7 @@ def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
     module_config_template()
 
 

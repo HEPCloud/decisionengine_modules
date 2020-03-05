@@ -6,7 +6,7 @@ Make HTML developer documentation files for Decision Engine using Sphinx.
 """
 
 # Python imports
-from __future__ import print_function
+#from __future__ import print_function
 import argparse
 import distutils.spawn
 import os

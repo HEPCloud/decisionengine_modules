@@ -133,8 +133,8 @@ class AWSSpotPriceForRegion(object):
                 AvailabilityZone = self.availability_zone,
                 MaxResults = self.max_results,
                 NextToken = '')
-        except Exception, e:
-            print "Exception", e
+        except Exception as e:
+            print("Exception", e)
             return None
         price_history = rc.get('SpotPriceHistory')
         if len(price_history) == 0:
@@ -221,24 +221,24 @@ def module_config_template():
               {"RegionName1":["Instance1",],},
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t spot_price_configuration - configuration required to get AWS spot price information"
-    print "\t Example:"
-    print "-------------"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t spot_price_configuration - configuration required to get AWS spot price information")
+    print("\t Example:")
+    print("-------------")
     pprint.pprint(config)
-    print "where"
-    print "\t ProfileName1 - name of account profile (example: hepcloud-rnd)"
-    print "\t RegionName1 - name of region (example: us-west-2)"
-    print "\t Instance1 - name of instance. If the list of instances is empty, price information for all instances is acquired"
+    print("where")
+    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
+    print("\t RegionName1 - name of region (example: us-west-2)")
+    print("\t Instance1 - name of instance. If the list of instances is empty, price information for all instances is acquired")
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -269,8 +269,8 @@ def main():
                                "retry_timeout": 20,
                            })
         rc = sprice.acquire()
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":

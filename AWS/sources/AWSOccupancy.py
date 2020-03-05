@@ -181,23 +181,23 @@ def module_config_template():
               ["RegionName1"],
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t spot_price_configuration - configuration required to get AWS spot price information"
-    print "\t Example:"
-    print "-------------"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t spot_price_configuration - configuration required to get AWS spot price information")
+    print("\t Example:")
+    print("-------------")
     pprint.pprint(config)
-    print "where"
-    print "\t ProfileName1 - name of account profile (example: hepcloud-rnd)"
-    print "\t RegionName1 - name of region (example: us-west-2)"
+    print("where")
+    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
+    print("\t RegionName1 - name of region (example: us-west-2)")
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -224,8 +224,8 @@ def main():
     else:
         occupancy = AWSOccupancy({'occupancy_configuration':'occupancy_config_sample.py'})
         rc = occupancy.acquire()
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":

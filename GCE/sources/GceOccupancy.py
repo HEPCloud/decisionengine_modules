@@ -90,7 +90,7 @@ def module_config_template():
             }
         }
     }
-    print 'Entry in channel configuration'
+    print('Entry in channel configuration')
     pprint.pprint(template)
 
 
@@ -98,7 +98,7 @@ def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
 
 
 def main():

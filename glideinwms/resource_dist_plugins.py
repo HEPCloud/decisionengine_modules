@@ -7,15 +7,12 @@ import logging
 
 logger = logging.getLogger()
 
-
+@six.add_metaclass(abc.ABCMeta)
 class ResourceOrderPlugin(object):
 
     """
     Pure virtual class to have a minimum set of methods defined
     """
-
-    __metaclass__ = abc.ABCMeta
-
 
     def __init__(self, resources):
         # ordered_resources if a list of tuple (EntryName, ordering_criteria)

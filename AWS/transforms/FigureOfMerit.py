@@ -4,7 +4,7 @@ Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
 
 """
-from __future__ import division
+# from __future__ import division
 import os
 import sys
 import copy
@@ -131,18 +131,18 @@ def module_config_template():
         "name":  "FigureOfMerit",
         },
         }
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration"
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
 
 def module_config_info():
     """
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
-    print "produces", PRODUCES
+    print("consumes", CONSUMES)
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -184,8 +184,8 @@ def main():
 
         fm_info = FigureOfMerit()
         rc = fm_info.transform(data_block)
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 if __name__ == '__main__':
     main()

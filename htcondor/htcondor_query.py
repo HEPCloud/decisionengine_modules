@@ -17,14 +17,11 @@ class QueryError(RuntimeError):
     def __init__(self, err_str):
         RuntimeError.__init__(self, err_str)
 
-
+@six.add_metaclass(abc.ABCMeta)
 class Query(object):
     """
     Pure virtual class to have a minimum set of methods defined
     """
-
-    __metaclass__ = abc.ABCMeta
-
 
     def __init__(self):
         self.stored_data = {}
@@ -206,7 +203,7 @@ def apply_constraint(data, constraint_func):
         return data
     else:
         outdata = {}
-        for key, val in data.iteritems():
+        for key, val in data.items():
             if constraint_func(val):
                 outdata[key] = val
     return outdata

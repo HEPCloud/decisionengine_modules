@@ -14,4 +14,4 @@ class ProvisionerRequests(Publisher.Publisher):
 
     # The DataBlock given to the source is t=0
     def publish(self, data_block):
-        print data_block["resource_requests"]
+        print(data_block["resource_requests"])

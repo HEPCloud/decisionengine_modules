@@ -31,6 +31,7 @@ def compare_dfs(df1, df2):
     for i in range(df1.shape[0]):
         for j in range(df1.shape[1]):
             if (df1.iloc[i,j] != df2.iloc[i,j]):
+                print(i,j, df1.iloc[i,j], df2.iloc[i,j])
                 rc = False
                 break
     return rc

@@ -31,4 +31,4 @@ class AWSSpotPrice(Source.Source):
 if __name__ == "__main__":
     sp = AWSSpotPrice()
     rc = sp.acquire()
-    print rc
+    print(rc)

@@ -634,7 +634,7 @@ class GlideFrontendElement(object):
         #       from the glideinwms frontend configuration
         try:
             group_config = self.fe_cfg['group'][self.fe_group]
-        except KeyError, e:
+        except KeyError as e:
             self.logger.error('Frontend Group %s not configured in frontend.xml' % self.fe_group)
             raise
 
@@ -1660,7 +1660,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 else:
                     if len(matches) == 1:
                         # These jobs can only run here
-                        key = iter(matches).next()
+                        key = next(iter(matches))
                         direct_match[key] = direct_match.get(key, 0) + job_count
                         prop_match[key] = prop_match.get(key, 0) + job_count
                         this_entry = entries.query('Name=="%s"' % key[1])

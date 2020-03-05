@@ -60,7 +60,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 

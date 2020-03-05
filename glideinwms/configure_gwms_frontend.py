@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+#from __future__ import print_function
 import os
 import sys
 import tempfile
@@ -14,7 +14,7 @@ import glideinwms.creation.lib.cvWConsts
 import glideinwms.creation.lib.cvWParamDict
 import glideinwms.creation.lib.xslt
 
-import glideinwms_config_lib
+import glideinwms_config_lib # 2to3 recommends from . import glideinwms_config_lib
 
 
 def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):

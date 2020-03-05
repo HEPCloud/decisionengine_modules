@@ -4,7 +4,7 @@ import boto
 import argparse
 import gcs_oauth2_boto_plugin
 import csv
-import StringIO
+import io
 import string
 import re
 import datetime
@@ -191,7 +191,7 @@ class GCEBillCalculator(object):
                 return []
 
             # Create a file-like object for holding the object contents.
-            object_contents = StringIO.StringIO()
+            object_contents = io.StringIO()
 
             # The unintuitively-named get_file() doesn't return the object
             # contents; instead, it actually writes the contents to
@@ -200,7 +200,7 @@ class GCEBillCalculator(object):
 
             try:
                 local_dst_uri = boto.storage_uri(os.path.join(dest_dir, fileNameForDownload), LOCAL_FILE)
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("Unable to download GCE billing file %s " % fileNameForDownload)
                 return []
 
@@ -411,7 +411,7 @@ class GCEBillingInfo(Source.Source):
             self.logger.info('Calculated corrected bill summary for google')
             self.logger.info(CorrectedBillSummaryDict)
 
-        except Exception, detail:
+        except Exception as detail:
             self.logger.error(detail) 
 
         return {PRODUCES[0]: pd.DataFrame([CorrectedBillSummaryDict])}
@@ -440,14 +440,14 @@ def module_config_template():
         }
     }
 
-    print "GCE Billing Info" 
+    print("GCE Billing Info")
     pprint.pprint(template)
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 def main():

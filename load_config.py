@@ -39,4 +39,4 @@ def load(python_file, retries=0, timeout=0):
 
 if __name__ == '__main__':
     config = load('spot_price_config_sample.py')
-    print config
+    print(config)

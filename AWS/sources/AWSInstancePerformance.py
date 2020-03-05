@@ -41,17 +41,17 @@ def module_config_template():
         }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t data_file - CSV cost data file"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t data_file - CSV cost data file")
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -80,8 +80,8 @@ def main():
         rc = perf_info.acquire()
         d = rc[PRODUCES[0]]
         pd.set_option('display.max_rows', len(d))
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":

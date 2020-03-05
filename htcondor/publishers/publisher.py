@@ -17,12 +17,8 @@ from decisionengine.framework.dataspace import datablock
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
-
+@six.add_metaclass(abc.ABCMeta)
 class HTCondorManifests(Publisher.Publisher):
-
-
-    __metaclass__ = abc.ABCMeta
-
 
     def __init__(self, config):
         if not config:

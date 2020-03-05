@@ -83,7 +83,7 @@ class FactoryEntries(Source.Source):
 
         results = {}
         if not dataframe.empty:
-            for key, value in self._entry_gridtype_map.iteritems():
+            for key, value in self._entry_gridtype_map.items():
                 results[key] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(value)))]
         else:
             # There were no entry classads in the factory collector or
