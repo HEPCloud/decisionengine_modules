@@ -49,7 +49,7 @@ class AWSFactoryEntryData(Transform.Transform):
             Convert it into flat list of string
             """
             vos = [i for sublist in
-                   map(lambda x: x.split(","), list(sub_df.GLIDEIN_Supported_VOs))
+                   [x.split(",") for x in list(sub_df.GLIDEIN_Supported_VOs)]
                    for i in sublist]
             # unique VOs
             vo_set = set(vos)

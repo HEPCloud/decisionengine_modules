@@ -133,7 +133,7 @@ class CondorQ(CondorQuery):
             if self.pool_name is not None:
                 p = self.pool_name
             err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (s, p, ex)
-            raise QueryError(err_str), None, sys.exc_info()[2]
+            raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -185,7 +185,7 @@ class CondorStatus(CondorQuery):
             if self.pool_name is not None:
                 p = self.pool_name
             err_str = 'Error querying pool %s using python bindings: %s' % (p, ex)
-            raise QueryError(err_str), None, sys.exc_info()[2]
+            raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -249,7 +249,7 @@ def bindings_friendly_attrs(format_list):
     if format_list is not None:
         if isinstance(format_list, list):
             attrs = format_list
-        elif isinstance(format_list, basestring):
+        elif isinstance(format_list, str):
             attrs = [format_list]
     return attrs
 

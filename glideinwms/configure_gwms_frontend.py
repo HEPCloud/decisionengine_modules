@@ -14,7 +14,7 @@ import glideinwms.creation.lib.cvWConsts
 import glideinwms.creation.lib.cvWParamDict
 import glideinwms.creation.lib.xslt
 
-import glideinwms_config_lib # 2to3 recommends from . import glideinwms_config_lib
+from . import glideinwms_config_lib
 
 
 def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):
