@@ -46,7 +46,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print( "consumes", CONSUMES
+    print("consumes", CONSUMES)
     module_config_template()
 
 
