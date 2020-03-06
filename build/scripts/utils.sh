@@ -25,11 +25,13 @@ setup_python_venv() {
 
     echo "SETTING UP VIRTUAL ENVIRONMENT ..."
     if [ -f $WORKSPACE/$VIRTUALENV_TARBALL ]; then
-        rm $WORKSPACE/$VIRTUALENV_TARBALL
-    fi
+        #rm $WORKSPACE/$VIRTUALENV_TARBALL
+        echo "Using existing $WORKSPACE/$VIRTUALENV_TARBALL"
+    else
     # Get latest virtualenv package that works with python 2.6
-    curl -o $WORKSPACE/$VIRTUALENV_TARBALL $VIRTUALENV_URL
+    curl -o $WORKSPACE/$VIRTUALENV_TARBALL $VIRTUALENV_URL 
     tar xzf $WORKSPACE/$VIRTUALENV_TARBALL
+    fi 
     if [ ! -d $VENV ] ; then
        $VIRTUALENV_EXE --system-site-packages $VENV
     fi
@@ -81,7 +83,10 @@ setup_de_framework() {
 setup_dependencies() {
     WORKSPACE=${1:-`pwd`}
     DEPS_DIR=$WORKSPACE/dependencies
-    rm -rf $DEPS_DIR
+    #rm -rf $DEPS_DIR
+    if [ -e $DEPS_DIR ];then
+     echo "Using existing $DEPS_DIR"
+    else
     mkdir $DEPS_DIR
     touch $DEPS_DIR/__init__.py
 
@@ -90,6 +95,7 @@ setup_dependencies() {
 
     # Setup glideinwms
     setup_glideinwms $DEPS_DIR
+    fi 
 
     export PYTHONPATH=$DEPS_DIR
     cd $WORKSPACE
