@@ -17,8 +17,12 @@ jobs:
         path: ./venv
         key: ${{ runner.os }}-venv-
         restore-keys: |
-          ${{ runner.os }}-venv-
-          ${{ runner.os }}-
+            ${{ runner.os }}-venv-
+      with:
+        path: ./dependencies
+        key: ${{ runner.os }}-dependencies-
+        restore-keys: |
+        ${{ runner.os }}-dependencies-
     - name: pylint action step
       uses: ./.github/actions/pylint-in-sl7-docker
       id: pylint
