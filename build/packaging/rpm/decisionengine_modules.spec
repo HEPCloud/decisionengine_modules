@@ -96,6 +96,7 @@ cp -r ../decisionengine_modules $RPM_BUILD_ROOT%{python_sitelib}
 #install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
+rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/.github
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/build
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/tests
 rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/AWS/tests
