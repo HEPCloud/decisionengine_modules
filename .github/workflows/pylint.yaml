@@ -18,6 +18,8 @@ jobs:
         key: ${{ runner.os }}-venv-
         restore-keys: |
             ${{ runner.os }}-venv-
+    - name: Cache dependencies
+      uses: actions/cache@v1
       with:
         path: ./dependencies
         key: ${{ runner.os }}-dependencies-
