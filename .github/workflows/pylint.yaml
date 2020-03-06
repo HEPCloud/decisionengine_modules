@@ -22,7 +22,7 @@ jobs:
         path: ./dependencies
         key: ${{ runner.os }}-dependencies-
         restore-keys: |
-        ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-dependencies-
     - name: pylint action step
       uses: ./.github/actions/pylint-in-sl7-docker
       id: pylint
