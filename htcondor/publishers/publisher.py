@@ -20,9 +20,7 @@ DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
 class HTCondorManifests(Publisher.Publisher):
 
-
     __metaclass__ = abc.ABCMeta
-
 
     def __init__(self, config):
         if not config:
@@ -38,14 +36,11 @@ class HTCondorManifests(Publisher.Publisher):
         self.classad_type = 'generic'
         self.invalidate_ads_constraint = {}
 
-
     def __repr__(self):
         return self.__str__()
 
-
     def __str__(self):
         return '%s' % vars(self)
-
 
     def __del__(self):
         for collector_host in self.invalidate_ads_constraint:
@@ -57,12 +52,13 @@ class HTCondorManifests(Publisher.Publisher):
                     'Requirements': constraint
                 }]
                 try:
-                    self.logger.info('Invalidating %s classads from collector_host %s with constraint %s' % (self.classad_type, collector_host, constraint))
+                    self.logger.info('Invalidating %s classads from collector_host %s with constraint %s' % (
+                        self.classad_type, collector_host, constraint))
                     self.condor_advertise(ads, collector_host=collector_host,
-                        update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND)
+                                          update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND)
                 except Exception as ex:
-                    self.logger.error('Error running invalidating %s classads from collector_host %s' % (self.classad_type, collector_host))
-
+                    self.logger.error('Error running invalidating %s classads from collector_host %s' % (
+                        self.classad_type, collector_host))
 
     @abc.abstractmethod
     def consumes(self):
@@ -70,7 +66,6 @@ class HTCondorManifests(Publisher.Publisher):
         Return list of items consumed
         """
         return None
-
 
     def condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
@@ -97,7 +92,8 @@ class HTCondorManifests(Publisher.Publisher):
             else:
                 collector_host = 'default'
                 collector = htcondor.Collector()
-            self.logger.info('Advertising %s classads to collector_host %s' % (self.classad_type, collector_host))
+            self.logger.info('Advertising %s classads to collector_host %s' % (
+                self.classad_type, collector_host))
             collector.advertise(ads, update_ad_command, True)
         except Exception as ex:
             # TODO: We need to be more specific about the errors/exception
@@ -105,14 +101,14 @@ class HTCondorManifests(Publisher.Publisher):
             col = 'default'
             if collector_host:
                 col = collector_host
-            self.logger.error('Error running %s for %s classads to collector_host %s' % (update_ad_command, self.classad_type, col))
+            self.logger.error('Error running %s for %s classads to collector_host %s' % (
+                update_ad_command, self.classad_type, col))
             #err_str = 'Error advertising with command %s to pool %s: %s' % (self.update_ad_command, col, ex)
             #raise QueryError(err_str), None, sys.exc_info()[2]
             raise
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
-
 
     def publish(self, datablock):
         """
@@ -127,14 +123,12 @@ class HTCondorManifests(Publisher.Publisher):
             self.publish_to_htcondor(key, dataframe)
             self.create_invalidate_constraint(dataframe)
 
-
     def create_invalidate_constraint(self, dataframe):
         """
         Derived classes should override the constraint creation else no
         classads will be deleted
         """
         pass
-
 
     def publish_to_htcondor(self, key, dataframe):
         try:

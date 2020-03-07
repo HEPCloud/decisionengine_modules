@@ -12,10 +12,10 @@ from decisionengine_modules.util import testutils as utils
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
 config = {"channel_name": "channel_aws_config_data",
-                               "Dataproducts": ["spot_occupancy_config"],
-                               "retries": 3,
-                               "retry_timeout": 20,
-    }
+          "Dataproducts": ["spot_occupancy_config"],
+          "retries": 3,
+          "retry_timeout": 20,
+          }
 
 account = {'spot_occupancy_config': pd.read_csv(os.path.join(DATA_DIR,
                                                              'account_config.csv'))}
@@ -31,12 +31,12 @@ def fix_spot_price(df):
     out_df = df.copy(deep=True)
     for r, row in df.iterrows():
         if isinstance(row['SpotPrice'], str):
-            out_df.loc[r,'SpotPrice'] = numpy.float64(row['SpotPrice'])
+            out_df.loc[r, 'SpotPrice'] = numpy.float64(row['SpotPrice'])
     return out_df
 
 
 class SessionMock(object):
-    def client(self, service = None, region_name = None):
+    def client(self, service=None, region_name=None):
         return None
 
 
@@ -45,7 +45,7 @@ class TestAWSSpotPriceWithSourceProxy:
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
             aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
             assert (aws_s_p.produces('a') == produces)
-    
+
     def test_acquire(self):
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
             aws_s_p = AWSSpotPrice.AWSSpotPrice(config)

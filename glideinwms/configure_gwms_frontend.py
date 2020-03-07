@@ -19,18 +19,20 @@ import glideinwms_config_lib
 
 def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):
     fe_configuration = glideinwms_config_lib.FrontendConfiguration(
-                           frontend_workdir=frontend_workdir)
+        frontend_workdir=frontend_workdir)
     return fe_configuration.frontend_config
 
 
 def main(args):
 
     # Load params from frontend configuration file
-    print('...Loading frontend configuration from %s ...' % args.frontend_config)
+    print('...Loading frontend configuration from %s ...' %
+          args.frontend_config)
     params = load_params_from_config(args, usage=usage)
 
     # Create dictionaries for new params
-    frontend_dicts_obj = glideinwms.creation.lib.cvWParamDict.frontendDicts(params)
+    frontend_dicts_obj = glideinwms.creation.lib.cvWParamDict.frontendDicts(
+        params)
     frontend_dicts_obj.populate()
 
     if args.update_scripts == 'yes':
@@ -38,7 +40,7 @@ def main(args):
         frontend_dicts_obj.create_dirs(fail_if_exists=False)
 
     # load old files and merge them together
-    #if old_params is not None:
+    # if old_params is not None:
     #    old_frontend_dicts_obj = cvWParamDict.frontendDicts(old_params)
     #    old_frontend_dicts_obj.load()
     #    frontend_dicts_obj.reuse(old_frontend_dicts_obj)
@@ -70,7 +72,7 @@ def main(args):
     print("...Reconfigured frontend '%s'" % params.frontend_name)
     print("...Active groups are:")
     for entry in frontend_dicts_obj.active_sub_list:
-        print("     %s"%entry)
+        print("     %s" % entry)
 
     print("...Work files are in %s" % frontend_dicts_obj.main_dicts.work_dir)
 
@@ -83,8 +85,8 @@ def get_arg_parser():
     description = 'Read the frontend configuration, update the web staging area and generate intermediate configuration that can be consumed by the decision engine'
 
     parser = argparse.ArgumentParser(
-                 description=description,
-                 formatter_class=argparse.RawTextHelpFormatter)
+        description=description,
+        formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         '--frontend-config', action='store', dest='frontend_config',
         default='/etc/gwms-frontend/frontend.xml',
@@ -121,8 +123,8 @@ def load_params_from_config(args, usage=''):
         sys.exit(1)
 
     params = glideinwms.creation.lib.cvWParams.VOFrontendParams(
-                 usage, args.web_base_dir,
-                 [sys.argv[0], transformed_xmlfile.name])
+        usage, args.web_base_dir,
+        [sys.argv[0], transformed_xmlfile.name])
     params.cfg_name = args.frontend_config
     return params
 
@@ -135,8 +137,8 @@ def get_old_params(params, args):
     if os.path.exists(old_config_file):
         try:
             old_params = glideinwms.creation.lib.cvWParams.VOFrontendParams(
-                             args.usage, args.web_base_dir,
-                             [sys.argv[0], old_config_file])
+                args.usage, args.web_base_dir,
+                [sys.argv[0], old_config_file])
         except RuntimeError as e:
             raise RuntimeError('Failed to load %s' % old_config_file)
     else:
@@ -152,6 +154,7 @@ def get_old_params(params, args):
 #
 ############################################################
 
+
 if __name__ == '__main__':
 
     noroot_msg = 'NOTE: Executing this command as user root is not allowed. Use the decisionengine user instead.'
@@ -166,6 +169,7 @@ if __name__ == '__main__':
     try:
         main(args)
     except RuntimeError as e:
-        print('\nError processing the configuration %s:' % args.frontend_config)
+        print('\nError processing the configuration %s:' %
+              args.frontend_config)
         print(e)
         sys.exit(1)

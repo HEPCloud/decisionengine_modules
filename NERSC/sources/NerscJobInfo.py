@@ -42,7 +42,8 @@ class NerscJobInfo(Source.Source):
         self.constraints['machines'] = self.constraints.get('machines',
                                                             ['edison', 'cori'])
         # get all systems that are up
-        up_machines = filter(lambda x: x['status'] == 'up', self.newt.get_status())
+        up_machines = filter(
+            lambda x: x['status'] == 'up', self.newt.get_status())
         if not up_machines:
             self.logger.info("All machines at NERSC are down")
         # filter machines that are up
@@ -107,9 +108,9 @@ def module_config_template():
                 'constraints': {
                     'machines': ["edison", "cori"],
                     'newt_keys': {
-                    'user': ["user1", "user2"],
-                    'repo': ['m2612', 'm2696'],
-                    'features': ["knl&quad&cache", ]
+                        'user': ["user1", "user2"],
+                        'repo': ['m2612', 'm2696'],
+                        'features': ["knl&quad&cache", ]
                     }
                 }
             }

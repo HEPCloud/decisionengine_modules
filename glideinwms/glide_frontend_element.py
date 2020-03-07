@@ -28,6 +28,7 @@ pandas.options.mode.chained_assignment = None  # default='warn'
 # TODO: Need a better way of setting global logger
 logger = logging.getLogger()
 
+
 class NoCredentialException(Exception):
     pass
 
@@ -42,7 +43,8 @@ def get_gfe_obj(fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom'):
     elif gfe_type == 'glideinwms_fom':
         gfe_obj = GlideFrontendElementFOM(fe_group, acct_group, fe_cfg)
     else:
-        raise RuntimeError('GlideFrontendElement of type %s not supported' % gfe_type)
+        raise RuntimeError(
+            'GlideFrontendElement of type %s not supported' % gfe_type)
     return gfe_obj
 
 
@@ -56,7 +58,6 @@ class GlideFrontendElement(object):
         self.fe_group = fe_group
         self.acct_group = acct_group
         self.fe_cfg = fe_cfg
-
 
     def generate_glidein_requests(self, jobs_df, slots_df,
                                   entries, factory_globals,
@@ -82,7 +83,8 @@ class GlideFrontendElement(object):
         # STEP 3: Get glidefactoryglobal and glideentry classads
         ########################################################################
 
-        factory_globals['PubKeyObj'] = self.create_factory_pubkeyobj(factory_globals)
+        factory_globals['PubKeyObj'] = self.create_factory_pubkeyobj(
+            factory_globals)
         self.glideid_list = self.create_glideid_list(entries)
 
         ########################################################################
@@ -124,12 +126,15 @@ class GlideFrontendElement(object):
         total_running_cores = slot_types['RunningCores']['abs']
         total_idle_cores = slot_types['IdleCores']['abs']
 
-        self.logger.info('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
+        self.logger.info('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (
+            total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
         # TODO: Need to compute following
         #       fe_[total_slots | total_idle_slots | total_running_slots]
         #       global_[total_slots | total_idle_slots | total_running_slots]
-        self.logger.info('Frontend slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, total_running_slots))
-        self.logger.info('Overall slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.global_total_max_slots, self.global_total_curb_slots, total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, total_running_slots))
+        self.logger.info('Frontend slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (
+            total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, total_running_slots))
+        self.logger.info('Overall slots found total %i?? (limit %i curb %i) idle?? %i (limit %i curb %i) running %i??' % (total_slots, self.global_total_max_slots,
+                                                                                                                          self.global_total_curb_slots, total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, total_running_slots))
 
         # Add entry info to each running slot's classad
         append_running_on(job_types['Running']['dataframe'],
@@ -171,9 +176,7 @@ class GlideFrontendElement(object):
         total_up_stats_arr = init_factory_stats_arr()
         total_down_stats_arr = init_factory_stats_arr()
 
-
         # Get the FOM info and generate requests based on the FOM
-
 
         for glideid in glideids_with_idle_jobs:
             if glideid == (None, None):
@@ -191,22 +194,25 @@ class GlideFrontendElement(object):
 
             glideid_str = "%s@%s" % (request_name, factory_pool_node)
             self.processed_glideid_strs.append(glideid_str)
-            entry_info = entries.query('Name == "%s" and CollectorHost == "%s"' % (request_name, factory_pool_node))
+            entry_info = entries.query(
+                'Name == "%s" and CollectorHost == "%s"' % (request_name, factory_pool_node))
 
             # Some short hand variables for easy reference
-            entry_in_downtime = entry_info.get('GLIDEIN_In_Downtime').tolist()[0] == 'True'
+            entry_in_downtime = entry_info.get(
+                'GLIDEIN_In_Downtime').tolist()[0] == 'True'
             count_jobs = {}    # Count of jobs with straight matches
             prop_jobs = {}     # proportional subset for this entry
             # proportional subset of jobs for this entry scaled also for
             # multicore (requested cores/available cores)
             prop_mc_jobs = {}
-            hereonly_jobs = {} # can only run on this site
+            hereonly_jobs = {}  # can only run on this site
             for status in job_types:
                 count_jobs[status] = job_types[status]['count'].get(glideid, 0)
                 prop_jobs[status] = job_types[status]['prop'].get(glideid, 0)
-                prop_mc_jobs[status] = job_types[status]['prop_match_cpu'].get(glideid, 0)
-                hereonly_jobs[status] = job_types[status]['hereonly'].get(glideid, 0)
-
+                prop_mc_jobs[status] = job_types[status]['prop_match_cpu'].get(
+                    glideid, 0)
+                hereonly_jobs[status] = job_types[status]['hereonly'].get(
+                    glideid, 0)
 
             count_slots = self.count_entry_slots[request_name]
             count_slots_per_cred = self.count_entry_slots_cred[request_name]
@@ -217,29 +223,36 @@ class GlideFrontendElement(object):
             if use_glexec != 'NEVER':
                 if entry_info.get('GLIDEIN_REQUIRE_VOMS') == 'True':
                     prop_jobs['Idle'] = prop_jobs['VomsIdle']
-                    self.logger.info('Voms proxy required, limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
+                    self.logger.info(
+                        'Voms proxy required, limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
                 elif entry_info.get('GLIDEIN_REQUIRE_GLEXEC_USE') == 'True':
                     prop_jobs['Idle'] = prop_jobs['ProxyIdle']
-                    self.logger.info('Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
+                    self.logger.info(
+                        'Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
 
             # MMDB should be debug
-            self.logger.info("Request %s: prop jobs %s(mc %s, min %s), available slots %s " % (request_name, prop_jobs['Idle'], prop_mc_jobs['Idle'], self.entry_min_glideins_running, count_slots['Idle'], ))
+            self.logger.info("Request %s: prop jobs %s(mc %s, min %s), available slots %s " % (
+                request_name, prop_jobs['Idle'], prop_mc_jobs['Idle'], self.entry_min_glideins_running, count_slots['Idle'], ))
 
             # effective idle is how much more we need
             # if there are idle slots, subtract them, they should match soon
             effective_idle = max(prop_jobs['Idle']-count_slots['Idle'], 0)
-            effective_oldidle = max(prop_jobs['OldIdle']-count_slots['Idle'], 0)
+            effective_oldidle = max(
+                prop_jobs['OldIdle']-count_slots['Idle'], 0)
 
             # Adjust the number of idle jobs in case
             # the minimum running parameter is set
             if prop_mc_jobs['Idle'] < self.entry_min_glideins_running:
                 #logger.log.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
-                self.logger.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
+                self.logger.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (
+                    request_name, self.entry_min_glideins_running))
                 prop_mc_jobs['Idle'] = self.entry_min_glideins_running
 
             # Compute min glideins required based on multicore jobs
-            effective_idle_mc = max(prop_mc_jobs['Idle']-count_slots['Idle'], 0)
-            effective_oldidle_mc = max(prop_mc_jobs['OldIdle']-count_slots['Idle'], 0)
+            effective_idle_mc = max(
+                prop_mc_jobs['Idle']-count_slots['Idle'], 0)
+            effective_oldidle_mc = max(
+                prop_mc_jobs['OldIdle']-count_slots['Idle'], 0)
 
             limits_triggered = {}
             # Compute minimum idle glideins required for this request_name
@@ -313,7 +326,8 @@ class GlideFrontendElement(object):
             glidein_monitors_per_cred = {}
             creds_with_running = 0
             for cred in self.credential_plugin.cred_list:
-                glidein_monitors_per_cred[cred.get_id()] = {'Glideins%s'%t: count_slots_per_cred[cred.get_id()][t] for t in count_slots}
+                glidein_monitors_per_cred[cred.get_id()] = {
+                    'Glideins%s' % t: count_slots_per_cred[cred.get_id()][t] for t in count_slots}
                 glidein_monitors_per_cred[cred.get_id()]['ScaledRunning'] = 0
                 if glidein_monitors_per_cred[cred.get_id()]['GlideinsRunning']:
                     creds_with_running += 1
@@ -327,7 +341,8 @@ class GlideFrontendElement(object):
                     if cred_monitor['GlideinsRunning']:
                         # This cred has running, scale them down
                         if (creds_with_running - scaled) == 1:
-                            cred_monitor['ScaledRunning'] = tr - (tr//creds_with_running)*scaled
+                            cred_monitor['ScaledRunning'] = tr - \
+                                (tr//creds_with_running)*scaled
                             scaled += 1
                             break
                         else:
@@ -343,7 +358,7 @@ class GlideFrontendElement(object):
                         my_identity, pubkeyid, pubkeyobj)
                     break
 
-            #TODO: These two come from glidefactory classad rows how to get it?
+            # TODO: These two come from glidefactory classad rows how to get it?
             trust_domain = entry_info.get('GLIDEIN_TrustDomain',
                                           ['Grid']).tolist()[0]
             auth_method = entry_info.get(
@@ -363,7 +378,8 @@ class GlideFrontendElement(object):
                     trust_domain=trust_domain, auth_method=auth_method)
                 self.gc_classads.extend(gc_classad)
             else:
-                self.logger.warning("Cannot advertise requests for %s because no factory %s key was found" % (request_name, factory_pool_node))
+                self.logger.warning("Cannot advertise requests for %s because no factory %s key was found" % (
+                    request_name, factory_pool_node))
 
         # TODO: Enable following logging in future
         """
@@ -388,7 +404,6 @@ class GlideFrontendElement(object):
             'glideclient_manifests': gc_df
         }
 
-
     def get_factory_key_ad_params(self, key_obj):
         # ReqEncIdentity will be checked against the AuthenticatedIdentity
         # This will prevent replay attacks, as only who knows the symkey
@@ -401,7 +416,6 @@ class GlideFrontendElement(object):
             'ReqEncIdentity': key_obj.encrypt_hex(str(key_obj.classad_identity))
         }
         return ad_params
-
 
     def create_glideclient_classads(self, factory_pool, request_name,
                                     glidein_name, min_nr_glideins,
@@ -436,28 +450,33 @@ class GlideFrontendElement(object):
 
         for cred in credentials_with_request:
             if not cred.advertize:
-                self.logger.info('Ignoring credential with id: %s, pilot_proxy: %s, type: %s, trust_domain: %s, security_name: %s, advertise: %s' % (cred.get_id(), cred.pilot_fname, cred.type, cred.trust_domain, cred.security_class, cred.advertize))
+                self.logger.info('Ignoring credential with id: %s, pilot_proxy: %s, type: %s, trust_domain: %s, security_name: %s, advertise: %s' % (
+                    cred.get_id(), cred.pilot_fname, cred.type, cred.trust_domain, cred.security_class, cred.advertize))
                 # We have already determined that this cred cannot be used
                 continue
 
             if not cred.supports_auth_method(auth_method):
-                self.logger.warning('Credential %s does not match auth method %s (for %s), skipping...' % (cred.type, auth_method, params_obj.request_name))
+                self.logger.warning('Credential %s does not match auth method %s (for %s), skipping...' % (
+                    cred.type, auth_method, params_obj.request_name))
                 continue
 
             if cred.trust_domain != trust_domain:
-                self.logger.warning('Credential %s does not match %s (for %s) domain, skipping...' % (cred.trust_domain, trust_domain, params_obj.request_name))
+                self.logger.warning('Credential %s does not match %s (for %s) domain, skipping...' % (
+                    cred.trust_domain, trust_domain, params_obj.request_name))
                 continue
 
             glidein_monitors_this_cred = {}
             if glidein_params_to_encrypt is None:
                 glidein_params_to_encrypt = {}
             else:
-                glidein_params_to_encrypt = copy.deepcopy(glidein_params_to_encrypt)
+                glidein_params_to_encrypt = copy.deepcopy(
+                    glidein_params_to_encrypt)
             req_idle, req_max_run = cred.get_usage_details()
             # TODO: Need to print this somewhere but currently logging this is interleaved with stats
             #self.logger.info('Advertizing credential %s with (%d idle, %d max run) for request %s' % (cred.filename, req_idle, req_max_run, params_obj.request_name))
 
-            glidein_monitors_this_cred = params_obj.glidein_monitors_per_cred.get(cred.get_id(), {})
+            glidein_monitors_this_cred = params_obj.glidein_monitors_per_cred.get(
+                cred.get_id(), {})
 
             # Create GlideClientClassad object
             my_name = '%s.%s' % (self.frontend_name, self.fe_group)
@@ -487,8 +506,10 @@ class GlideFrontendElement(object):
             gc_classad.adParams['WebGroupDescriptFile'] = self.group_descript_fname
             gc_classad.adParams['WebGroupDescriptSign'] = self.group_descript_signature
 
-            params_attr = {'GlideinParam%s'%k: v for (k, v) in params_obj.glidein_params.items()}
-            config_attr = {'GlideinConfig%s'%k: v for (k, v) in self.glidein_config_limits.items()}
+            params_attr = {'GlideinParam%s' % k: v for (
+                k, v) in params_obj.glidein_params.items()}
+            config_attr = {'GlideinConfig%s' % k: v for (
+                k, v) in self.glidein_config_limits.items()}
             monitor_attr = {}
             for attr_name in params_obj.glidein_monitors:
                 prefix = 'GlideinMonitor'
@@ -508,47 +529,59 @@ class GlideFrontendElement(object):
             gc_classad.adParams.update(monitor_attr)
 
             # Add security class and security name to encrypted params
-            glidein_params_to_encrypt['SecurityClass'] = str(cred.security_class)
+            glidein_params_to_encrypt['SecurityClass'] = str(
+                cred.security_class)
             glidein_params_to_encrypt['SecurityName'] = str(self.security_name)
 
             # Add id for all the credential files
             if 'username_password' in cred.type:
-                glidein_params_to_encrypt['Username'] = self.file_id_cache.file_id(cred, cred.filename)
-                glidein_params_to_encrypt['Password'] = self.file_id_cache.file_id(cred, cred.key_fname)
+                glidein_params_to_encrypt['Username'] = self.file_id_cache.file_id(
+                    cred, cred.filename)
+                glidein_params_to_encrypt['Password'] = self.file_id_cache.file_id(
+                    cred, cred.key_fname)
             if 'grid_proxy' in cred.type:
-                glidein_params_to_encrypt['SubmitProxy'] = self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['SubmitProxy'] = self.file_id_cache.file_id(
+                    cred, cred.filename)
             if 'cert_pair' in cred.type:
-                glidein_params_to_encrypt['PublicCert'] = self.file_id_cache.file_id(cred, cred.filename)
-                glidein_params_to_encrypt['PrivateCert'] = self.file_id_cache.file_id(cred, cred.key_fname)
+                glidein_params_to_encrypt['PublicCert'] = self.file_id_cache.file_id(
+                    cred, cred.filename)
+                glidein_params_to_encrypt['PrivateCert'] = self.file_id_cache.file_id(
+                    cred, cred.key_fname)
             if 'key_pair' in cred.type:
-                glidein_params_to_encrypt['PublicKey'] = self.file_id_cache.file_id(cred, cred.filename)
-                glidein_params_to_encrypt['PrivateKey'] = self.file_id_cache.file_id(cred, cred.key_fname)
+                glidein_params_to_encrypt['PublicKey'] = self.file_id_cache.file_id(
+                    cred, cred.filename)
+                glidein_params_to_encrypt['PrivateKey'] = self.file_id_cache.file_id(
+                    cred, cred.key_fname)
             if 'vm_id' in cred.type:
                 glidein_params_to_encrypt['VMId'] = str(cred.vm_id)
             if 'vm_type' in cred.type:
                 glidein_params_to_encrypt['VMType'] = str(cred.vm_type)
             if 'remote_username' in cred.type:
-                glidein_params_to_encrypt['RemoteUsername'] = self.file_id_cache.file_id(cred, cred.remote_username)
+                glidein_params_to_encrypt['RemoteUsername'] = self.file_id_cache.file_id(
+                    cred, cred.remote_username)
             if 'auth_file' in cred.type:
-                glidein_params_to_encrypt['AuthFile'] = self.file_id_cache.file_id(cred, cred.filename)
+                glidein_params_to_encrypt['AuthFile'] = self.file_id_cache.file_id(
+                    cred, cred.filename)
             if cred.project_id:
                 glidein_params_to_encrypt['ProjectId'] = str(cred.project_id)
 
             # Add id for the pilot proxy
             if cred.pilot_fname:
-                glidein_params_to_encrypt['GlideinProxy'] = self.file_id_cache.file_id(cred, cred.pilot_fname)
+                glidein_params_to_encrypt['GlideinProxy'] = self.file_id_cache.file_id(
+                    cred, cred.pilot_fname)
 
             # Add classad attributes that need to be encrypted
             for attr in glidein_params_to_encrypt:
-                value = str(key_obj.encrypt_hex(glidein_params_to_encrypt[attr]))
-                escaped_value = string.replace(string.replace(value, '"', '\\"'), '\n', '\\n')
+                value = str(key_obj.encrypt_hex(
+                    glidein_params_to_encrypt[attr]))
+                escaped_value = string.replace(
+                    string.replace(value, '"', '\\"'), '\n', '\\n')
                 ad_attr = '%s%s' % ('GlideinEncParam', attr)
                 gc_classad.adParams[ad_attr] = escaped_value
 
             gc_classads.append(gc_classad)
 
         return gc_classads
-
 
     def create_glideclientglobal_classads(self, glidefactory_classad,
                                           key_builder):
@@ -562,7 +595,8 @@ class GlideFrontendElement(object):
             # that do not have valid factory key objects
             return
 
-        classad_identity = self.my_identity_at_factory[(glidefactory_classad['CollectorHost'], glidefactory_classad['AuthenticatedIdentity'])]
+        classad_identity = self.my_identity_at_factory[(
+            glidefactory_classad['CollectorHost'], glidefactory_classad['AuthenticatedIdentity'])]
         key_obj = key_builder.get_key_obj(classad_identity,
                                           glidefactory_classad['PubKeyID'],
                                           glidefactory_classad['PubKeyObj'])
@@ -579,7 +613,8 @@ class GlideFrontendElement(object):
             cred.create_if_not_exist()
             cred.loaded_data = []
             for cred_file in (cred.filename, cred.key_fname, cred.pilot_fname):
-                self.logger.debug('Loading credential file %s' % str(cred_file))
+                self.logger.debug('Loading credential file %s' %
+                                  str(cred_file))
                 if cred_file:
                     cred_data = cred.get_string(cred_file)
                     if cred_data:
@@ -587,7 +622,8 @@ class GlideFrontendElement(object):
                     else:
                         # We encountered error with this credential
                         # Move onto next credential
-                        self.logger.info('ERROR loading credential file %s, setting advertize to False' % cred_file)
+                        self.logger.info(
+                            'ERROR loading credential file %s, setting advertize to False' % cred_file)
                         cred.advertize = False
                         break
 
@@ -613,17 +649,18 @@ class GlideFrontendElement(object):
                     if hasattr(cred, 'security_class'):
                         # Convert security_class to string for factory
                         # to interpret it correctly
-                        classad_attrs_to_encrypt['SecurityClass%s'%cred.file_id(fname)] = str(cred.security_class)
+                        classad_attrs_to_encrypt['SecurityClass%s' % cred.file_id(
+                            fname)] = str(cred.security_class)
 
         # Add classad attributes that need to be encrypted
         for attr in classad_attrs_to_encrypt:
             value = str(key_obj.encrypt_hex(classad_attrs_to_encrypt[attr]))
-            escaped_value = string.replace(string.replace(value, '"', '\\"'), '\n', '\\n')
+            escaped_value = string.replace(
+                string.replace(value, '"', '\\"'), '\n', '\\n')
             ad_attr = '%s%s' % ('GlideinEncParam', attr)
             gcg_classad.adParams[ad_attr] = escaped_value
 
         return gcg_classad
-
 
     def read_fe_config(self):
         """
@@ -635,7 +672,8 @@ class GlideFrontendElement(object):
         try:
             group_config = self.fe_cfg['group'][self.fe_group]
         except KeyError, e:
-            self.logger.error('Frontend Group %s not configured in frontend.xml' % self.fe_group)
+            self.logger.error(
+                'Frontend Group %s not configured in frontend.xml' % self.fe_group)
             raise
 
         # Frontend information
@@ -654,13 +692,19 @@ class GlideFrontendElement(object):
         # This frontend's curbs and limits
         self.fe_total_max_slots = int(group_config['fe_total_max_glideins'])
         self.fe_total_curb_slots = int(group_config['fe_total_curb_glideins'])
-        self.fe_total_max_slots_idle = int(group_config['fe_total_max_vms_idle'])
-        self.fe_total_curb_slots_idle = int(group_config['fe_total_curb_vms_idle'])
+        self.fe_total_max_slots_idle = int(
+            group_config['fe_total_max_vms_idle'])
+        self.fe_total_curb_slots_idle = int(
+            group_config['fe_total_curb_vms_idle'])
         # This frontend's curbs and limits
-        self.global_total_max_slots = int(group_config['global_total_max_glideins'])
-        self.global_total_curb_slots = int(group_config['global_total_curb_glideins'])
-        self.global_total_max_slots_idle = int(group_config['global_total_max_vms_idle'])
-        self.global_total_curb_slots_idle = int(group_config['global_total_curb_vms_idle'])
+        self.global_total_max_slots = int(
+            group_config['global_total_max_glideins'])
+        self.global_total_curb_slots = int(
+            group_config['global_total_curb_glideins'])
+        self.global_total_max_slots_idle = int(
+            group_config['global_total_max_vms_idle'])
+        self.global_total_curb_slots_idle = int(
+            group_config['global_total_curb_vms_idle'])
 
         # Consider if we need to always keep some running glideins at entry
         # entry_min_running
@@ -674,7 +718,8 @@ class GlideFrontendElement(object):
         # curb_vms_idle
         self.entry_curb_slots_idle = int(group_config['curb_vms_idle'])
         # entry_fraction_running
-        self.entry_fraction_glidein_running = float(group_config['fraction_running'])
+        self.entry_fraction_glidein_running = float(
+            group_config['fraction_running'])
 
         self.idle_lifetime = int(group_config.get('idle_lifetime', 0))
         self.reserve_idle = int(group_config['reserve_idle'])
@@ -687,7 +732,8 @@ class GlideFrontendElement(object):
         cred_plugin_class = glideinFrontendPlugins.proxy_plugins[cred_plugin_name]
         cred_list = create_credential_list(group_config['proxies'],
                                            group_config)
-        self.logger.info('Number of credentials found from the configuration %s' % len(cred_list))
+        self.logger.info(
+            'Number of credentials found from the configuration %s' % len(cred_list))
         self.credential_plugin = cred_plugin_class(self.workdir, cred_list)
         self.glidein_config_limits = {}
 
@@ -704,7 +750,6 @@ class GlideFrontendElement(object):
         self.group_web_url = group_config['web_url']
         self.group_descript_fname = group_config['sign_descript']['group_descript_fname']
         self.group_descript_signature = group_config['sign_descript']['group_descript_signature']
-
 
     def match(self, job_types, slot_types, entries):
         """
@@ -724,12 +769,10 @@ class GlideFrontendElement(object):
         self.count_real_jobs, self.count_real_glideins = \
             self.count_real_running(job_types['Running']['dataframe'])
 
-
         # Step 3: Count matches based on each job types
         for job_type in job_types:
             (job_types[job_type]['count'], job_types[job_type]['prop'], job_types[job_type]['hereonly'], job_types[job_type]['prop_match_cpu'], job_types[job_type]['total']) = \
                 self.count_match(job_types, job_type, entries)
-
 
     def count_real_running(self, jobs):
         """
@@ -780,7 +823,6 @@ class GlideFrontendElement(object):
 
         return out_job_counts, out_glidein_counts
 
-
     def count_glidein_slots(self, slot_types):
         """
         Given the slots dataframe, count the number of slots in various
@@ -802,9 +844,10 @@ class GlideFrontendElement(object):
             total_entry_slots = pandas.DataFrame()
             if not slot_types['Total']['dataframe'].empty:
                 #self.logger.info('------- CHECK ---------------------------------------')
-                #self.logger.info(slot_types['Total']['dataframe'].columns.values)
-                #self.logger.info('----------------------------------------------')
-                total_entry_slots = slot_types['Total']['dataframe'].query('(GLIDEIN_Entry_Name == "%s") and (GLIDEIN_Name == "%s") and (GLIDEIN_FACTORY == "%s")' % (req_entry, req_name, req_fact))
+                # self.logger.info(slot_types['Total']['dataframe'].columns.values)
+                # self.logger.info('----------------------------------------------')
+                total_entry_slots = slot_types['Total']['dataframe'].query(
+                    '(GLIDEIN_Entry_Name == "%s") and (GLIDEIN_Name == "%s") and (GLIDEIN_FACTORY == "%s")' % (req_entry, req_name, req_fact))
 
             entry_slot_types = {
                 'Total': total_entry_slots,
@@ -816,44 +859,58 @@ class GlideFrontendElement(object):
                 'RunningCores': get_running_slots(total_entry_slots),
             }
 
-            count_entry_slots[request_name]['Total'] = len(entry_slot_types['Total'])
-            count_entry_slots[request_name]['Idle'] = len(entry_slot_types['Idle'])
-            count_entry_slots[request_name]['Running'] = len(entry_slot_types['Running'])
+            count_entry_slots[request_name]['Total'] = len(
+                entry_slot_types['Total'])
+            count_entry_slots[request_name]['Idle'] = len(
+                entry_slot_types['Idle'])
+            count_entry_slots[request_name]['Running'] = len(
+                entry_slot_types['Running'])
 
             for st in entry_slot_types:
                 if st == 'TotalCores':
-                    count_entry_slots[request_name][st] = count_total_cores(entry_slot_types[st])
+                    count_entry_slots[request_name][st] = count_total_cores(
+                        entry_slot_types[st])
                 elif st == 'IdleCores':
-                    count_entry_slots[request_name][st] = count_idle_cores(entry_slot_types[st])
+                    count_entry_slots[request_name][st] = count_idle_cores(
+                        entry_slot_types[st])
                 elif st == 'RunningCores':
-                    count_entry_slots[request_name][st] = count_running_cores(entry_slot_types[st])
+                    count_entry_slots[request_name][st] = count_running_cores(
+                        entry_slot_types[st])
                 elif st == 'Running':
-                    count_entry_slots[request_name][st] = len(entry_slot_types[st]) - len(get_running_pslots(total_entry_slots))
+                    count_entry_slots[request_name][st] = len(
+                        entry_slot_types[st]) - len(get_running_pslots(total_entry_slots))
                 else:
-                    count_entry_slots[request_name][st] = len(entry_slot_types[st])
+                    count_entry_slots[request_name][st] = len(
+                        entry_slot_types[st])
                 # Further get counts per credentials
                 for cred in self.credential_plugin.cred_list:
                     # Initialize all counts to 0 for potential empty frames
                     count_entry_slots_cred[request_name][cred.get_id()][st] = 0
                     entry_slots_cred = pandas.DataFrame()
                     if not entry_slot_types[st].empty:
-                        entry_slots_cred = entry_slot_types[st].query('GLIDEIN_CredentialIdentifier == "%s"' % cred.get_id())
+                        entry_slots_cred = entry_slot_types[st].query(
+                            'GLIDEIN_CredentialIdentifier == "%s"' % cred.get_id())
 
                     if st == 'TotalCores':
-                        count_entry_slots_cred[request_name][cred.get_id()][st] = count_total_cores(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id(
+                        )][st] = count_total_cores(entry_slots_cred)
                     elif st == 'IdleCores':
-                        count_entry_slots_cred[request_name][cred.get_id()][st] = count_idle_cores(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id(
+                        )][st] = count_idle_cores(entry_slots_cred)
                     elif st == 'RunningCores':
-                        count_entry_slots_cred[request_name][cred.get_id()][st] = count_running_cores(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id(
+                        )][st] = count_running_cores(entry_slots_cred)
                     elif st == 'Running':
-                        count_entry_slots_cred[request_name][cred.get_id()][st] = len(entry_slots_cred) - len(get_running_pslots(entry_slots_cred))
+                        count_entry_slots_cred[request_name][cred.get_id()][st] = len(
+                            entry_slots_cred) - len(get_running_pslots(entry_slots_cred))
                     else:
-                        count_entry_slots_cred[request_name][cred.get_id()][st] = len(entry_slots_cred)
+                        count_entry_slots_cred[request_name][cred.get_id()][st] = len(
+                            entry_slots_cred)
 
         return (count_entry_slots, count_entry_slots_cred)
 
-
     # IDEA: pass the site buckets and use it as match expr. should work
+
     def count_match(self, job_types, job_type, entries):
         """
         Count the match for which job is running on which entry
@@ -886,29 +943,35 @@ class GlideFrontendElement(object):
 
                 if len(matches) == 0:
                     # These jobs do not match anywhere. Special entry (None, None)
-                    direct_match[(None, None)] = direct_match.get((None, None), 0) + job_count
-                    prop_match[(None, None)] = prop_match.get((None, None), 0) + job_count
-                    hereonly_match[(None, None)] = hereonly_match.get((None, None), 0) + job_count
-                    prop_match_cpu[(None, None)] = prop_match_cpu.get((None, None), 0) + (job_count * req_cpus)
+                    direct_match[(None, None)] = direct_match.get(
+                        (None, None), 0) + job_count
+                    prop_match[(None, None)] = prop_match.get(
+                        (None, None), 0) + job_count
+                    hereonly_match[(None, None)] = hereonly_match.get(
+                        (None, None), 0) + job_count
+                    prop_match_cpu[(None, None)] = prop_match_cpu.get(
+                        (None, None), 0) + (job_count * req_cpus)
                 else:
                     for key in matches:
-                        direct_match[key] = direct_match.get(key, 0) + job_count
+                        direct_match[key] = direct_match.get(
+                            key, 0) + job_count
                         if len(matches) == 1:
                             # These jobs can only run here
-                            hereonly_match[key] = hereonly_match.get(key, 0) + job_count
+                            hereonly_match[key] = hereonly_match.get(
+                                key, 0) + job_count
                         else:
                             hereonly_match[key] = hereonly_match.get(key, 0)
                         fraction = math.ceil(float(job_count)/len(matches))
                         prop_match[key] = prop_match.get(key, 0) + fraction
                         this_entry = entries.query('Name =="%s"' % key[1])
-                        #glidein_cpus = 1 # default to 1 if not defined
+                        # glidein_cpus = 1 # default to 1 if not defined
                         for index, row in this_entry.iterrows():
                             glidein_cpus = row.get('GLIDEIN_CPUS', 1)
 
-                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
+                        prop_match_cpu[key] = math.ceil(
+                            (prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
         total = job_types[job_type]['abs']
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
-
 
     def categorize_jobs(self, jobs_df):
         """
@@ -935,14 +998,18 @@ class GlideFrontendElement(object):
         else:
             idle_all = jobs_df.query('JobStatus == 1')
             idle = jobs_df.query('JobStatus == 1')
-            old_idle =jobs_df.query('JobStatus == 1 and (ServerTime - EnteredCurrentStatus) > 600')
-            idle_3600 = jobs_df.query('JobStatus == 1 and (ServerTime - EnteredCurrentStatus) > 3600')
-            voms_idle = jobs_df.query('JobStatus == 1 and (x509UserProxyFirstFQAN !="")')
-            proxy_idle = jobs_df.query('JobStatus == 1 and (x509userproxy !="")')
+            old_idle = jobs_df.query(
+                'JobStatus == 1 and (ServerTime - EnteredCurrentStatus) > 600')
+            idle_3600 = jobs_df.query(
+                'JobStatus == 1 and (ServerTime - EnteredCurrentStatus) > 3600')
+            voms_idle = jobs_df.query(
+                'JobStatus == 1 and (x509UserProxyFirstFQAN !="")')
+            proxy_idle = jobs_df.query(
+                'JobStatus == 1 and (x509userproxy !="")')
             running = jobs_df.query('JobStatus == 2')
 
         job_types = {
-            #'All': jobs.df,
+            # 'All': jobs.df,
             'IdleAll': {'dataframe': idle_all, 'abs': len(idle_all)},
             'Idle': {'dataframe': idle, 'abs': len(idle)},
             'OldIdle': {'dataframe': old_idle, 'abs': len(old_idle)},
@@ -952,8 +1019,6 @@ class GlideFrontendElement(object):
             'Running': {'dataframe': running, 'abs': len(running)},
         }
         return job_types
-
-
 
     def categorize_slots(self, slots_df):
         """
@@ -981,7 +1046,6 @@ class GlideFrontendElement(object):
 
         return slot_types
 
-
     def create_glideid_list(self, entries):
         """
         Create list of glideids
@@ -991,7 +1055,6 @@ class GlideFrontendElement(object):
         for index, row in entries.iterrows():
             glideid_list.add((row['CollectorHost'], row['Name']))
         return glideid_list
-
 
     def identify_limits_triggered(self, count_status,
                                   total_glideins, total_idle_glideins,
@@ -1026,7 +1089,6 @@ class GlideFrontendElement(object):
             limits_triggered['IdleGlideinsGlobal'] = 'count=%i, limit=%i' % (global_total_idle_glideins,
                                                                              self.global_total_max_slots_idle)
 
-
     def compute_glidein_min_idle(self, count_status, total_glideins,
                                  total_idle_glideins, fe_total_glideins,
                                  fe_total_idle_glideins,
@@ -1047,7 +1109,7 @@ class GlideFrontendElement(object):
             (fe_total_glideins >= self.fe_total_max_slots) or
             (fe_total_idle_glideins >= self.fe_total_max_slots_idle) or
             (global_total_glideins >= self.global_total_max_slots) or
-            (global_total_idle_glideins >= self.global_total_max_slots_idle)):
+                (global_total_idle_glideins >= self.global_total_max_slots_idle)):
 
             # Do not request more glideins under following conditions:
             # 1. Have all the running jobs I wanted
@@ -1064,7 +1126,7 @@ class GlideFrontendElement(object):
                 global_total_glideins, global_total_idle_glideins,
                 limits_triggered)
 
-        elif (effective_idle>0):
+        elif (effective_idle > 0):
             # don't go over the system-wide max
             # not perfect, given the number of entries, but better than nothing
             glidein_min_idle = min(
@@ -1079,48 +1141,56 @@ class GlideFrontendElement(object):
                 self.global_total_max_slots_idle-global_total_idle_glideins)
 
             if glidein_min_idle < effective_idle:
-                limits_triggered['MaxLimitHit'] = 'was=%i, min=%i' % (effective_idle, glidein_min_idle)
+                limits_triggered['MaxLimitHit'] = 'was=%i, min=%i' % (
+                    effective_idle, glidein_min_idle)
 
             # since it takes a few cycles to stabilize, ask for only one third
-            glidein_min_idle=glidein_min_idle/3
+            glidein_min_idle = glidein_min_idle/3
             # do not reserve any more than the number of old idles
             # for reserve (/3)
             glidein_idle_reserve = min(effective_oldidle/3, self.reserve_idle)
 
-            glidein_min_idle+=glidein_idle_reserve
-            glidein_min_idle = min(glidein_min_idle, self.entry_max_glideins_idle)
+            glidein_min_idle += glidein_idle_reserve
+            glidein_min_idle = min(
+                glidein_min_idle, self.entry_max_glideins_idle)
 
             if count_status['Idle'] >= self.entry_curb_slots_idle:
-                glidein_min_idle/=2 # above first treshold, reduce
-                limits_triggered['CurbIdleGlideinsPerEntry'] = 'count=%i, curb=%i' % (count_status['Idle'], self.entry_curb_slots_idle)
+                glidein_min_idle /= 2  # above first treshold, reduce
+                limits_triggered['CurbIdleGlideinsPerEntry'] = 'count=%i, curb=%i' % (
+                    count_status['Idle'], self.entry_curb_slots_idle)
             if total_glideins >= self.total_curb_slots:
-                glidein_min_idle/=2 # above global treshold, reduce further
-                limits_triggered['CurbTotalGlideinsPerGroup'] = 'count=%i, curb=%i' % (total_glideins, self.total_curb_slots)
+                glidein_min_idle /= 2  # above global treshold, reduce further
+                limits_triggered['CurbTotalGlideinsPerGroup'] = 'count=%i, curb=%i' % (
+                    total_glideins, self.total_curb_slots)
             if total_idle_glideins >= self.total_curb_slots_idle:
-                glidein_min_idle/=2 # above global treshold, reduce further
-                limits_triggered['CurbIdleGlideinsPerGroup'] = 'count=%i, curb=%i' % (total_idle_glideins, self.total_curb_slots_idle)
-            if fe_total_glideins>=self.fe_total_curb_slots:
-                glidein_min_idle/=2 # above global treshold, reduce further
-                limits_triggered['CurbTotalGlideinsPerFrontend'] = 'count=%i, curb=%i' % (fe_total_glideins, self.fe_total_curb_slots)
-            if fe_total_idle_glideins>=self.fe_total_curb_slots_idle:
-                glidein_min_idle/=2 # above global treshold, reduce further
-                limits_triggered['CurbIdleGlideinsPerFrontend'] = 'count=%i, curb=%i' % (fe_total_idle_glideins, self.fe_total_curb_slots_idle)
-            if global_total_glideins>=self.global_total_curb_slots:
-                glidein_min_idle/=2 # above global treshold, reduce further
-                limits_triggered['CurbTotalGlideinsGlobal'] = 'count=%i, curb=%i' % (global_total_glideins, self.global_total_curb_slots)
-            if global_total_idle_glideins>=self.global_total_curb_slots_idle:
-                glidein_min_idle/=2 # above global treshold, reduce further
-                limits_triggered['CurbIdleGlideinsGlobal'] = 'count=%i, curb=%i' % (global_total_idle_glideins, self.global_total_curb_slots_idle)
+                glidein_min_idle /= 2  # above global treshold, reduce further
+                limits_triggered['CurbIdleGlideinsPerGroup'] = 'count=%i, curb=%i' % (
+                    total_idle_glideins, self.total_curb_slots_idle)
+            if fe_total_glideins >= self.fe_total_curb_slots:
+                glidein_min_idle /= 2  # above global treshold, reduce further
+                limits_triggered['CurbTotalGlideinsPerFrontend'] = 'count=%i, curb=%i' % (
+                    fe_total_glideins, self.fe_total_curb_slots)
+            if fe_total_idle_glideins >= self.fe_total_curb_slots_idle:
+                glidein_min_idle /= 2  # above global treshold, reduce further
+                limits_triggered['CurbIdleGlideinsPerFrontend'] = 'count=%i, curb=%i' % (
+                    fe_total_idle_glideins, self.fe_total_curb_slots_idle)
+            if global_total_glideins >= self.global_total_curb_slots:
+                glidein_min_idle /= 2  # above global treshold, reduce further
+                limits_triggered['CurbTotalGlideinsGlobal'] = 'count=%i, curb=%i' % (
+                    global_total_glideins, self.global_total_curb_slots)
+            if global_total_idle_glideins >= self.global_total_curb_slots_idle:
+                glidein_min_idle /= 2  # above global treshold, reduce further
+                limits_triggered['CurbIdleGlideinsGlobal'] = 'count=%i, curb=%i' % (
+                    global_total_idle_glideins, self.global_total_curb_slots_idle)
 
-            if glidein_min_idle<1:
-                glidein_min_idle=1
+            if glidein_min_idle < 1:
+                glidein_min_idle = 1
         else:
             # no idle, make sure the glideins know it
             limits_triggered['NoEffectiveIdle'] = 'no glidein is needed'
             glidein_min_idle = 0
 
         return int(glidein_min_idle)
-
 
     def compute_glidein_max_running(self, prop_jobs, real_slots, idle_slots):
         """
@@ -1145,13 +1215,13 @@ class GlideFrontendElement(object):
                 # frequently but in smaller bursts.
                 # NOTE: We do not consider idle cores as fragmentation can
                 #       impact us negatively
-                max_running = int((max(prop_jobs['Idle'] - idle_slots, 0) + real_slots) * self.entry_fraction_glidein_running + 1)
+                max_running = int(
+                    (max(prop_jobs['Idle'] - idle_slots, 0) + real_slots) * self.entry_fraction_glidein_running + 1)
             else:
                 # No reason for a delta when we don't need more than we have
                 max_running = int(real_slots)
 
         return max_running
-
 
     def create_factory_pubkeyobj(self, factory_globals):
         key_objs = []
@@ -1165,13 +1235,13 @@ class GlideFrontendElement(object):
                 # if no valid key
                 # if key needed, will handle the error later on
                 raise
-                self.logger.warning("Factory Globals '%s': invalid RSA key" % row.get('Name', None))
-                self.logger.exception("Factory Globals '%s': invalid RSA key" % row.get('Name', None))
+                self.logger.warning(
+                    "Factory Globals '%s': invalid RSA key" % row.get('Name', None))
+                self.logger.exception(
+                    "Factory Globals '%s': invalid RSA key" % row.get('Name', None))
                 key_obj = None
             key_objs.append(key_obj)
         return key_objs
-
-
 
 
 ###############################################################################
@@ -1190,7 +1260,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                                                       acct_group, fe_cfg)
         # Sum of all the glidein requests from different job filters
         self.total_glidein_requests = {}
-
 
     def generate_glidein_requests(self, jobs_df, slots_df,
                                   entries, factory_globals,
@@ -1216,11 +1285,11 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         self.fom_entries = fom_entries
 
         return self.generate_glidein_requests_one(
-                   jobs_df, slots_df, entries,
-                   factory_globals, job_filter=job_filter)
+            jobs_df, slots_df, entries,
+            factory_globals, job_filter=job_filter)
 
+    # def generate_glidein_requests_one(self, jobs_df, job_clusters_df,
 
-    #def generate_glidein_requests_one(self, jobs_df, job_clusters_df,
     def generate_glidein_requests_one(self, jobs_df, slots_df,
                                       entries, factory_globals,
                                       job_filter='ClusterId > 0'):
@@ -1262,7 +1331,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         # STEP 3: Get glidefactoryglobal and glideentry classads
         ########################################################################
 
-        factory_globals['PubKeyObj'] = self.create_factory_pubkeyobj(factory_globals)
+        factory_globals['PubKeyObj'] = self.create_factory_pubkeyobj(
+            factory_globals)
         self.glideid_list = self.create_glideid_list(entries)
 
         ########################################################################
@@ -1281,10 +1351,13 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         group_slots_df = fe_slots_df = pandas.DataFrame()
         if 'GLIDECLIENT_NAME' in slots_df:
             non_na_slots_df = slots_df.dropna(subset=['GLIDECLIENT_NAME'])
-            group_slots_query_str = 'GLIDECLIENT_NAME=="%s.%s"' % (self.frontend_name, self.fe_group)
+            group_slots_query_str = 'GLIDECLIENT_NAME=="%s.%s"' % (
+                self.frontend_name, self.fe_group)
             fe_slots_query_str = 'GLIDECLIENT_NAME.str.startswith("%s.")' % self.frontend_name
-            self.logger.debug('Finding group slots matching condition: %s' % group_slots_query_str)
-            self.logger.debug('Finding fe slots matching condition: %s' % fe_slots_query_str)
+            self.logger.debug(
+                'Finding group slots matching condition: %s' % group_slots_query_str)
+            self.logger.debug(
+                'Finding fe slots matching condition: %s' % fe_slots_query_str)
             group_slots_df = non_na_slots_df.query(group_slots_query_str)
             fe_slots_df = non_na_slots_df.query(fe_slots_query_str)
         else:
@@ -1326,9 +1399,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         global_total_idle_slots = global_slots_count['Idle']
         global_total_running_slots = global_slots_count['Running']
 
-        self.logger.info('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
-        self.logger.info('Frontend slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (fe_total_slots, self.fe_total_max_slots, self.fe_total_curb_slots, fe_total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, fe_total_running_slots))
-        self.logger.info('Overall slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (global_total_slots, self.global_total_max_slots, self.global_total_curb_slots, global_total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, global_total_running_slots))
+        self.logger.info('Group slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (
+            total_slots, self.total_max_slots, self.total_curb_slots, total_idle_slots, self.total_max_slots_idle, self.total_curb_slots_idle, total_running_slots))
+        self.logger.info('Frontend slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (fe_total_slots, self.fe_total_max_slots,
+                                                                                                                     self.fe_total_curb_slots, fe_total_idle_slots, self.fe_total_max_slots_idle, self.fe_total_curb_slots_idle, fe_total_running_slots))
+        self.logger.info('Overall slots found total %i (limit %i curb %i) idle %i (limit %i curb %i) running %i' % (global_total_slots, self.global_total_max_slots,
+                                                                                                                    self.global_total_curb_slots, global_total_idle_slots, self.global_total_max_slots_idle, self.global_total_curb_slots_idle, global_total_running_slots))
 
         # Add entry info to each running slot's classad
         append_running_on(job_types['Running']['dataframe'],
@@ -1386,10 +1462,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
             glideid_str = "%s@%s" % (request_name, factory_pool_node)
             self.processed_glideid_strs.append(glideid_str)
-            entry_info = entries.query('Name == "%s" and CollectorHost == "%s"' % (request_name, factory_pool_node))
+            entry_info = entries.query(
+                'Name == "%s" and CollectorHost == "%s"' % (request_name, factory_pool_node))
 
             # Some short hand variables for easy reference
-            glidein_in_downtime = entry_info.get('GLIDEIN_In_Downtime').tolist()[0]
+            glidein_in_downtime = entry_info.get(
+                'GLIDEIN_In_Downtime').tolist()[0]
             # numpy bool is not python bool. Convert to string and compare
             entry_in_downtime = ('%s' % glidein_in_downtime).upper() == 'TRUE'
             count_jobs = {}    # Count of jobs with straight matches
@@ -1397,13 +1475,14 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             # proportional subset of jobs for this entry scaled also for
             # multicore (requested cores/available cores)
             prop_mc_jobs = {}
-            hereonly_jobs = {} # can only run on this site
+            hereonly_jobs = {}  # can only run on this site
             for status in job_types:
                 count_jobs[status] = job_types[status]['count'].get(glideid, 0)
                 prop_jobs[status] = job_types[status]['prop'].get(glideid, 0)
-                prop_mc_jobs[status] = job_types[status]['prop_match_cpu'].get(glideid, 0)
-                hereonly_jobs[status] = job_types[status]['hereonly'].get(glideid, 0)
-
+                prop_mc_jobs[status] = job_types[status]['prop_match_cpu'].get(
+                    glideid, 0)
+                hereonly_jobs[status] = job_types[status]['hereonly'].get(
+                    glideid, 0)
 
             count_slots = self.count_entry_slots[request_name]
             count_slots_per_cred = self.count_entry_slots_cred[request_name]
@@ -1414,10 +1493,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             if use_glexec != 'NEVER':
                 if entry_info.get('GLIDEIN_REQUIRE_VOMS') == 'True':
                     prop_jobs['Idle'] = prop_jobs['VomsIdle']
-                    self.logger.info('Voms proxy required, limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
+                    self.logger.info(
+                        'Voms proxy required, limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
                 elif entry_info.get('GLIDEIN_REQUIRE_GLEXEC_USE') == 'True':
                     prop_jobs['Idle'] = prop_jobs['ProxyIdle']
-                    self.logger.info('Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
+                    self.logger.info(
+                        'Proxy required (GLEXEC), limiting idle glideins based on jobs: %i' % prop_jobs['Idle'])
 
             # MMDB should be debug
             self.logger.info("Request %s: prop jobs %s(mc %s, min %s), available slots %s " % (
@@ -1427,18 +1508,22 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             # effective idle is how much more we need
             # if there are idle slots, subtract them, they should match soon
             effective_idle = max(prop_jobs['Idle']-count_slots['Idle'], 0)
-            effective_oldidle = max(prop_jobs['OldIdle']-count_slots['Idle'], 0)
+            effective_oldidle = max(
+                prop_jobs['OldIdle']-count_slots['Idle'], 0)
 
             # Adjust the number of idle jobs in case
             # the minimum running parameter is set
             if prop_mc_jobs['Idle'] < self.entry_min_glideins_running:
                 #logger.log.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
-                self.logger.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (request_name, self.entry_min_glideins_running))
+                self.logger.info("Entry %s: Adjusting idle cores to %s since the 'min' attribute of 'running_glideins_per_entry' is set" % (
+                    request_name, self.entry_min_glideins_running))
                 prop_mc_jobs['Idle'] = self.entry_min_glideins_running
 
             # Compute min glideins required based on multicore jobs
-            effective_idle_mc = max(prop_mc_jobs['Idle']-count_slots['Idle'], 0)
-            effective_oldidle_mc = max(prop_mc_jobs['OldIdle']-count_slots['Idle'], 0)
+            effective_idle_mc = max(
+                prop_mc_jobs['Idle']-count_slots['Idle'], 0)
+            effective_oldidle_mc = max(
+                prop_mc_jobs['OldIdle']-count_slots['Idle'], 0)
 
             limits_triggered = {}
             # Compute minimum idle glideins required for this request_name
@@ -1458,7 +1543,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 count_slots['Idle'])
 
             # MMDB should be debug
-            self.logger.info("Limits triggered: %s " % (', '.join(["%s: %s" % (k, v) for k, v in limits_triggered.items()])))
+            self.logger.info("Limits triggered: %s " % (
+                ', '.join(["%s: %s" % (k, v) for k, v in limits_triggered.items()])))
 
             # TODO: Figure out what to do with monitoring
             # Frontend groups logs stats here creating web monitoring xml files
@@ -1486,10 +1572,10 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 fom = fom_info.get('FOM').tolist()[0]
             except IndexError:
                 fom = '-'
-                self.logger.error('FOM info not found for following entry possibly because of inaccurate/missing info in the instance performance file')
+                self.logger.error(
+                    'FOM info not found for following entry possibly because of inaccurate/missing info in the instance performance file')
                 self.logger.error(entry_info)
                 self.logger.error(fom_info)
-
 
             if entry_in_downtime:
                 total_down_stats_arr = log_and_sum_factory_line(
@@ -1525,7 +1611,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             glidein_monitors_per_cred = {}
             creds_with_running = 0
             for cred in self.credential_plugin.cred_list:
-                glidein_monitors_per_cred[cred.get_id()] = {'Glideins%s'%t: count_slots_per_cred[cred.get_id()][t] for t in count_slots}
+                glidein_monitors_per_cred[cred.get_id()] = {
+                    'Glideins%s' % t: count_slots_per_cred[cred.get_id()][t] for t in count_slots}
                 glidein_monitors_per_cred[cred.get_id()]['ScaledRunning'] = 0
                 if glidein_monitors_per_cred[cred.get_id()]['GlideinsRunning']:
                     creds_with_running += 1
@@ -1539,7 +1626,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     if cred_monitor['GlideinsRunning']:
                         # This cred has running, scale them down
                         if (creds_with_running - scaled) == 1:
-                            cred_monitor['ScaledRunning'] = tr - (tr//creds_with_running)*scaled
+                            cred_monitor['ScaledRunning'] = tr - \
+                                (tr//creds_with_running)*scaled
                             scaled += 1
                             break
                         else:
@@ -1555,7 +1643,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         my_identity, pubkeyid, pubkeyobj)
                     break
 
-            #TODO: These two come from glidefactory classad rows how to get it?
+            # TODO: These two come from glidefactory classad rows how to get it?
             trust_domain = entry_info.get('GLIDEIN_TrustDomain',
                                           ['Grid']).tolist()[0]
             auth_method = entry_info.get(
@@ -1575,7 +1663,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     trust_domain=trust_domain, auth_method=auth_method)
                 self.gc_classads.extend(gc_classad)
             else:
-                self.logger.warning("Cannot advertise requests for %s because no factory %s key was found" % (request_name, factory_pool_node))
+                self.logger.warning("Cannot advertise requests for %s because no factory %s key was found" % (
+                    request_name, factory_pool_node))
 
         # TODO: Enable following logging in future
         """
@@ -1601,10 +1690,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             'glideclient_manifests': gc_df
         }
 
-
     def count_match(self, job_types, job_type, entries):
         return self.count_match_fom_bff(job_types, job_type, entries)
-
 
     def count_match_fom_bff(self, job_types, job_type, entries):
         """
@@ -1643,45 +1730,56 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
                 matches = set()
                 # TODO: only entries w/ explicit numeric fixed GLIDEIN_CPUS are considered. Handle auto here
-                entries_with_cpus = entries.query('GLIDEIN_CPUS>=%i' % req_cpus)
+                entries_with_cpus = entries.query(
+                    'GLIDEIN_CPUS>=%i' % req_cpus)
 
                 for index, row in entries_with_cpus.iterrows():
                     matches.add((row.get('CollectorHost'), row.get('Name')))
 
-
                 if len(matches) == 0:
                     # These jobs do not match anywhere
                     # Represented by a special entry (None, None)
-                    direct_match[(None, None)] = direct_match.get((None, None), 0) + job_count
-                    prop_match[(None, None)] = prop_match.get((None, None), 0) + job_count
-                    hereonly_match[(None, None)] = hereonly_match.get((None, None), 0) + job_count
-                    prop_match_cpu[(None, None)] = prop_match_cpu.get((None, None), 0) + (job_count * req_cpus)
-                    dbg_info.append('%i jobs requesting %i cpus not matching entries' % (job_count, req_cpus))
+                    direct_match[(None, None)] = direct_match.get(
+                        (None, None), 0) + job_count
+                    prop_match[(None, None)] = prop_match.get(
+                        (None, None), 0) + job_count
+                    hereonly_match[(None, None)] = hereonly_match.get(
+                        (None, None), 0) + job_count
+                    prop_match_cpu[(None, None)] = prop_match_cpu.get(
+                        (None, None), 0) + (job_count * req_cpus)
+                    dbg_info.append(
+                        '%i jobs requesting %i cpus not matching entries' % (job_count, req_cpus))
                 else:
                     if len(matches) == 1:
                         # These jobs can only run here
                         key = iter(matches).next()
-                        direct_match[key] = direct_match.get(key, 0) + job_count
+                        direct_match[key] = direct_match.get(
+                            key, 0) + job_count
                         prop_match[key] = prop_match.get(key, 0) + job_count
                         this_entry = entries.query('Name=="%s"' % key[1])
                         # Default glidein_cpus to 1 if not defined
                         glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
-                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus*job_count))/glidein_cpus)
+                        prop_match_cpu[key] = math.ceil(
+                            (prop_match_cpu.get(key, 0) + float(req_cpus*job_count))/glidein_cpus)
                         # Append FOM for all matches that are not in downtime
-                        fom_matches = self.matches_with_fom(matches, entries_with_cpus)
+                        fom_matches = self.matches_with_fom(
+                            matches, entries_with_cpus)
                         dbg_info.append('%i jobs requesting %i cpus matching 1 entry (fom %i) w/ %i cpus: (<%s>, <%s>, <%s, %s>) %s, %s' %
                                         (job_count, req_cpus, len(fom_matches), glidein_cpus,
-                                         prop_match_cpu.get(key, 0), float(req_cpus)/glidein_cpus,
+                                         prop_match_cpu.get(key, 0), float(
+                                             req_cpus)/glidein_cpus,
                                          type(req_cpus), type(glidein_cpus),
                                          prop_match_cpu[key], key))
                     else:
                         # Append FOM for all matches that are not in downtime
-                        fom_matches = self.matches_with_fom(matches, entries_with_cpus)
+                        fom_matches = self.matches_with_fom(
+                            matches, entries_with_cpus)
                         # Get entries not in downtime and FOM not INFINITY
                         fom_matches_up = fom_matches.query(
                             '(GLIDEIN_In_Downtime!=True) and (FOM != %f)' % sys.float_info.max)
                         # Compute 1/FOM for each match
-                        inv_fom_series = fom_matches_up['FOM'].apply(compute_nth)
+                        inv_fom_series = fom_matches_up['FOM'].apply(
+                            compute_nth)
                         inv_fom_total = inv_fom_series.sum()
                         # Calculate requests based on % value of 1/FOM
                         fom_reqs = inv_fom_series.apply(
@@ -1692,19 +1790,23 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
                         for index, row in fom_matches_up.iterrows():
                             key = (row.get('CollectorHost'), row.get('Name'))
-                            direct_match[key] = direct_match.get(key, 0) + job_count
+                            direct_match[key] = direct_match.get(
+                                key, 0) + job_count
                             fraction = row.get('ResourceRequests', 0)
                             prop_match[key] = prop_match.get(key, 0) + fraction
                             glidein_cpus = row.get('GLIDEIN_CPUS', 1)
-                            prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
+                            prop_match_cpu[key] = math.ceil(
+                                (prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
                             hereonly_match[key] = hereonly_match.get(key, 0)
                             dbg_info.append('  entry i %i: (%s, %s, fr: %s) %s, %s ' %
                                             (len(matches), prop_match_cpu.get(key, 0),
                                              (fraction * req_cpus)/glidein_cpus, fraction, prop_match_cpu[key], key))
 
                     # Add stats for all entries in downtime or FOM == INFINITY
-                    fom_matches_down = entries_with_cpus.query('GLIDEIN_In_Downtime==True')
-                    fom_matches_inf = fom_matches.query('FOM==%f' % sys.float_info.max)
+                    fom_matches_down = entries_with_cpus.query(
+                        'GLIDEIN_In_Downtime==True')
+                    fom_matches_inf = fom_matches.query(
+                        'FOM==%f' % sys.float_info.max)
                     for rejected_matches in (fom_matches_down, fom_matches_inf):
                         for index, row in rejected_matches.iterrows():
                             key = (row['CollectorHost'], row['Name'])
@@ -1714,10 +1816,9 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
         total = job_types[job_type]['abs']
         # TODO: MMDB should be debug
-        #logger.info('\n'.join(dbg_info))
+        # logger.info('\n'.join(dbg_info))
 
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
-
 
     def count_match_fom_dff(self, job_types, job_type, entries):
         """
@@ -1755,19 +1856,24 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
                 if len(matches) == 0:
                     # These jobs do not match anywhere. Special entry (None, None)
-                    direct_match[(None, None)] = direct_match.get((None, None), 0) + job_count
-                    prop_match[(None, None)] = prop_match.get((None, None), 0) + job_count
-                    hereonly_match[(None, None)] = hereonly_match.get((None, None), 0) + job_count
-                    prop_match_cpu[(None, None)] = prop_match_cpu.get((None, None), 0) + (job_count * req_cpus)
+                    direct_match[(None, None)] = direct_match.get(
+                        (None, None), 0) + job_count
+                    prop_match[(None, None)] = prop_match.get(
+                        (None, None), 0) + job_count
+                    hereonly_match[(None, None)] = hereonly_match.get(
+                        (None, None), 0) + job_count
+                    prop_match_cpu[(None, None)] = prop_match_cpu.get(
+                        (None, None), 0) + (job_count * req_cpus)
                 elif len(matches) == 1:
                     # These jobs can only run here
                     key = matches[0]
                     direct_match[key] = direct_match.get(key, 0) + job_count
                     prop_match[key] = prop_match.get(key, 0) + job_count
                     this_entry = entries.query('Name=="%s"' % key[1])
-                    #glidein_cpus = 1 # default to 1 if not defined
+                    # glidein_cpus = 1 # default to 1 if not defined
                     glidein_cpus = this_entry.get('GLIDEIN_CPUS', 1)
-                    prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
+                    prop_match_cpu[key] = math.ceil(
+                        (prop_match_cpu.get(key, 0) + float(req_cpus))/glidein_cpus)
                 else:
                     fom_matches = self.group_matches_by_fom(matches, entries)
 
@@ -1779,13 +1885,14 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         match_entry_count = len(fom_group_entries)
                         # Find the entries that are up i.e not in Downtime
                         #self.logger.info('------ ALL ENTRIES --------')
-                        #self.logger.info(list(fom_group_entries.get('Name')))
-                        #self.logger.info(list(fom_group_entries.get('GLIDEIN_In_Downtime')))
-                        fom_group_entries_up = fom_group_entries.query('GLIDEIN_In_Downtime != True')
+                        # self.logger.info(list(fom_group_entries.get('Name')))
+                        # self.logger.info(list(fom_group_entries.get('GLIDEIN_In_Downtime')))
+                        fom_group_entries_up = fom_group_entries.query(
+                            'GLIDEIN_In_Downtime != True')
                         match_entry_count = len(fom_group_entries_up)
                         #self.logger.info('------ UP ENTRIES --------')
-                        #self.logger.info(list(fom_group_entries_up.get('Name')))
-                        #self.logger.info(list(fom_group_entries_up.get('GLIDEIN_In_Downtime')))
+                        # self.logger.info(list(fom_group_entries_up.get('Name')))
+                        # self.logger.info(list(fom_group_entries_up.get('GLIDEIN_In_Downtime')))
                         job_count_unmatched = job_count - job_count_matched
                         if job_count_unmatched > 0:
                             # Distribute the jobs equally among this entry group
@@ -1797,26 +1904,35 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             #       FOMs
                             for key in matches:
                                 #self.logger.info('-------> key <--------')
-                                #self.logger.info(key)
+                                # self.logger.info(key)
                                 #self.logger.info('-------> key <--------')
-                                this_entry_df = fom_group_entries.query('(Name=="%s") and (GLIDEIN_In_Downtime != True)' % key[1])
+                                this_entry_df = fom_group_entries.query(
+                                    '(Name=="%s") and (GLIDEIN_In_Downtime != True)' % key[1])
                                 if len(this_entry_df):
                                     if (job_count - job_count_matched) > 0:
-                                        direct_match[key] = direct_match.get(key, 0) + job_count
-                                        fraction = math.ceil(float(job_count_unmatched)/match_entry_count)
-                                        prop_match[key] = prop_match.get(key, 0) + fraction
+                                        direct_match[key] = direct_match.get(
+                                            key, 0) + job_count
+                                        fraction = math.ceil(
+                                            float(job_count_unmatched)/match_entry_count)
+                                        prop_match[key] = prop_match.get(
+                                            key, 0) + fraction
                                         job_count_matched = job_count_matched + fraction
-                                        #glidein_cpus = 1 # default to 1 if not defined
+                                        # glidein_cpus = 1 # default to 1 if not defined
                                         for index, row in this_entry_df.iterrows():
-                                            glidein_cpus = row.get('GLIDEIN_CPUS', 1)
-                                        prop_match_cpu[key] = math.ceil((prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
+                                            glidein_cpus = row.get(
+                                                'GLIDEIN_CPUS', 1)
+                                        prop_match_cpu[key] = math.ceil(
+                                            (prop_match_cpu.get(key, 0) + (fraction * req_cpus))/glidein_cpus)
                                     else:
                                         # We already matched everything
                                         # Just populate the stats
-                                        direct_match[key] = direct_match.get(key, 0)
-                                        prop_match[key] = prop_match.get(key, 0)
+                                        direct_match[key] = direct_match.get(
+                                            key, 0)
+                                        prop_match[key] = prop_match.get(
+                                            key, 0)
                                     # hereonly_match remains same
-                                    hereonly_match[key] = hereonly_match.get(key, 0)
+                                    hereonly_match[key] = hereonly_match.get(
+                                        key, 0)
                             # Populate info for entries that are in downtime
                             #down_entries_df = fom_group_entries.query('(GLIDEIN_In_Downtime == True)')
                         else:
@@ -1824,13 +1940,16 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             # We already matched everything to other FOM groups
                             # Populate the stats as downtime doesnt mattter
                             for key in matches:
-                                this_entry_df = fom_group_entries.query('(Name=="%s")' % key[1])
+                                this_entry_df = fom_group_entries.query(
+                                    '(Name=="%s")' % key[1])
                                 direct_match[key] = direct_match.get(key, 0)
-                                hereonly_match[key] = hereonly_match.get(key, 0)
+                                hereonly_match[key] = hereonly_match.get(
+                                    key, 0)
                                 prop_match[key] = prop_match.get(key, 0)
                         # Add stats for all entries in downtime
                         # in case they are not considered above
-                        fom_group_entries_down = fom_group_entries.query('(GLIDEIN_In_Downtime == True)')
+                        fom_group_entries_down = fom_group_entries.query(
+                            '(GLIDEIN_In_Downtime == True)')
                         for index, row in fom_group_entries_down.iterrows():
                             key = (row['CollectorHost'], row['Name'])
                             direct_match[key] = direct_match.get(key, 0)
@@ -1840,7 +1959,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         #self.logger.info('---------- count_match return keys ----------')
         total = job_types[job_type]['abs']
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
-
 
     def matches_with_fom(self, matches, entries):
         """
@@ -1857,10 +1975,10 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         matches_df = pandas.merge(entries, df1, on=['Name'], how='inner')
         # Get the intersection of matches_df and fom_entries
         # Following will give all the matches with entire entry classad and FOM
-        matches_fom_entries_df = pandas.merge(self.fom_entries, matches_df, on=['EntryName'], how='inner')
+        matches_fom_entries_df = pandas.merge(
+            self.fom_entries, matches_df, on=['EntryName'], how='inner')
         #self.logger.info('----------> %s' % matches_fom_entries_df.columns.values)
         return matches_fom_entries_df
-
 
     def group_matches_by_fom(self, matches, entries):
         """
@@ -1884,7 +2002,8 @@ def count_total_cores(slots):
     if not slots.empty:
         # TotalSlotCpus should always be the correct number but
         # is not defined pre partitionable slots
-        count = slots.loc[slots['SlotType'] == 'Partitionable', 'TotalSlotCpus'].sum()
+        count = slots.loc[slots['SlotType'] ==
+                          'Partitionable', 'TotalSlotCpus'].sum()
         count += slots.loc[slots['SlotType'] != 'Partitionable', 'Cpus'].sum()
     return count
 
@@ -1948,15 +2067,19 @@ def append_running_on(jobs, slots):
         if pandas.notnull(remote_host):
             matching_slots = slots.query('Name == "%s"' % remote_host)
             if len(matching_slots) > 1:
-                logger.info('ERROR: Multiple slots %s running same job found' % matching_slots['Name'].tolist())
+                logger.info('ERROR: Multiple slots %s running same job found' %
+                            matching_slots['Name'].tolist())
             elif len(matching_slots) == 1:
                 # TODO: Find a better way to do this through pandas
-                schedd = matching_slots.get('GLIDEIN_Schedd').tolist()[0].split('@')
+                schedd = matching_slots.get('GLIDEIN_Schedd').tolist()[
+                    0].split('@')
                 factory_pool = schedd[-1].split(':')[0]
 
-                entry_name = matching_slots.get('GLIDEIN_ENTRY_NAME').tolist()[0]
+                entry_name = matching_slots.get(
+                    'GLIDEIN_ENTRY_NAME').tolist()[0]
                 glidein_name = matching_slots.get('GLIDEIN_Name').tolist()[0]
-                factory_name = matching_slots.get('GLIDEIN_Factory').tolist()[0]
+                factory_name = matching_slots.get(
+                    'GLIDEIN_Factory').tolist()[0]
                 #factory_pool = matching_slots.get('CollectorHost').tolist()[0]
                 ro = '%s@%s@%s@%s' % (entry_name, glidein_name, factory_name,
                                       factory_pool)
@@ -2003,9 +2126,11 @@ def log_and_sum_factory_line(factory, is_down, factory_stat_arr,
         fom = 'INFINITY'
 
     if isinstance(fom, (float, int)):
-        logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(form_arr)) + ('%s %14.4f %s' % (down_str, fom, factory)))
+        logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(
+            form_arr)) + ('%s %14.4f %s' % (down_str, fom, factory)))
     else:
-        logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(form_arr)) + ('%s %14s %s' % (down_str, fom, factory)))
+        logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(
+            form_arr)) + ('%s %14s %s' % (down_str, fom, factory)))
 
     new_arr = []
     for i in range(len(factory_stat_arr)):

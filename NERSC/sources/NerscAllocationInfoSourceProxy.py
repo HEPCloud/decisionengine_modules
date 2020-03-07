@@ -14,7 +14,6 @@ class NerscAllocationInfoSourceProxy(SourceProxy.SourceProxy):
     def produces(self):
         return PRODUCES
 
-
     def acquire(self):
         """
         Acquire factory entries from the factory collector
@@ -24,7 +23,8 @@ class NerscAllocationInfoSourceProxy(SourceProxy.SourceProxy):
 
         nerscai = super(NerscAllocationInfoSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(nerscai.keys())):
-            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
+            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (
+                type(self).__name__, PRODUCES))
         return {'Nersc_Allocation_Info': nerscai.get('Nersc_Allocation_Info')}
 
 
@@ -59,7 +59,6 @@ def module_config_info():
     module_config_template()
 
 
-
 def main():
     """
     Call this a a test unit or use as CLI of this module
@@ -80,6 +79,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

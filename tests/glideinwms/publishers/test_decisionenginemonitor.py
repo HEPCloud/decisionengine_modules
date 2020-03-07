@@ -29,13 +29,13 @@ expected_constraint = {
     'col3.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e3"))'
 }
 
+
 class TestDecisionEngineMonitorManifests:
 
     def test_consumes(self):
         consumes = ['decisionenginemonitor_manifests']
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
         assert(p.consumes() == consumes)
-
 
     def test_publish(self):
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
@@ -44,7 +44,6 @@ class TestDecisionEngineMonitorManifests:
             # TODO: Complete this test when we have detailed contents of the
             #       dataframe and the logic engine facts
             assert(True == True)
-
 
     def test_create_invalidate_constraint(self):
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)

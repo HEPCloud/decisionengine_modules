@@ -14,8 +14,9 @@ import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud.aws"
-CONSUMES=['AWS_Price_Performance']
+DEFAULT_GRAPHITE_CONTEXT = "hepcloud.aws"
+CONSUMES = ['AWS_Price_Performance']
+
 
 class AWSPricePerformancePublisher(publisher):
     def __init__(self, *args, **kwargs):
@@ -27,9 +28,11 @@ class AWSPricePerformancePublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.%s.%s.price_perf'%(row['AccountName'], row['AvailabilityZone'], graphite.sanitize_key(row['InstanceType'])))
+            key = ('%s.%s.%s.price_perf' % (
+                row['AccountName'], row['AvailabilityZone'], graphite.sanitize_key(row['InstanceType'])))
             d[key] = row['AWS_Price_Performance']
         return self.graphite_context_header, d
+
 
 def module_config_template():
     """
@@ -39,13 +42,14 @@ def module_config_template():
     d = {"AWSPricePerformancePublisher": {
          "module": "modules.AWS.publishers.AWS_price_performance",
          "name": "AWSPricePerformancePublisher",
-         },}
+         }, }
     print "Entry in channel cofiguration"
     pprint.pprint(d)
     print "where"
     print "\t name - name of the class to be instantiated by task manager"
     print "\t publish_to_graphite - publish to graphite if True"
     print "\t graphite_host - graphite host name"
+
 
 def module_config_info():
     """
@@ -54,7 +58,6 @@ def module_config_info():
 
     print "consumes", CONSUMES
     module_config_template()
-
 
 
 def main():
@@ -84,16 +87,17 @@ def main():
         ds = dataspace.DataSpace(global_config)
 
         data_block = datablock.DataBlock(ds,
-                                         #'5CC840DD-88B9-45CE-9DA2-FF531289AC66',
+                                         # '5CC840DD-88B9-45CE-9DA2-FF531289AC66',
                                          'C56E0AAF-99D3-42A8-88A3-921E30C1879C',
                                          1)
 
         pp_info = AWSPricePerformancePublisher({"publish_to_graphite": True,
                                                 "graphite_host": "fifemondata.fnal.gov",
                                                 "graphite_port": 2104,
-                                                "graphite_context":"hepcloud.aws",
-                                                "output_file": "%s/de_data/AWS_price_perf.csv"%(os.environ.get('HOME'),)})
+                                                "graphite_context": "hepcloud.aws",
+                                                "output_file": "%s/de_data/AWS_price_perf.csv" % (os.environ.get('HOME'),)})
         rc = pp_info.publish(data_block)
+
 
 if __name__ == '__main__':
     main()

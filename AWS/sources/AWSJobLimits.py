@@ -18,6 +18,7 @@ PRODUCES = ['Job_Limits']
 RETRIES = 5
 TO = 20
 
+
 class AWSJobLimits(Source.Source):
     def __init__(self, *args, **kwargs):
         self.data_file = args[0]['data_file']
@@ -29,11 +30,13 @@ class AWSJobLimits(Source.Source):
         rc = None
         for i in range(RETRIES):
             if os.path.exists(self.data_file):
-                rc = {PRODUCES[0]: pd.read_csv(self.data_file).drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)}
+                rc = {PRODUCES[0]: pd.read_csv(self.data_file).drop_duplicates(
+                    subset=['AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop=True)}
                 break
             else:
                 time.sleep(TO)
         return rc
+
 
 def module_config_template():
     """
@@ -41,13 +44,13 @@ def module_config_template():
     """
 
     d = {"AWSJobLimits": {
-        "module" :  "modules.AWS.sources.AWSJobLimits",
-        "name"   :  "AWSJobLimits",
-                    "parameters": {
-                        "data_file": "%s/de_data/job_limits.csv"%(os.environ.get('HOME'),),
-                    },
+        "module":  "modules.AWS.sources.AWSJobLimits",
+        "name":  "AWSJobLimits",
+        "parameters": {
+            "data_file": "%s/de_data/job_limits.csv" % (os.environ.get('HOME'),),
+        },
         "schedule": 60*60,
-        }
+    }
     }
 
     print "Entry in channel cofiguration"
@@ -56,13 +59,13 @@ def module_config_template():
     print "\t name - name of the class to be instantiated by task manager"
     print "\t data_file - CSV job limits data file"
 
+
 def module_config_info():
     """
     print this module configuration information
     """
     print "produces", PRODUCES
     module_config_template()
-
 
 
 def main():
@@ -85,7 +88,7 @@ def main():
     elif args.configinfo:
         module_config_info()
     else:
-        jl_info = AWSJobLimits({'data_file':'job_limits_sample.csv'})
+        jl_info = AWSJobLimits({'data_file': 'job_limits_sample.csv'})
         rc = jl_info.acquire()
         print "INFO"
         print rc

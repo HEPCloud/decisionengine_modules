@@ -6,6 +6,7 @@ import sys
 
 _INFINITY = sys.float_info.max
 
+
 def figure_of_merit(performance,
                     running,
                     allowed,
@@ -17,5 +18,3 @@ def figure_of_merit(performance,
         if idle >= max_idle:
             return _INFINITY
     return performance*float(running+1)/allowed
-
-

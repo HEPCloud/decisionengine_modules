@@ -29,13 +29,13 @@ expected_constraint = {
     'col3.com': '(glideinmytype == "glideclientglobal") && (stringlistmember(ClientName, "e3"))'
 }
 
+
 class TestGlideClientGlobalManifests:
 
     def test_consumes(self):
         consumes = ['glideclientglobal_manifests']
         p = glideclientglobal.GlideClientGlobalManifests(config)
         assert(p.consumes() == consumes)
-
 
     def test_publish(self):
         p = glideclientglobal.GlideClientGlobalManifests(config)
@@ -44,7 +44,6 @@ class TestGlideClientGlobalManifests:
             # TODO: Complete this test when we have detailed contents of the
             #       dataframe and the logic engine facts
             assert(True == True)
-
 
     def test_create_invalidate_constraint(self):
         p = glideclientglobal.GlideClientGlobalManifests(config)

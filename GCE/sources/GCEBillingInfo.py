@@ -20,12 +20,13 @@ from boto.exception import NoAuthHandlerFound
 
 PRODUCES = ['GCE_Billing_Info']
 
+
 class GCEBillCalculator(object):
     """
     Calculate GCE bill
     """
 
-    def __init__(self, projectId, accountProfileName, accountNumber, lastKnownBillDate, balanceAtDate, applyDiscount, botoConfig, localFileDir, sumToDate = None):
+    def __init__(self, projectId, accountProfileName, accountNumber, lastKnownBillDate, balanceAtDate, applyDiscount, botoConfig, localFileDir, sumToDate=None):
 
         self.logger = logging.getLogger()
 
@@ -36,19 +37,18 @@ class GCEBillCalculator(object):
         self.bucketBillingName = 'billing-' + str(self.project_id)
         # Expect lastKnownBillDate as '%m/%d/%y %H:%M' : validated when needed
         self.lastKnownBillDate = lastKnownBillDate
-        self.balanceAtDate = balanceAtDate # $
+        self.balanceAtDate = balanceAtDate  # $
         self.applyDiscount = applyDiscount
         # Expect sumToDate as '%m/%d/%y %H:%M' : validated when needed
         self.botoConfig = botoConfig
         self.localFileDir = localFileDir
-        self.sumToDate = sumToDate # '08/31/16 23:59'
+        self.sumToDate = sumToDate  # '08/31/16 23:59'
 
         # Do not download the files twice for repetitive calls e.g. for alarms
         self.fileNameForDownloadList = None
 
         # Set env for google api
-        #os.environ['BOTO_CONFIG'] = self.botoConfig 
-
+        #os.environ['BOTO_CONFIG'] = self.botoConfig
 
     def CalculateBill(self):
 
@@ -57,24 +57,27 @@ class GCEBillCalculator(object):
             self.fileNameForDownloadList = self._downloadBillFiles()
 
         if self.fileNameForDownloadList != []:
-            lastStartDateBilledConsideredDatetime, BillSummaryDict = self._sumUpBillFromDateToDate(self.fileNameForDownloadList, self.lastKnownBillDate, self.sumToDate)
+            lastStartDateBilledConsideredDatetime, BillSummaryDict = self._sumUpBillFromDateToDate(
+                self.fileNameForDownloadList, self.lastKnownBillDate, self.sumToDate)
         else:
             return "", {}
 
         CorrectedBillSummaryDict = self._applyBillCorrections(BillSummaryDict)
 
         self.logger.debug('---')
-        self.logger.debug('Bill Computation for %s Account Finished at %s' % (self.project_id, time.strftime("%c")))
-        self.logger.debug('Last Start Date Billed Considered : ' + lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M'))
+        self.logger.debug('Bill Computation for %s Account Finished at %s' % (
+            self.project_id, time.strftime("%c")))
+        self.logger.debug('Last Start Date Billed Considered : ' +
+                          lastStartDateBilledConsideredDatetime.strftime('%m/%d/%y %H:%M'))
         self.logger.debug('Last Known Balance :' + str(self.balanceAtDate))
-        self.logger.debug('Date of Last Known Balance : ' + self.lastKnownBillDate)
+        self.logger.debug('Date of Last Known Balance : ' +
+                          self.lastKnownBillDate)
         self.logger.debug('BillSummaryDict:')
         self.logger.debug(json.dumps(BillSummaryDict))
         self.logger.debug('CorrectedBillSummaryDict')
         self.logger.debug(json.dumps(CorrectedBillSummaryDict))
 
         return lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict
-
 
     def _downloadBillFiles(self):
         # Identify what files need to be downloaded, given the last known balance date
@@ -91,10 +94,12 @@ class GCEBillCalculator(object):
             uri = boto.storage_uri(self.bucketBillingName, GOOGLE_STORAGE)
             file_obj = uri.get_bucket()
         except NoAuthHandlerFound:
-            self.logger.error("Unable to download GCE billing file names because auth is not set up")
+            self.logger.error(
+                "Unable to download GCE billing file names because auth is not set up")
             return []
         except:
-            self.logger.error("Able to auth but unable to download GCE billing files")
+            self.logger.error(
+                "Able to auth but unable to download GCE billing files")
             return []
 
         filesList = []
@@ -110,7 +115,8 @@ class GCEBillCalculator(object):
         billingFileMatch = re.compile(billingFileNameIdentifier)
         billingFileDateIdentifier = "20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]"
         dateExtractionMatch = re.compile(billingFileDateIdentifier)
-        lastKnownBillDateDatetime = datetime.datetime(*(time.strptime(self.lastKnownBillDate, '%m/%d/%y %H:%M')[0:6]))
+        lastKnownBillDateDatetime = datetime.datetime(
+            *(time.strptime(self.lastKnownBillDate, '%m/%d/%y %H:%M')[0:6]))
 
         self.logger.debug('lastKnownBillDate ' + self.lastKnownBillDate)
         fileNameForDownloadList = []
@@ -118,7 +124,8 @@ class GCEBillCalculator(object):
         previousFileNameForDownloadListString = None
         noFileNameMatchesFileNameIdentifier = True
         for file in filesList:
-            self.logger.debug('File in bucket ' + self.bucketBillingName + ' : ' + file)
+            self.logger.debug('File in bucket ' +
+                              self.bucketBillingName + ' : ' + file)
             # Is the file a billing file?
             if billingFileMatch.search(file) is None:
                 continue
@@ -127,47 +134,59 @@ class GCEBillCalculator(object):
             # extract date from file
             dateMatch = dateExtractionMatch.search(file)
             if dateMatch is None:
-                self.logger.error('Cannot identify date in billing file name ' + file + ' with regex = "' + billingFileDateIdentifier + '"')
+                self.logger.error('Cannot identify date in billing file name ' +
+                                  file + ' with regex = "' + billingFileDateIdentifier + '"')
                 return []
 
             date = dateMatch.group(0)
-            billDateDatetime = datetime.datetime(*(time.strptime(date, '%Y-%m-%d')[0:6]))
-            self.logger.debug('Date extracted from file: ' + billDateDatetime.strftime('%m/%d/%y %H:%M'))
+            billDateDatetime = datetime.datetime(
+                *(time.strptime(date, '%Y-%m-%d')[0:6]))
+            self.logger.debug('Date extracted from file: ' +
+                              billDateDatetime.strftime('%m/%d/%y %H:%M'))
 
             # Start by putting the current file and file start date in the previous list
             if not previousFileNameForDownloadListString:
                 previousFileNameForDownloadListString = file
                 previousFileForDownloadListDateTime = billDateDatetime
-                self.logger.debug('previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
-                self.logger.debug('previousFileNameForDownloadListString ' + previousFileNameForDownloadListString)
+                self.logger.debug('previousFileForDownloadListDateTime ' +
+                                  previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
+                self.logger.debug(
+                    'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString)
                 self.logger.debug(fileNameForDownloadList)
                 continue
 
             # if the last known bill date is past the start date of the previous file...
             if lastKnownBillDateDatetime > previousFileForDownloadListDateTime:
-                self.logger.debug('lastKnownBillDateDatetime > previousFileForDownloadListDateTime: ' + lastKnownBillDateDatetime.strftime('%m/%d/%y %H:%M') + ' > ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
+                self.logger.debug('lastKnownBillDateDatetime > previousFileForDownloadListDateTime: ' + lastKnownBillDateDatetime.strftime(
+                    '%m/%d/%y %H:%M') + ' > ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
                 # if the previous file starts and end around the last known bill date,
                 # add previous and current file name to the list
                 if lastKnownBillDateDatetime < billDateDatetime:
-                    fileNameForDownloadList = [previousFileNameForDownloadListString, file]
-                    self.logger.debug('lastKnownBillDateDatetime < billDateDatetime: ' + lastKnownBillDateDatetime.strftime('%m/%d/%y %H:%M') + ' < ' + billDateDatetime.strftime('%m/%d/%y %H:%M'))
+                    fileNameForDownloadList = [
+                        previousFileNameForDownloadListString, file]
+                    self.logger.debug('lastKnownBillDateDatetime < billDateDatetime: ' + lastKnownBillDateDatetime.strftime(
+                        '%m/%d/%y %H:%M') + ' < ' + billDateDatetime.strftime('%m/%d/%y %H:%M'))
                     self.logger.debug('fileNameForDownloadList:')
                     self.logger.debug(fileNameForDownloadList)
                 previousFileForDownloadListDateTime = billDateDatetime
                 previousFileNameForDownloadListString = file
-                self.logger.info('previousFileForDownloadListDateTime ' + previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
-                self.logger.info('previousFileNameForDownloadListString ' + previousFileNameForDownloadListString)
+                self.logger.info('previousFileForDownloadListDateTime ' +
+                                 previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
+                self.logger.info(
+                    'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString)
 
             else:
                 if not fileNameForDownloadList:
-                    fileNameForDownloadList = [previousFileNameForDownloadListString]
+                    fileNameForDownloadList = [
+                        previousFileNameForDownloadListString]
                 # at this point, all the files have a start date past the last known bill date: we want those files
                 fileNameForDownloadList.append(file)
                 self.logger.debug('fileNameForDownloadList:')
                 self.logger.debug(fileNameForDownloadList)
 
         if noFileNameMatchesFileNameIdentifier:
-            self.logger.error('No billing files found in bucket ' + self.bucketBillingName + ' looking for patterns containing ' + billingFileNameIdentifier)
+            self.logger.error('No billing files found in bucket ' + self.bucketBillingName +
+                              ' looking for patterns containing ' + billingFileNameIdentifier)
             return []
 
         # After looking at all the files, if their start date is always older than the last known billing date,
@@ -179,15 +198,18 @@ class GCEBillCalculator(object):
         self.logger.info(fileNameForDownloadList)
 
         # Download files to the local directory
-        dest_dir = self.localFileDir 
+        dest_dir = self.localFileDir
         for fileNameForDownload in fileNameForDownloadList:
             try:
-                src_uri = boto.storage_uri(self.bucketBillingName + '/' + fileNameForDownload, GOOGLE_STORAGE)
+                src_uri = boto.storage_uri(
+                    self.bucketBillingName + '/' + fileNameForDownload, GOOGLE_STORAGE)
             except NoAuthHandlerFound:
-                self.logger.error("Unable to download GCE billing file %s " % fileNameForDownload)
+                self.logger.error(
+                    "Unable to download GCE billing file %s " % fileNameForDownload)
                 return []
             except:
-                self.logger.error("Able to auth but unable to download billing file %s " % fileNameForDownload)
+                self.logger.error(
+                    "Able to auth but unable to download billing file %s " % fileNameForDownload)
                 return []
 
             # Create a file-like object for holding the object contents.
@@ -199,9 +221,11 @@ class GCEBillCalculator(object):
             src_uri.get_key().get_file(object_contents)
 
             try:
-                local_dst_uri = boto.storage_uri(os.path.join(dest_dir, fileNameForDownload), LOCAL_FILE)
+                local_dst_uri = boto.storage_uri(os.path.join(
+                    dest_dir, fileNameForDownload), LOCAL_FILE)
             except Exception, e:
-                self.logger.error("Unable to download GCE billing file %s " % fileNameForDownload)
+                self.logger.error(
+                    "Unable to download GCE billing file %s " % fileNameForDownload)
                 return []
 
             object_contents.seek(0)
@@ -210,8 +234,7 @@ class GCEBillCalculator(object):
 
         return fileNameForDownloadList
 
-
-    def _sumUpBillFromDateToDate(self, fileList, sumFromDate, sumToDate = None):
+    def _sumUpBillFromDateToDate(self, fileList, sumFromDate, sumToDate=None):
         # CSV Billing file format documentation:
         # https://support.google.com/cloud/answer/6293835?rd=1
         # https://cloud.google.com/storage/pricing
@@ -234,17 +257,19 @@ class GCEBillCalculator(object):
 
         adjustedSupportCostKeyString = 'AdjustedSupport'
 
-        sumFromDateDatetime = datetime.datetime(*(time.strptime(sumFromDate, '%m/%d/%y %H:%M')[0:6]))
+        sumFromDateDatetime = datetime.datetime(
+            *(time.strptime(sumFromDate, '%m/%d/%y %H:%M')[0:6]))
         lastStartDateBilledConsideredDatetime = sumFromDateDatetime
         if sumToDate is not None:
-            sumToDateDatetime = datetime.datetime(*(time.strptime(sumToDate, '%m/%d/%y %H:%M')[0:6]))
-        BillSummaryDict = {totalCsvHeaderString: 0.0, adjustedSupportCostKeyString: 0.0}
-
+            sumToDateDatetime = datetime.datetime(
+                *(time.strptime(sumToDate, '%m/%d/%y %H:%M')[0:6]))
+        BillSummaryDict = {totalCsvHeaderString: 0.0,
+                           adjustedSupportCostKeyString: 0.0}
 
         for fileName in fileList:
             file = open(self.localFileDir + fileName, 'rb')
             csvfilereader = csv.DictReader(file)
-            rowCounter=0
+            rowCounter = 0
 
             for row in csvfilereader:
                 # Skip if there is no date (e.g. final comment lines)
@@ -255,8 +280,10 @@ class GCEBillCalculator(object):
                 # Skip rows whose UsageStartDate is prior to sumFromDate and past sumToDate
                 # Remove timezone info, as python 2.4 does not support %z and we consider local time
                 # Depending on standard vs. daylight time we have a variation on that notation.
-                dateInRowStr = re.split('-0[7,8]:00',row[usageStartDateCsvHeaderString])[0]
-                usageStartDateDatetime = datetime.datetime(*(time.strptime(dateInRowStr, '%Y-%m-%dT%H:%M:%S')[0:6]))
+                dateInRowStr = re.split(
+                    '-0[7,8]:00', row[usageStartDateCsvHeaderString])[0]
+                usageStartDateDatetime = datetime.datetime(
+                    *(time.strptime(dateInRowStr, '%Y-%m-%dT%H:%M:%S')[0:6]))
                 if usageStartDateDatetime < sumFromDateDatetime:
                     continue
 
@@ -269,10 +296,11 @@ class GCEBillCalculator(object):
 
                 # Sum up the costs
                 try:
-                    rowCounter+=1
+                    rowCounter += 1
                     key = row[ProductNameCsvHeaderString]
                     if key == '':
-                        self.logger.error("Missing Line Item in file %s, row: %s" % (fileName, row))
+                        self.logger.error(
+                            "Missing Line Item in file %s, row: %s" % (fileName, row))
                         return []
 
                     # For now we do not calculate support costs as they depend on Onix services only
@@ -280,16 +308,17 @@ class GCEBillCalculator(object):
                     # Add up cost per product (i.e. key) and total cost
                     # totalCsvHeaderString already exists within the dictionary: it is added first
                     # as it is guaranteed not to throw a KeyError exception.
-                    BillSummaryDict[totalCsvHeaderString] += float(row[costCsvHeaderString])
+                    BillSummaryDict[totalCsvHeaderString] += float(
+                        row[costCsvHeaderString])
                     BillSummaryDict[key] += float(row[costCsvHeaderString])
-
 
                 # If it is the first time that we encounter this key (product), add it to the dictionary
                 except KeyError:
                     BillSummaryDict[key] = float(row[costCsvHeaderString])
                 except Exception as e:
-                    self.logger.error("GCE billing: Unable to sum row %s" % row)
-                    return [] 
+                    self.logger.error(
+                        "GCE billing: Unable to sum row %s" % row)
+                    return []
 
         return lastStartDateBilledConsideredDatetime, BillSummaryDict
 
@@ -333,17 +362,26 @@ class GCEBillCalculator(object):
         # (there shouldn't be any noticeable performance loss (actually, regex may even be faster than find()!
         # '/' acts as '.' in graphite (i.e. it's a separator)
         spendingCategories = [('compute-engine.instances', re.compile("com\.google\.cloud/services/compute-engine/(Vmimage|Licensed)")),
-                              ('compute-engine.network', re.compile("com\.google\.cloud/services/compute-engine/Network")),
-                              ('compute-engine.storage', re.compile("com\.google\.cloud/services/compute-engine/Storage")),
-                              ('compute-engine.other', re.compile("com\.google\.cloud/services/compute-engine/")),
-                              ('cloud-storage.storage', re.compile("com\.google\.cloud/services/cloud-storage/Storage")),
-                              ('cloud-storage.network', re.compile("com\.google\.cloud/services/cloud-storage/Bandwidth")),
-                              ('cloud-storage.operations', re.compile("com\.google\.cloud/services/cloud-storage/Class")),
-                              ('cloud-storage.other', re.compile("com\.google\.cloud/services/cloud-storage/")),
-                              ('pubsub', re.compile("com\.googleapis/services/pubsub/")),
-                              ('services', re.compile(''))] # fallback category
+                              ('compute-engine.network',
+                               re.compile("com\.google\.cloud/services/compute-engine/Network")),
+                              ('compute-engine.storage',
+                               re.compile("com\.google\.cloud/services/compute-engine/Storage")),
+                              ('compute-engine.other',
+                               re.compile("com\.google\.cloud/services/compute-engine/")),
+                              ('cloud-storage.storage',
+                               re.compile("com\.google\.cloud/services/cloud-storage/Storage")),
+                              ('cloud-storage.network',
+                               re.compile("com\.google\.cloud/services/cloud-storage/Bandwidth")),
+                              ('cloud-storage.operations',
+                               re.compile("com\.google\.cloud/services/cloud-storage/Class")),
+                              ('cloud-storage.other',
+                               re.compile("com\.google\.cloud/services/cloud-storage/")),
+                              ('pubsub', re.compile(
+                                  "com\.googleapis/services/pubsub/")),
+                              ('services', re.compile(''))]  # fallback category
 
-        CorrectedBillSummaryDict = dict([(key, 0) for key in [k for k,v in spendingCategories]])
+        CorrectedBillSummaryDict = dict(
+            [(key, 0) for key in [k for k, v in spendingCategories]])
         # use the line above if dict comprehensions are not yet supported
         #CorrectedBillSummaryDict = { key: 0.0 for key in [ k for k,v in spendingCategories ] }
 
@@ -359,8 +397,10 @@ class GCEBillCalculator(object):
 
         # Calculate totals
         CorrectedBillSummaryDict[adjustedSupportCostKeyString] = BillSummaryDict[adjustedSupportCostKeyString]
-        CorrectedBillSummaryDict[adjustedTotalKeyString] = BillSummaryDict[totalKeyString] + BillSummaryDict[adjustedSupportCostKeyString]
-        CorrectedBillSummaryDict[balanceAtDateKeyString] = self.balanceAtDate - CorrectedBillSummaryDict[adjustedTotalKeyString]
+        CorrectedBillSummaryDict[adjustedTotalKeyString] = BillSummaryDict[totalKeyString] + \
+            BillSummaryDict[adjustedSupportCostKeyString]
+        CorrectedBillSummaryDict[balanceAtDateKeyString] = self.balanceAtDate - \
+            CorrectedBillSummaryDict[adjustedTotalKeyString]
 
         return CorrectedBillSummaryDict
 
@@ -370,14 +410,18 @@ class GCEBillingInfo(Source.Source):
         super(GCEBillingInfo, self).__init__(config)
 
         # Load configuration "constants"
-        self.projectId = config.get('projectId') 
-        self.credentialsProfileName = config.get('credentialsProfileName') # NOT CURRENTLY USED
-        self.accountNumber = config.get('accountNumber') # NOT CURRENTLY USED
-        self.lastKnownBillDate = config.get('lastKnownBillDate') # '%m/%d/%y %H:%M'
-        self.balanceAtDate = config.get('balanceAtDate') # $
-        self.applyDiscount = config.get('applyDiscount') # Onix does not provide discounts
-        self.botoConfig = config.get('botoConfig') # BOTO_CONFIG env
-        self.localFileDir = config.get('localFileDir') # location for downloaded billing files
+        self.projectId = config.get('projectId')
+        self.credentialsProfileName = config.get(
+            'credentialsProfileName')  # NOT CURRENTLY USED
+        self.accountNumber = config.get('accountNumber')  # NOT CURRENTLY USED
+        self.lastKnownBillDate = config.get(
+            'lastKnownBillDate')  # '%m/%d/%y %H:%M'
+        self.balanceAtDate = config.get('balanceAtDate')  # $
+        # Onix does not provide discounts
+        self.applyDiscount = config.get('applyDiscount')
+        self.botoConfig = config.get('botoConfig')  # BOTO_CONFIG env
+        # location for downloaded billing files
+        self.localFileDir = config.get('localFileDir')
 
         self.logger = logging.getLogger()
 
@@ -395,16 +439,15 @@ class GCEBillingInfo(Source.Source):
         """
 
         try:
-            calculator = GCEBillCalculator(projectId = self.projectId,
-                                           accountProfileName = self.credentialsProfileName,
-                                           accountNumber = self.accountNumber,
-                                           lastKnownBillDate = self.lastKnownBillDate,
-                                           balanceAtDate = self.balanceAtDate,
-                                           applyDiscount = self.applyDiscount,
-                                           botoConfig = self.botoConfig,
-                                           localFileDir = self.localFileDir)
+            calculator = GCEBillCalculator(projectId=self.projectId,
+                                           accountProfileName=self.credentialsProfileName,
+                                           accountNumber=self.accountNumber,
+                                           lastKnownBillDate=self.lastKnownBillDate,
+                                           balanceAtDate=self.balanceAtDate,
+                                           applyDiscount=self.applyDiscount,
+                                           botoConfig=self.botoConfig,
+                                           localFileDir=self.localFileDir)
 #                                           sumToDate = '10/20/16 23:59')
-
 
             lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
 
@@ -412,9 +455,10 @@ class GCEBillingInfo(Source.Source):
             self.logger.info(CorrectedBillSummaryDict)
 
         except Exception, detail:
-            self.logger.error(detail) 
+            self.logger.error(detail)
 
         return {PRODUCES[0]: pd.DataFrame([CorrectedBillSummaryDict])}
+
 
 def module_config_template():
     """
@@ -427,12 +471,12 @@ def module_config_template():
             "name":  "GCEBillingInfo",
             "parameters": {
                 'projectId': 'Blah',
-                'lastKnownBillDate': '01/01/18 00:00', # '%m/%d/%y %H:%M'
+                'lastKnownBillDate': '01/01/18 00:00',  # '%m/%d/%y %H:%M'
                 'balanceAtDate': 100.0,    # $
                 'accountName': 'Blah',
                 'accountNumber': 1111,
-                'credentialsProfileName':'BillingBlah',
-                'applyDiscount': True, # DLT discount does not apply to credits
+                'credentialsProfileName': 'BillingBlah',
+                'applyDiscount': True,  # DLT discount does not apply to credits
                 'botoConfig': "path_to_file",
                 'locaFileDir': "dir_for_billing_files"
             },
@@ -440,8 +484,9 @@ def module_config_template():
         }
     }
 
-    print "GCE Billing Info" 
+    print "GCE Billing Info"
     pprint.pprint(template)
+
 
 def module_config_info():
     """
@@ -449,6 +494,7 @@ def module_config_info():
     """
     print "produces", PRODUCES
     module_config_template()
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -466,7 +512,7 @@ def main():
     elif args.configinfo:
         module_config_info()
     else:
-       pass 
+        pass
 
 
 if __name__ == "__main__":

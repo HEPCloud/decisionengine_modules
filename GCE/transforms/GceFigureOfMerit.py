@@ -21,7 +21,7 @@ IMPORTANT: Please do not change order of these keys and always
 
 CONSUMES = ["GCE_Instance_Performance",
             "Factory_Entries_GCE",
-            "GCE_Occupancy" ]
+            "GCE_Occupancy"]
 
 PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 
@@ -35,7 +35,8 @@ class GceFigureOfMerit(Transform.Transform):
 
         performance = data_block[CONSUMES[0]]
         performance["PricePerformance"] = np.where(performance["PerfTtbarTotal"] > 0,
-                                                   performance["OnDemandPrice"] / performance["PerfTtbarTotal"],
+                                                   performance["OnDemandPrice"] /
+                                                   performance["PerfTtbarTotal"],
                                                    sys.float_info.max)
 
         factory_entries = data_block[CONSUMES[1]].fillna(0)
@@ -51,16 +52,20 @@ class GceFigureOfMerit(Transform.Transform):
 
             occupancy_df = gce_occupancy[(gce_occupancy.AvailabilityZone == az) &
                                          (gce_occupancy.InstanceType == it)]
-            occupancy = float(occupancy_df["Occupancy"].values[0]) if not occupancy_df.empty else 0
+            occupancy = float(
+                occupancy_df["Occupancy"].values[0]) if not occupancy_df.empty else 0
 
             max_allowed = max_idle = idle = 0
 
             if (not factory_entries.empty) and ('EntryName' in factory_entries):
                 factory_df = factory_entries[factory_entries.EntryName == entry_name]
                 if not factory_df.empty:
-                    max_allowed = float(factory_df["GlideinConfigPerEntryMaxGlideins"].values[0])
-                    max_idle = float(factory_df["GlideinConfigPerEntryMaxIdle"].values[0])
-                    idle = float(factory_df["GlideinMonitorTotalStatusIdle"].values[0])
+                    max_allowed = float(
+                        factory_df["GlideinConfigPerEntryMaxGlideins"].values[0])
+                    max_idle = float(
+                        factory_df["GlideinConfigPerEntryMaxIdle"].values[0])
+                    idle = float(
+                        factory_df["GlideinMonitorTotalStatusIdle"].values[0])
 
             fom = figure_of_merit(row["PricePerformance"],
                                   occupancy,
@@ -89,10 +94,10 @@ def module_config_template():
 
     d = {
         "GceFigureOfMerit": {
-           "module":  "modules.GCE.transforms.GceFigureOfMerit",
-           "name":  "GceFigureOfMerit",
-           "parameters": {
-           }
+            "module":  "modules.GCE.transforms.GceFigureOfMerit",
+            "name":  "GceFigureOfMerit",
+            "parameters": {
+            }
         }
     }
 
@@ -133,6 +138,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

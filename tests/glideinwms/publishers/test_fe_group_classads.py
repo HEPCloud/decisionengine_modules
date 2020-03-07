@@ -29,13 +29,14 @@ expected_constraint = {
     'col3.com': '(glideinmytype == "glideclient") && (stringlistmember(ClientName, "e3"))'
 }
 
+
 class TestGlideinWMSManifests:
 
     def test_consumes(self):
-        consumes = ['glideclient_manifests', 'Factory_Entries_Grid', 'Factory_Entries_AWS', 'Factory_Entries_GCE', 'Factory_Entries_LCF']
+        consumes = ['glideclient_manifests', 'Factory_Entries_Grid',
+                    'Factory_Entries_AWS', 'Factory_Entries_GCE', 'Factory_Entries_LCF']
         p = fe_group_classads.GlideinWMSManifests(config)
         assert(p.consumes() == consumes)
-
 
     def test_publish(self):
         p = fe_group_classads.GlideinWMSManifests(config)
@@ -44,7 +45,6 @@ class TestGlideinWMSManifests:
             # TODO: Complete this test when we have detailed contents of the
             #       dataframe and the logic engine facts
             assert(True == True)
-
 
     def test_create_invalidate_constraint(self):
         p = fe_group_classads.GlideinWMSManifests(config)

@@ -20,13 +20,14 @@ import decisionengine_modules.load_config as load_config
 # default values
 REGION = 'us-west-2'
 INSTANCE_TYPES = ['m3.2xlarge', 'c3.2xlarge']
-HISTORY_OBSERVATION_TIME = 3600 # observe spot price for the last hour
-#HISTORY_START_TIME = HISTORY_END_TIME.replace(day=(HISTORY_END_TIME.day-1)) # 1 day ago
+HISTORY_OBSERVATION_TIME = 3600  # observe spot price for the last hour
+# HISTORY_START_TIME = HISTORY_END_TIME.replace(day=(HISTORY_END_TIME.day-1)) # 1 day ago
 PRODUCT_DESCRIPTIONS = ['Linux/UNIX']
 DRY_RUN = False
 MAX_RESULTS = 1000
-AVAILABILITY_ZONE='' # any
+AVAILABILITY_ZONE = ''  # any
 PRODUCES = ['provisioner_resource_spot_prices']
+
 
 class SpotPriceData(object):
     """
@@ -42,23 +43,25 @@ class SpotPriceData(object):
         self.data = sp_data
         self.data['Timestamp'] = sp_data['Timestamp'].isoformat()
 
-    def __cmp__(self, other = None):
+    def __cmp__(self, other=None):
         """
         overrides comparison method
         """
         try:
-            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
+            if (self.data['AvailabilityZone'], self.data['InstanceType']) == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
         except:
             pass
 
         return -1
 
+
 class AWSSpotPriceForRegion(object):
     """
     Spot price data and methods
     """
-    def __init__(self, region = REGION, profile_name=None):
+
+    def __init__(self, region=REGION, profile_name=None):
         """
 
         :type region: :obj:`str`
@@ -72,10 +75,11 @@ class AWSSpotPriceForRegion(object):
             self.ec2 = session.client('ec2', region_name=region)
 
         else:
-            self.ec2 = boto3.client('ec2', region_name = region)
+            self.ec2 = boto3.client('ec2', region_name=region)
         self.account_name = profile_name
         t = time.time()
-        self.start_time = datetime.datetime.utcfromtimestamp(t - HISTORY_OBSERVATION_TIME)
+        self.start_time = datetime.datetime.utcfromtimestamp(
+            t - HISTORY_OBSERVATION_TIME)
         self.end_time = datetime.datetime.utcfromtimestamp(t)
         self.intance_types = INSTANCE_TYPES
         self.dry_run = DRY_RUN
@@ -84,14 +88,13 @@ class AWSSpotPriceForRegion(object):
         self.availability_zone = AVAILABILITY_ZONE
 
     def init_query(self,
-                   spot_price_history_start_time = None,
-                   spot_price_history_end_time = None,
-                   instance_types = INSTANCE_TYPES,
-                   product_descriptions = PRODUCT_DESCRIPTIONS,
-                   dry_run = DRY_RUN,
-                   max_resuts = MAX_RESULTS,
-                   availability_zone = AVAILABILITY_ZONE):
-
+                   spot_price_history_start_time=None,
+                   spot_price_history_end_time=None,
+                   instance_types=INSTANCE_TYPES,
+                   product_descriptions=PRODUCT_DESCRIPTIONS,
+                   dry_run=DRY_RUN,
+                   max_resuts=MAX_RESULTS,
+                   availability_zone=AVAILABILITY_ZONE):
         """
         Init AWS spot price query
 
@@ -112,11 +115,10 @@ class AWSSpotPriceForRegion(object):
         if spot_price_history_end_time:
             self.end_time = spot_price_history_end_time
         self.intance_types = instance_types
-        self.dry_run =  dry_run
+        self.dry_run = dry_run
         self.max_results = max_resuts
         self.product_descriptions = product_descriptions
         self.availability_zone = availability_zone
-
 
     def get_price(self):
         """
@@ -124,15 +126,15 @@ class AWSSpotPriceForRegion(object):
         """
         try:
             rc = self.ec2.describe_spot_price_history(
-                DryRun = self.dry_run,
-                StartTime = self.start_time,
-                EndTime = self.end_time,
-                InstanceTypes = self.intance_types,
-                ProductDescriptions = self.product_descriptions,
-                Filters = [],
-                AvailabilityZone = self.availability_zone,
-                MaxResults = self.max_results,
-                NextToken = '')
+                DryRun=self.dry_run,
+                StartTime=self.start_time,
+                EndTime=self.end_time,
+                InstanceTypes=self.intance_types,
+                ProductDescriptions=self.product_descriptions,
+                Filters=[],
+                AvailabilityZone=self.availability_zone,
+                MaxResults=self.max_results,
+                NextToken='')
         except Exception, e:
             print "Exception", e
             return None
@@ -166,12 +168,13 @@ class AWSSpotPriceForRegion(object):
                 l[i].data['SpotPrice'] = spd.data['SpotPrice']
         return l
 
+
 class AWSSpotPrice(Source.Source):
     def __init__(self, config_dict):
         self.config_file = config_dict['spot_price_configuration']
         self.account_dict = {}
 
-    def produces(self): 
+    def produces(self):
         return PRODUCES
 
     def acquire(self):
@@ -182,19 +185,23 @@ class AWSSpotPrice(Source.Source):
         """
 
         # Load kown accounts configuration
-        self.account_dict = load_config.load(self.config_file, 5, 20) # account configuration is dynamic
+        # account configuration is dynamic
+        self.account_dict = load_config.load(self.config_file, 5, 20)
         sp_data = []
         for account in self.account_dict:
             for region, instances in self.account_dict[account].items():
-                spot_price_info = AWSSpotPriceForRegion(region, profile_name=account)
-                spot_price_info.init_query(instance_types = instances)
+                spot_price_info = AWSSpotPriceForRegion(
+                    region, profile_name=account)
+                spot_price_info.init_query(instance_types=instances)
                 spot_price_history = spot_price_info.get_price()
                 if spot_price_history:
-                    sp_data += spot_price_info.spot_price_summary(spot_price_history)
+                    sp_data += spot_price_info.spot_price_summary(
+                        spot_price_history)
 
         sp_list = [i.data for i in sp_data]
 
         return {PRODUCES[0]: pd.DataFrame(sp_list)}
+
 
 def module_config_template():
     """
@@ -202,18 +209,18 @@ def module_config_template():
     """
 
     d = {"AWSSpotPrice": {
-        "module" :  "modules.AWS.sources.AWSSpotPrice",
-        "name"   :  "AWSSpotPrice",
-                    "parameters": {
-                        "spot_price_configuration": "%s/de_config/AWS_Spot_price_config.py"%(os.environ.get('HOME'),),
-                    },
+        "module":  "modules.AWS.sources.AWSSpotPrice",
+        "name":  "AWSSpotPrice",
+        "parameters": {
+            "spot_price_configuration": "%s/de_config/AWS_Spot_price_config.py" % (os.environ.get('HOME'),),
+        },
         "schedule": 60*60,
-        }
+    }
     }
 
     config = {"ProfileName1":
-              {"RegionName1":["Instance1",],},
-    }
+              {"RegionName1": ["Instance1", ], },
+              }
 
     print "Entry in channel cofiguration"
     pprint.pprint(d)
@@ -228,13 +235,13 @@ def module_config_template():
     print "\t RegionName1 - name of region (example: us-west-2)"
     print "\t Instance1 - name of instance. If the list of instances is empty, price information for all instances is acquired"
 
+
 def module_config_info():
     """
     print this module configuration information
     """
     print "produces", PRODUCES
     module_config_template()
-
 
 
 def main():
@@ -257,7 +264,8 @@ def main():
     elif args.configinfo:
         module_config_info()
     else:
-        sprice = AWSSpotPrice({'spot_price_configuration':'spot_price_config_sample.py'})
+        sprice = AWSSpotPrice(
+            {'spot_price_configuration': 'spot_price_config_sample.py'})
         rc = sprice.acquire()
         print "INFO"
         print rc
@@ -265,4 +273,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
