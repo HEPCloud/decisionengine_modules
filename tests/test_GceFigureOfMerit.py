@@ -67,7 +67,7 @@ expected_transform_output = {
 }
 
 for k, value in data_block.items():
-    print(tabulate.tabulate(value, headers='keys', tablefmt='psql'))
+    print (tabulate.tabulate(value, headers='keys', tablefmt='psql'))
 
 
 class TestGceFigureOfMerit:
