@@ -35,7 +35,7 @@ class Graphite(object):
             t = (namespace+"."+k, (now, v))
             post_data.append(t)
             if debug_print:
-                print t
+                print(t)
         # pickle data
         payload = pickle.dumps(post_data, protocol=2)
         header = struct.pack("!L", len(payload))
