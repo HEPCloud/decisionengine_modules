@@ -4,7 +4,6 @@ Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
 
 """
-# from __future__ import division
 import os
 import sys
 import copy

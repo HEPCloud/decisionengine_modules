@@ -3,7 +3,6 @@
 Calculates real time burn rate for AWS
 
 """
-#from __future__ import division
 import pandas as pd
 import pprint
 

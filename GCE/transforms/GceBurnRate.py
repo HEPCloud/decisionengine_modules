@@ -3,7 +3,6 @@
 Calculates real time burn rate for GCE
 
 """
-#from __future__ import division
 import pandas as pd
 import pprint
 
