@@ -50,5 +50,3 @@ class TestGCEResourceLimits:
                     gce_limits = gce_resource_limits.acquire()
                     assert PRODUCES == list(gce_limits.keys())
                     assert CONFIG.get("entry_limit_attrs").sort() == list(gce_limits.get(PRODUCES[0])).sort()
-
-
