@@ -1,5 +1,5 @@
-name: 'RPM build'
-description: 'Run rpm build in preconfigured SL7 docker image'
+name: 'Unit Tests'
+description: 'Run unit tests in preconfigured SL7 docker image'
 inputs:
   PYVER:
     description: "The python version to build with."

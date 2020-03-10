@@ -1,4 +1,10 @@
 #!/bin/bash -x
+PYVER=${1:-"2.7"}
+export PYVER
+echo PYVER
 decisionengine_modules/build/packaging/rpm/package.sh decisionengine_modules
-tar cvf $GITHUB_WORKSPACE/rpmbuild.tar /var/tmp/root/rpm/decisionengine_modules/*
-exit 0
+status=$?
+tar cvf $GITHUB_WORKSPACE/rpmbuild-$PYVER.tar /var/tmp/`whoami`/rpm/decisionengine_modules/*RPMS
+pwd
+ls -l
+exit $status
