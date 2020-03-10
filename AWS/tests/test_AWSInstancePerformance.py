@@ -23,6 +23,6 @@ class TestAWSInstancePerformance:
     def test_acquire(self):
         aws_i_p = AWSInstancePerformance.AWSInstancePerformance(config)
         res = aws_i_p.acquire()
-        assert produces == res.keys()
+        assert produces == list(res.keys())
         assert expected_pandas_df.equals(res.get(produces[0]))
 

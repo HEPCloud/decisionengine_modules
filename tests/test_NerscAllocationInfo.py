@@ -37,5 +37,5 @@ class TestNerscAllocationInfo:
         with mock.patch.object(newt.Newt, "get_usage") as f:
             f.return_value = utils.input_from_file(ALLOCATIONS_FIXTURE_FILE)
             res = nersc_allocations.acquire()
-            assert PRODUCES == res.keys()
+            assert PRODUCES == list(res.keys())
             assert EXPECTED_PANDAS_DFRAME.equals(res[PRODUCES[0]])

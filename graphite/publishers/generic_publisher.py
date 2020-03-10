@@ -3,6 +3,7 @@
 Generic publisher for graphana
 
 """
+import six
 import abc
 import os
 import copy

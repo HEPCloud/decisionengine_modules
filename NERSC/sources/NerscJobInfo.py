@@ -53,7 +53,7 @@ class NerscJobInfo(Source.Source):
         newt_keys = self.constraints.get("newt_keys", {})
         for m in machines:
             values = self.newt.get_queue(m)
-            for k, v in newt_keys.tems():
+            for k, v in newt_keys.items():
                 if v:
                     values = [x for x in values if x[k] in v]
             if values:

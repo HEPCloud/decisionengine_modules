@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import six
 import zipfile
 import csv
 import io

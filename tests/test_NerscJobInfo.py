@@ -50,5 +50,5 @@ class TestNerscJobInfo:
             with mock.patch.object(newt.Newt, "get_queue") as get_queue:
                 get_queue.return_value = utils.input_from_file(JOBS_FIXTURE_FILE)
                 res = nersc_job_info.acquire()
-                assert PRODUCES == res.keys()
+                assert PRODUCES == list(res.keys())
                 assert EXPECTED_PANDAS_DFRAME.equals(res[PRODUCES[0]])

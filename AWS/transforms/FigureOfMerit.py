@@ -130,7 +130,7 @@ def module_config_template():
         "name":  "FigureOfMerit",
         },
         }
-    print("Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
     print("where")
     print("\t name - name of the class to be instantiated by task manager")
@@ -169,7 +169,7 @@ def main():
         config_manager = configmanager.ConfigManager()
         config_manager.load()
         global_config = config_manager.get_global_config()
-        print "GLOBAL CONF", global_config
+        print("GLOBAL CONF %s"%(global_config,))
         ds = dataspace.DataSpace(global_config)
 
         #data_block = datablock.DataBlock(ds,

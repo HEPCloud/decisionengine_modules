@@ -59,5 +59,5 @@ class TestGceOccupancy:
                 client.return_value = MockClient()
                 occupancy = GceOccupancy.GceOccupancy(CONFIG)
                 res = occupancy.acquire()
-                assert PRODUCES == res.keys()
+                assert PRODUCES == list(res.keys())
                 assert EXPECTED_DF.equals(res.get(PRODUCES[0]))

@@ -1,3 +1,4 @@
+import six
 import os
 import unittest
 

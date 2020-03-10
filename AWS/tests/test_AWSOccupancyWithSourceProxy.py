@@ -47,7 +47,7 @@ class TestAWSOccupancyWithSourceProxy:
                                                                  'occupancy.fixture'))
                         get_instances.return_value = cap
                         res = aws_occ.acquire()
-                        assert produces == res.keys()
+                        assert produces == list(res.keys())
                         df1 = expected_pandas_df.sort_values(['AvailabilityZone', 'InstanceType'])
                         new_df = res.get(produces[0]).sort_values(['AvailabilityZone', 'InstanceType'])
                         new_df.reindex()
