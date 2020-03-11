@@ -1,0 +1,11 @@
+# for runtime
+boto
+classad
+google_auth
+google-api-python-client
+pandas
+
+# for tests
+mock
+pytest
+tabulate
