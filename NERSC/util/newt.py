@@ -2,13 +2,14 @@
 Newt API interface
 """
 
+from copy import deepcopy
 import os
 import time
 import requests
 
 """
-Newt base URL. When not specified in constructor this 
-URL will be used. 
+Newt base URL. When not specified in constructor this
+URL will be used.
 """
 _NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
 
@@ -17,7 +18,7 @@ class Newt(object):
 
     def __init__(self, password_file, newt_base_url=None):
         """
-        Constructor that takes path to password file and 
+        Constructor that takes path to password file and
         optional Newt base URL
         :param password_file: path to password file
         :param newt_base_url: Newt base URL (default will be _NEWT_BASE_URL)
@@ -36,7 +37,7 @@ class Newt(object):
 
     def _login(self):
         """
-        Establishes newt Session 
+        Establishes newt Session
         :return: void
         """
         if self.expiration_time < time.time() + 3600:
@@ -53,21 +54,54 @@ class Newt(object):
 
     def get_usage(self, username):
         """
-        Returns allocation and usage for the given user
-        :param username: string username 
-        :return: json containing allocation and usage information for a given user 
+        Returns allocation and usage for the given user using NEWT IRIS API
+        :param username: string username
+        :return: json containing allocation and usage information for a given user
         """
         self._login()
-        user_url = self.newt_base_url + "account/usage/user/" + username
-        r = self.session.get(user_url)
+        iris_url = "{}/{}".format(self.newt_base_url, 'account/iris')
+        query = (
+            "accounts(username: \\\"{}\\\") {{ "
+            "   projectId, "
+            "   repoName, "
+            "   repoType, "
+            "   currentAlloc, "
+            "   usedAlloc, "
+            "   users {{ "
+            "       uid, "
+            "       name, "
+            "       firstname, "
+            "       lastname, "
+            "       middlename, "
+            "       userAlloc, "
+            "       userAllocPct, "
+            "       usedAlloc "
+            "   }} "
+            "}}"
+        ).format(username)
+        # Remove whitespace to make more readable
+        query = query.replace(" ", "").replace(",", ", ")
+        r = self.session.post(
+            url=iris_url,
+            data={"query": query})
         r.raise_for_status()
-        return r.json()
+        raw_json = r.json()
+
+        # Flatten json so it returns data that follows the old NEWT structure
+        final = {'items':[]}
+        for account in raw_json['data']['newt']['accounts']:
+            _item = {k:v for k, v in account.items() if k != 'users'}
+            for user in account['users']:
+                _item2 = deepcopy(_item)
+                _item2.update(user)
+                final['items'].append(_item2)
+        return final
 
     def get_status(self, system=None):
         """
         Returns system status for a given system (if provided) or all systems
         :param system: string name of the system (optional)
-        :return: json containing system status 
+        :return: json containing system status
         """
         self._login()
         status_url = self.newt_base_url + "status/"
@@ -79,7 +113,7 @@ class Newt(object):
 
     def get_queue(self, system, query=None):
         """
-        Returns information about queues controlled by 
+        Returns information about queues controlled by
         optional query name parameter
         :param system: string system name (like 'cori', 'edison' ..)
         :param query: string query (optional)
