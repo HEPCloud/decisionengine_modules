@@ -55,9 +55,12 @@ install:
         ar x condor_8.8.3-470254-ubuntu14_amd64.deb;
         tar xf data.tar.xz;
         mv -v usr/lib/libclassad* /usr/local/lib/;
+        mv -v usr/lib/condor/libcondor_utils* /usr/local/lib/;
         mv -v usr/lib/condor/libpyclassad2.7* /usr/local/lib;
         mv -v usr/lib/python2.7/dist-packages/classad.so /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
+        mv -v usr/lib/python2.7/dist-packages/htcondor.so /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
         ldd /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages/classad.so;
+        ldd /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages/htcondor.so;
         cd -;
     else
         pip install classad;
@@ -107,8 +110,8 @@ env:
 
 # command to run tests
 script:
-  - cd ${TRAVIS_BUILD_DIR}
-  - coverage run -m pytest -v -l --tb=native ${TRAVIS_BUILD_DIR}/tests/
+  - cd `dirname ${TRAVIS_BUILD_DIR}`
+  - coverage run -m pytest -v -l --tb=native decisionengine_modules
 
 # hook into coveralls
 after_success:

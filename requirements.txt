@@ -1,5 +1,6 @@
 # for runtime
 boto
+boto3
 google_auth
 google-api-python-client
 gcs-oauth2-boto-plugin
