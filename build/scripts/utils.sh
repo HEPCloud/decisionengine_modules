@@ -11,45 +11,29 @@ setup_python_venv() {
         exit 1
     fi
     WORKSPACE=${1:-`pwd`}
-    VIRTUALENV_VER=15.2.0
-    VIRTUALENV_TARBALL=virtualenv-${VIRTUALENV_VER}.tar.gz
-    #VIRTUALENV_URL="https://pypi.python.org/packages/d4/0c/9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/$VIRTUALENV_TARBALL"
-    VIRTUALENV_URL="https://glideinwms.fnal.gov/downloads/$VIRTUALENV_TARBALL"
-    VIRTUALENV_EXE=$WORKSPACE/virtualenv-${VIRTUALENV_VER}/virtualenv.py
-    VENV=$WORKSPACE/venv
+    VENV=$WORKSPACE/venv-${PYVER}
 
     # Following is useful for running the script outside jenkins
-    if [ ! -d "$WORKSPACE" ]; then
-        mkdir $WORKSPACE
-    fi
+    #if [ ! -d "$WORKSPACE" ]; then
+    #    mkdir $WORKSPACE
+    #fi
 
-    echo "SETTING UP VIRTUAL ENVIRONMENT ..."
-    if [ -f $WORKSPACE/$VIRTUALENV_TARBALL ]; then
-        #rm $WORKSPACE/$VIRTUALENV_TARBALL
-        echo "Using existing $WORKSPACE/$VIRTUALENV_TARBALL"
-    else
-    # Get latest virtualenv package that works with python 2.6
-    curl -o $WORKSPACE/$VIRTUALENV_TARBALL $VIRTUALENV_URL 
-    tar xzf $WORKSPACE/$VIRTUALENV_TARBALL
-    fi 
+    VIRTUALENV_EXE=virtualenv-$PYVER
+    PIP_EXE=pip
+
     if [ ! -d $VENV ] ; then
-       $VIRTUALENV_EXE --system-site-packages $VENV
+      $VIRTUALENV_EXE $VENV
     fi
 
     source $VENV/bin/activate
 
-    # Install dependancies first so we don't get uncompatible ones
-    # Following RPMs need to be installed on the machine:
-    #pip_packages="astroid pylint pep8 unittest2 coverage sphinx DBUtils pytest"
-    pip_packages="argparse WebOb astroid pylint pycodestyle unittest2 coverage sphinx DBUtils pytest mock"
+    pip_packages="argparse WebOb astroid pylint pycodestyle unittest2 coverage sphinx DBUtils pytest mock pandas tabulate gcs-client google-api-python-client boto classad boto3-stubs boto3-utils psycopg2 htcondor gcs_oauth2_boto_plugin"
     for package in $pip_packages; do
         echo "Installing $package ..."
-        status="DONE"
         pip install --quiet $package
         if [ $? -ne 0 ]; then
-            status="FAILED"
+            echo "Installing $package ... FAILED"
         fi
-        echo "Installing $package ... $status"
     done
 
     # Need this because some strange control sequences when using default TERM=xterm
@@ -68,7 +52,7 @@ setup_git_product() {
 
 setup_glideinwms() {
     dir=$1
-    glideinwms_git_repo="http://cdcvs.fnal.gov/projects/glideinwms"
+    glideinwms_git_repo="https://github.com/glideinWMS/glideinwms.git"
     setup_git_product "$glideinwms_git_repo" $dir
 }
 
@@ -83,10 +67,7 @@ setup_de_framework() {
 setup_dependencies() {
     WORKSPACE=${1:-`pwd`}
     DEPS_DIR=$WORKSPACE/dependencies
-    #rm -rf $DEPS_DIR
-    if [ -e $DEPS_DIR ];then
-     echo "Using existing $DEPS_DIR"
-    else
+    rm -rf $DEPS_DIR
     mkdir $DEPS_DIR
     touch $DEPS_DIR/__init__.py
 
@@ -95,7 +76,6 @@ setup_dependencies() {
 
     # Setup glideinwms
     setup_glideinwms $DEPS_DIR
-    fi 
 
     export PYTHONPATH=$DEPS_DIR
     cd $WORKSPACE

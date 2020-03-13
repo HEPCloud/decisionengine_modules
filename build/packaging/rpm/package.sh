@@ -11,6 +11,7 @@ else
 fi
 
 echo "Using source dir: $source_dir"
+echo "Using Python version: $PYVER"
 
 export RPM_TOPDIR=/var/tmp/$id/rpm/decisionengine_modules
 mkdir -p $RPM_TOPDIR
@@ -25,6 +26,7 @@ cat > $rpm_macros << RPM_MACROS
 %_specdir   %{_topdir}/SPECS
 %_srcrpmdir %{_topdir}/SRPMS
 %_tmppath   %{_topdir}/TMP
+%pyver %(echo \$PYVER)
 RPM_MACROS
 
 release_dir=/var/tmp/$id/release/v0.1

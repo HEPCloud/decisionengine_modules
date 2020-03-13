@@ -2,7 +2,7 @@
 
 get_current_git_branch() {
     cd $DE_MODULES_SRC
-    gb=`git branch | grep "\*" | cut -d ' ' -f2`
+    gb=`git branch | grep "\*" | cut -d ' ' -f2 | sed -e's/ /_/g'`
     cd $WORKSPACE
     echo $gb
 }
@@ -222,6 +222,10 @@ export DE_MODULES_SRC="$my_parent_dir/../.."
 
 export DECISIONENGINE_SRC=$WORKSPACE/dependencies/decisionengine
 
+if [ ! -e $PYVER ];then
+    PYVER=2.7
+fi
+export PYVER
 
 source $DE_MODULES_SRC/build/scripts/utils.sh
 setup_python_venv $WORKSPACE
