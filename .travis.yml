@@ -43,6 +43,26 @@ before_install:
 # commands to install any dependencies
 install:
 
+  ## classad for python2 is not ideal here...
+  - if [[ $(echo ${TRAVIS_PYTHON_VERSION} | cut -d'.' -f1) -lt 3 ]]; then
+        sudo chown -R travis /usr/local/;
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/";
+        sudo apt-get -y install binutils tar wget xz-utils;
+        mkdir -p /tmp/condor;
+        mkdir -p /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
+        cd /tmp/condor;
+        wget https://research.cs.wisc.edu/htcondor/ubuntu/stable/pool/contrib/c/condor/condor_8.8.3-470254-ubuntu14_amd64.deb;
+        ar x condor_8.8.3-470254-ubuntu14_amd64.deb;
+        tar xf data.tar.xz;
+        mv -v usr/lib/libclassad* /usr/local/lib/;
+        mv -v usr/lib/condor/libpyclassad2.7* /usr/local/lib;
+        mv -v usr/lib/python2.7/dist-packages/classad.so /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
+        ldd /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages/classad.so;
+        cd -;
+    else
+        pip install classad;
+    fi
+
   # build a local boost with our specific python
   - sudo apt-get install -y wget git libicu-dev zlib1g-dev libbz2-dev g++
   - cd ~/
