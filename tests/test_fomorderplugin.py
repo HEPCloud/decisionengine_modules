@@ -25,9 +25,9 @@ class TestFOMOrderPlugin():
     def test_order_resources(self):
         test_df = pandas.DataFrame({
             'EntryName': ['g1', 'g2', 'g3', 'g4',
-                          'g5', 'a1', 'n5', 'n1',
-                          'a2', 'a4', 'a5', 'n2',
-                          'n3', 'a3', 'n4'],
+                          'g5', 'a1', 'n5', 'a2',
+                          'a4', 'n1', 'a5', 'n2',
+                          'a3', 'n3', 'n4'],
             'FOM': [
                 0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05,
                 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10]
@@ -39,9 +39,9 @@ class TestFOMOrderPlugin():
     def test_eligible_resources(self):
         test_df = pandas.DataFrame({
             'EntryName': ['g1', 'g2', 'g3', 'g4',
-                          'g5', 'a1', 'n5', 'n1',
-                          'a2', 'a4', 'a5', 'n2',
-                          'n3', 'a3', 'n4'],
+                          'g5', 'a1', 'n5', 'a2',
+                          'a4', 'n1', 'a5', 'n2',
+                          'a3', 'n3', 'n4'],
             'FOM': [
                 0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05,
                 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10]
@@ -55,8 +55,8 @@ class TestFOMOrderPlugin():
     def test_eligible_resources_with_constraints(self):
         test_df = pandas.DataFrame({
             'EntryName': ['g1', 'g2', 'g3', 'g4',
-                          'g5', 'a1', 'n5', 'n1',
-                          'a2', 'a4', 'a5', 'n2'],
+                          'g5', 'a1', 'n5', 'a2',
+                          'a4', 'n1', 'a5', 'n2'],
             'FOM': [
                 0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05,
                 0.10, 0.10, 0.10, 0.15, 0.30]
@@ -69,7 +69,7 @@ class TestFOMOrderPlugin():
     def test_eligible_resources_with_constraints_limit(self):
         test_df = pandas.DataFrame({
             'EntryName': ['g1', 'g2', 'g3', 'g4',
-                          'g5', 'a1', 'n5', 'n1'],
+                          'g5', 'a1', 'n5', 'a2'],
             'FOM': [
                 0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10
             ]

@@ -18,6 +18,17 @@ import decisionengine_modules.load_config as load_config
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
 
+class CustomList(list):
+    def __init__(self, *args):
+        list.__init__(self, *args)
+
+    def __contains__(self, other = None):
+        for x in self:
+            if (x.data['AvailabilityZone'],x.data['InstanceType']) == (other.data['AvailabilityZone'],other.data['InstanceType']):
+                return (True, self.index(x) )
+
+        return (False, -1)
+
 class OccupancyData(object):
     """
     Occupancy data element
@@ -34,6 +45,7 @@ class OccupancyData(object):
     def __cmp__(self, other = None):
         """
         overrides comparison method
+        This is obsolete in P3.
         """
         try:
             if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
@@ -97,17 +109,20 @@ class OccupancyForRegion(object):
         :arg instances: instances returned by :meth:`get_ec2_instances`
         :rtype: :obj:`list`: list of spot price data (:class:`aws_data.AWSDataElement`)
         """
-        l = []
+        l = CustomList() # l = []
         for instance, data in instances.items():
             if not self.instance_types or \
                     (self.instance_types and \
                          data['InstanceType'] in self.instance_types):
                 occ_data = OccupancyData(data)
-                if not occ_data in l:
+
+                boolresult, idxresult = l.__contains__( occ_data )
+                if not boolresult:
                     l.append(occ_data)
                 else:
-                    i = l.index(occ_data)
+                    i = idxresult
                     l[i].data['RunningVms'] += occ_data.data['RunningVms']
+
         return l
 
 
@@ -165,7 +180,9 @@ class AWSOccupancy(SourceProxy.SourceProxy):
                         occupancy_data += data
 
         oc_list = [i.data for i in occupancy_data]
-        return { PRODUCES[0]: pd.DataFrame(oc_list)}
+        # to fix the test failure
+        column_names = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms'] 
+        return { PRODUCES[0]: pd.DataFrame(oc_list, columns = column_names)}
 
 def module_config_template():
     """

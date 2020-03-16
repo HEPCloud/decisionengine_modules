@@ -76,7 +76,7 @@ class FOMOrderPlugin(ResourceOrderPlugin):
                 logger.info('%s does not have any entries to order' % rss)
         try:
             self._ordered_resources = rss_foms.sort_values(
-                by=['FOM'], ascending=ascending).reset_index(drop=True)
+                by=['FOM', 'EntryName'], ascending=ascending).reset_index(drop=True)
         except KeyError as e:
             logger.error('Unable to find Figure of Merrit "FOM" in the dataframe columns %s' % list(self.resources.columns))
 

@@ -64,8 +64,8 @@ class GceOccupancy(Source.Source):
                         key = "{}:{}".format(instance_type,
                                                 zone)
                         if status == "RUNNING":
-                            data = d.setdefault(key, {"InstanceType": instance_type,
-                                                      "AvailabilityZone": zone,
+                            data = d.setdefault(key, {"AvailabilityZone": zone,
+                                                      "InstanceType": instance_type,
                                                       "Occupancy": 0})
                             data["Occupancy"] += 1
 

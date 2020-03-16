@@ -196,8 +196,8 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
                     sp_data += spot_price_info.spot_price_summary(spot_price_history)
 
         sp_list = [i.data for i in sp_data]
-
-        return {PRODUCES[0]: pd.DataFrame(sp_list)}
+        column_names = ['AccountName', 'AvailabilityZone', 'InstanceType', 'ProductDescription', 'SpotPrice', 'Timestamp']
+        return {PRODUCES[0]: pd.DataFrame(sp_list, columns = column_names)}
 
 def module_config_template():
     """

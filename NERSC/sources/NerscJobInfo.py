@@ -58,7 +58,8 @@ class NerscJobInfo(Source.Source):
                     values = [x for x in values if x[k] in v]
             if values:
                 raw_results.extend(values)
-        pandas_frame = pd.DataFrame(raw_results)
+        column_names = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse', 'hostname', 'jobid', 'queue', 'submittime', 'reason', 'source', 'memory', 'nodes', 'rank_p', 'timereq', 'procs', 'user']
+        pandas_frame = pd.DataFrame(raw_results, columns = column_names)
         return {PRODUCES[0]: pandas_frame}
 
     def produces(self, name_schema_id_list=None):
