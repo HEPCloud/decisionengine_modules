@@ -106,9 +106,9 @@ class GCEBillCalculator(object):
         # Extract file creation date from the file name
         # Assume a format such as this: Fermilab Billing Export-2016-08-22.csv
         # billingFileNameIdentifier = 'Fermilab\ Billing\ Export\-20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9].csv'
-        billingFileNameIdentifier = "hepcloud\-fnal\-20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9].csv"
+        billingFileNameIdentifier = r"hepcloud\-fnal\-20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9].csv"
         billingFileMatch = re.compile(billingFileNameIdentifier)
-        billingFileDateIdentifier = "20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]"
+        billingFileDateIdentifier = r"20[0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]"
         dateExtractionMatch = re.compile(billingFileDateIdentifier)
         lastKnownBillDateDatetime = datetime.datetime(*(time.strptime(self.lastKnownBillDate, '%m/%d/%y %H:%M')[0:6]))
 
@@ -332,15 +332,15 @@ class GCEBillCalculator(object):
         # (using regex in case future entries need more complex parsing;
         # (there shouldn't be any noticeable performance loss (actually, regex may even be faster than find()!
         # '/' acts as '.' in graphite (i.e. it's a separator)
-        spendingCategories = [('compute-engine.instances', re.compile("com\.google\.cloud/services/compute-engine/(Vmimage|Licensed)")),
-                              ('compute-engine.network', re.compile("com\.google\.cloud/services/compute-engine/Network")),
-                              ('compute-engine.storage', re.compile("com\.google\.cloud/services/compute-engine/Storage")),
-                              ('compute-engine.other', re.compile("com\.google\.cloud/services/compute-engine/")),
-                              ('cloud-storage.storage', re.compile("com\.google\.cloud/services/cloud-storage/Storage")),
-                              ('cloud-storage.network', re.compile("com\.google\.cloud/services/cloud-storage/Bandwidth")),
-                              ('cloud-storage.operations', re.compile("com\.google\.cloud/services/cloud-storage/Class")),
-                              ('cloud-storage.other', re.compile("com\.google\.cloud/services/cloud-storage/")),
-                              ('pubsub', re.compile("com\.googleapis/services/pubsub/")),
+        spendingCategories = [('compute-engine.instances', re.compile(r"com\.google\.cloud/services/compute-engine/(Vmimage|Licensed)")),
+                              ('compute-engine.network', re.compile(r"com\.google\.cloud/services/compute-engine/Network")),
+                              ('compute-engine.storage', re.compile(r"com\.google\.cloud/services/compute-engine/Storage")),
+                              ('compute-engine.other', re.compile(r"com\.google\.cloud/services/compute-engine/")),
+                              ('cloud-storage.storage', re.compile(r"com\.google\.cloud/services/cloud-storage/Storage")),
+                              ('cloud-storage.network', re.compile(r"com\.google\.cloud/services/cloud-storage/Bandwidth")),
+                              ('cloud-storage.operations', re.compile(r"com\.google\.cloud/services/cloud-storage/Class")),
+                              ('cloud-storage.other', re.compile(r"com\.google\.cloud/services/cloud-storage/")),
+                              ('pubsub', re.compile(r"com\.googleapis/services/pubsub/")),
                               ('services', re.compile(''))] # fallback category
 
         CorrectedBillSummaryDict = dict([(key, 0) for key in [k for k,v in spendingCategories]])
