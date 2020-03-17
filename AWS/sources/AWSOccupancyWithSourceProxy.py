@@ -20,7 +20,7 @@ PRODUCES = ['AWS_Occupancy']
 
 class CustomList(list):
     def __init__(self, *args):
-        list.__init__(self, *args)
+        super(CustomList, self).init(*args)
 
     def __contains__(self, other = None):
         for x in self:
@@ -181,7 +181,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
 
         oc_list = [i.data for i in occupancy_data]
         # to fix the test failure
-        column_names = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms'] 
+        column_names = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms']
         return { PRODUCES[0]: pd.DataFrame(oc_list, columns = column_names)}
 
 def module_config_template():

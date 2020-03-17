@@ -412,7 +412,7 @@ class GCEBillingInfo(Source.Source):
             self.logger.info(CorrectedBillSummaryDict)
 
         except Exception as detail:
-            self.logger.error(detail) 
+            self.logger.error(detail)
 
         return {PRODUCES[0]: pd.DataFrame([CorrectedBillSummaryDict])}
 

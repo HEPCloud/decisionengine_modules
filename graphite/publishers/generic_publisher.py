@@ -3,11 +3,11 @@
 Generic publisher for graphana
 
 """
-import six
 import abc
-import os
 import copy
+import os
 import pandas as pd
+import six
 
 from decisionengine.framework.modules import Publisher
 import decisionengine.framework.configmanager.ConfigManager as configmanager

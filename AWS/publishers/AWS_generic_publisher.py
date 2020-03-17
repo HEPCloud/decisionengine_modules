@@ -1,13 +1,12 @@
-import six
 """
 Generic AWS publisher
 
 """
 import abc
-import os
 import copy
+import os
 import pandas as pd
-
+import six
 from decisionengine.framework.modules import Publisher
 import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.dataspace.datablock as datablock

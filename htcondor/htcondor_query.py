@@ -1,12 +1,10 @@
 #!/usr/bin/pyhon
-import six
-import os
-import sys
 import abc
-
 import htcondor
-
 import logging
+import os
+import six
+import sys
 
 logger = logging.getLogger()
 

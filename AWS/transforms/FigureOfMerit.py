@@ -169,7 +169,7 @@ def main():
         config_manager = configmanager.ConfigManager()
         config_manager.load()
         global_config = config_manager.get_global_config()
-        print("GLOBAL CONF %s"%(global_config,))
+        print("GLOBAL CONF %s" % (global_config,))
         ds = dataspace.DataSpace(global_config)
 
         #data_block = datablock.DataBlock(ds,

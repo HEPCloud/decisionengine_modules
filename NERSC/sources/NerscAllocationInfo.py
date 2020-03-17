@@ -44,7 +44,6 @@ class NerscAllocationInfo(Source.Source):
         newt_keys = self.constraints.get("newt_keys", {})
         for key, values in newt_keys.items():
             if values:
-#                results = filter(lambda x: x[key] in values, results)
                 results = [x for x in results if x[key] in values]
         self.raw_results = results
 
