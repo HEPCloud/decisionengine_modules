@@ -64,6 +64,7 @@ install:
         cd -;
     else
         pip install classad;
+        pip install htcondor;
     fi
 
   # build a local boost with our specific python
