@@ -18,17 +18,6 @@ import decisionengine_modules.load_config as load_config
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
 
-class CustomList(list):
-    def __init__(self, *args):
-        super(CustomList, self).init(*args)
-
-    def __contains__(self, other = None):
-        for x in self:
-            if (x.data['AvailabilityZone'],x.data['InstanceType']) == (other.data['AvailabilityZone'],other.data['InstanceType']):
-                return (True, self.index(x) )
-
-        return (False, -1)
-
 class OccupancyData(object):
     """
     Occupancy data element
@@ -42,18 +31,19 @@ class OccupancyData(object):
         """
         self.data = occupancy_data
 
-    def __cmp__(self, other = None):
+    def __eq__(self, other = None):
         """
-        overrides comparison method
-        This is obsolete in P3.
+        replaces comparison method
         """
-        try:
-            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
-                return 0
-        except:
-            pass
+        if not other:
+            return False
 
-        return -1
+
+        return (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType'])
+
+    def __ne__(self, other):
+        return not self == other
+
 
 class OccupancyForRegion(object):
     """
@@ -109,18 +99,16 @@ class OccupancyForRegion(object):
         :arg instances: instances returned by :meth:`get_ec2_instances`
         :rtype: :obj:`list`: list of spot price data (:class:`aws_data.AWSDataElement`)
         """
-        l = CustomList() # l = []
+        l = []
         for instance, data in instances.items():
             if not self.instance_types or \
                     (self.instance_types and \
                          data['InstanceType'] in self.instance_types):
                 occ_data = OccupancyData(data)
-
-                boolresult, idxresult = l.__contains__( occ_data )
-                if not boolresult:
+                if not occ_data in l:
                     l.append(occ_data)
                 else:
-                    i = idxresult
+                    i = l.index(occ_data)
                     l[i].data['RunningVms'] += occ_data.data['RunningVms']
 
         return l
