@@ -64,6 +64,7 @@ class GceOccupancy(Source.Source):
                         key = "{}:{}".format(instance_type,
                                                 zone)
                         if status == "RUNNING":
+                            # TODO: Order matters for the test, need to REVISIT.
                             data = d.setdefault(key, {"AvailabilityZone": zone,
                                                       "InstanceType": instance_type,
                                                       "Occupancy": 0})

@@ -14,8 +14,8 @@ PRODUCES = ['Nersc_Job_Info']
 
 _MAX_RETRIES = 10
 _RETRY_TIMEOUT = 10
-
-
+# TODO this is a default column list and needs to be overriden from configuration
+COLUMN_LIST = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse', 'hostname', 'jobid', 'queue', 'submittime', 'reason', 'source', 'memory', 'nodes', 'rank_p', 'timereq', 'procs', 'user']
 class NerscJobInfo(Source.Source):
     """
     Information of jobs on NERSC machines
@@ -58,8 +58,8 @@ class NerscJobInfo(Source.Source):
                     values = [x for x in values if x[k] in v]
             if values:
                 raw_results.extend(values)
-        column_names = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse', 'hostname', 'jobid', 'queue', 'submittime', 'reason', 'source', 'memory', 'nodes', 'rank_p', 'timereq', 'procs', 'user']
-        pandas_frame = pd.DataFrame(raw_results, columns = column_names)
+
+        pandas_frame = pd.DataFrame(raw_results, columns = COLUMN_LIST)
         return {PRODUCES[0]: pandas_frame}
 
     def produces(self, name_schema_id_list=None):

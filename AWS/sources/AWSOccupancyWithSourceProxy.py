@@ -17,7 +17,8 @@ import decisionengine_modules.load_config as load_config
 # default values
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
-
+# TODO this is a default column list and needs to be overriden from configuration
+COLUMN_LIST = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms']
 class OccupancyData(object):
     """
     Occupancy data element
@@ -169,8 +170,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
 
         oc_list = [i.data for i in occupancy_data]
         # to fix the test failure
-        column_names = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms']
-        return { PRODUCES[0]: pd.DataFrame(oc_list, columns = column_names)}
+        return { PRODUCES[0]: pd.DataFrame(oc_list, columns = COLUMN_LIST)}
 
 def module_config_template():
     """
