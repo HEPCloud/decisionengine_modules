@@ -3,7 +3,6 @@
 Calculates real time burn rate for AWS
 
 """
-from __future__ import division
 import pandas as pd
 import pprint
 
@@ -64,10 +63,10 @@ def module_config_template():
         }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
 
 
 def module_config_info():
@@ -75,8 +74,8 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
-    print "produces", PRODUCES
+    print("consumes", CONSUMES)
+    print("produces", PRODUCES)
     module_config_template()
 
 

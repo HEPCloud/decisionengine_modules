@@ -19,7 +19,7 @@ class CloudRequests(Transform.Transform):
     def _load_data_frame(self, list_of_dicts):
         list_of_keys = list_of_dicts[0].keys()
         pandas_data = {}
-        print "CloudRequest list of keys", list_of_keys
+        print("CloudRequest list of keys", list_of_keys)
         for key in list_of_keys:
             pandas_data[key] = pd.Series([d[key] for d in list_of_dicts])
         return pd.DataFrame(pandas_data)

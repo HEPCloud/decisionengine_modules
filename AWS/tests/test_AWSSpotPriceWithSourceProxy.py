@@ -58,6 +58,6 @@ class TestAWSSpotPriceWithSourceProxy:
                                                                   'spot_price.fixture'))
                         get_price.return_value = sp_d
                         res = aws_s_p.acquire()
-                        assert produces == res.keys()
+                        assert produces == list(res.keys())
                         new_df = fix_spot_price(res[produces[0]])
                         assert utils.compare_dfs(expected_pandas_df, new_df)

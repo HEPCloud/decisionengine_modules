@@ -57,7 +57,7 @@ class TestNerscFigureOfMerit:
     def test_transform(self):
         nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
         res = nersc_figure_of_merit.transform(data_block)
-        assert produces == res.keys()
+        assert produces == list(res.keys())
         for key, value in res.items():
             try:
                 assert expected_transform_output[key].equals(value)

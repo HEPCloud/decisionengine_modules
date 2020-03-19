@@ -43,19 +43,19 @@ def module_config_template():
          "module": "modules.GCE.publishers.GCEPricePerformance_publisher",
          "name": "GCEPricePerformancePublisher",
          },}
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t publish_to_graphite - publish to graphite if True"
-    print "\t graphite_host - graphite host name"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t publish_to_graphite - publish to graphite if True")
+    print("\t graphite_host - graphite host name")
 
 def module_config_info():
     """
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
+    print("consumes", CONSUMES)
     module_config_template()
 
 

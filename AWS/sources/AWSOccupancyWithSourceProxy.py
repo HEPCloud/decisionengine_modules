@@ -17,7 +17,8 @@ import decisionengine_modules.load_config as load_config
 # default values
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
-
+# TODO this is a default column list and needs to be overriden from configuration
+COLUMN_LIST = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms']
 class OccupancyData(object):
     """
     Occupancy data element
@@ -31,17 +32,19 @@ class OccupancyData(object):
         """
         self.data = occupancy_data
 
-    def __cmp__(self, other = None):
+    def __eq__(self, other = None):
         """
-        overrides comparison method
+        replaces comparison method
         """
-        try:
-            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
-                return 0
-        except:
-            pass
+        if not other:
+            return False
 
-        return -1
+
+        return (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType'])
+
+    def __ne__(self, other):
+        return not self == other
+
 
 class OccupancyForRegion(object):
     """
@@ -108,6 +111,7 @@ class OccupancyForRegion(object):
                 else:
                     i = l.index(occ_data)
                     l[i].data['RunningVms'] += occ_data.data['RunningVms']
+
         return l
 
 
@@ -165,7 +169,8 @@ class AWSOccupancy(SourceProxy.SourceProxy):
                         occupancy_data += data
 
         oc_list = [i.data for i in occupancy_data]
-        return { PRODUCES[0]: pd.DataFrame(oc_list)}
+        # to fix the test failure
+        return { PRODUCES[0]: pd.DataFrame(oc_list, columns = COLUMN_LIST)}
 
 def module_config_template():
     """
@@ -189,23 +194,23 @@ def module_config_template():
               ["RegionName1"],
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t spot_price_configuration - configuration required to get AWS spot price information"
-    print "\t Example:"
-    print "-------------"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t spot_price_configuration - configuration required to get AWS spot price information")
+    print("\t Example:")
+    print("-------------")
     pprint.pprint(config)
-    print "where"
-    print "\t ProfileName1 - name of account profile (example: hepcloud-rnd)"
-    print "\t RegionName1 - name of region (example: us-west-2)"
+    print("where")
+    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
+    print("\t RegionName1 - name of region (example: us-west-2)")
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -236,8 +241,8 @@ def main():
                                "retry_timeout": 20,
                            })
         rc = occupancy.acquire()
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":

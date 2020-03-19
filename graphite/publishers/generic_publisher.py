@@ -4,9 +4,10 @@ Generic publisher for graphana
 
 """
 import abc
-import os
 import copy
+import os
 import pandas as pd
+import six
 
 from decisionengine.framework.modules import Publisher
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -18,9 +19,8 @@ DEFAULT_GRAPHITE_HOST='fermicloud399.fnal.gov'
 DEFAULT_GRAPHITE_PORT=2004
 DEFAULT_GRAPHITE_CONTEXT=""
 
+@six.add_metaclass(abc.ABCMeta)
 class GenericPublisher(Publisher.Publisher):
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, config):
         self.graphite_host = config.get('graphite_host', DEFAULT_GRAPHITE_HOST)
@@ -53,4 +53,4 @@ class GenericPublisher(Publisher.Publisher):
             end_point.send_dict(self.graphite_context(data)[0], self.graphite_context(data)[1], debug_print=False, send_data=True)
         csv_data = data.to_csv(self.output_file, index=False)
         if not self.output_file:
-            print csv_data
+            print(csv_data)

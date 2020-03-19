@@ -1,12 +1,10 @@
 #!/usr/bin/pyhon
-
-import os
-import sys
 import abc
-
 import htcondor
-
 import logging
+import os
+import six
+import sys
 
 logger = logging.getLogger()
 
@@ -17,14 +15,11 @@ class QueryError(RuntimeError):
     def __init__(self, err_str):
         RuntimeError.__init__(self, err_str)
 
-
+@six.add_metaclass(abc.ABCMeta)
 class Query(object):
     """
     Pure virtual class to have a minimum set of methods defined
     """
-
-    __metaclass__ = abc.ABCMeta
-
 
     def __init__(self):
         self.stored_data = {}
@@ -136,7 +131,7 @@ class CondorQ(CondorQuery):
             if self.pool_name is not None:
                 p = self.pool_name
             err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (s, p, ex)
-            raise QueryError(err_str), None, sys.exc_info()[2]
+            raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -188,7 +183,7 @@ class CondorStatus(CondorQuery):
             if self.pool_name is not None:
                 p = self.pool_name
             err_str = 'Error querying pool %s using python bindings: %s' % (p, ex)
-            raise QueryError(err_str), None, sys.exc_info()[2]
+            raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -206,7 +201,7 @@ def apply_constraint(data, constraint_func):
         return data
     else:
         outdata = {}
-        for key, val in data.iteritems():
+        for key, val in data.items():
             if constraint_func(val):
                 outdata[key] = val
     return outdata
@@ -252,7 +247,7 @@ def bindings_friendly_attrs(format_list):
     if format_list is not None:
         if isinstance(format_list, list):
             attrs = format_list
-        elif isinstance(format_list, basestring):
+        elif isinstance(format_list, str):
             attrs = [format_list]
     return attrs
 

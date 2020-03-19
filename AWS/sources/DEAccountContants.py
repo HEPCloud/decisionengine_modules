@@ -42,7 +42,7 @@ class AccountConstants(object):
     def info(self):
         for name in EXPECTED_NAMES:
             attr = getattr(self, name)
-            print name, attr, type(attr)
+            print(name, attr, type(attr))
 
 def load_constants(constants_file):
     '''

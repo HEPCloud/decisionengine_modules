@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import time
-import cPickle
+import pickle
 import struct
 import socket
 import sys
@@ -13,7 +13,7 @@ def sanitize_key(key):
             ".": "_",
             " ": "_",
     }
-    for old,new in replacements.iteritems():
+    for old,new in replacements.items():
         key = key.replace(old, new)
     return key
 
@@ -31,13 +31,13 @@ class Graphite(object):
         now=int(time.time())
         post_data=[]
         # turning data dict into [('$path.$key',($timestamp,$value)),...]]
-        for k,v in data.iteritems():
+        for k,v in data.items():
             t = (namespace+"."+k, (now, v))
             post_data.append(t)
             if debug_print:
-                print t
+                print(t)
         # pickle data
-        payload = cPickle.dumps(post_data, protocol=2)
+        payload = pickle.dumps(post_data, protocol=2)
         header = struct.pack("!L", len(payload))
         message = header + payload
         # throw data at graphite
@@ -46,7 +46,7 @@ class Graphite(object):
             try:
                 s.connect((self.graphite_host, self.graphite_pickle_port))
                 s.sendall(message)
-            except socket.error, detail:
+            except socket.error as detail:
                 sys.stderr.write("Error sending data to graphite at %s:%d: %s\n" % (self.graphite_host,self.graphite_pickle_port, detail))
             finally:
                 s.close()

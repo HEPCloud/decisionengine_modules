@@ -1,7 +1,8 @@
 #!/usr/bin/env python
+import six
 import zipfile
 import csv
-import StringIO
+import io
 import string
 import re
 import datetime
@@ -17,7 +18,7 @@ import pandas as pd
 import logging
 
 from decisionengine.framework.modules import Source
-import DEAccountContants
+import DEAccountContants # 2to3 recommends from . import DEAccountContants
 
 PRODUCES = ['AWS_Billing_Info', 'AWS_Billing_Rate']
 
@@ -521,7 +522,7 @@ class AWSBillCalculator(object):
                            estimatedTotalDataOutCsvHeaderString: 0.0}
 
         # The seek(0) resets the csv iterator, in case of multiple passes e.g. in alarm calculations
-        billCVSAggregateStrStringIO = StringIO.StringIO(billCVSAggregateStr)
+        billCVSAggregateStrStringIO = io.StringIO(billCVSAggregateStr)
         billCVSAggregateStrStringIO.seek(0)
         for row in csv.DictReader(billCVSAggregateStrStringIO):
             # Skip if there is no date (e.g. final comment lines)
@@ -721,8 +722,8 @@ class BillingInfo(Source.Source):
                     self.logger.debug('---')
                     self.logger.debug()
 
-            except Exception, detail:
-                print detail
+            except Exception as detail:
+                print(detail)
             except:
                 pass
 
@@ -758,24 +759,24 @@ def module_config_template():
                         }
                    }
 
-    print "Entry in channel configuration"
+    print("Entry in channel configuration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t billing_configuration - configuration requred to get AWS billing information"
-    print "\t Example of Billing configuration file:"
-    print "-------------"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t billing_configuration - configuration requred to get AWS billing information")
+    print("\t Example of Billing configuration file:")
+    print("-------------")
     pprint.pprint(account_info)
-    print "-------------"
-    print "\t dst_dir_for_s3_files - directory for AWS billing files"
-    print "\t schedule - execution period"
+    print("-------------")
+    print("\t dst_dir_for_s3_files - directory for AWS billing files")
+    print("\t schedule - execution period")
 
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -802,8 +803,8 @@ def main():
         bi = BillingInfo({'billing_configuration': '/etc/decisionengine/modules.conf/AccountConstants_my.py',
                           'dst_dir_for_s3_files': '/var/lib/decisionengine/awsfiles'})
         rc = bi.acquire()
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":

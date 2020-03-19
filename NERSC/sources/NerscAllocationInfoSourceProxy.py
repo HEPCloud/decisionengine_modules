@@ -46,7 +46,7 @@ def module_config_template():
         }
     }
 
-    print 'Entry in channel configuration'
+    print('Entry in channel configuration')
     pprint.pprint(template)
 
 
@@ -55,7 +55,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 

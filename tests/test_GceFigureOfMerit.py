@@ -79,7 +79,7 @@ class TestGceFigureOfMerit:
     def test_transform(self):
         gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
         res = gce_figure_of_merit.transform(data_block)
-        assert PRODUCES.sort() == res.keys().sort()
+        assert PRODUCES.sort() == list(res.keys()).sort()
 
         expected_df = expected_transform_output[PRODUCES[0]]
         res_df = res[PRODUCES[0]]

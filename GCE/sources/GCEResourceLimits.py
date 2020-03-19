@@ -59,14 +59,14 @@ def module_config_template():
         }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(template)
 
 def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
     module_config_template()
 
 

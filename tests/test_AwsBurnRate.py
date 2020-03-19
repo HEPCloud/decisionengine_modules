@@ -100,7 +100,7 @@ class TestAwsBurnRate:
     def test_transform(self):
         aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
         res = aws_burn_rate.transform(data_block)
-        assert produces.sort() == res.keys().sort()
+        assert produces.sort() == list(res.keys()).sort()
 
         expected_df = expected_transform_output[produces[0]]
         res_df = res[produces[0]]

@@ -25,5 +25,5 @@ class TestGCEInstancePerformance:
     def test_acquire(self):
         gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG)
         res = gce_price_performance.acquire()
-        assert PRODUCES == res.keys()
+        assert PRODUCES == list(res.keys())
         assert EXPECTED_PANDAS_DF.equals(res.get(PRODUCES[0]))

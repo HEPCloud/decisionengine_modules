@@ -52,7 +52,7 @@ if __name__ == "__main__":
     #   where jobs_pd.RequestCpus <= resources_pd.ResourceCpus
     #merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
     merged_pd = pd.merge_asof(jobs_pd, resource_spot_pd, left_on='RequestCpus', right_on='ResourceCpus')
-    print merged_pd
+    print(merged_pd)
 
     # create a new column that gives a boolean determining wether or not the row matches memory requirments
     merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <=merged_pd.ResourceMemory)

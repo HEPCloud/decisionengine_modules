@@ -51,7 +51,7 @@ class TestGceBurnRate:
     def test_transform(self):
         gce_burn_rate = GceBurnRate.GceBurnRate(CONFIG)
         res = gce_burn_rate.transform(data_block)
-        assert PRODUCES.sort() == res.keys().sort()
+        assert PRODUCES.sort() == list(res.keys()).sort()
 
         expected_df = expected_transform_output[PRODUCES[0]]
         res_df = res[PRODUCES[0]]

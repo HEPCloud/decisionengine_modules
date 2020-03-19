@@ -24,7 +24,7 @@ request_dict = {
 request_df = pandas.DataFrame(request_dict)
 
 expected_constraint = {
-    'col1.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e1,e3,e2"))',
+    'col1.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e1,e2,e3"))',
     'col2.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e1,e2"))',
     'col3.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e3"))'
 }

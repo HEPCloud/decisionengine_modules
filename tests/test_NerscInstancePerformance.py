@@ -25,5 +25,5 @@ class TestNerscInstancePerformance:
     def test_acquire(self):
         nersc_instance_performance = NerscInstancePerformance.NerscInstancePerformance(CONFIG)
         res = nersc_instance_performance.acquire()
-        assert PRODUCES == res.keys()
+        assert PRODUCES == list(res.keys())
         assert EXPECTED_PANDAS_DF.equals(res.get(PRODUCES[0]))

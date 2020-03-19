@@ -64,8 +64,9 @@ class GceOccupancy(Source.Source):
                         key = "{}:{}".format(instance_type,
                                                 zone)
                         if status == "RUNNING":
-                            data = d.setdefault(key, {"InstanceType": instance_type,
-                                                      "AvailabilityZone": zone,
+                            # TODO: Order matters for the test, need to REVISIT.
+                            data = d.setdefault(key, {"AvailabilityZone": zone,
+                                                      "InstanceType": instance_type,
                                                       "Occupancy": 0})
                             data["Occupancy"] += 1
 
@@ -90,7 +91,7 @@ def module_config_template():
             }
         }
     }
-    print 'Entry in channel configuration'
+    print('Entry in channel configuration')
     pprint.pprint(template)
 
 
@@ -98,7 +99,7 @@ def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
 
 
 def main():
