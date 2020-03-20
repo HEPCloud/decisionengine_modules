@@ -1866,7 +1866,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         (None, None), 0) + (job_count * req_cpus)
                 elif len(matches) == 1:
                     # These jobs can only run here
-                    key = next(iter(matches[0]))
+                    key = next(iter(matches))
                     direct_match[key] = direct_match.get(key, 0) + job_count
                     prop_match[key] = prop_match.get(key, 0) + job_count
                     this_entry = entries.query('Name=="%s"' % key[1])
