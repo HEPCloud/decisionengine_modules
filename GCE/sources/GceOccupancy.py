@@ -24,7 +24,8 @@ class GceOccupancy(Source.Source):
         super(GceOccupancy, self).__init__(config)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config["credential"]
         credentials, self.project = google.auth.default()
-        self.client = googleapiclient.discovery.build("compute", "v1", credentials=credentials)
+        self.client = googleapiclient.discovery.build(
+            "compute", "v1", credentials=credentials)
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 
@@ -58,11 +59,12 @@ class GceOccupancy(Source.Source):
                 if "instances" in instances_scoped_list:
                     instances = instances_scoped_list.get("instances", [])
                     for instance in instances:
-                        instance_type = instance.get("machineType").split("/").pop()
+                        instance_type = instance.get(
+                            "machineType").split("/").pop()
                         zone = instance.get("zone").split("/").pop()
                         status = instance.get("status")
                         key = "{}:{}".format(instance_type,
-                                                zone)
+                                             zone)
                         if status == "RUNNING":
                             # TODO: Order matters for the test, need to REVISIT.
                             data = d.setdefault(key, {"AvailabilityZone": zone,
@@ -85,9 +87,9 @@ def module_config_template():
             'module': 'decisionengine_modules.GCE.sources.GceOccupancy',
             'name': 'GceOccupancy',
             'parameters': {
-               'credential': '/etc/gwms-frontend/credentials/monitoring.json',
-               'max_retries': 10,
-               'retry_timeout': 10,
+                'credential': '/etc/gwms-frontend/credentials/monitoring.json',
+                'max_retries': 10,
+                'retry_timeout': 10,
             }
         }
     }

@@ -21,12 +21,12 @@ GCE_OCCUPANCY_DF = pd.read_csv(CSV_FILE)
 """
 GCE Instance Performance DF
 """
-gce_instance_performance_df =  pd.DataFrame([
-        {"EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
-         "InstanceType": "n1-standard-1",
-         "AvailabilityZone": "us-central1-a",
-         "OnDemandPrice": 0.0475,
-         "PerfTtbarTotal": 0.0317}, ])
+gce_instance_performance_df = pd.DataFrame([
+    {"EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
+     "InstanceType": "n1-standard-1",
+     "AvailabilityZone": "us-central1-a",
+     "OnDemandPrice": 0.0475,
+     "PerfTtbarTotal": 0.0317}, ])
 
 gce_instance_performance_df.reindex(columns=("EnryName",
                                              "InstanceType",
@@ -39,10 +39,10 @@ expected datablock
 """
 data_block = {
     "GCE_Instance_Performance": gce_instance_performance_df.reindex(columns=("EntryName",
-                                                 "InstanceType",
-                                                 "AvailabilityZone",
-                                                 "OnDemandPrice",
-                                                 "PerfTtbarTotal")),
+                                                                             "InstanceType",
+                                                                             "AvailabilityZone",
+                                                                             "OnDemandPrice",
+                                                                             "PerfTtbarTotal")),
     "Factory_Entries_GCE": pd.DataFrame([
         {"EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
          "GlideinConfigPerEntryMaxIdle": 100,
@@ -63,11 +63,11 @@ expected_transform_output = {
     PRODUCES[1]: pd.DataFrame([
         {"EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
          "FigureOfMerit": 0.08241324921135648
-        }, ]),
+         }, ]),
 }
 
 for k, value in data_block.items():
-    print (tabulate.tabulate(value, headers='keys', tablefmt='psql'))
+    print(tabulate.tabulate(value, headers='keys', tablefmt='psql'))
 
 
 class TestGceFigureOfMerit:
@@ -90,5 +90,3 @@ class TestGceFigureOfMerit:
         res_df = res[PRODUCES[1]]
         assert np.isclose(expected_df["PricePerformance"],
                           res_df["PricePerformance"])
-
-

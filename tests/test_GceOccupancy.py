@@ -13,7 +13,7 @@ EXPECTED_DF = pd.read_csv(CSV_FILE)
 
 CONFIG = {
     "project": "hepcloud-fnal",
-    "credential": os.path.join(DATA_DIR,"monitoring.json")
+    "credential": os.path.join(DATA_DIR, "monitoring.json")
 }
 
 PRODUCES = ["GCE_Occupancy"]
@@ -22,7 +22,7 @@ PRODUCES = ["GCE_Occupancy"]
 class MockRequest(object):
 
     def execute(self):
-        with open(os.path.join(DATA_DIR,"GceOccupancy.input.fixture.json"), "r") as f:
+        with open(os.path.join(DATA_DIR, "GceOccupancy.input.fixture.json"), "r") as f:
             data = json.load(f)
             return data
 

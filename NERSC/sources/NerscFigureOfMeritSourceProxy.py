@@ -11,14 +11,11 @@ PRODUCES = ['Nersc_Figure_Of_Merit']
 
 class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
-
     def __init__(self, config):
         super(NerscFigureOfMeritSourceProxy, self).__init__(config)
 
-
     def produces(self):
         return PRODUCES
-
 
     def acquire(self):
         """
@@ -29,7 +26,8 @@ class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
         fom = super(NerscFigureOfMeritSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
-            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
+            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (
+                type(self).__name__, PRODUCES))
         return {'Nersc_Figure_Of_Merit': fom.get('Nersc_Figure_Of_Merit')}
 
 
@@ -64,7 +62,6 @@ def module_config_info():
     module_config_template()
 
 
-
 def main():
     """
     Call this a a test unit or use as CLI of this module
@@ -86,6 +83,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

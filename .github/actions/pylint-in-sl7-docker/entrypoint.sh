@@ -1,11 +1,7 @@
-#!/bin/bash -x
+#!/bin/bash
 PYVER=${1:-"2.7"}
-export PYVER
-echo PYVER=$PYVER
-decisionengine_modules/build/scripts/run_pylint.sh
-tar cvfj $GITHUB_WORKSPACE/logs-$PYVER.tar.bz2 pep8.*.log pylint.*.log
-cat pep8.*.log
+GITHUB_WORKSPACE=${GITHUB_WORKSPACE:-`pwd`}
+env PYVER=$PYVER decisionengine_modules/build/scripts/run_pylint.sh
+tar cvfj $GITHUB_WORKSPACE/logs-$PYVER.tar.bz2 pylint.*.log
 cat pylint.*.log
-pwd
-ls -l
-exit `cat *.log | wc -l`
+exit `cat pylint*.log | wc -l`

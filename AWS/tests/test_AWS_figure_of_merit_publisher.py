@@ -25,7 +25,7 @@ class TestAWSFOMPublisher(unittest.TestCase):
         self.publisher = AWSFOMPublisher.AWSFOMPublisher({'publish_to_graphite': False,
                                                           'graphite_host': 'fifemondata.fnal.gov',
                                                           'graphite_port': 2104,
-                                                          'graphite_context':'hepcloud.aws',
+                                                          'graphite_context': 'hepcloud.aws',
                                                           'output_file': OUTPUT_FILE})
 
     def tearDown(self):
@@ -42,4 +42,3 @@ class TestAWSFOMPublisher(unittest.TestCase):
         self.publisher.publish(data_block)
         opd = pd.read_csv(OUTPUT_FILE)
         self.assertTrue(opd.equals(EXPECTED_REPLY))
-

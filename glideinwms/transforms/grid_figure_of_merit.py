@@ -14,15 +14,14 @@ PRODUCES = ['Grid_Figure_Of_Merit']
 ATTR_ENTRYNAME = 'EntryName'
 ATTR_FOM = 'Grid_Figure_Of_Merit'
 
-class GridFigureOfMerit(Transform.Transform):
 
+class GridFigureOfMerit(Transform.Transform):
 
     def __init__(self, config):
         super(GridFigureOfMerit, self).__init__(config)
         self.config = config
         self.logger = logging.getLogger()
         self.price_performance = self.config.get('price_performance', 1)
-
 
     def transform(self, datablock):
         """
@@ -48,10 +47,8 @@ class GridFigureOfMerit(Transform.Transform):
 
         return {PRODUCES[0]: pandas.DataFrame(foms)}
 
-
     def consumes(self, name_list=None):
         return CONSUMES
-
 
     def produces(self, name_schema_id_list=None):
         return PRODUCES
@@ -64,9 +61,9 @@ def module_config_template():
 
     template = {
         "GridFigureOfMerit": {
-           "module":  "decisionengine_modules.glideinwms.transforms.grid_figure_of_merit",
-           "name":  "GridFigureOfMerit",
-           "parameters": { },
+            "module": "decisionengine_modules.glideinwms.transforms.grid_figure_of_merit",
+            "name": "GridFigureOfMerit",
+            "parameters": {},
         }
     }
 
@@ -104,6 +101,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

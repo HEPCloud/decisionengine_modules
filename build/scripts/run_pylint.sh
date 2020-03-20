@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 get_current_git_branch() {
     cd $DE_MODULES_SRC
-    gb=`git branch | grep "\*" | cut -d ' ' -f2 | sed -e's/ /_/g'`
+    gb=`git branch | grep "\*" | cut -d ' ' -f2- | sed -e's/(detached from //g'| sed -e's/)//g'`
     cd $WORKSPACE
     echo $gb
 }
@@ -57,8 +57,31 @@ process_branch() {
     # E302 expected 2 blank lines, found 1
     # E303 too many blank lines (2)
     # E501 line too long (90 > 79 characters)
+# E1: Indentation
+# - E129: visually indented line with same indent as next logical line
+#
+# E2: Whitespace
+# - E221: multiple spaces before operator
+# - E241: multiple spaces after ','
+# - E272: multiple spaces before keyword
+#
+# E7: Statement
+# - E731: do not assign a lambda expression, use a def
+#
+# W5: Line break warning
+# - W503: line break before binary operator
+# - W504: line break after binary operator
+#
+# These are required to get the package.py files to test clean:
+# - F999: syntax error in doctest
+#
+# N8: PEP8-naming
+# - N801: class names should use CapWords convention
+# - N813: camelcase imported as lowercase
+# - N814: camelcase imported as constant
+#
 
-    PEP8_OPTIONS="--ignore=E261,E265,E302,E303,E501"
+    PEP8_OPTIONS="--ignore=E261,E265,E302,E303,E501,E129,E221,E241,E272,E731,W503,W504,F999,N801,N813,N814"
 
     # Generate pylint config file
     #pylint --generate-rcfile > $PYLINT_RCFILE
@@ -74,7 +97,10 @@ process_branch() {
     for file in $scripts
     do
         files_checked="$files_checked $file"
-        pylint $PYLINT_OPTIONS $file >> $pylint_log || log_nonzero_rc "pylint" $?
+        # if called as run_pylint.sh run the pylint (long) otherwise just run pycodestyle (fast)
+        if [[ "$my_filename" == "run_pylint.sh" ]]; then
+            pylint $PYLINT_OPTIONS $file >> $pylint_log || log_nonzero_rc "pylint" $?
+        fi
         pycodestyle $PEP8_OPTIONS $file >> $pep8_log || log_nonzero_rc "pep8" $?
     done
     exit
@@ -218,14 +244,15 @@ fi
 
 my_full_path=`readlink -f $0`
 my_parent_dir=`dirname $my_full_path`
+export my_filename=`basename $0`
+echo "Called as $my_filename"
+
 export DE_MODULES_SRC="$my_parent_dir/../.."
 
 export DECISIONENGINE_SRC=$WORKSPACE/dependencies/decisionengine
 
-if [ ! -e $PYVER ];then
-    PYVER=2.7
-fi
-export PYVER
+export PYVER=${PYVER:-"2.7"}
+echo PYVER=$PYVER
 
 source $DE_MODULES_SRC/build/scripts/utils.sh
 setup_python_venv $WORKSPACE

@@ -18,6 +18,8 @@ EXPECTED_NAMES = ['accountName',
                   'emailReceipientForAlarms',
                   'projectId',
                   ]
+
+
 class AccountConstants(object):
     def __init__(self, constants={}):
         # Initialize variables
@@ -29,20 +31,21 @@ class AccountConstants(object):
                 setattr(self, k, val)
 
     def __repr__(self):
-        return "%s %s %s %s %s %s %s %s %s"%(self.accountName,
-                                             self.accountNumber,
-                                             self.credentialsProfileName,
-                                             self.lastKnownBillDate,
-                                             self.balanceAtDate,
-                                             self.applyDiscount,
-                                             self.costRatePerHourInLastSixHoursAlarmThreshold,
-                                             self.costRatePerHourInLastDayAlarmThreshold,
-                                             self.emailReceipientForAlarms)
+        return "%s %s %s %s %s %s %s %s %s" % (self.accountName,
+                                               self.accountNumber,
+                                               self.credentialsProfileName,
+                                               self.lastKnownBillDate,
+                                               self.balanceAtDate,
+                                               self.applyDiscount,
+                                               self.costRatePerHourInLastSixHoursAlarmThreshold,
+                                               self.costRatePerHourInLastDayAlarmThreshold,
+                                               self.emailReceipientForAlarms)
 
     def info(self):
         for name in EXPECTED_NAMES:
             attr = getattr(self, name)
             print(name, attr, type(attr))
+
 
 def load_constants(constants_file):
     '''
@@ -56,7 +59,7 @@ def load_constants(constants_file):
     '''
 
     code = None
-    config_dict = {} # to trick pylint
+    config_dict = {}  # to trick pylint
     with open(constants_file, "r") as f:
         code = "config_dict=" + string.join(f.readlines(), "")
     if code:
@@ -64,9 +67,9 @@ def load_constants(constants_file):
 
     return config_dict
 
+
 if __name__ == '__main__':
     account_dict = load_constants('AccountConstants_sample.py')
     instances = map(lambda x: AccountConstants(x), account_dict.values())
     for i in instances:
         i.info()
-
