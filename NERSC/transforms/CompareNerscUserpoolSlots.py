@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 Compare slots on Nersc and startd
 """

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Get AWS spot price information
 """

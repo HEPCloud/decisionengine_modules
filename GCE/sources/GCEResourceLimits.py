@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Query Resource Limits from another channel with the factory source
 """

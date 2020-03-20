@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Get AWS capacity (running instances) information.
 """

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
@@ -188,7 +187,7 @@ def main():
                                          1,
                                          109)
 
-        fm_info = FigureOfMerit()
+        fm_info = FigureOfMerit({})
         rc = fm_info.transform(data_block)
         print("INFO")
         print(rc)

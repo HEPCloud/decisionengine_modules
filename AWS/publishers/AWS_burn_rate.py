@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Publishes AWS VM burn rate
 
