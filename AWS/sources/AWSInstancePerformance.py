@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Fill in data from Instane Performance CSV file
 """

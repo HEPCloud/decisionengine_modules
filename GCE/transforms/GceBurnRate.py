@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Calculates real time burn rate for GCE
 

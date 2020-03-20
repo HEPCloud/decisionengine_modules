@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 Compare jobs on factory and Nersc
 """

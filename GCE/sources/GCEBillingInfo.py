@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import json
 import boto
 import argparse
@@ -274,7 +273,7 @@ class GCEBillCalculator(object):
             for row in csvfilereader:
                 # Skip if there is no date (e.g. final comment lines)
                 if row[usageStartDateCsvHeaderString] == '':
-                    self.logger.error("Missing Start Time in row: ", row)
+                    self.logger.error("Missing Start Time in row: {}".format(row))
                     return []
 
                 # Skip rows whose UsageStartDate is prior to sumFromDate and past sumToDate

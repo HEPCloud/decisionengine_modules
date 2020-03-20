@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import six
 import zipfile
 import csv
@@ -734,27 +733,26 @@ class BillingInfo(Source.Source):
                         calculator.accountName, time.strftime("%c")))
                     self.logger.debug()
                     self.logger.debug(
-                        'Last Start Date Billed Considered: ' + lastStartDateBilledConsideredDatetime.strftime(
-                            '%m/%d/%y %H:%M'))
+                        'Last Start Date Billed Considered: {}'.format(lastStartDateBilledConsideredDatetime.strftime(
+                            '%m/%d/%y %H:%M')))
                     self.logger.debug(
-                        'Now', dateNow.strftime('%m/%d/%y %H:%M'))
+                        'Now {}'.format(dateNow.strftime('%m/%d/%y %H:%M')))
                     self.logger.debug(
-                        'delay between now and Last Start Date Billed Considered in hours', dataDelay)
+                        'delay between now and Last Start Date Billed Considered in hours {}'.format(dataDelay))
                     self.logger.debug(
-                        'Six hours before that: ' + sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M'))
+                        'Six hours before that: {}'.format(sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')))
                     self.logger.debug(
-                        'One day before that: ' + oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M'))
-                    self.logger.debug('Adjusted Total Now from Date of Last Known Balance: $',
-                                      CorrectedBillSummaryDict['Total'])
+                        'One day before that: {}'.format(oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')))
+                    self.logger.debug('Adjusted Total Now from Date of Last Known Balance: ${}'.format(
+                                      CorrectedBillSummaryDict['Total']))
                     self.logger.debug()
                     self.logger.debug(
-                        'Cost In the Last Six Hours: $', costInLastSixHours)
-                    self.logger.debug('Cost Rate Per Hour In the Last Six Hours: $', costRatePerHourInLastSixHours,
-                                      ' / h')
+                        'Cost In the Last Six Hours: ${}'.format(costInLastSixHours))
+                    self.logger.debug('Cost Rate Per Hour In the Last Six Hours: ${} / h'.format(costRatePerHourInLastSixHours))
                     self.logger.debug()
-                    self.logger.debug('Cost In the Last Day: $', costInLastDay)
+                    self.logger.debug('Cost In the Last Day: ${}'.format(costInLastDay))
                     self.logger.debug(
-                        'Cost Rate Per Hour In the Last Day: $', costRatePerHourInLastDay, ' / h')
+                        'Cost Rate Per Hour In the Last Day: ${} / h'.format(costRatePerHourInLastDay))
                     self.logger.debug('---')
                     self.logger.debug()
 

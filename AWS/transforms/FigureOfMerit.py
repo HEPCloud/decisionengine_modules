@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.

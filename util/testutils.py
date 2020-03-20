@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import classad
 import datetime
