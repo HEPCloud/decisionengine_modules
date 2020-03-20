@@ -12,6 +12,7 @@ import logging
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.gce"
 CONSUMES = ['GCE_Burn_Rate']
 
+
 class GCEBurnRatePublisher(publisher):
     def __init__(self, config):
         super(GCEBurnRatePublisher, self).__init__(config)
@@ -23,8 +24,9 @@ class GCEBurnRatePublisher(publisher):
     def graphite_context(self, data_block):
         d = {}
         # Only one row in this data frame
-        d['hepcloud-fnal.BurnRate'] = data_block.loc[0,'BurnRate'].item()
+        d['hepcloud-fnal.BurnRate'] = data_block.loc[0, 'BurnRate'].item()
         return self.graphite_context_header, d
+
 
 def module_config_template():
     """

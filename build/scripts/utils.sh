@@ -27,14 +27,23 @@ setup_python_venv() {
 
     source $VENV/bin/activate
 
-    pip_packages="argparse WebOb astroid pylint pycodestyle unittest2 coverage sphinx DBUtils pytest mock pandas tabulate gcs-client google-api-python-client boto classad boto3-stubs boto3-utils psycopg2 htcondor gcs_oauth2_boto_plugin"
-    for package in $pip_packages; do
-        echo "Installing $package ..."
-        pip install --quiet $package
-        if [ $? -ne 0 ]; then
-            echo "Installing $package ... FAILED"
+    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin"
+    echo "Installing $pip_packages ..."
+    pip install --quiet $pip_packages
+    if [ $? -ne 0 ]; then
+        echo "Installing $pip_packages ... FAILED"
+    fi
+    if [[ "$PYVER" == "2.7" ]]
+    then
+        if [ ! -f venv-2.7/lib/python2.7/site-packages/classad.so ];then
+          ln -s /usr/lib64/python2.7/site-packages/classad.so venv-2.7/lib/python2.7/site-packages/classad.so
         fi
-    done
+        if [ ! -f venv-2.7/lib/python2.7/site-packages/htcondor.so ];then
+          ln -s /usr/lib64/python2.7/site-packages/htcondor.so venv-2.7/lib/python2.7/site-packages/htcondor.so
+        fi
+    else
+        pip install classad htcondor
+    fi
 
     # Need this because some strange control sequences when using default TERM=xterm
     export TERM="linux"

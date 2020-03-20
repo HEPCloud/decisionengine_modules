@@ -44,13 +44,16 @@ class Newt(object):
             login_url = self.newt_base_url + "login/"
             postfields = None
             with open(self.password_file) as f:
-                postfields = "&".join([line[:-1].strip() for line in f.readlines()])
+                postfields = "&".join([line[:-1].strip()
+                                       for line in f.readlines()])
             r = self.session.post(login_url, data=postfields)
             r.raise_for_status()
             response_dict = r.json()
             if not response_dict.get("auth"):
-                raise RuntimeError("Failed to establish session to {}".format(login_url))
-            self.expiration_time = response_dict.get('session_lifetime') + time.time()
+                raise RuntimeError(
+                    "Failed to establish session to {}".format(login_url))
+            self.expiration_time = response_dict.get(
+                'session_lifetime') + time.time()
 
     def get_usage(self, username):
         """
@@ -88,9 +91,9 @@ class Newt(object):
         raw_json = r.json()
 
         # Flatten json so it returns data that follows the old NEWT structure
-        final = {'items':[]}
+        final = {'items': []}
         for account in raw_json['data']['newt']['accounts']:
-            _item = {k:v for k, v in account.items() if k != 'users'}
+            _item = {k: v for k, v in account.items() if k != 'users'}
             for user in account['users']:
                 _item2 = deepcopy(_item)
                 _item2.update(user)

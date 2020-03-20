@@ -5,120 +5,126 @@ import pandas
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
 config_test_match_exprs = {
-  'match_expressions': {
-    ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_1"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_2"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_3"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_4"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ("VO_Name=='nova'", "group_5"): ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
-  },
-  'job_q_expr': "JobStatus==1"
+    'match_expressions': {
+        ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_1"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_2"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_3"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_4"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ("VO_Name=='nova'", "group_5"): ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1", "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    },
+    'job_q_expr': "JobStatus==1"
 }
 
 # input with valid job_q data
 valid_q_datablock = {
-  'job_manifests': pandas.DataFrame({
-    "VO_Name": ['cms', 'cms', 'cms', 'cms', 'cms', 'cms', 'nova', 'nova', 'des'],
-    "RequestCpus": [1, 1, 1, 1, 2, 2, 1, 2, 1],
-    "MaxWallTimeMins": [240, 240, 1080, 720, 240, 1080, 720, 240, 240],
-    "JobStatus": [1, 5, 1, 1, 1, 1, 1, 1, 1]
+    'job_manifests': pandas.DataFrame({
+        "VO_Name": ['cms', 'cms', 'cms', 'cms', 'cms', 'cms', 'nova', 'nova', 'des'],
+        "RequestCpus": [1, 1, 1, 1, 2, 2, 1, 2, 1],
+        "MaxWallTimeMins": [240, 240, 1080, 720, 240, 1080, 720, 240, 240],
+        "JobStatus": [1, 5, 1, 1, 1, 1, 1, 1, 1]
     })
 }
 # expected output
 valid_output_dataframe = pandas.DataFrame({
-  'Job_Match_Expr': [
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='nova'"
-  ],
-  'Factory_Match_Epxr': [
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
-  ],
-  'Totals': [2, 1, 2, 1, 1],
-  'Frontend_Group': [
-    "group_1",
-    "group_2",
-    "group_3",
-    "group_4",
-    "group_5"
-  ]
-  },
-  columns=['Job_Match_Expr', 'Factory_Match_Epxr', 'Totals', 'Frontend_Group']
+    'Job_Match_Expr': [
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='nova'"
+    ],
+    'Factory_Match_Epxr': [
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1",
+         "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    ],
+    'Totals': [2, 1, 2, 1, 1],
+    'Frontend_Group': [
+        "group_1",
+        "group_2",
+        "group_3",
+        "group_4",
+        "group_5"
+    ]
+},
+    columns=['Job_Match_Expr', 'Factory_Match_Epxr',
+             'Totals', 'Frontend_Group']
 )
 
 # input with empty job_q data
 empty_q_datablock = {
-  'job_manifests': pandas.DataFrame({})
+    'job_manifests': pandas.DataFrame({})
 }
 # expected output from empty job queue
 empty_q_output_dataframe = pandas.DataFrame({
-  'Job_Match_Expr': [
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='nova'"
-  ],
-  'Factory_Match_Epxr': [
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
-  ],
-  'Totals': [0, 0, 0, 0, 0],
-  'Frontend_Group': [
-    "group_1",
-    "group_2",
-    "group_3",
-    "group_4",
-    "group_5"
-  ]
-  },
-  columns=['Job_Match_Expr', 'Factory_Match_Epxr', 'Totals', 'Frontend_Group']
+    'Job_Match_Expr': [
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='nova'"
+    ],
+    'Factory_Match_Epxr': [
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1",
+         "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    ],
+    'Totals': [0, 0, 0, 0, 0],
+    'Frontend_Group': [
+        "group_1",
+        "group_2",
+        "group_3",
+        "group_4",
+        "group_5"
+    ]
+},
+    columns=['Job_Match_Expr', 'Factory_Match_Epxr',
+             'Totals', 'Frontend_Group']
 )
 
 
 # input with missing job_q data
 missing_q_datablock = {
-  'job_manifests': pandas.DataFrame({
-    "VO_Name": ['cms', 'cms', 'cms', 'cms', 'cms', 'cms', 'nova', 'nova', 'des'],
-    "MaxWallTimeMins": [240, 240, 1080, 720, 240, 1080, 720, 240, 240],
-    "JobStatus": [1, 5, 1, 1, 1, 1, 1, 1, 1]
+    'job_manifests': pandas.DataFrame({
+        "VO_Name": ['cms', 'cms', 'cms', 'cms', 'cms', 'cms', 'nova', 'nova', 'des'],
+        "MaxWallTimeMins": [240, 240, 1080, 720, 240, 1080, 720, 240, 240],
+        "JobStatus": [1, 5, 1, 1, 1, 1, 1, 1, 1]
     })
 }
 # expected output from missing data job queue
 missing_q_output_dataframe = pandas.DataFrame({
-  'Job_Match_Expr': [
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='nova'"
-  ],
-  'Factory_Match_Epxr': [
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
-  ],
-  'Totals': [0, 0, 0, 0, 0],
-  'Frontend_Group': [
-    "group_1",
-    "group_2",
-    "group_3",
-    "group_4",
-    "group_5"
-  ]
-  },
-  columns=['Job_Match_Expr', 'Factory_Match_Epxr', 'Totals', 'Frontend_Group']
+    'Job_Match_Expr': [
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='nova'"
+    ],
+    'Factory_Match_Epxr': [
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1",
+         "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    ],
+    'Totals': [0, 0, 0, 0, 0],
+    'Frontend_Group': [
+        "group_1",
+        "group_2",
+        "group_3",
+        "group_4",
+        "group_5"
+    ]
+},
+    columns=['Job_Match_Expr', 'Factory_Match_Epxr',
+             'Totals', 'Frontend_Group']
 )
 
 
@@ -159,7 +165,8 @@ class TestJobClustering:
         db = output.get('job_clusters')
         assert db['Totals'].sum() == 0
         assert db.shape[0] == 5
-        assert db.iloc[0,0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
+        assert db.iloc[0,
+                       0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
 
     def test_transform_missing_q(self):
         job_clusters = job_clustering.JobClustering(config_test_match_exprs)
@@ -168,4 +175,5 @@ class TestJobClustering:
         db = output.get('job_clusters')
         assert db['Totals'].sum() == 0
         assert db.shape[0] == 5
-        assert db.iloc[0,0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
+        assert db.iloc[0,
+                       0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"

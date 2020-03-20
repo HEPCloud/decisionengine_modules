@@ -15,7 +15,10 @@ PRODUCES = ['Nersc_Job_Info']
 _MAX_RETRIES = 10
 _RETRY_TIMEOUT = 10
 # TODO this is a default column list and needs to be overriden from configuration
-COLUMN_LIST = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse', 'hostname', 'jobid', 'queue', 'submittime', 'reason', 'source', 'memory', 'nodes', 'rank_p', 'timereq', 'procs', 'user']
+COLUMN_LIST = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse', 'hostname', 'jobid', 'queue',
+               'submittime', 'reason', 'source', 'memory', 'nodes', 'rank_p', 'timereq', 'procs', 'user']
+
+
 class NerscJobInfo(Source.Source):
     """
     Information of jobs on NERSC machines
@@ -33,8 +36,8 @@ class NerscJobInfo(Source.Source):
 
     def _acquire(self):
         """
-        Helper method that does heavy lifting. 
-        Called from acquire 
+        Helper method that does heavy lifting.
+        Called from acquire
         :return: `dict`
         """
         raw_results = []
@@ -42,11 +45,13 @@ class NerscJobInfo(Source.Source):
         self.constraints['machines'] = self.constraints.get('machines',
                                                             ['edison', 'cori'])
         # get all systems that are up
-        up_machines = [x for x in self.newt.get_status() if x['status'] == 'up']
+        up_machines = [x for x in self.newt.get_status()
+                       if x['status'] == 'up']
         if not up_machines:
             self.logger.info("All machines at NERSC are down")
         # filter machines that are up
-        machines = [x for x in self.constraints.get('machines') if x in [y["system"] for y in up_machines]]
+        machines = [x for x in self.constraints.get('machines') if x in [
+            y["system"] for y in up_machines]]
         if not machines:
             self.logger.info("All requested machines at NERSC are down")
         # filter results based on constraints specified in newt_keys dictionary
@@ -59,7 +64,7 @@ class NerscJobInfo(Source.Source):
             if values:
                 raw_results.extend(values)
 
-        pandas_frame = pd.DataFrame(raw_results, columns = COLUMN_LIST)
+        pandas_frame = pd.DataFrame(raw_results, columns=COLUMN_LIST)
         return {PRODUCES[0]: pandas_frame}
 
     def produces(self, name_schema_id_list=None):
@@ -107,9 +112,9 @@ def module_config_template():
                 'constraints': {
                     'machines': ["edison", "cori"],
                     'newt_keys': {
-                    'user': ["user1", "user2"],
-                    'repo': ['m2612', 'm2696'],
-                    'features': ["knl&quad&cache", ]
+                        'user': ["user1", "user2"],
+                        'repo': ['m2612', 'm2696'],
+                        'features': ["knl&quad&cache", ]
                     }
                 }
             }

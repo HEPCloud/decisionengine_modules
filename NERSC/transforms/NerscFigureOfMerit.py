@@ -51,7 +51,8 @@ class NerscFigureOfMerit(Transform.Transform):
 
         performance = data_block[CONSUMES[0]]
         performance["PricePerformance"] = np.where(performance["PerfTtbarTotal"] > 0,
-                                                   performance["OnDemandPrice"] / performance["PerfTtbarTotal"],
+                                                   (performance["OnDemandPrice"] /
+                                                    performance["PerfTtbarTotal"]),
                                                    sys.float_info.max)
 
         factory_entries_lcf = data_block[CONSUMES[1]]
@@ -92,10 +93,10 @@ def module_config_template():
 
     d = {
         "NerscFigureOfMerit": {
-           "module":  "modules.NERSC.transforms.NerscFigureOfMerit",
-           "name":  "NerscFigureOfMerit",
-           "parameters": {
-           }
+            "module": "modules.NERSC.transforms.NerscFigureOfMerit",
+            "name": "NerscFigureOfMerit",
+            "parameters": {
+            }
         }
     }
 
@@ -136,6 +137,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

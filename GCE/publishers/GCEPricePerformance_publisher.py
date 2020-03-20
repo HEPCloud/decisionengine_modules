@@ -16,8 +16,9 @@ import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 import logging
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.gce"
-CONSUMES=['GCE_Price_Performance']
+DEFAULT_GRAPHITE_CONTEXT = "hepcloud.de.gce"
+CONSUMES = ['GCE_Price_Performance']
+
 
 class GCEPricePerformancePublisher(publisher):
     def __init__(self, config):
@@ -30,9 +31,10 @@ class GCEPricePerformancePublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.price_perf'%(graphite.sanitize_key(row['EntryName'])))
+            key = ('%s.price_perf' % (graphite.sanitize_key(row['EntryName'])))
             d[key] = row['PricePerformance']
         return self.graphite_context_header, d
+
 
 def module_config_template():
     """
@@ -42,13 +44,14 @@ def module_config_template():
     d = {"GCEPricePerformancePublisher": {
          "module": "modules.GCE.publishers.GCEPricePerformance_publisher",
          "name": "GCEPricePerformancePublisher",
-         },}
+         }, }
     print("Entry in channel cofiguration")
     pprint.pprint(d)
     print("where")
     print("\t name - name of the class to be instantiated by task manager")
     print("\t publish_to_graphite - publish to graphite if True")
     print("\t graphite_host - graphite host name")
+
 
 def module_config_info():
     """
@@ -57,7 +60,6 @@ def module_config_info():
 
     print("consumes", CONSUMES)
     module_config_template()
-
 
 
 def main():

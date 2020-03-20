@@ -5,34 +5,36 @@ from decisionengine_modules.glideinwms.publishers import job_clustering_publishe
 config_pub = {"publish_to_graphite": True,
               "graphite_host": "lsdataitb.fnal.gov",
               "graphite_port": 2004,
-              "graphite_context":"hepcloud.de.glideinwms",
+              "graphite_context": "hepcloud.de.glideinwms",
               "output_file": "/etc/decisionengine/modules.data/test_job_clusters.csv"}
 
 valid_datablock = pandas.DataFrame({
-  'Job_Bucket_Criteria_Expr': [
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
-    "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
-    "VO_Name=='nova'"
-  ],
-  'Site_Bucket_Criteria_Expr': [
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-    ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1","GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
-  ],
-  'Totals': [2, 1, 2, 1, 1],
-  'Frontend_Group': [
-    "group_1",
-    "group_2",
-    "group_3",
-    "group_4",
-    "group_5"
-  ]
-  },
-  columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Epxr', 'Totals', 'Frontend_Group']
+    'Job_Bucket_Criteria_Expr': [
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+        "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+        "VO_Name=='nova'"
+    ],
+    'Site_Bucket_Criteria_Expr': [
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
+        ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1",
+         "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
+    ],
+    'Totals': [2, 1, 2, 1, 1],
+    'Frontend_Group': [
+        "group_1",
+        "group_2",
+        "group_3",
+        "group_4",
+        "group_5"
+    ]
+},
+    columns=['Job_Bucket_Criteria_Expr',
+             'Site_Bucket_Criteria_Epxr', 'Totals', 'Frontend_Group']
 )
 
 # expected output
