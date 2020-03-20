@@ -187,7 +187,7 @@ def main():
                                          1,
                                          109)
 
-        fm_info = FigureOfMerit()
+        fm_info = FigureOfMerit({})
         rc = fm_info.transform(data_block)
         print("INFO")
         print(rc)
