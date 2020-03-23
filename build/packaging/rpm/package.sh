@@ -50,7 +50,9 @@ mkdir -p $release_dir
 cp -r $source_dir  $release_dir
 cd $release_dir
 tar --exclude=.git --exclude=.gitignore --exclude=doc --exclude=cxx/build \
-    --exclude=readme --exclude=.cache \
+    --exclude=readme --exclude=.cache --exclude=README.md --exclude=requirements.txt \
+    --exclude=.travis.yaml --exclude=.pep8speaks.yaml --exclude .pytest_cache \
+    --exclude=decisionengine_modules/.pep8speaks.yml --exclude=decisionengine_modules/.travis.yml \
     -czf $release_tar decisionengine_modules
 
 cp $release_tar $RPM_TOPDIR/SOURCES
