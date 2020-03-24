@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 get_current_git_branch() {
     cd $DE_MODULES_SRC
