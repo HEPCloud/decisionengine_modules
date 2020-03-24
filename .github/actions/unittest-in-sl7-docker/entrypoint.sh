@@ -1,5 +1,5 @@
 #!/bin/bash
-export PYVER=${1:-"2.7"}
+export PYVER=${1:-"3.6"}
 source decisionengine_modules/build/scripts/utils.sh
 setup_python_venv
 setup_dependencies
@@ -14,7 +14,7 @@ cd -
 export PYTHONPATH=$PWD:$PYTHONPATH
 source venv-${PYVER}/bin/activate
 pip install tabulate psycopg2
-pytest -v -l --tb=native decisionengine_modules > pytest-$PYVER.log 2>&1
+pytest -v -l --tb=native decisionengine_modules > pytest.log 2>&1
 status=$?
-cat pytest-$PYVER.log
+cat pytest.log
 exit $status

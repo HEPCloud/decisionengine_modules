@@ -11,7 +11,6 @@ else
 fi
 
 echo "Using source dir: $source_dir"
-echo "Using Python version: $PYVER"
 
 export RPM_TOPDIR=/var/tmp/$id/rpm/decisionengine_modules
 mkdir -p $RPM_TOPDIR
@@ -26,7 +25,6 @@ cat > $rpm_macros << RPM_MACROS
 %_specdir   %{_topdir}/SPECS
 %_srcrpmdir %{_topdir}/SRPMS
 %_tmppath   %{_topdir}/TMP
-%pyver %(echo \$PYVER)
 RPM_MACROS
 
 release_dir=/var/tmp/$id/release/v0.1
@@ -53,6 +51,7 @@ tar --exclude=.git --exclude=.gitignore --exclude=doc --exclude=cxx/build \
     --exclude=readme --exclude=.cache --exclude=README.md --exclude=requirements.txt \
     --exclude=.travis.yaml --exclude=.pep8speaks.yaml --exclude .pytest_cache \
     --exclude=decisionengine_modules/.pep8speaks.yml --exclude=decisionengine_modules/.travis.yml \
+    --exclude=decisionengine_modules/__pycache__ \
     -czf $release_tar decisionengine_modules
 
 cp $release_tar $RPM_TOPDIR/SOURCES
@@ -85,5 +84,5 @@ ls -latrh $RPM_TOPDIR/SRPMS
 echo
 echo "RPMS:"
 echo "----"
-ls -latrh $RPM_TOPDIR/RPMS/x86_64
+ls -latrh $RPM_TOPDIR/RPMS
 echo "_________________________________________________________________________"

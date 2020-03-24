@@ -81,7 +81,7 @@ process_branch() {
 # - N814: camelcase imported as constant
 #
 
-    PEP8_OPTIONS="--ignore=E261,E265,E302,E303,E501,E129,E221,E241,E272,E731,W503,W504,F999,N801,N813,N814"
+    PEP8_OPTIONS="--ignore=E261,E265,E302,E303,E501,E129,E221,E241,E272,E731,E1004,W503,W504,F999,N801,N813,N814"
 
     # Generate pylint config file
     #pylint --generate-rcfile > $PYLINT_RCFILE
@@ -250,9 +250,6 @@ echo "Called as $my_filename"
 export DE_MODULES_SRC="$my_parent_dir/../.."
 
 export DECISIONENGINE_SRC=$WORKSPACE/dependencies/decisionengine
-
-export PYVER=${PYVER:-"2.7"}
-echo PYVER=$PYVER
 
 source $DE_MODULES_SRC/build/scripts/utils.sh
 setup_python_venv $WORKSPACE
