@@ -11,14 +11,14 @@ setup_python_venv() {
         exit 1
     fi
     WORKSPACE=${1:-`pwd`}
-    VENV=$WORKSPACE/venv-${PYVER}
+    VENV=$WORKSPACE/venv
 
     # Following is useful for running the script outside jenkins
     #if [ ! -d "$WORKSPACE" ]; then
     #    mkdir $WORKSPACE
     #fi
 
-    VIRTUALENV_EXE=virtualenv-$PYVER
+    VIRTUALENV_EXE=virtualenv-3.6
     PIP_EXE=pip
 
     if [ ! -d $VENV ] ; then
@@ -33,17 +33,7 @@ setup_python_venv() {
     if [ $? -ne 0 ]; then
         echo "Installing $pip_packages ... FAILED"
     fi
-    if [[ "$PYVER" == "2.7" ]]
-    then
-        if [ ! -f venv-2.7/lib/python2.7/site-packages/classad.so ];then
-          ln -s /usr/lib64/python2.7/site-packages/classad.so venv-2.7/lib/python2.7/site-packages/classad.so
-        fi
-        if [ ! -f venv-2.7/lib/python2.7/site-packages/htcondor.so ];then
-          ln -s /usr/lib64/python2.7/site-packages/htcondor.so venv-2.7/lib/python2.7/site-packages/htcondor.so
-        fi
-    else
-        pip install classad htcondor
-    fi
+    pip install classad htcondor
 
     # Need this because some strange control sequences when using default TERM=xterm
     export TERM="linux"
