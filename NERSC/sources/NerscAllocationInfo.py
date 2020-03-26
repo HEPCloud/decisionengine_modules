@@ -39,12 +39,21 @@ class NerscAllocationInfo(Source.Source):
         for username in self.constraints.get("usernames", []):
             values = self.newt.get_usage(username)
             if values:
-                results.extend(values['items'])
+                try:
+                    results.extend(values['items'])
+                except KeyError:
+                    # Empty return from get_usage, so just move on
+                    pass
         # filter results based on constraints specified in newt_keys dictionary
         newt_keys = self.constraints.get("newt_keys", {})
         for key, values in newt_keys.items():
+            k = key
+            # The below remapping is needed for backward compatibility with 
+            # existing config files
+            if key == 'rname': k = 'repoName'
+            if key == 'repo_type': k = 'repoType'
             if values:
-                results = [x for x in results if x[key] in values]
+                results = [x for x in results if x[k] in values]
         self.raw_results = results
 
     def raw_results_to_pandas_frame(self):
