@@ -16,11 +16,11 @@ FAKE_USER = "user2"
 CONFIG = {
     "passwd_file": PASSWD_FILE,
     "constraints": {
-       "usernames": ["timm", FAKE_USER],
-       "newt_keys": {
-          "rname": ["m2612", "m2696", "m2015"],
-          "repo_type": ["REPO", ],
-       }
+        "usernames": ["timm", FAKE_USER],
+        "newt_keys": {
+            "rname": ["m2612", "m2696", "m2015"],
+            "repo_type": ["REPO", ],
+        }
     }
 }
 
@@ -37,7 +37,7 @@ class TestNerscAllocationInfo:
 
         def side_effect_get_usage(username):
             if username == FAKE_USER:
-                return {'items':[]}
+                return {'items': []}
             return utils.input_from_file(ALLOCATIONS_FIXTURE_FILE)
 
         nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
