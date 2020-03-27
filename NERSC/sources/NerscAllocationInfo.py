@@ -50,9 +50,9 @@ class NerscAllocationInfo(Source.Source):
             k = key
             # The below remapping is needed for backward compatibility with
             # existing config files
-            if key == 'rname': 
+            if key == 'rname':
                 k = 'repoName'
-            if key == 'repo_type': 
+            if key == 'repo_type':
                 k = 'repoType'
             if values:
                 results = [x for x in results if x[k] in values]
