@@ -51,7 +51,7 @@ class TestFigureOfMerit:
         data_block = create_datablock()
         fom = FigureOfMerit.FigureOfMerit(data_block)
         res = fom.transform(data_block)
-        r_keys = res.keys().sort()
+        r_keys = list(res.keys()).sort()
         p_keys = produces.sort()
         assert p_keys == r_keys
         for k in expected_reply.keys():

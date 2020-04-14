@@ -88,9 +88,9 @@ class FigureOfMerit(Transform.Transform):
                 fom_row['PerfTtbarTotal'] = 0.
             else:
                 price_perf_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
-                price_perf_row['EntryName'] = r1['EntryName'].values[0]
+#                price_perf_row['EntryName'] = r1['EntryName'].values[0]
                 fom_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
-                fom_row['EntryName'] = r1['EntryName'].values[0]
+#                fom_row['EntryName'] = r1['EntryName'].values[0]
 
             if r2.empty:
                 running_vms = 0
@@ -114,9 +114,9 @@ class FigureOfMerit(Transform.Transform):
             fom_rows.append(fom_row)
 
         price_perf_df = pd.DataFrame(price_perf_rows)
-        price_perf_df.reindex_axis(sorted(price_perf_df.columns), axis=1)
+        price_perf_df.reindex(sorted(price_perf_df.columns), axis=1)
         fom_df = pd.DataFrame(fom_rows)
-        fom_df.reindex_axis(sorted(fom_df.columns), axis=1)
+        fom_df.reindex(sorted(fom_df.columns), axis=1)
         return {PRODUCES[0]: price_perf_df, PRODUCES[1]: fom_df}
 
     def consumes(self):

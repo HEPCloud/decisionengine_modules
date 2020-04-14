@@ -1,6 +1,6 @@
-AccountName,AvailabilityZone,InstanceType,ProductDescription,SpotPrice,Timestamp,PerfTtbarTotal,EntryName,MaxLimit,AWS_Price_Performance
-HEPCloud_CMS,us-east-1d,m3.xlarge,Linux/UNIX,0.0617,2018-10-04T11:36:38,0.0557008,FNAL_HEPCLOUD_AWS_us-east-1d_m3.xlarge,20,1.10770401861
-HEPCloud_CMS,us-east-1c,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,FNAL_HEPCLOUD_AWS_us-east-1c_m3.xlarge,20,1.10770401861
-HEPCloud_CMS,us-east-1e,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,FNAL_HEPCLOUD_AWS_us-east-1e_m3.xlarge,20,1.10770401861
-HEPCloud_CMS,us-east-1b,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,FNAL_HEPCLOUD_AWS_us-east-1b_m3.xlarge,20,1.10770401861
-HEPCloud_CMS,us-east-1a,m3.xlarge,Linux/UNIX,0.266,2018-09-19T23:08:24,0.0557008,FNAL_HEPCLOUD_AWS_us-east-1a_m3.xlarge,20,4.775515
+AccountName,AvailabilityZone,InstanceType,ProductDescription,SpotPrice,Timestamp,PerfTtbarTotal,MaxLimit,AWS_Price_Performance
+HEPCloud_CMS,us-east-1d,m3.xlarge,Linux/UNIX,0.0617,2018-10-04T11:36:38,0.0557008,20,1.10770401861
+HEPCloud_CMS,us-east-1c,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,20,1.10770401861
+HEPCloud_CMS,us-east-1e,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,20,1.10770401861
+HEPCloud_CMS,us-east-1b,m3.xlarge,Linux/UNIX,0.0617,2018-10-03T21:27:14,0.0557008,20,1.10770401861
+HEPCloud_CMS,us-east-1a,m3.xlarge,Linux/UNIX,0.266,2018-09-19T23:08:24,0.0557008,20,4.775515
