@@ -128,10 +128,7 @@ class CondorQ(CondorQuery):
                 p = self.pool_name
             err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (
                 s, p, ex)
-            try: 
-                raise QueryError(err_str).with_traceback(sys.exc_info()[2])
-            except AttributeError:
-                raise QueryError(err_str), None, sys.exc_info()[2]
+            six.reraise(QueryError(err_str), None, sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -183,10 +180,7 @@ class CondorStatus(CondorQuery):
                 p = self.pool_name
             err_str = 'Error querying pool %s using python bindings: %s' % (
                 p, ex)
-            try: 
-                raise QueryError(err_str).with_traceback(sys.exc_info()[2])
-            except AttributeError:
-                raise QueryError(err_str), None, sys.exc_info()[2]
+            six.reraise(QueryError(err_str), None, sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
