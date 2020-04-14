@@ -294,7 +294,7 @@ def list2dict(list_data, attr_name):
                         # No need for Undefined check to see if
                         # attribute exists in the fetched classad
                         dict_el[a] = list_el[a]
-                except:
+                except Exception:
                     # Do not fail
                     pass
 
@@ -336,7 +336,7 @@ def eval_classad_expr(classads, format_list=None):
                     # No need for Undefined check to see if
                     # attribute exists in the fetched classad
                     dict_el[attr] = classad[attr]
-            except:
+            except Exception:
                 pass
 
         # Do not delete this block until we resolve the TODO above.
