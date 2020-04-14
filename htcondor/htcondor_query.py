@@ -129,7 +129,7 @@ class CondorQ(CondorQuery):
             err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (
                 s, p, ex)
             query_error = QueryError(err_str)
-            six.reraise(query_error, None, sys.exc_info()[2])
+            six.reraise(type(query_error), query_error, sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -182,7 +182,7 @@ class CondorStatus(CondorQuery):
             err_str = 'Error querying pool %s using python bindings: %s' % (
                 p, ex)
             query_error = QueryError(err_str)
-            six.reraise(query_error, None, sys.exc_info()[2])
+            six.reraise(type(query_error), query_error, sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -294,7 +294,7 @@ def list2dict(list_data, attr_name):
                         # No need for Undefined check to see if
                         # attribute exists in the fetched classad
                         dict_el[a] = list_el[a]
-                except Exception as e:
+                except:
                     # Do not fail
                     pass
 
@@ -336,7 +336,7 @@ def eval_classad_expr(classads, format_list=None):
                     # No need for Undefined check to see if
                     # attribute exists in the fetched classad
                     dict_el[attr] = classad[attr]
-            except Exception as e:
+            except:
                 pass
 
         # Do not delete this block until we resolve the TODO above.
@@ -377,7 +377,7 @@ def split_collector_host(collector_host):
         primary = hosts[0]
         secondary = hosts[1:]
         secondary.sort()
-        return (hosts[0], ','.join(secondary))
+        return (primary, ','.join(secondary))
     else:
         RuntimeError(
             'collector_host should be a comman or space separated string but found %s' % collector_host)
