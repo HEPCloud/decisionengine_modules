@@ -88,9 +88,7 @@ class FigureOfMerit(Transform.Transform):
                 fom_row['PerfTtbarTotal'] = 0.
             else:
                 price_perf_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
-#                price_perf_row['EntryName'] = r1['EntryName'].values[0]
                 fom_row['PerfTtbarTotal'] = r1['PerfTtbarTotal'].values[0]
-#                fom_row['EntryName'] = r1['EntryName'].values[0]
 
             if r2.empty:
                 running_vms = 0
