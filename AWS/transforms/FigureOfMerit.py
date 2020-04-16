@@ -3,11 +3,10 @@ Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
 
 """
-import os
-import sys
 import copy
 import pprint
 import pandas as pd
+import sys
 
 from decisionengine.framework.modules import Transform
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -178,9 +177,6 @@ def main():
         print("GLOBAL CONF %s" % (global_config,))
         ds = dataspace.DataSpace(global_config)
 
-        # data_block = datablock.DataBlock(ds,
-        #                                 '6D596F43-B4DB-4418-812A-79869001E72B',
-        #                                 1)
         data_block = datablock.DataBlock(ds,
                                          "AWS_Calculations_with_source_proxy",
                                          "F70B4110-E66D-49CA-9333-4A983A679F37",
