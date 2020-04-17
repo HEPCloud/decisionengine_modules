@@ -77,6 +77,8 @@ install:
   - cd boost_1_58_0
   - ./bootstrap.sh --with-python=$(which python) --with-python-root=/opt/python/${TRAVIS_PYTHON_VERSION}/ --with-libraries=python,regex,system
   - ./b2 -q --prefix=/usr/local/ cxxflags=-fpermissive include=/opt/python/${TRAVIS_PYTHON_VERSION}/include/ install  -j 6
+  - cd ..
+  - rm -rf boost_1_58_0
 
     # Setup pkg-config and cmake search paths to use the virtualenv python from travis
   - export PKG_CONFIG_PATH="/opt/python/${TRAVIS_PYTHON_VERSION}/lib/pkgconfig"
@@ -112,8 +114,10 @@ env:
 # command to run tests
 script:
   - cd `dirname ${TRAVIS_BUILD_DIR}`
-  - coverage run -m pytest -v -l --tb=native decisionengine_modules
+  - coverage run --rcfile=decisionengine_modules/.coveragerc -m pytest -v -l --tb=native decisionengine_modules
 
 # hook into coveralls
 after_success:
+  - mv .coverage ${TRAVIS_BUILD_DIR}
+  - cd ${TRAVIS_BUILD_DIR}
   - coveralls
