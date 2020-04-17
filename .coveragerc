@@ -3,6 +3,7 @@
 [run]
 branch = True
 source = decisionengine_modules
+omit = */tests/*
 
 
 [report]
