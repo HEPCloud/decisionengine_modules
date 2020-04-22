@@ -1,21 +1,18 @@
-import json
-import boto
 import argparse
-import gcs_oauth2_boto_plugin
 import csv
-import io
-import string
-import re
 import datetime
-import time
-import sys
+import json
+import logging
 import os
 import pprint
-import pandas as pd
+import re
+import time
 
-import logging
-from decisionengine.framework.modules import Source
+import boto
+import pandas as pd
 from boto.exception import NoAuthHandlerFound
+from decisionengine.framework.modules import Source
+from six import StringIO
 
 PRODUCES = ['GCE_Billing_Info']
 
@@ -169,7 +166,7 @@ class GCEBillCalculator(object):
                     self.logger.debug(fileNameForDownloadList)
                 previousFileForDownloadListDateTime = billDateDatetime
                 previousFileNameForDownloadListString = file
-                self.logger.info('previousFileForDownloadListDateTime ' %
+                self.logger.info('previousFileForDownloadListDateTime %s' %
                                  previousFileForDownloadListDateTime.strftime('%m/%d/%y %H:%M'))
                 self.logger.info(
                     'previousFileNameForDownloadListString ' + previousFileNameForDownloadListString)
@@ -212,7 +209,7 @@ class GCEBillCalculator(object):
                 return []
 
             # Create a file-like object for holding the object contents.
-            object_contents = io.StringIO()
+            object_contents = StringIO()
 
             # The unintuitively-named get_file() doesn't return the object
             # contents; instead, it actually writes the contents to
