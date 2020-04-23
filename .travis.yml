@@ -112,7 +112,7 @@ env:
 # command to run tests
 script:
   - cd `dirname ${TRAVIS_BUILD_DIR}`
-  - coverage run -m pytest -v -l --tb=native decisionengine_modules
+  - coverage run -m pytest -v -l --tb=native --ignore=decisionengine_modules/tests/test_NerscJobInfo.py  decisionengine_modules
 
 # hook into coveralls
 after_success:

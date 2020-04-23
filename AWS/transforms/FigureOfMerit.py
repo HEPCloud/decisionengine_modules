@@ -3,11 +3,10 @@ Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
 
 """
-import os
-import sys
 import copy
 import pprint
 import pandas as pd
+import sys
 
 from decisionengine.framework.modules import Transform
 import decisionengine.framework.configmanager.ConfigManager as configmanager
@@ -114,9 +113,9 @@ class FigureOfMerit(Transform.Transform):
             fom_rows.append(fom_row)
 
         price_perf_df = pd.DataFrame(price_perf_rows)
-        price_perf_df.reindex_axis(sorted(price_perf_df.columns), axis=1)
+        price_perf_df.reindex(sorted(price_perf_df.columns), axis=1)
         fom_df = pd.DataFrame(fom_rows)
-        fom_df.reindex_axis(sorted(fom_df.columns), axis=1)
+        fom_df.reindex(sorted(fom_df.columns), axis=1)
         return {PRODUCES[0]: price_perf_df, PRODUCES[1]: fom_df}
 
     def consumes(self):
@@ -178,9 +177,6 @@ def main():
         print("GLOBAL CONF %s" % (global_config,))
         ds = dataspace.DataSpace(global_config)
 
-        # data_block = datablock.DataBlock(ds,
-        #                                 '6D596F43-B4DB-4418-812A-79869001E72B',
-        #                                 1)
         data_block = datablock.DataBlock(ds,
                                          "AWS_Calculations_with_source_proxy",
                                          "F70B4110-E66D-49CA-9333-4A983A679F37",

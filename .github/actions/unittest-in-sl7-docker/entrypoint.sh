@@ -14,7 +14,7 @@ cd -
 export PYTHONPATH=$PWD:$PYTHONPATH
 source venv-${PYVER}/bin/activate
 pip install tabulate psycopg2
-pytest -v -l --tb=native decisionengine_modules > pytest-$PYVER.log 2>&1
+pytest -v -l --tb=native --ignore=decisionengine_modules/tests/test_NerscJobInfo.py decisionengine_modules > pytest-$PYVER.log 2>&1
 status=$?
 cat pytest-$PYVER.log
 exit $status
