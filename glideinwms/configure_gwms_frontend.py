@@ -13,7 +13,7 @@ import glideinwms.creation.lib.cvWConsts
 import glideinwms.creation.lib.cvWParamDict
 import glideinwms.creation.lib.xslt
 
-from . import glideinwms_config_lib
+import glideinwms_config_lib
 
 
 def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):
@@ -138,7 +138,7 @@ def get_old_params(params, args):
             old_params = glideinwms.creation.lib.cvWParams.VOFrontendParams(
                 args.usage, args.web_base_dir,
                 [sys.argv[0], old_config_file])
-        except RuntimeError as e:
+        except RuntimeError:
             raise RuntimeError('Failed to load %s' % old_config_file)
     else:
         print('Warning: Cannot find %s' % old_config_file)

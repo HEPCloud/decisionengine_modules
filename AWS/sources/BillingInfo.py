@@ -1,22 +1,20 @@
-import six
-import zipfile
-import csv
-import io
-import string
-import re
-import datetime
-import time
-import sys
-import os
 import copy
-import pprint
-import boto3
-from boto3.session import Session
-import numpy as np
-import pandas as pd
+import csv
+import datetime
 import logging
+import os
+import pprint
+import re
+import string
+import time
+import zipfile
 
+import boto3
+import pandas as pd
+import six
+from boto3.session import Session
 from decisionengine.framework.modules import Source
+
 import DEAccountContants  # 2to3 recommends from . import DEAccountContants
 
 PRODUCES = ['AWS_Billing_Info', 'AWS_Billing_Rate']
@@ -421,10 +419,6 @@ class AWSBillCalculator(object):
             billingFileNameNewFormatIdentifier)
         billingFileDateIdentifier = r'20[0-9][0-9]\-[0-9][0-9]'
         dateExtractionMatch = re.compile(billingFileDateIdentifier)
-        newLastColumnHeaderString = 'ResourceId'
-        new5thColumnHeaderString = 'RecordId'
-        old4thColumnHeaderString = 'RecordType'
-        newFormat = True
         data_by_month = {}
         for zipFileName in zipFileList:
             dateMatch = dateExtractionMatch.search(zipFileName)
@@ -434,10 +428,9 @@ class AWSBillCalculator(object):
             date_key = dateMatch.group(0)
             data_by_month[date_key] = ''
         # Check if file is in new or old format
+        newFormat = True
         if billingFileNameNewFormatMatch.search(zipFileName) is None:
             newFormat = False
-        else:
-            newFormat = True
 
         # Read in files for the merging
         zipFile = zipfile.ZipFile(zipFileName, 'r')
@@ -542,7 +535,7 @@ class AWSBillCalculator(object):
                            estimatedTotalDataOutCsvHeaderString: 0.0}
 
         # The seek(0) resets the csv iterator, in case of multiple passes e.g. in alarm calculations
-        billCVSAggregateStrStringIO = io.StringIO(billCVSAggregateStr)
+        billCVSAggregateStrStringIO = six.StringIO(billCVSAggregateStr)
         billCVSAggregateStrStringIO.seek(0)
         for row in csv.DictReader(billCVSAggregateStrStringIO):
             # Skip if there is no date (e.g. final comment lines)
@@ -671,7 +664,6 @@ class BillingInfo(Source.Source):
         """
 
         # get data for all accounts
-        d = {}
         data = []
         datarate = []
         for i in self.accounts:
@@ -758,7 +750,7 @@ class BillingInfo(Source.Source):
 
             except Exception as detail:
                 print(detail)
-            except Exception as e:
+            except Exception:
                 pass
 
         return {PRODUCES[0]: pd.DataFrame(data), PRODUCES[1]: pd.DataFrame(datarate)}
