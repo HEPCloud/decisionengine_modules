@@ -72,7 +72,7 @@ setup_de_framework() {
     product_git_repo=$de_framework_git_repo
     wspace=${dir:-`pwd`}
     cd $wspace
-    git clone --branch 1.1.0 "${product_git_repo}"
+    git clone --branch 1.1.1 "${product_git_repo}"
 }
 
 
