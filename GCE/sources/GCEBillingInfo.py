@@ -83,7 +83,6 @@ class GCEBillCalculator(object):
         # URI scheme for Cloud Storage.
         GOOGLE_STORAGE = 'gs'
         LOCAL_FILE = 'file'
-        header_values = {"x-goog-project-id": self.project_id}
 
         # Access list of files from Goggle storage bucket
         try:
@@ -93,7 +92,7 @@ class GCEBillCalculator(object):
             self.logger.error(
                 "Unable to download GCE billing file names because auth is not set up")
             return []
-        except Exception as e:
+        except Exception:
             self.logger.error(
                 "Able to auth but unable to download GCE billing files")
             return []
@@ -203,7 +202,7 @@ class GCEBillCalculator(object):
                 self.logger.error(
                     "Unable to download GCE billing file %s " % fileNameForDownload)
                 return []
-            except Exception as e:
+            except Exception:
                 self.logger.error(
                     "Able to auth but unable to download billing file %s " % fileNameForDownload)
                 return []
@@ -219,7 +218,7 @@ class GCEBillCalculator(object):
             try:
                 local_dst_uri = boto.storage_uri(os.path.join(
                     dest_dir, fileNameForDownload), LOCAL_FILE)
-            except Exception as e:
+            except Exception:
                 self.logger.error(
                     "Unable to download GCE billing file %s " % fileNameForDownload)
                 return []
@@ -245,7 +244,6 @@ class GCEBillCalculator(object):
         #               BillSummaryDict: (Keys depend on services present in the csv file)
 
         # Constants
-        itemDescriptionCsvHeaderString = 'ItemDescription'
         ProductNameCsvHeaderString = 'Line Item'
         costCsvHeaderString = 'Cost'
         usageStartDateCsvHeaderString = 'Start Time'
@@ -311,7 +309,7 @@ class GCEBillCalculator(object):
                 # If it is the first time that we encounter this key (product), add it to the dictionary
                 except KeyError:
                     BillSummaryDict[key] = float(row[costCsvHeaderString])
-                except Exception as e:
+                except Exception:
                     self.logger.error(
                         "GCE billing: Unable to sum row %s" % row)
                     return []
