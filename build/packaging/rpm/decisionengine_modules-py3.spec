@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 1.1.1
+%define version 1.1.2
 %define release 1_py3.6
 
 %define de_user decisionengine
