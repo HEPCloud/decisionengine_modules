@@ -9,6 +9,7 @@ import re
 import time
 
 import boto
+import gcs_oauth2_boto_plugin
 import pandas as pd
 from boto.exception import NoAuthHandlerFound
 from decisionengine.framework.modules import Source
