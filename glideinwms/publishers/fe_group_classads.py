@@ -1,7 +1,6 @@
 import argparse
 import pprint
 import pandas
-import numpy
 
 import logging
 from decisionengine_modules.htcondor.publishers import publisher
@@ -15,7 +14,6 @@ CONSUMES = [
 
 class GlideinWMSManifests(publisher.HTCondorManifests):
 
-
     def __init__(self, config):
         super(GlideinWMSManifests, self).__init__(config)
         self.logger = logging.getLogger()
@@ -27,13 +25,11 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
         }
         self.classad_type = 'glideclient'
 
-
     def consumes(self):
         """
         Return list of items produced
         """
         return CONSUMES
-
 
     def publish(self, datablock):
         requests_df = datablock.get('glideclient_manifests')
@@ -57,7 +53,8 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                     allow_type_req_dfs[allow_type] = allow_type_req_dfs[allow_type].append(row)
                     break
 
-        self.logger.info('Facts available in publisher %s: %s' % (self.__class__.__name__, facts_df.to_dict(orient='records')))
+        self.logger.info('Facts available in publisher %s: %s' % (self.__class__.__name__,
+                                                                  facts_df.to_dict(orient='records')))
         for index, row in facts_df.iterrows():
             fact_name = row['fact_name']
             fact_value = ('%s' % row['fact_value']).lower() == 'true'
@@ -68,10 +65,9 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                 self.logger.info('Setting ReqIdleGlideins=0 for fact: %s' % fact_name)
                 allow_type_req_dfs[fact_name]['ReqIdleGlideins'] = [0] * len(allow_type_req_dfs[fact_name])
 
-        publish_requests_df = pandas.DataFrame(pandas.concat(allow_type_req_dfs.values(), ignore_index=True))
+        publish_requests_df = pandas.DataFrame(pandas.concat(allow_type_req_dfs.values(), ignore_index=True, sort=True))
         self.publish_to_htcondor(self.classad_type, publish_requests_df)
         self.create_invalidate_constraint(publish_requests_df)
-
 
     def create_invalidate_constraint(self, requests_df):
         if not requests_df.empty:
@@ -79,7 +75,8 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                 client_names = list(set(request_group['ClientName']))
                 client_names.sort()
                 if client_names:
-                    constraint = '(glideinmytype == "%s") && (stringlistmember(ClientName, "%s"))' % (self.classad_type, ','.join(client_names))
+                    constraint = '(glideinmytype == "%s") && (stringlistmember(ClientName, "%s"))' % \
+                                 (self.classad_type, ','.join(client_names))
                     self.invalidate_ads_constraint[collector_host] = constraint
 
 
