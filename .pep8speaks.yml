@@ -12,6 +12,7 @@ flake8:
       - E302 # expected 2 blank lines, found 1
       - E261 # at least two spaces before inline comment
       - E265 # block comment should start with '# '
+      - W503 # line break before binary operator
 
     exclude: []
     count: True
