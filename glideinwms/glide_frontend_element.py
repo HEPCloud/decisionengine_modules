@@ -1927,8 +1927,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     job_count_matched = 0
 
                     for (fom, fom_group_entries) in fom_matches:
-                        fom_group_entries_up = fom_group_entries.query(
-                            'GLIDEIN_In_Downtime != True')
                         job_count_unmatched = job_count - job_count_matched
                         if job_count_unmatched > 0:
                             # Distribute the jobs equally among this entry group
