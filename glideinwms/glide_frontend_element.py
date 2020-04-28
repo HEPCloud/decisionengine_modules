@@ -1805,15 +1805,15 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             matches, entries_with_cpus)
                         dbg_info.append('%i jobs requesting %i cpus matching 1 entry '
                                         '(fom %i) w/ %i cpus: (<%s>, <%s>, <%s, %s>) %s, %s'
-                                        %(job_count,
-                                          req_cpus,
-                                          len(fom_matches),
-                                          glidein_cpus,
-                                          prop_match_cpu.get(key, 0),
-                                          float(req_cpus) / glidein_cpus,
-                                          type(req_cpus),
-                                          type(glidein_cpus),
-                                          prop_match_cpu[key], key)
+                                        % (job_count,
+                                           req_cpus,
+                                           len(fom_matches),
+                                           glidein_cpus,
+                                           prop_match_cpu.get(key, 0),
+                                           float(req_cpus) / glidein_cpus,
+                                           type(req_cpus),
+                                           type(glidein_cpus),
+                                           prop_match_cpu[key], key)
                                         )
                     else:
                         # Append FOM for all matches that are not in downtime
