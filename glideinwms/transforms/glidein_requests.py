@@ -1,4 +1,3 @@
-
 import os.path
 import argparse
 import pprint
@@ -8,7 +7,6 @@ import traceback
 
 import logging
 from decisionengine.framework.modules import Transform
-from decisionengine.framework.dataspace.datablock import DataBlock
 from decisionengine_modules.glideinwms import glide_frontend_element
 from decisionengine_modules.glideinwms import resource_dist_plugins
 
@@ -86,14 +84,8 @@ class GlideinRequestManifests(Transform.Transform):
             fe_cfg = self.read_fe_config()
             # Get factory global classad dataframe
             factory_globals = datablock.get('factoryglobal_manifests')
-            # Initialize an empty DataFrame so we can copy factory entries
-            entries = pandas.DataFrame()
-            # Get factory entries dataframe for different type of entries
-            # for et in SUPPORTED_ENTRY_TYPES:
-            #    entries = entries.append(datablock.get(et), ignore_index=True)
-            #    pandas.concat(datablock.get(et), ignore_index=True)
             entries = pandas.DataFrame(pandas.concat(
-                [datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True))
+                [datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True))
             if entries.empty:
                 # There are no entries to request resources from
                 self.logger.info(
@@ -146,12 +138,6 @@ class GlideinRequestManifests(Transform.Transform):
                 self.logger.info(
                     '--------------------------------------------')
 
-                # self.logger.info(jobs_df.columns.values)
-                #self.logger.info('----> Name: %s' % entries.get('Name'))
-                #self.logger.info('----> GLIDEIN_Max_Walltime: %s' % entries.get('GLIDEIN_Max_Walltime'))
-                #self.logger.info('----> GLIDEIN_CPUS: %s' % entries.get('GLIDEIN_CPUS'))
-                #self.logger.info('----> GLIDEIN_Supported_VOs: %s' % entries.get('GLIDEIN_Supported_VOs'))
-                #matched_entries = pandas.DataFrame(entries).query(match_exp)
                 matched_entries = entries.query(match_exp)
 
                 # Get the Frontend element object. Currently FOM.
@@ -162,11 +148,11 @@ class GlideinRequestManifests(Transform.Transform):
                 # for this bucket/frontend group
                 group_manifests = \
                     gfe.generate_glidein_requests(
-                        #jobs_df, job_clusters_df, slots_df, matched_entries,
+                        # jobs_df, job_clusters_df, slots_df, matched_entries,
                         jobs_df, slots_df, matched_entries, factory_globals,
                         job_filter=job_query, fom_entries=fom_entries)
                 manifests = self.merge_requests(manifests, group_manifests)
-        except Exception as e:
+        except Exception:
             self.logger.error(
                 'Error generating glidein requests: %s' % traceback.format_exc())
             raise
@@ -209,7 +195,9 @@ class GlideinRequestManifests(Transform.Transform):
     def read_fe_config(self):
         if not os.path.isfile(self.de_frontend_configfile):
             raise RuntimeError(
-                'Error reading Frontend config for DE %s. Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' % self.de_frontend_configfile)
+                'Error reading Frontend config for DE %s. '
+                'Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' %
+                self.de_frontend_configfile)
         fe_cfg = eval(open(self.de_frontend_configfile, 'r').read())
         if not isinstance(fe_cfg, dict):
             raise ValueError('Frontend config for DE in %s is invalid' %
