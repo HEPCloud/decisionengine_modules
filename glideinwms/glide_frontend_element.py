@@ -37,10 +37,10 @@ def get_gfe_obj(fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom'):
     Return glide frontend object of right type based on request
     """
     gfe_obj = None
-    if gfe_type == 'glideinwms':
-        gfe_obj = GlideFrontendElement(fe_group, acct_group, fe_cfg)
-    elif gfe_type == 'glideinwms_fom':
+    if gfe_type == 'glideinwms_fom':
         gfe_obj = GlideFrontendElementFOM(fe_group, acct_group, fe_cfg)
+    elif gfe_type == 'glideinwms':
+        gfe_obj = GlideFrontendElement(fe_group, acct_group, fe_cfg)
     else:
         raise RuntimeError(
             'GlideFrontendElement of type %s not supported' % gfe_type)
