@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import argparse
 import pprint
@@ -13,7 +12,7 @@ PRODUCES = ['job_clusters']
 
 CONSUMES = ['job_manifests']
 
-#EMPTY_JOB_CLUSTER = pandas.DataFrame({
+# EMPTY_JOB_CLUSTER = pandas.DataFrame({
 #                'Job_Bucket_Criteria_Expr': [""],
 #                'Site_Bucket_Criteria_Expr': [""],
 #                'Totals': [0],
@@ -22,13 +21,13 @@ CONSUMES = ['job_manifests']
 #                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
 
 
-# TODO 
+# TODO
 # - what debugging logs are needed?
 # - what and how is metadata for a dataframe?
 # - do we need to validate case or type for attr content?  again onboarding?
 
 class JobClustering(Transform.Transform):
-    
+
     def __init__(self, config):
         super(JobClustering, self).__init__(config)
 
@@ -39,8 +38,10 @@ class JobClustering(Transform.Transform):
         self.job_q_expr = config.get('job_q_expr')
 
         # Creating dataframe with config info but all totals are zero
-        totals = [[job_expr[0], self.match_exprs.get(job_expr), 0, job_expr[1]] for job_expr in self.match_exprs.keys()]
-        self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
+        totals = [[job_expr[0], self.match_exprs.get(
+            job_expr), 0, job_expr[1]] for job_expr in self.match_exprs.keys()]
+        self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals, columns=[
+                                                  'Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
 
         self.logger = logging.getLogger()
 
@@ -50,13 +51,11 @@ class JobClustering(Transform.Transform):
         """
         return CONSUMES
 
-
     def produces(self):
         """
         Return list of items produced
         """
         return PRODUCES
-
 
     def transform(self, datablock):
 
@@ -95,18 +94,23 @@ class JobClustering(Transform.Transform):
         try:
             df_q = df_full_q.query(self.job_q_expr)
             # Query job q and populate bucket totals
-            totals = [[job_expr[0], self.match_exprs.get(job_expr), df_q.query(job_expr[0]).shape[0], job_expr[1]] for job_expr in self.match_exprs.keys()]
-            df_job_clusters = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
+            totals = [[job_expr[0], self.match_exprs.get(job_expr), df_q.query(
+                job_expr[0]).shape[0], job_expr[1]] for job_expr in self.match_exprs.keys()]
+            df_job_clusters = pandas.DataFrame(totals, columns=[
+                                               'Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
             self.logger.debug("Job category totals: %s" % df_job_clusters)
 
         except KeyError:
-            self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
+            self.logger.error(
+                "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
         except ValueError:
-            self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
+            self.logger.error(
+                "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
         except pandas.core.computation.ops.UndefinedVariableError:
-            self.logger.error("Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
+            self.logger.error(
+                "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
 
         self.logger.info("*** Ending job clustering ***")
@@ -126,7 +130,7 @@ def module_config_template():
             'parameters': {
                 'match_expressions': {
                       "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"]
-                 }
+                }
             },
         }
     }

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os.path
 import argparse
 import pprint
@@ -9,7 +7,6 @@ import traceback
 
 import logging
 from decisionengine.framework.modules import Transform
-from decisionengine.framework.dataspace.datablock import DataBlock
 from decisionengine_modules.glideinwms import glide_frontend_element
 from decisionengine_modules.glideinwms import resource_dist_plugins
 
@@ -29,6 +26,7 @@ SUPPORTED_ENTRY_TYPES = [
 
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
+
 
 class GlideinRequestManifests(Transform.Transform):
 
@@ -56,20 +54,17 @@ class GlideinRequestManifests(Transform.Transform):
 
         self.logger = logging.getLogger()
 
-
     def consumes(self):
         """
         Return list of items consumed
         """
         return CONSUMES
 
-
     def produces(self):
         """
         Return list of items produced
         """
         return PRODUCES
-
 
     def transform(self, datablock):
         """
@@ -89,16 +84,12 @@ class GlideinRequestManifests(Transform.Transform):
             fe_cfg = self.read_fe_config()
             # Get factory global classad dataframe
             factory_globals = datablock.get('factoryglobal_manifests')
-            # Initialize an empty DataFrame so we can copy factory entries
-            entries = pandas.DataFrame()
-            # Get factory entries dataframe for different type of entries
-            #for et in SUPPORTED_ENTRY_TYPES:
-            #    entries = entries.append(datablock.get(et), ignore_index=True)
-            #    pandas.concat(datablock.get(et), ignore_index=True)
-            entries = pandas.DataFrame(pandas.concat([datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True))
+            entries = pandas.DataFrame(pandas.concat(
+                [datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True))
             if entries.empty:
                 # There are no entries to request resources from
-                self.logger.info('There are no entries to request resources from')
+                self.logger.info(
+                    'There are no entries to request resources from')
                 return {
                     CONSUMES[0]: pandas.DataFrame(),
                     CONSUMES[1]: pandas.DataFrame()
@@ -126,28 +117,27 @@ class GlideinRequestManifests(Transform.Transform):
             # Get HTCondor slots dataframe
             slots_df = datablock.get('startd_manifests')
 
-            #self.logger.info(job_clusters_df)
+            # self.logger.info(job_clusters_df)
             for index, row in job_clusters_df.iterrows():
                 # Each job bucket represents a frontend group equivalent
                 # For every job bucket figure out how many glideins to request
                 # at which entry (i.e entries matching entry query expressions)
 
-                self.logger.info('--------------------------------------------')
+                self.logger.info(
+                    '--------------------------------------------')
                 fe_group = row.get('Frontend_Group')
 
-                self.logger.info('Processing glidein requests for the FE Group: %s' % fe_group)
+                self.logger.info(
+                    'Processing glidein requests for the FE Group: %s' % fe_group)
                 job_query = row.get('Job_Bucket_Criteria_Expr')
-                self.logger.info('Frontend Group %s job query: %s' % (fe_group, job_query))
+                self.logger.info('Frontend Group %s job query: %s' %
+                                 (fe_group, job_query))
                 match_exp = ' or '.join(row.get('Site_Bucket_Criteria_Expr'))
-                self.logger.info('Frontend Group %s site matching expression : %s' % (fe_group, match_exp))
-                self.logger.info('--------------------------------------------')
+                self.logger.info(
+                    'Frontend Group %s site matching expression : %s' % (fe_group, match_exp))
+                self.logger.info(
+                    '--------------------------------------------')
 
-                #self.logger.info(jobs_df.columns.values)
-                #self.logger.info('----> Name: %s' % entries.get('Name'))
-                #self.logger.info('----> GLIDEIN_Max_Walltime: %s' % entries.get('GLIDEIN_Max_Walltime'))
-                #self.logger.info('----> GLIDEIN_CPUS: %s' % entries.get('GLIDEIN_CPUS'))
-                #self.logger.info('----> GLIDEIN_Supported_VOs: %s' % entries.get('GLIDEIN_Supported_VOs'))
-                #matched_entries = pandas.DataFrame(entries).query(match_exp)
                 matched_entries = entries.query(match_exp)
 
                 # Get the Frontend element object. Currently FOM.
@@ -158,16 +148,16 @@ class GlideinRequestManifests(Transform.Transform):
                 # for this bucket/frontend group
                 group_manifests = \
                     gfe.generate_glidein_requests(
-                        #jobs_df, job_clusters_df, slots_df, matched_entries,
+                        # jobs_df, job_clusters_df, slots_df, matched_entries,
                         jobs_df, slots_df, matched_entries, factory_globals,
                         job_filter=job_query, fom_entries=fom_entries)
                 manifests = self.merge_requests(manifests, group_manifests)
-        except:
-            self.logger.error('Error generating glidein requests: %s' % traceback.format_exc())
+        except Exception:
+            self.logger.error(
+                'Error generating glidein requests: %s' % traceback.format_exc())
             raise
 
         return manifests
-
 
     def sanitize_entries(self, entries):
         """
@@ -176,15 +166,16 @@ class GlideinRequestManifests(Transform.Transform):
         """
         tag = 'DE_ORIGINAL'
 
-        entries['GLIDEIN_CPUS_%s'%tag] = entries['GLIDEIN_CPUS']
+        entries['GLIDEIN_CPUS_%s' % tag] = entries['GLIDEIN_CPUS']
         if 'GLIDEIN_ESTIMATED_CPUS' in entries.columns:
-            entries['GLIDEIN_ESTIMATED_CPUS_%s'%tag] = entries['GLIDEIN_ESTIMATED_CPUS']
+            entries['GLIDEIN_ESTIMATED_CPUS_%s' %
+                    tag] = entries['GLIDEIN_ESTIMATED_CPUS']
             entries = entries.fillna(value={'GLIDEIN_ESTIMATED_CPUS': 1})
         else:
-             entries['GLIDEIN_ESTIMATED_CPUS_%s'%tag] = pandas.Series([numpy.nan]*len(entries))
-             entries['GLIDEIN_ESTIMATED_CPUS'] = pandas.Series([1]*len(entries))
+            entries['GLIDEIN_ESTIMATED_CPUS_%s' %
+                    tag] = pandas.Series([numpy.nan] * len(entries))
+            entries['GLIDEIN_ESTIMATED_CPUS'] = pandas.Series([1] * len(entries))
         return entries.apply(sanitize_glidein_cpus, axis=1)
-
 
     def merge_requests(self, manifests, group_manifests):
         merged_manifests = {}
@@ -192,28 +183,32 @@ class GlideinRequestManifests(Transform.Transform):
             m_keys = set(manifests.keys())
             g_keys = set(group_manifests.keys())
             if m_keys != g_keys:
-                raise RuntimeError('Mismatch in manifest keys: %s, %s' % (m_keys, g_keys))
+                raise RuntimeError(
+                    'Mismatch in manifest keys: %s, %s' % (m_keys, g_keys))
             for key in m_keys:
-                merged_manifests[key] = manifests[key].append(group_manifests[key], ignore_index=True)
+                merged_manifests[key] = manifests[key].append(
+                    group_manifests[key], ignore_index=True)
         else:
             merged_manifests = group_manifests
         return merged_manifests
 
-
     def read_fe_config(self):
         if not os.path.isfile(self.de_frontend_configfile):
-            raise RuntimeError('Error reading Frontend config for DE %s. Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' % self.de_frontend_configfile)
+            raise RuntimeError(
+                'Error reading Frontend config for DE %s. '
+                'Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' %
+                self.de_frontend_configfile)
         fe_cfg = eval(open(self.de_frontend_configfile, 'r').read())
         if not isinstance(fe_cfg, dict):
-            raise ValueError('Frontend config for DE in %s is invalid' % self.de_frontend_configfile)
+            raise ValueError('Frontend config for DE in %s is invalid' %
+                             self.de_frontend_configfile)
         return fe_cfg
-
 
     def shortlist_entries(self, foms):
         fom_plugin = resource_dist_plugins.FOMOrderPlugin(foms)
         return fom_plugin.eligible_resources(
-                   constraint=self.fom_resource_constraint,
-                   limit=self.fom_resource_limit)
+            constraint=self.fom_resource_constraint,
+            limit=self.fom_resource_limit)
 
 
 def module_config_template():

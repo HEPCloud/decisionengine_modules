@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pandas as pd
 import pandasql as pdsql
 
@@ -71,9 +70,9 @@ if __name__ == "__main__":
     req = {}
     limit = 5
     for res in resources_to_request:
-        print "considering jobs for %s" % res
-        print "number of jobs remaining: %i" % number_of_jobs
-        print "limit: %i" % limit
+        print("considering jobs for %s" % res)
+        print("number of jobs remaining: %i" % number_of_jobs)
+        print("limit: %i" % limit)
         if number_of_jobs - limit > 0:
             req[res] = limit
             number_of_jobs -= limit
@@ -82,6 +81,6 @@ if __name__ == "__main__":
             number_of_jobs = 0
         else:
             break
-    print "number of unconsidered jobs: %i" % number_of_jobs
+    print("number of unconsidered jobs: %i" % number_of_jobs)
 
-    print req
+    print(req)

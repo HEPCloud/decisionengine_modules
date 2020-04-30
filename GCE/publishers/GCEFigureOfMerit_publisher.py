@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Publishes price / performance data
 
@@ -16,8 +15,9 @@ import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 import logging
 
-DEFAULT_GRAPHITE_CONTEXT="hepcloud.de.gce"
-CONSUMES=['GCE_Figure_Of_Merit']
+DEFAULT_GRAPHITE_CONTEXT = "hepcloud.de.gce"
+CONSUMES = ['GCE_Figure_Of_Merit']
+
 
 class GCEFigureOfMeritPublisher(publisher):
     def __init__(self, config):
@@ -30,7 +30,8 @@ class GCEFigureOfMeritPublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.fig_of_merit'%(graphite.sanitize_key(row['EntryName'])))
+            key = ('%s.fig_of_merit' %
+                   (graphite.sanitize_key(row['EntryName'])))
             d[key] = row['FigureOfMerit']
         return self.graphite_context_header, d
 
@@ -43,13 +44,13 @@ def module_config_template():
     d = {"GCEFigureOfMeritPublisher": {
          "module": "modules.GCE.publishers.GCEFigureOfMerit_publisher",
          "name": "GCEFigureOfMeritPublisher",
-         },}
-    print "Entry in channel cofiguration"
+         }, }
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t publish_to_graphite - publish to graphite if True"
-    print "\t graphite_host - graphite host name"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t publish_to_graphite - publish to graphite if True")
+    print("\t graphite_host - graphite host name")
 
 
 def module_config_info():
@@ -57,7 +58,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
+    print("consumes", CONSUMES)
     module_config_template()
 
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import importlib
 import string
 import time
@@ -7,6 +6,7 @@ import pprint
 """
 Load python object
 """
+
 
 def load(python_file, retries=0, timeout=0):
     """
@@ -33,10 +33,11 @@ def load(python_file, retries=0, timeout=0):
         except IOError:
             time.sleep(timeout)
     else:
-         raise RuntimeError('can not load %s'%(python_file,))
+        raise RuntimeError('can not load %s' % (python_file,))
 
     return config
 
+
 if __name__ == '__main__':
     config = load('spot_price_config_sample.py')
-    print config
+    print(config)

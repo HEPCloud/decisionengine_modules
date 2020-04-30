@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import argparse
 import traceback
 import pprint
@@ -25,13 +24,11 @@ class FactoryGlobalManifests(Source.Source):
         self.subsystem_name = 'any'
         self.logger = logging.getLogger()
 
-
     def produces(self):
         """
         Return list of items produced
         """
         return PRODUCES
-
 
     def acquire(self):
         """
@@ -63,14 +60,18 @@ class FactoryGlobalManifests(Source.Source):
                     else:
                         df['CollectorHosts'] = [col_host] * len(df)
 
-                    dataframe = pandas.concat([dataframe, df], ignore_index=True)
+                    dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
             except htcondor_query.QueryError:
-                self.logger.warning('Failed to get glidefactoryglobal classads from collector host(s) "%s"' % collector_host)
-                self.logger.error('Failed to get glidefactoryglobal classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
+                self.logger.warning('Failed to get glidefactoryglobal classads from collector host(s) "%s"' %
+                                    collector_host)
+                self.logger.error('Failed to get glidefactoryglobal classads from collector host(s) "%s". '
+                                  'Traceback: %s' % (collector_host, traceback.format_exc()))
             except Exception:
-                self.logger.warning('Unexpected error fetching glidefactoryglobal classads from collector host(s) "%s"' % collector_host)
-                self.logger.error('Unexpected error fetching glidefactoryglobal classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
-
+                self.logger.warning('Unexpected error fetching glidefactoryglobal classads '
+                                    'from collector host(s) "%s"' % collector_host)
+                self.logger.error('Unexpected error fetching glidefactoryglobal classads '
+                                  'from collector host(s) "%s". Traceback: %s' %
+                                  (collector_host, traceback.format_exc()))
 
         return {PRODUCES[0]: dataframe}
 

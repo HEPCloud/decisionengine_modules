@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import os
 import time
@@ -9,6 +8,7 @@ from glideinwms.lib import condorExe
 import logging
 
 logger = logging.getLogger()
+
 
 class Credential:
 
@@ -41,10 +41,11 @@ class Credential:
         self.type = proxy_types.get(proxy_fname, "Unknown")
         self.security_class = proxy_security_classes.get(proxy_fname, proxy_id)
         self.trust_domain = proxy_trust_domains.get(proxy_fname, "None")
-        self.update_frequency = int(proxy_update_frequency.get(proxy_fname, -1))
+        self.update_frequency = int(
+            proxy_update_frequency.get(proxy_fname, -1))
 
         # Following items can be None
-        self.vm_id_fname   = proxy_vmid_fname.get(proxy_fname)
+        self.vm_id_fname = proxy_vmid_fname.get(proxy_fname)
         self.vm_type_fname = proxy_vmtype_fname.get(proxy_fname)
         self.vm_id = proxy_vm_ids.get(proxy_fname)
         self.vm_type = proxy_vm_types.get(proxy_fname)
@@ -56,7 +57,6 @@ class Credential:
 
         # Will be initialized when get_id() is called
         self._id = None
-
 
     def get_id(self, recreate=False):
         """
@@ -77,7 +77,6 @@ class Credential:
             self._id = self.file_id(self.get_id_filename())
         return self._id
 
-
     def get_id_filename(self):
         """
         Get credential file used to generate the credential id
@@ -95,23 +94,23 @@ class Credential:
             cred_file = self.pilot_fname
         return cred_file
 
-
     def create(self):
         """
         Generate the credential
         """
 
         if self.creation_script:
-            logger.debug("Creating credential using %s" % (self.creation_script))
+            logger.debug("Creating credential using %s" %
+                         (self.creation_script))
             try:
                 condorExe.iexe_cmd(self.creation_script)
-            except:
-                logger.exception("Creating credential using %s failed" % (self.creation_script))
+            except Exception as e:
+                logger.exception(
+                    "Creating credential using %s failed" % (self.creation_script))
                 self.advertize = False
 
             # Recreating the credential can result in ID change
             self._id = self.file_id(self.get_id_filename())
-
 
     def create_if_not_exist(self):
         """
@@ -121,7 +120,6 @@ class Credential:
         if self.filename and (not os.path.exists(self.filename)):
             logger.debug("Credential %s does not exist." % (self.filename))
             self.create()
-
 
     def get_string(self, cred_file=None):
         """
@@ -141,16 +139,16 @@ class Credential:
             data_fd = open(cred_file)
             cred_data = data_fd.read()
             data_fd.close()
-        except:
+        except Exception as e:
             # This credential should not be advertised
             self.advertize = False
             logger.exception("Failed to read credential %s: " % cred_file)
             raise
         return cred_data
 
-
     # PM: Why are the usage details part of Credential Class?
     #     This is overloading the purpose of Credential Class
+
     def add_usage_details(self, req_idle=0, req_max_run=0):
         """
         Add usage details for this credential
@@ -158,13 +156,11 @@ class Credential:
         self.req_idle = req_idle
         self.req_max_run = req_max_run
 
-
     def get_usage_details(self):
         """
         Return usage details for this credential
         """
         return (self.req_idle, self.req_max_run)
-
 
     def file_id(self, filename, ignoredn=False):
         """
@@ -172,11 +168,10 @@ class Credential:
         """
         if (("grid_proxy" in self.type) and not ignoredn):
             dn = x509Support.extract_DN(filename)
-            hash_str = filename+dn
+            hash_str = filename + dn
         else:
             hash_str = filename
-        return str(abs(hash(hash_str))%1000000)
-
+        return str(abs(hash(hash_str)) % 1000000)
 
     def time_left(self):
         """
@@ -188,25 +183,25 @@ class Credential:
             return 0
 
         if ("grid_proxy" in self.type) or ("cert_pair" in self.type):
-            time_list = condorExe.iexe_cmd("openssl x509 -in %s -noout -enddate" % self.filename)
+            time_list = condorExe.iexe_cmd(
+                "openssl x509 -in %s -noout -enddate" % self.filename)
             if "notAfter=" in time_list[0]:
                 time_str = time_list[0].split("=")[1].strip()
-                timeleft = calendar.timegm(time.strptime(time_str,"%b %d %H:%M:%S %Y %Z"))-int(time.time())
+                timeleft = calendar.timegm(time.strptime(
+                    time_str, "%b %d %H:%M:%S %Y %Z")) - int(time.time())
             return timeleft
         else:
             return -1
-
 
     def renew(self):
         """
         Renews credential if time_left()<update_frequency
         Only works if type is grid_proxy or creation_script is provided
         """
-        remaining=self.time_left()
+        remaining = self.time_left()
         if ((remaining != -1) and (self.update_frequency != -1) and
-            (remaining < self.update_frequency)):
+                (remaining < self.update_frequency)):
             self.create()
-
 
     def supports_auth_method(self, auth_method):
         """
@@ -216,7 +211,6 @@ class Credential:
         type_set = set(self.type.split('+'))
         am_set = set(auth_method.split('+'))
         return am_set.issubset(type_set)
-
 
     def __str__(self):
         output = ""
@@ -231,7 +225,7 @@ class Credential:
         try:
             output += "key_fname = %s\n" % self.key_fname
             output += "pilot_fname = %s\n" % self.pilot_fname
-        except:
+        except Exception as e:
             pass
         output += "vm_id = %s\n" % self.vm_id
         output += "vm_type = %s\n" % self.vm_type
@@ -247,7 +241,6 @@ class CredentialCache:
     # Specially expensive to create id for proxy which uses DN in hash
     def __init__(self):
         self.file_id_cache = {}
-
 
     def file_id(self, cred, filename):
         """

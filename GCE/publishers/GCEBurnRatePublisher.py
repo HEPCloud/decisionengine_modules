@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Publishes GCE VM Burn Rates
 
@@ -12,6 +11,7 @@ import logging
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.gce"
 CONSUMES = ['GCE_Burn_Rate']
 
+
 class GCEBurnRatePublisher(publisher):
     def __init__(self, config):
         super(GCEBurnRatePublisher, self).__init__(config)
@@ -23,8 +23,9 @@ class GCEBurnRatePublisher(publisher):
     def graphite_context(self, data_block):
         d = {}
         # Only one row in this data frame
-        d['hepcloud-fnal.BurnRate'] = data_block.loc[0,'BurnRate'].item()
+        d['hepcloud-fnal.BurnRate'] = data_block.loc[0, 'BurnRate'].item()
         return self.graphite_context_header, d
+
 
 def module_config_template():
     """
@@ -37,12 +38,12 @@ def module_config_template():
             "name": "GCEBurnRatePublisher",
         },
     }
-    print "Entry in channel configuration"
+    print("Entry in channel configuration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t publish_to_graphite - publish to graphite if True"
-    print "\t graphite_host - graphite host name"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t publish_to_graphite - publish to graphite if True")
+    print("\t graphite_host - graphite host name")
 
 
 def module_config_info():
@@ -50,7 +51,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
+    print("consumes", CONSUMES)
     module_config_template()
 
 

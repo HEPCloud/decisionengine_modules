@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Get AWS capacity (running instances) information.
 """
@@ -18,6 +17,7 @@ import decisionengine_modules.load_config as load_config
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
 
+
 class OccupancyData(object):
     """
     Occupancy data element
@@ -31,18 +31,19 @@ class OccupancyData(object):
         """
         self.data = occupancy_data
 
-    def __cmp__(self, other = None):
+    def __cmp__(self, other=None):
         """
         overrides comparison method
         """
         try:
-            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
+            if (self.data['AvailabilityZone'], self.data['InstanceType']) == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
 
-        except:
+        except Exception as e:
             pass
 
         return -1
+
 
 class OccupancyForRegion(object):
     """
@@ -65,7 +66,7 @@ class OccupancyForRegion(object):
                                             region_name=region)
             self.ec2_resource = session.resource('ec2', region_name=region)
         else:
-            self.ec2_resource =  boto3.resource('ec2', region)
+            self.ec2_resource = boto3.resource('ec2', region)
         self.instance_types = instance_types
         self.account_name = profile_name
 
@@ -77,16 +78,16 @@ class OccupancyForRegion(object):
         """
 
         instances = self.ec2_resource.instances.all()
-        d ={}
+        d = {}
         for instance in instances:
             running_vms = 0
             if instance.state['Name'] == 'running':
                 running_vms = 1
             d[instance.id] = {'AccountName': self.account_name,
-                              'InstanceType' : instance.instance_type,
+                              'InstanceType': instance.instance_type,
                               'AvailabilityZone': instance.placement['AvailabilityZone'],
                               'RunningVms': running_vms,
-            }
+                              }
         return d
 
     def capacity(self, instances):
@@ -97,21 +98,18 @@ class OccupancyForRegion(object):
         :arg instances: instances returned by :meth:`get_ec2_instances`
         :rtype: :obj:`list`: list of spot price data (:class:`aws_data.AWSDataElement`)
         """
-        l = []
+        ll = []
         for instance, data in instances.items():
-            if not self.instance_types or \
-                    (self.instance_types and \
-                         data['InstanceType'] in self.instance_types):
+            if ((not self.instance_types) or
+                    (self.instance_types and
+                     (data['InstanceType'] in self.instance_types))):
                 occ_data = OccupancyData(data)
-                if not occ_data in l:
-                    l.append(occ_data)
+                if occ_data not in ll:
+                    ll.append(occ_data)
                 else:
-                    i = l.index(occ_data)
-                    l[i].data['RunningVms'] += occ_data.data['RunningVms']
-        return l
-
-
-
+                    i = ll.index(occ_data)
+                    ll[i].data['RunningVms'] += occ_data.data['RunningVms']
+        return ll
 
     '''
     def fill_capacity_data(self, instances):
@@ -130,13 +128,15 @@ class OccupancyForRegion(object):
                           RunningVms=row.RunningVms)
   '''
 
+
 class AWSOccupancy(Source.Source):
     def __init__(self, configdict):
         self.config_file = configdict['occupancy_configuration']
         self.account_dict = {}
         self.logger = logging.getLogger()
 
-    def produces(self,schema_id_list): return PRODUCES
+    def produces(self, schema_id_list):
+        return PRODUCES
 
     def acquire(self):
         """
@@ -147,9 +147,10 @@ class AWSOccupancy(Source.Source):
         """
 
         # Load kown accounts configuration
-        self.account_dict = load_config.load(self.config_file, 5, 20) # account configuration is dynamic
+        # account configuration is dynamic
+        self.account_dict = load_config.load(self.config_file, 5, 20)
         occupancy_data = []
-        self.logger.debug('account_dict %s'%(self.account_dict,))
+        self.logger.debug('account_dict %s' % (self.account_dict,))
         for account in self.account_dict:
             for region in self.account_dict[account]:
                 occcupancy = OccupancyForRegion(region, profile_name=account)
@@ -160,7 +161,8 @@ class AWSOccupancy(Source.Source):
                         occupancy_data += data
 
         oc_list = [i.data for i in occupancy_data]
-        return { PRODUCES[0]: pd.DataFrame(oc_list)}
+        return {PRODUCES[0]: pd.DataFrame(oc_list)}
+
 
 def module_config_template():
     """
@@ -168,38 +170,38 @@ def module_config_template():
     """
 
     d = {"AWSOccupancy": {
-        "module" :  "modules.AWS.sources.AWSOccupancy",
-        "name"   :  "AWSSpotOccupancy",
-                    "parameters": {
-                        "occupancy_configuration": "%s/de_config/AWS_occupancy_config.py"%(os.environ.get('HOME'),),
-                    },
-        "schedule": 60*60,
-        }
+        "module": "modules.AWS.sources.AWSOccupancy",
+        "name": "AWSSpotOccupancy",
+        "parameters": {
+            "occupancy_configuration": "%s/de_config/AWS_occupancy_config.py" % (os.environ.get('HOME'),),
+        },
+        "schedule": 60 * 60,
+    }
     }
 
     config = {"ProfileName1":
               ["RegionName1"],
-    }
+              }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t spot_price_configuration - configuration required to get AWS spot price information"
-    print "\t Example:"
-    print "-------------"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t spot_price_configuration - configuration required to get AWS spot price information")
+    print("\t Example:")
+    print("-------------")
     pprint.pprint(config)
-    print "where"
-    print "\t ProfileName1 - name of account profile (example: hepcloud-rnd)"
-    print "\t RegionName1 - name of region (example: us-west-2)"
+    print("where")
+    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
+    print("\t RegionName1 - name of region (example: us-west-2)")
+
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
-
 
 
 def main():
@@ -222,12 +224,12 @@ def main():
     elif args.configinfo:
         module_config_info()
     else:
-        occupancy = AWSOccupancy({'occupancy_configuration':'occupancy_config_sample.py'})
+        occupancy = AWSOccupancy(
+            {'occupancy_configuration': 'occupancy_config_sample.py'})
         rc = occupancy.acquire()
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":
     main()
-

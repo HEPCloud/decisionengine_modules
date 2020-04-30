@@ -1,4 +1,4 @@
-#!/usr/bin/python
+import six
 import abc
 import traceback
 import argparse
@@ -9,11 +9,8 @@ from decisionengine.framework.modules import Source
 import logging
 from decisionengine_modules.htcondor import htcondor_query
 
-
+@six.add_metaclass(abc.ABCMeta)
 class ResourceManifests(Source.Source):
-
-    __metaclass__ = abc.ABCMeta
-
 
     def __init__(self, config):
         super(ResourceManifests, self).__init__(config)

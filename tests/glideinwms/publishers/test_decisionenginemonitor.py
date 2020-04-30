@@ -24,10 +24,11 @@ request_dict = {
 request_df = pandas.DataFrame(request_dict)
 
 expected_constraint = {
-    'col1.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e1,e3,e2"))',
+    'col1.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e1,e2,e3"))',
     'col2.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e1,e2"))',
     'col3.com': '(glideinmytype == "glideclientmonitor") && (stringlistmember(GlideClientName, "e3"))'
 }
+
 
 class TestDecisionEngineMonitorManifests:
 
@@ -36,15 +37,13 @@ class TestDecisionEngineMonitorManifests:
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
         assert(p.consumes() == consumes)
 
-
     def test_publish(self):
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
         with mock.patch.object(decisionenginemonitor.DecisionEngineMonitorManifests, 'publish_to_htcondor') as publish_to_htcondor:
             publish_to_htcondor.return_value = None
             # TODO: Complete this test when we have detailed contents of the
             #       dataframe and the logic engine facts
-            assert(True == True)
-
+            # assert(True == True)
 
     def test_create_invalidate_constraint(self):
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)

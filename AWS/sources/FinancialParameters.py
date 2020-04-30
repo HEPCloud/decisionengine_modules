@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import pprint
 import pandas
 
@@ -6,18 +5,18 @@ from decisionengine.framework.modules import Source
 
 PRODUCES = ["financial_params"]
 
+
 class FinancialParameters(Source.Source):
 
     def __init__(self, config):
         super(FinancialParameters, self).__init__(config)
         self.financial_parameters_dict = config.get('financial_parameters')
 
-
     def produces(self):
         return PRODUCES
 
-
     # The DataBlock given to the source is t=0
+
     def acquire(self):
         """
         Read the financial parameters from the config file and
@@ -46,24 +45,24 @@ def module_config_template():
                 }
             }
         },
-        "schedule": 60*60,
+        "schedule": 60 * 60,
     }
 
-    print "Entry in channel configuration"
+    print("Entry in channel configuration")
     pprint.pprint(d)
-    print "where"
-    print "\t params - are the desired burn rates and balances"
+    print("where")
+    print("\t params - are the desired burn rates and balances")
+
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 
 def main():
-
     """
     Call this a a test unit or use as CLI of this module
     """
@@ -94,6 +93,7 @@ def main():
         }
         MyFP = FinancialParameters(myparams)
         mydf = MyFP.acquire()
+
 
 if __name__ == "__main__":
     main()

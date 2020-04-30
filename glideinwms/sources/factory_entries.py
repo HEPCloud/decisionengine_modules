@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import argparse
 import traceback
@@ -73,7 +72,7 @@ class FactoryEntries(Source.Source):
                     else:
                         df['CollectorHosts'] = [col_host] * len(df)
 
-                    dataframe = pandas.concat([dataframe, df], ignore_index=True)
+                    dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
             except htcondor_query.QueryError:
                 self.logger.warning('Query error fetching glidefactory classads from collector host(s) "%s"' % collector_host)
                 self.logger.error('Query error fetching glidefactory classads from collector host(s) "%s". Traceback: %s' % (collector_host, traceback.format_exc()))
@@ -83,7 +82,7 @@ class FactoryEntries(Source.Source):
 
         results = {}
         if not dataframe.empty:
-            for key, value in self._entry_gridtype_map.iteritems():
+            for key, value in self._entry_gridtype_map.items():
                 results[key] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(value)))]
         else:
             # There were no entry classads in the factory collector or

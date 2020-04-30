@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Get AWS capacity (running instances) information.
 """
@@ -17,6 +16,9 @@ import decisionengine_modules.load_config as load_config
 # default values
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
+# TODO this is a default column list and needs to be overriden from configuration
+COLUMN_LIST = ['AccountName', 'AvailabilityZone', 'InstanceType', 'RunningVms']
+
 
 class OccupancyData(object):
     """
@@ -31,17 +33,18 @@ class OccupancyData(object):
         """
         self.data = occupancy_data
 
-    def __cmp__(self, other = None):
+    def __eq__(self, other=None):
         """
-        overrides comparison method
+        replaces comparison method
         """
-        try:
-            if (self.data['AvailabilityZone'], self.data['InstanceType'])  == (other.data['AvailabilityZone'], other.data['InstanceType']):
-                return 0
-        except:
-            pass
+        if not other:
+            return False
 
-        return -1
+        return (self.data['AvailabilityZone'], self.data['InstanceType']) == (other.data['AvailabilityZone'], other.data['InstanceType'])
+
+    def __ne__(self, other):
+        return not self == other
+
 
 class OccupancyForRegion(object):
     """
@@ -64,7 +67,7 @@ class OccupancyForRegion(object):
                                             region_name=region)
             self.ec2_resource = session.resource('ec2', region_name=region)
         else:
-            self.ec2_resource =  boto3.resource('ec2', region)
+            self.ec2_resource = boto3.resource('ec2', region)
         self.instance_types = instance_types
         self.account_name = profile_name
 
@@ -76,16 +79,16 @@ class OccupancyForRegion(object):
         """
 
         instances = self.ec2_resource.instances.all()
-        d ={}
+        d = {}
         for instance in instances:
             running_vms = 0
             if instance.state['Name'] == 'running':
                 running_vms = 1
             d[instance.id] = {'AccountName': self.account_name,
-                              'InstanceType' : instance.instance_type,
+                              'InstanceType': instance.instance_type,
                               'AvailabilityZone': instance.placement['AvailabilityZone'],
                               'RunningVms': running_vms,
-                          }
+                              }
 
         return d
 
@@ -97,21 +100,18 @@ class OccupancyForRegion(object):
         :arg instances: instances returned by :meth:`get_ec2_instances`
         :rtype: :obj:`list`: list of spot price data (:class:`aws_data.AWSDataElement`)
         """
-        l = []
+        ll = []
         for instance, data in instances.items():
-            if not self.instance_types or \
-                    (self.instance_types and \
-                         data['InstanceType'] in self.instance_types):
+            if not self.instance_types or (self.instance_types and
+                                           data['InstanceType'] in self.instance_types):
                 occ_data = OccupancyData(data)
-                if not occ_data in l:
-                    l.append(occ_data)
+                if occ_data not in ll:
+                    ll.append(occ_data)
                 else:
-                    i = l.index(occ_data)
-                    l[i].data['RunningVms'] += occ_data.data['RunningVms']
-        return l
+                    i = ll.index(occ_data)
+                    ll[i].data['RunningVms'] += occ_data.data['RunningVms']
 
-
-
+        return ll
 
     '''
     def fill_capacity_data(self, instances):
@@ -130,12 +130,13 @@ class OccupancyForRegion(object):
                           RunningVms=row.RunningVms)
   '''
 
+
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, *args, **kwargs):
         super(AWSOccupancy, self).__init__(*args, **kwargs)
         self.logger = logging.getLogger()
 
-    def produces(self): 
+    def produces(self):
         return PRODUCES
 
     def acquire(self):
@@ -149,11 +150,12 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         # Load kown accounts configuration
         account_conf = super(AWSOccupancy, self).acquire()
         if len(account_conf.keys()) != 1:
-            raise RuntimeError('Wrong configuration %s. Only one key is expected'%(account_conf,))
+            raise RuntimeError(
+                'Wrong configuration %s. Only one key is expected' % (account_conf,))
         self.account_dict = {}
         for k in account_conf:
             self.account_dict = account_conf[k].to_dict()
-        self.logger.debug('account_dict %s'%(self.account_dict,))
+        self.logger.debug('account_dict %s' % (self.account_dict,))
         occupancy_data = []
         for account in self.account_dict:
             for region in self.account_dict[account]:
@@ -165,7 +167,9 @@ class AWSOccupancy(SourceProxy.SourceProxy):
                         occupancy_data += data
 
         oc_list = [i.data for i in occupancy_data]
-        return { PRODUCES[0]: pd.DataFrame(oc_list)}
+        # to fix the test failure
+        return {PRODUCES[0]: pd.DataFrame(oc_list, columns=COLUMN_LIST)}
+
 
 def module_config_template():
     """
@@ -173,41 +177,41 @@ def module_config_template():
     """
 
     d = {"AWSOccupancy": {
-        "module" :  "modules.AWS.sources.AWSOccupancyWithSourceProxy",
-        "name"   :  "AWSSpotOccupancy",
-                    "parameters": {
-                        "channel_name": "source_channel_name",
-                        "Dataproducts": "list of data keys to retrieve from source channel data",
-                        "retries": "<number of retries to acquire data>",
-                        "retry_timeout": "<retry timeout>"
-                    },
-        "schedule": 60*60,
-        }
+        "module": "modules.AWS.sources.AWSOccupancyWithSourceProxy",
+        "name": "AWSSpotOccupancy",
+        "parameters": {
+            "channel_name": "source_channel_name",
+            "Dataproducts": "list of data keys to retrieve from source channel data",
+            "retries": "<number of retries to acquire data>",
+            "retry_timeout": "<retry timeout>"
+        },
+        "schedule": 60 * 60,
+    }
     }
 
     config = {"ProfileName1":
               ["RegionName1"],
-    }
+              }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t spot_price_configuration - configuration required to get AWS spot price information"
-    print "\t Example:"
-    print "-------------"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t spot_price_configuration - configuration required to get AWS spot price information")
+    print("\t Example:")
+    print("-------------")
     pprint.pprint(config)
-    print "where"
-    print "\t ProfileName1 - name of account profile (example: hepcloud-rnd)"
-    print "\t RegionName1 - name of region (example: us-west-2)"
+    print("where")
+    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
+    print("\t RegionName1 - name of region (example: us-west-2)")
+
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
-
 
 
 def main():
@@ -231,15 +235,14 @@ def main():
         module_config_info()
     else:
         occupancy = AWSOccupancy({"channel_name": "channel_aws_config_data",
-                               "Dataproducts":["spot_occupancy_config"],
-                               "retries": 3,
-                               "retry_timeout": 20,
-                           })
+                                  "Dataproducts": ["spot_occupancy_config"],
+                                  "retries": 3,
+                                  "retry_timeout": 20,
+                                  })
         rc = occupancy.acquire()
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":
     main()
-

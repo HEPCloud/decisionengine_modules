@@ -1,0 +1,123 @@
+language: python
+os: linux
+
+# What versions of python do we test with
+python:
+  - "2.7"
+  - "3.6"
+  - "3.8"
+  - "pypy3"
+
+jobs:
+  allow_failures:
+    # These don't need to work, but be nice if they did
+    - python: "2.7"
+    # https://svn.boost.org/trac10/ticket/4125 / https://github.com/boostorg/python/pull/291
+    - python: "pypy3"
+
+  fast_finish: true
+
+# Just some useful info and prep work
+before_install:
+  - uname -a
+  - pip install -U pip
+  - pip install -U pytest
+
+  # setup the 'simple major ver' link, missing for some versions on travis-ci....
+  - if [[ ! -e /opt/python/${TRAVIS_PYTHON_VERSION} ]]; then
+        sudo ln -s /opt/python/$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])') /opt/python/${TRAVIS_PYTHON_VERSION};
+    fi
+
+  # some things don't look for pymalloc version
+  - if [[ ! -e /opt/python/${TRAVIS_PYTHON_VERSION}/include/python${TRAVIS_PYTHON_VERSION} ]]; then
+        sudo ln -s /opt/python/${TRAVIS_PYTHON_VERSION}/include/python${TRAVIS_PYTHON_VERSION}m /opt/python/${TRAVIS_PYTHON_VERSION}/include/python${TRAVIS_PYTHON_VERSION};
+    fi
+
+  # old cmake and boost can't always find pypy
+  - if [[ -e /opt/python/${TRAVIS_PYTHON_VERSION}/lib/libpypy3-c.so ]]; then
+        PYPYVER=$(python -c 'import sys; print("%d.%d" % (sys.version_info.major, sys.version_info.minor))');
+        sudo ln -s /opt/python/${TRAVIS_PYTHON_VERSION}/lib/libpypy3-c.so /opt/python/${TRAVIS_PYTHON_VERSION}/lib/libpython3.so;
+        sudo ln -s /opt/python/${TRAVIS_PYTHON_VERSION}/lib/libpypy3-c.so /opt/python/${TRAVIS_PYTHON_VERSION}/lib/libpython${PYPYVER}.so;
+    fi
+
+# commands to install any dependencies
+install:
+
+  ## classad for python2 is not ideal here...
+  - if [[ $(echo ${TRAVIS_PYTHON_VERSION} | cut -d'.' -f1) -lt 3 ]]; then
+        sudo chown -R travis /usr/local/;
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/";
+        sudo apt-get -y install binutils tar wget xz-utils;
+        mkdir -p /tmp/condor;
+        mkdir -p /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
+        cd /tmp/condor;
+        wget https://research.cs.wisc.edu/htcondor/ubuntu/stable/pool/contrib/c/condor/condor_8.8.3-470254-ubuntu14_amd64.deb;
+        ar x condor_8.8.3-470254-ubuntu14_amd64.deb;
+        tar xf data.tar.xz;
+        mv -v usr/lib/libclassad* /usr/local/lib/;
+        mv -v usr/lib/condor/libcondor_utils* /usr/local/lib/;
+        mv -v usr/lib/condor/libpyclassad2.7* /usr/local/lib;
+        mv -v usr/lib/python2.7/dist-packages/classad.so /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
+        mv -v usr/lib/python2.7/dist-packages/htcondor.so /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages;
+        ldd /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages/classad.so;
+        ldd /home/travis/virtualenv/python$(python -c 'import sys;print("%d.%d.%d" % sys.version_info[:3])')/lib/python2.7/site-packages/htcondor.so;
+        cd -;
+    else
+        pip install classad;
+        pip install htcondor;
+    fi
+
+  # build a local boost with our specific python
+  - sudo apt-get install -y wget git libicu-dev zlib1g-dev libbz2-dev g++
+  - cd ~/
+  - sudo chown -R travis /usr/local/
+  ## This version of boost matches the default version in travis
+  - travis_retry wget -c http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.gz
+  - tar xf boost_1_58_0.tar.gz
+  - cd boost_1_58_0
+  - ./bootstrap.sh --with-python=$(which python) --with-python-root=/opt/python/${TRAVIS_PYTHON_VERSION}/ --with-libraries=python,regex,system
+  - ./b2 -q --prefix=/usr/local/ cxxflags=-fpermissive include=/opt/python/${TRAVIS_PYTHON_VERSION}/include/ install  -j 6
+  - cd ..
+  - rm -rf boost_1_58_0
+
+    # Setup pkg-config and cmake search paths to use the virtualenv python from travis
+  - export PKG_CONFIG_PATH="/opt/python/${TRAVIS_PYTHON_VERSION}/lib/pkgconfig"
+  - export CMAKE_INCLUDE_PATH="/opt/python/${TRAVIS_PYTHON_VERSION}/include/python${TRAVIS_PYTHON_VERSION}m/include/;/opt/python/${TRAVIS_PYTHON_VERSION}/include/python${TRAVIS_PYTHON_VERSION}/include/;/opt/python/${TRAVIS_PYTHON_VERSION}/include/"
+  - export CMAKE_LIBRARY_PATH="/opt/python/${TRAVIS_PYTHON_VERSION}/lib/;/opt/python/${TRAVIS_PYTHON_VERSION}/lib_pypy/"
+  - export PYVER=$(python -c 'import sys; print("%d.%d" % (sys.version_info.major, sys.version_info.minor))')
+
+  # Pull down decisionengine/master
+  - cd $(dirname ${TRAVIS_BUILD_DIR})
+  - git clone https://github.com/HEPCloud/decisionengine.git
+
+  # run cmake and build logic engine
+  - sudo apt-get -y install cmake g++
+  - mkdir -p ${TRAVIS_BUILD_DIR}/../decisionengine/framework/logicengine/cxx/build
+  - cd ${TRAVIS_BUILD_DIR}/../decisionengine/framework/logicengine/cxx/build
+  - cmake -DPYVER=${PYVER} -DCMAKE_LIBRARY_PATH="${CMAKE_LIBRARY_PATH}" -DCMAKE_INCLUDE_PATH="${CMAKE_INCLUDE_PATH}" ..
+  - make
+  - make liblinks
+
+  # pull in any listed python requirements
+  - cd ${TRAVIS_BUILD_DIR}/../decisionengine/
+  - pip install -r requirements.txt
+
+  - cd ${TRAVIS_BUILD_DIR}
+  - pip install -r requirements.txt
+
+  - pip install coveralls
+
+# Environment variables
+env:
+  - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/../decisionengine/framework/logicengine/"   PYTHONPATH=$(dirname ${TRAVIS_BUILD_DIR})    PYTHON_PATH=${PYTHONPATH}
+
+# command to run tests
+script:
+  - cd `dirname ${TRAVIS_BUILD_DIR}`
+  - coverage run --rcfile=decisionengine_modules/.coveragerc -m pytest -v -l --tb=native decisionengine_modules
+
+# hook into coveralls
+after_success:
+  - mv .coverage ${TRAVIS_BUILD_DIR}
+  - cd ${TRAVIS_BUILD_DIR}
+  - coveralls

@@ -1,21 +1,16 @@
-#!/usr/bin/python
-
 import abc
-import pandas
-
 import logging
+import pandas
+import six
 
 logger = logging.getLogger()
 
-
+@six.add_metaclass(abc.ABCMeta)
 class ResourceOrderPlugin(object):
 
     """
     Pure virtual class to have a minimum set of methods defined
     """
-
-    __metaclass__ = abc.ABCMeta
-
 
     def __init__(self, resources):
         # ordered_resources if a list of tuple (EntryName, ordering_criteria)
@@ -79,7 +74,7 @@ class FOMOrderPlugin(ResourceOrderPlugin):
                 logger.info('%s does not have any entries to order' % rss)
         try:
             self._ordered_resources = rss_foms.sort_values(
-                by=['FOM'], ascending=ascending).reset_index(drop=True)
+                by=['FOM', 'EntryName'], ascending=ascending).reset_index(drop=True)
         except KeyError as e:
             logger.error('Unable to find Figure of Merrit "FOM" in the dataframe columns %s' % list(self.resources.columns))
 

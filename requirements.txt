@@ -1,0 +1,15 @@
+# for runtime
+boto
+boto3
+google_auth
+google-api-python-client
+gcs-oauth2-boto-plugin
+pandas
+
+# commented out until we drop python2 support
+## classad ##
+
+# for tests
+mock
+pytest
+tabulate

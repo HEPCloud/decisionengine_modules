@@ -1,9 +1,7 @@
-#!/usr/bin/env python
 """
 Calculates real time burn rate for AWS
 
 """
-from __future__ import division
 import pandas as pd
 import pprint
 
@@ -35,10 +33,11 @@ class AwsBurnRate(Transform.Transform):
         if not occupancy.empty:
             df = pd.merge(occupancy,
                           spot_prices,
-                          how ="inner",
+                          how="inner",
                           on=["AccountName", "AvailabilityZone", "InstanceType"])
             if not df.empty:
-                df["BurnRate"] = pd.to_numeric(df["RunningVms"])*pd.to_numeric(df["SpotPrice"])
+                df["BurnRate"] = pd.to_numeric(
+                    df["RunningVms"]) * pd.to_numeric(df["SpotPrice"])
                 burn_df = pd.DataFrame([{"BurnRate": df["BurnRate"].sum()}])
 
         return {PRODUCES[0]: burn_df}
@@ -57,17 +56,17 @@ def module_config_template():
 
     d = {
         "AwsBurnRate": {
-           "module":  "modules.AWS.transforms.AwsBurnRate",
-           "name":  "AwsBurnRate",
-           "parameters": {
-           }
+            "module": "modules.AWS.transforms.AwsBurnRate",
+            "name": "AwsBurnRate",
+            "parameters": {
+            }
         }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
 
 
 def module_config_info():
@@ -75,8 +74,8 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
-    print "produces", PRODUCES
+    print("consumes", CONSUMES)
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -101,6 +100,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

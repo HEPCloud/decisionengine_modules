@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import argparse
 import pprint
 import traceback
@@ -41,7 +40,8 @@ class JobQ(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
         dataframe = pandas.DataFrame()
-        (collector_host, secondary_collectors) = htcondor_query.split_collector_host(self.collector_host)
+        (collector_host, secondary_collectors) = htcondor_query.split_collector_host(
+            self.collector_host)
         for schedd in self.schedds:
             try:
                 condor_q = htcondor_query.CondorQ(schedd_name=schedd,
@@ -52,8 +52,10 @@ class JobQ(Source.Source):
                 df = pandas.DataFrame(condor_q.stored_data)
                 if not df.empty:
                     # Add schedd name and collector host to job records
-                    df['ScheddName'] = pandas.Series([schedd]*len(condor_q.stored_data))
-                    df['CollectorHost'] = pandas.Series([collector_host]*len(condor_q.stored_data))
+                    df['ScheddName'] = pandas.Series(
+                        [schedd] * len(condor_q.stored_data))
+                    df['CollectorHost'] = pandas.Series(
+                        [collector_host] * len(condor_q.stored_data))
                     dataframe = dataframe.append(df, ignore_index=True)
             except htcondor_query.QueryError:
                 self.logger.warning('Query error fetching job classads from schedd "%s" in collector host(s) "%s".' %
@@ -61,7 +63,8 @@ class JobQ(Source.Source):
             except Exception:
                 msg = 'Unexpected error fetching job classads from schedd "{}" in collector host(s) "{}".'
                 self.logger.warning(msg.format(schedd, collector_host))
-                self.logger.error(msg.format(schedd, collector_host) + " Traceback: {}".format(traceback.format_exc()))
+                self.logger.error(msg.format(
+                    schedd, collector_host) + " Traceback: {}".format(traceback.format_exc()))
         return {'job_manifests': dataframe}
 
 

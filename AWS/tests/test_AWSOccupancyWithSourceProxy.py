@@ -10,13 +10,14 @@ from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
-config={"channel_name": "channel_aws_config_data",
-                               "Dataproducts": ["spot_occupancy_config"],
-                               "retries": 3,
-                               "retry_timeout": 20,
-    }
+config = {"channel_name": "channel_aws_config_data",
+          "Dataproducts": ["spot_occupancy_config"],
+          "retries": 3,
+          "retry_timeout": 20,
+          }
 
-account = {'spot_occupancy_config': pd.read_csv(os.path.join(DATA_DIR,'account_config.csv'))}
+account = {'spot_occupancy_config': pd.read_csv(
+    os.path.join(DATA_DIR, 'account_config.csv'))}
 
 expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
                                               'AWSOcupancyWithSourceProxy_expected_acquire.csv'))
@@ -25,7 +26,7 @@ produces = ['AWS_Occupancy']
 
 
 class SessionMock(object):
-    def resource(self, service = None, region_name = None):
+    def resource(self, service=None, region_name=None):
         return None
 
 
@@ -47,8 +48,10 @@ class TestAWSOccupancyWithSourceProxy:
                                                                  'occupancy.fixture'))
                         get_instances.return_value = cap
                         res = aws_occ.acquire()
-                        assert produces == res.keys()
-                        df1 = expected_pandas_df.sort_values(['AvailabilityZone', 'InstanceType'])
-                        new_df = res.get(produces[0]).sort_values(['AvailabilityZone', 'InstanceType'])
+                        assert produces == list(res.keys())
+                        df1 = expected_pandas_df.sort_values(
+                            ['AvailabilityZone', 'InstanceType'])
+                        new_df = res.get(produces[0]).sort_values(
+                            ['AvailabilityZone', 'InstanceType'])
                         new_df.reindex()
                         assert utils.compare_dfs(df1, new_df)

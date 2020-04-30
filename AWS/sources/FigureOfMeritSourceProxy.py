@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
@@ -52,7 +51,7 @@ def module_config_template():
             }
         },
     }
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(template)
 
 
@@ -61,7 +60,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
 
 

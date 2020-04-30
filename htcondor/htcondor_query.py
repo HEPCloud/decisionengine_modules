@@ -1,42 +1,37 @@
 #!/usr/bin/pyhon
-
-import os
-import sys
 import abc
-
 import htcondor
-
 import logging
+import os
+import six
+import sys
 
 logger = logging.getLogger()
+
 
 class QueryError(RuntimeError):
     """
     Thrown when there are exceptions using htcondor python bindings or commands
     """
+
     def __init__(self, err_str):
         RuntimeError.__init__(self, err_str)
 
 
+@six.add_metaclass(abc.ABCMeta)
 class Query(object):
     """
     Pure virtual class to have a minimum set of methods defined
     """
 
-    __metaclass__ = abc.ABCMeta
-
-
     def __init__(self):
         self.stored_data = {}
-
 
     def __repr__(self):
         return self.__str__()
 
-
     def __str__(self):
         return '%s' % vars(self)
-
 
     @abc.abstractmethod
     def fetch(self, constraint=None, format_list=None, condor_config=None):
@@ -46,13 +41,11 @@ class Query(object):
         """
         return
 
-
     def load(self, constraint=None, format_list=None, condor_config=None):
         """
         Fetch the data and store it in self.stored_data
         """
         self.stored_data = self.fetch(constraint, format_list, condor_config)
-
 
     def fetch_stored(self, constraint_func=None):
         """
@@ -80,9 +73,8 @@ class CondorQuery(Query):
         self.pool_name = pool_name
         Query.__init__(self)
 
-
-    #@abc.abstractmethod
-    #def fetch(self, constraint=None, format_list=None):
+    # @abc.abstractmethod
+    # def fetch(self, constraint=None, format_list=None):
     #    """
     #    Fetch the results using htcondor-python bindings
     #    """
@@ -98,7 +90,6 @@ class CondorQ(CondorQuery):
         self.schedd_name = schedd_name
         CondorQuery.__init__(self, 'schedd', ['ClusterId', 'ProcId'],
                              pool_name=pool_name)
-
 
     def fetch(self, constraint=None, format_list=None, condor_config=None):
         """
@@ -135,8 +126,9 @@ class CondorQ(CondorQuery):
             p = 'default'
             if self.pool_name is not None:
                 p = self.pool_name
-            err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (s, p, ex)
-            raise QueryError(err_str), None, sys.exc_info()[2]
+            err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (
+                s, p, ex)
+            raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -159,7 +151,6 @@ class CondorStatus(CondorQuery):
 
         CondorQuery.__init__(self, subsystem_str, group_attr,
                              pool_name=pool_name)
-
 
     def fetch(self, constraint=None, format_list=None, condor_config=None):
         """
@@ -187,8 +178,9 @@ class CondorStatus(CondorQuery):
             p = 'default'
             if self.pool_name is not None:
                 p = self.pool_name
-            err_str = 'Error querying pool %s using python bindings: %s' % (p, ex)
-            raise QueryError(err_str), None, sys.exc_info()[2]
+            err_str = 'Error querying pool %s using python bindings: %s' % (
+                p, ex)
+            raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
@@ -206,7 +198,7 @@ def apply_constraint(data, constraint_func):
         return data
     else:
         outdata = {}
-        for key, val in data.iteritems():
+        for key, val in data.items():
             if constraint_func(val):
                 outdata[key] = val
     return outdata
@@ -252,7 +244,7 @@ def bindings_friendly_attrs(format_list):
     if format_list is not None:
         if isinstance(format_list, list):
             attrs = format_list
-        elif isinstance(format_list, basestring):
+        elif isinstance(format_list, str):
             attrs = [format_list]
     return attrs
 
@@ -278,7 +270,7 @@ def list2dict(list_data, attr_name):
                 else:
                     # Try lower cases
                     for k in list_el:
-                        if an.lower()==k.lower():
+                        if an.lower() == k.lower():
                             dict_name.append(list_el[k])
                             break
             dict_name = tuple(dict_name)
@@ -292,7 +284,7 @@ def list2dict(list_data, attr_name):
                         # Try to evaluate the condor expr and use its value
                         # If cannot be evaluated, keep the expr as is
                         a_value = list_el[a].eval()
-                        if '%s'%a_value != 'Undefined':
+                        if '%s' % a_value != 'Undefined':
                             # Cannot use classad.Value.Undefined for
                             # for comparison as it gets cast to int
                             dict_el[a] = a_value
@@ -300,7 +292,7 @@ def list2dict(list_data, attr_name):
                         # No need for Undefined check to see if
                         # attribute exists in the fetched classad
                         dict_el[a] = list_el[a]
-                except:
+                except Exception as e:
                     # Do not fail
                     pass
 
@@ -334,7 +326,7 @@ def eval_classad_expr(classads, format_list=None):
             try:
                 if (classad[attr].__class__.__name__ == 'ExprTree'):
                     a_value = classad[attr].eval()
-                    if '%s'%a_value != 'Undefined':
+                    if '%s' % a_value != 'Undefined':
                         # Cannot use classad.Value.Undefined
                         # for comparison as it gets cast to int
                         dict_el[attr] = a_value
@@ -342,7 +334,7 @@ def eval_classad_expr(classads, format_list=None):
                     # No need for Undefined check to see if
                     # attribute exists in the fetched classad
                     dict_el[attr] = classad[attr]
-            except:
+            except Exception as e:
                 pass
 
         # Do not delete this block until we resolve the TODO above.
@@ -366,7 +358,6 @@ def eval_classad_expr(classads, format_list=None):
             pprint.pprint('------------- PICKLE ERROR ---------------')
         """
 
-
         classad_list.append(dict_el)
     return classad_list
 
@@ -386,4 +377,5 @@ def split_collector_host(collector_host):
         secondary.sort()
         return (hosts[0], ','.join(secondary))
     else:
-        RuntimeError('collector_host should be a comman or space separated string but found %s' % collector_host)
+        RuntimeError(
+            'collector_host should be a comman or space separated string but found %s' % collector_host)

@@ -15,4 +15,4 @@ class PublishMonitoring(Publisher.Publisher):
     # The DataBlock given to the source is t=0
     def publish(self, data_block):
         monitoring_message = "This would be a monitoring push.  Printing the request instead.  Request: %s" % data_block["resource_requests"]
-        print monitoring_message
+        print(monitoring_message)

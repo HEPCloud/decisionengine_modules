@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 Compare slots on Nersc and startd
 """
@@ -11,6 +10,7 @@ from decisionengine.framework.modules import Transform
 
 CONSUMES = ['startd_manifests', 'Factory_Entries_LCF', 'Nersc_Job_Info']
 PRODUCES = ['nersc_userpool_slots_comparison']
+
 
 class CompareNerscUserpoolSlots(Transform.Transform):
     """
@@ -47,7 +47,8 @@ class CompareNerscUserpoolSlots(Transform.Transform):
 
         # constrain userpool slots with only batch slurm
         userpool_slots_df = userpool_slots_df[userpool_slots_df['GLIDEIN_GridType'] == "batch slurm"]
-        userpool_slots_df = userpool_slots_df[userpool_slots_df['SlotType'] == 'Partitionable']
+        userpool_slots_df = userpool_slots_df[(
+            userpool_slots_df['SlotType'] == 'Partitionable')]
 
         results = {}
 
@@ -61,20 +62,25 @@ class CompareNerscUserpoolSlots(Transform.Transform):
 
         for index, row in nersc_df.iterrows():
             if row['status'] == 'R':
-                key = row['hostname']+row['queue']+row['user']
+                key = row['hostname'] + row['queue'] + row['user']
                 entry_name = self.entry_nersc_map[key]
                 if entry_name not in cores_dict:
-                    logging.info("error: entry %s does NOT exist!" %(entry_name))
+                    logging.info("error: entry %s does NOT exist!" %
+                                 (entry_name))
                 else:
-                    result_key = 'nersc'+'.'+row['hostname']+'.'\
-                                 +row['queue']+'.'+row['user']+'.count'
+                    result_key = 'nersc' + '.' + row['hostname'] + '.'\
+                                 + row['queue'] + '.' + row['user'] + '.count'
                     if result_key in results:
-                        results[result_key] += (cores_dict[entry_name]*int(row['nodes']))
+                        results[result_key] += (cores_dict[entry_name] *
+                                                int(row['nodes']))
                     else:
-                        results[result_key] = (cores_dict[entry_name]*int(row['nodes']))
-                    total_slots_nersc += (cores_dict[entry_name]*int(row['nodes']))
+                        results[result_key] = (
+                            cores_dict[entry_name] * int(row['nodes']))
+                    total_slots_nersc += (cores_dict[entry_name] *
+                                          int(row['nodes']))
 
-        logging.info("total number of slots on Nersc = " + str(total_slots_nersc))
+        logging.info("total number of slots on Nersc = %s" %
+                     str(total_slots_nersc))
 
         # pull slot info from User pool ########
 
@@ -82,7 +88,8 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         for index, row in userpool_slots_df.iterrows():
             total_slots_userpool += int(row['TotalCpus'])
 
-        logging.info("total number of slots on userpool = " + str(total_slots_userpool))
+        logging.info("total number of slots on userpool = %s" %
+                     str(total_slots_userpool))
 
         # compute the relative difference between the two metrics ###
         rel_diff = 0.0
@@ -91,7 +98,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
             more = max(total_slots_nersc, total_slots_userpool)
             rel_diff = diff / more
 
-        logging.info("diff = %f, rel diff = %f" %(diff, rel_diff))
+        logging.info("diff = %f, rel diff = %f" % (diff, rel_diff))
 
         # construct the result namespace ############################
         results['nersc.count'] = total_slots_nersc
@@ -99,6 +106,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         results['relative_diff'] = rel_diff
 
         return {PRODUCES[0]: results}
+
 
 def module_config_template():
     """
@@ -113,7 +121,7 @@ def module_config_template():
             }
         }
     }
-    print 'Entry in channel configuration'
+    print('Entry in channel configuration')
     pprint.pprint(template)
 
 
@@ -121,7 +129,7 @@ def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
     module_config_template()
 
 

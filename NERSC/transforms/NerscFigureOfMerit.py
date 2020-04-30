@@ -1,10 +1,8 @@
-#!/usr/bin/env python
 """
 Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.
 
 """
-from __future__ import division
 import pandas as pd
 import numpy as np
 import pprint
@@ -52,7 +50,8 @@ class NerscFigureOfMerit(Transform.Transform):
 
         performance = data_block[CONSUMES[0]]
         performance["PricePerformance"] = np.where(performance["PerfTtbarTotal"] > 0,
-                                                   performance["OnDemandPrice"] / performance["PerfTtbarTotal"],
+                                                   (performance["OnDemandPrice"] /
+                                                    performance["PerfTtbarTotal"]),
                                                    sys.float_info.max)
 
         factory_entries_lcf = data_block[CONSUMES[1]]
@@ -93,17 +92,17 @@ def module_config_template():
 
     d = {
         "NerscFigureOfMerit": {
-           "module":  "modules.NERSC.transforms.NerscFigureOfMerit",
-           "name":  "NerscFigureOfMerit",
-           "parameters": {
-           }
+            "module": "modules.NERSC.transforms.NerscFigureOfMerit",
+            "name": "NerscFigureOfMerit",
+            "parameters": {
+            }
         }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
 
 
 def module_config_info():
@@ -111,8 +110,8 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
-    print "produces", PRODUCES
+    print("consumes", CONSUMES)
+    print("produces", PRODUCES)
     module_config_template()
 
 
@@ -137,6 +136,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

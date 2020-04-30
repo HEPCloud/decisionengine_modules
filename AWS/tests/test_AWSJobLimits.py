@@ -23,5 +23,5 @@ class TestAWSJobLimits:
     def test_acquire(self):
         aws_job_limits = AWSJobLimits.AWSJobLimits(config)
         res = aws_job_limits.acquire()
-        assert produces == res.keys()
+        assert produces == list(res.keys())
         assert expected_pandas_df.equals(res.get(produces[0]))

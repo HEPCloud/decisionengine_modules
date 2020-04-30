@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Fill in data from Instane Performance CSV file
 """
@@ -15,16 +14,17 @@ import decisionengine_modules.load_config as load_config
 
 PRODUCES = ['Performance_Data']
 
+
 class AWSInstancePerformance(Source.Source):
     def __init__(self, *args, **kwargs):
         self.data_file = args[0]['data_file']
-
 
     def produces(self):
         return PRODUCES
 
     def acquire(self):
-        return {PRODUCES[0]: pd.read_csv(self.data_file).drop_duplicates(subset=[ 'AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop = True)}
+        return {PRODUCES[0]: pd.read_csv(self.data_file).drop_duplicates(subset=['AvailabilityZone', 'InstanceType'], keep='last').reset_index(drop=True)}
+
 
 def module_config_template():
     """
@@ -32,28 +32,28 @@ def module_config_template():
     """
 
     d = {"AWSInstancePerformance": {
-        "module" :  "modules.AWS.sources.AWSInstancePerformance",
-        "name"   :  "AWSInstancePerformance",
-                    "parameters": {
-                        "data_file": "%s/de_data/instance_performance.csv"%(os.environ.get('HOME'),),
-                    },
-        "schedule": 60*60,
-        }
+        "module": "modules.AWS.sources.AWSInstancePerformance",
+        "name": "AWSInstancePerformance",
+        "parameters": {
+            "data_file": "%s/de_data/instance_performance.csv" % (os.environ.get('HOME'),),
+        },
+        "schedule": 60 * 60,
+    }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t data_file - CSV cost data file"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t data_file - CSV cost data file")
+
 
 def module_config_info():
     """
     print this module configuration information
     """
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
-
 
 
 def main():
@@ -76,12 +76,13 @@ def main():
     elif args.configinfo:
         module_config_info()
     else:
-        perf_info = AWSInstancePerformance({'data_file':'instance_performance_sample.csv'})
+        perf_info = AWSInstancePerformance(
+            {'data_file': 'instance_performance_sample.csv'})
         rc = perf_info.acquire()
         d = rc[PRODUCES[0]]
         pd.set_option('display.max_rows', len(d))
-        print "INFO"
-        print rc
+        print("INFO")
+        print(rc)
 
 
 if __name__ == "__main__":

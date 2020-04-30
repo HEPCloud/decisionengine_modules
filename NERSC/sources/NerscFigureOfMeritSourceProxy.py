@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import pprint
 import argparse
@@ -11,14 +10,11 @@ PRODUCES = ['Nersc_Figure_Of_Merit']
 
 class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
-
     def __init__(self, config):
         super(NerscFigureOfMeritSourceProxy, self).__init__(config)
 
-
     def produces(self):
         return PRODUCES
-
 
     def acquire(self):
         """
@@ -29,7 +25,8 @@ class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
         fom = super(NerscFigureOfMeritSourceProxy, self).acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
-            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
+            raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (
+                type(self).__name__, PRODUCES))
         return {'Nersc_Figure_Of_Merit': fom.get('Nersc_Figure_Of_Merit')}
 
 
@@ -60,9 +57,8 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "produces", PRODUCES
+    print("produces", PRODUCES)
     module_config_template()
-
 
 
 def main():
@@ -86,6 +82,7 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
+
 
 if __name__ == "__main__":
     main()

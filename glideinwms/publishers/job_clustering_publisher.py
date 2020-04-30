@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Publishes price / performance data
 
@@ -14,6 +13,7 @@ import logging
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud.de.glideinwms"
 CONSUMES = ['job_clusters']
 
+
 class JobClusteringPublisher(publisher):
     def __init__(self, config):
         super(JobClusteringPublisher, self).__init__(config)
@@ -25,7 +25,8 @@ class JobClusteringPublisher(publisher):
     def graphite_context(self, datablock):
         d = {}
         for i, row in datablock.iterrows():
-            key = ('%s.job_cluster' % (graphite.sanitize_key(row['Frontend_Group'])))
+            key = ('%s.job_cluster' %
+                   (graphite.sanitize_key(row['Frontend_Group'])))
             d[key] = row['Totals']
         return self.graphite_context_header, d
 
@@ -38,13 +39,13 @@ def module_config_template():
     d = {"JobClusteringPublisher": {
          "module": "modules.glideinwms.publishers.JobClustering_publisher",
          "name": "JobClusteringPublisher",
-         },}
-    print "Entry in channel cofiguration"
+         }, }
+    print("Entry in channel cofiguration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t publish_to_graphite - publish to graphite if True"
-    print "\t graphite_host - graphite host name"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t publish_to_graphite - publish to graphite if True")
+    print("\t graphite_host - graphite host name")
 
 
 def module_config_info():
@@ -52,7 +53,7 @@ def module_config_info():
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
+    print("consumes", CONSUMES)
     module_config_template()
 
 

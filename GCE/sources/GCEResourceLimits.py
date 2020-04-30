@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Query Resource Limits from another channel with the factory source
 """
@@ -14,8 +13,9 @@ PRODUCES = ['GCE_Resource_Limits']
 
 class GCEResourceLimits(SourceProxy.SourceProxy):
     """
-    Consumes factory data to find GCE entry limits 
+    Consumes factory data to find GCE entry limits
     """
+
     def __init__(self, config):
         super(GCEResourceLimits, self).__init__(config)
         self.entry_limit_attrs = config.get('entry_limit_attrs')
@@ -48,25 +48,26 @@ def module_config_template():
     template = {
         "gce_resource_limits": {
             "module": "modules.GCE.sources.GCEResourceLimits",
-            "name":   "GCEResourceLimits",
+            "name": "GCEResourceLimits",
                       "parameters": {
-                        "channel_name": "source_channel_name",
-                        "data_products": "list of data keys to retrieve from source channel data",
-                        "retries": "<number of retries to acquire data>",
-                        "retry_timeout": "<retry timeout>",
-                        "entry_limit_attrs": "[]"
+                          "channel_name": "source_channel_name",
+                          "data_products": "list of data keys to retrieve from source channel data",
+                          "retries": "<number of retries to acquire data>",
+                          "retry_timeout": "<retry timeout>",
+                          "entry_limit_attrs": "[]"
                       },
         }
     }
 
-    print "Entry in channel cofiguration"
+    print("Entry in channel cofiguration")
     pprint.pprint(template)
+
 
 def module_config_info():
     """
     Print module information
     """
-    print 'produces %s' % PRODUCES
+    print('produces %s' % PRODUCES)
     module_config_template()
 
 

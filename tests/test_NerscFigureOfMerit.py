@@ -8,11 +8,11 @@ config = {
 }
 
 nersc_instance_performance_df = pd.DataFrame([
-        {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",
-         "InstanceType": "haswell",
-         "AvailabilityZone": "cori",
-         "OnDemandPrice": 0.576,
-         "PerfTtbarTotal": 0.96}])
+    {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",
+     "InstanceType": "haswell",
+     "AvailabilityZone": "cori",
+     "OnDemandPrice": 0.576,
+     "PerfTtbarTotal": 0.96}])
 
 nersc_instance_performance_df.reindex(columns=("EnryName",
                                                "InstanceType",
@@ -22,10 +22,10 @@ nersc_instance_performance_df.reindex(columns=("EnryName",
 
 data_block = {
     "Nersc_Instance_Performance": nersc_instance_performance_df.reindex(columns=("EntryName",
-                                                 "InstanceType",
-                                                 "AvailabilityZone",
-                                                 "OnDemandPrice",
-                                                 "PerfTtbarTotal")),
+                                                                                 "InstanceType",
+                                                                                 "AvailabilityZone",
+                                                                                 "OnDemandPrice",
+                                                                                 "PerfTtbarTotal")),
     "Factory_Entries_LCF": pd.DataFrame([
         {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",
          "GlideinConfigPerEntryMaxGlideins": 200,
@@ -44,7 +44,7 @@ expected_transform_output = {
     produces[1]: pd.DataFrame([
         {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",
          "FigureOfMerit": 0.3
-        }]),
+         }]),
 }
 
 
@@ -57,9 +57,10 @@ class TestNerscFigureOfMerit:
     def test_transform(self):
         nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
         res = nersc_figure_of_merit.transform(data_block)
-        assert produces == res.keys()
+        assert produces == list(res.keys())
         for key, value in res.items():
             try:
                 assert expected_transform_output[key].equals(value)
-            except:
-                print (key, " fail\n", expected_transform_output[key], "\n", value)
+            except Exception as e:
+                print(key, " fail\n",
+                      expected_transform_output[key], "\n", value)

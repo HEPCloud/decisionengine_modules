@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 from glideinwms.lib import classadSupport
 

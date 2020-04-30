@@ -21,14 +21,14 @@ occupancy = pd.DataFrame([
         "InstanceType": "t2.micro",
         "RunningVms": 1,
     },
-    ])
+])
 
 provisioner_resource_spot_prices = pd.DataFrame([
     {
         "AccountName": "CMS",
         "AvailabilityZone": "us-east-1c",
         "InstanceType": "m3.xlarge",
-        "ProductDescription" : "Linux/UNIX",
+        "ProductDescription": "Linux/UNIX",
         "SpotPrice": 0.0644,
         "Timestamp": pd.Timestamp("2019-01-25 11:15:22"),
     },
@@ -72,7 +72,7 @@ provisioner_resource_spot_prices = pd.DataFrame([
         "SpotPrice": 0.0635,
         "Timestamp": pd.Timestamp("2019-01-25 11:15:22"),
     },
-    ])
+])
 
 df = pd.merge(occupancy,
               provisioner_resource_spot_prices,
@@ -100,10 +100,9 @@ class TestAwsBurnRate:
     def test_transform(self):
         aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
         res = aws_burn_rate.transform(data_block)
-        assert produces.sort() == res.keys().sort()
+        assert produces.sort() == list(res.keys()).sort()
 
         expected_df = expected_transform_output[produces[0]]
         res_df = res[produces[0]]
         assert np.isclose(expected_df["BurnRate"],
                           res_df["BurnRate"])
-

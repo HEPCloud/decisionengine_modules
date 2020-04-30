@@ -14,11 +14,11 @@ PASSWD_FILE = os.path.join(DATA_DIR, "passwd")
 CONFIG = {
     "passwd_file": PASSWD_FILE,
     "constraints": {
-       "machines": ["edison", "cori"],
-       "newt_keys": {
-          "user": ["hufnagel", "timm"],
-          "repo": ["m2612", "m2696"],
-       }
+        "machines": ["edison", "cori"],
+        "newt_keys": {
+            "user": ["hufnagel", "timm"],
+            "repo": ["m2612", "m2696"],
+        }
     }
 }
 
@@ -46,9 +46,11 @@ class TestNerscJobInfo:
     def test_acquire(self):
         nersc_job_info = NerscJobInfo.NerscJobInfo(CONFIG)
         with mock.patch.object(newt.Newt, "get_status") as get_status:
-            get_status.return_value = utils.input_from_file(STATUS_FIXTURE_FILE)
+            get_status.return_value = utils.input_from_file(
+                STATUS_FIXTURE_FILE)
             with mock.patch.object(newt.Newt, "get_queue") as get_queue:
-                get_queue.return_value = utils.input_from_file(JOBS_FIXTURE_FILE)
+                get_queue.return_value = utils.input_from_file(
+                    JOBS_FIXTURE_FILE)
                 res = nersc_job_info.acquire()
-                assert PRODUCES == res.keys()
+                assert PRODUCES == list(res.keys())
                 assert EXPECTED_PANDAS_DFRAME.equals(res[PRODUCES[0]])

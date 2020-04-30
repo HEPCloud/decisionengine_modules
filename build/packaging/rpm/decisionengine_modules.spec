@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 0.3.12
-%define release 1
+%define release 1_py3
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -13,10 +13,10 @@
 %define systemddir %{_prefix}/lib/systemd/system
 
 # From http://fedoraproject.org/wiki/Packaging:Python
-# Define python_sitelib
+# Define python3_sitelib
 %if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%{!?python3_sitelib: %global python3_sitelib %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python3_sitearch: %global python3_sitearch %(%{__python3} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
 
 %define de_python_sitelib $RPM_BUILD_ROOT%{python_sitelib}
@@ -33,6 +33,9 @@ URL:            http://hepcloud.fnal.gov
 Source0:        decisionengine_modules.tar.gz
 
 BuildArch:      x86_64
+BuildRequires: python36-devel
+BuildRequires: python3-rpm-macros
+Requires: python3
 #BuildRequires:  cmake numpy numpy-f2py python-pandas
 #BuildRequires:  boost-python boost-regex boost-system
 #Requires:       numpy >= 1.7.1
@@ -86,22 +89,22 @@ install -d $RPM_BUILD_ROOT%{de_channel_confdir}
 #install -d $RPM_BUILD_ROOT%{de_logdir}
 #install -d $RPM_BUILD_ROOT%{de_lockdir}
 #install -d $RPM_BUILD_ROOT%{systemddir}
-install -d $RPM_BUILD_ROOT%{python_sitelib}
+install -d $RPM_BUILD_ROOT%{python3_sitelib}
 
 # Copy files in place
-cp -r ../decisionengine_modules $RPM_BUILD_ROOT%{python_sitelib}
+cp -r ../decisionengine_modules $RPM_BUILD_ROOT%{python3_sitelib}
 
 #mkdir -p $RPM_BUILD_ROOT%{de_confdir}/config.d
 # BUILDING testcase RPM: Uncomment following 1 line
 #install -m 0644 framework/tests/etc/decisionengine/config.d/channelA.conf $RPM_BUILD_ROOT%{de_channel_confdir}
 
 # Remove unwanted files
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/.github
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/build
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/tests
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/AWS/tests
+rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/.github
+rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/build
+rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/tests
+rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/AWS/tests
 # BUILDING testcase RPM: Comment following line
-rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
+rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/testcases
 
 # BUILDING testcase RPM: Uncomment following 3 lines
 #%files testcase
@@ -110,23 +113,7 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 
 
 %files standard-library
-%{python_sitelib}/decisionengine_modules/__init__.py
-%{python_sitelib}/decisionengine_modules/__init__.pyo
-%{python_sitelib}/decisionengine_modules/__init__.pyc
-%{python_sitelib}/decisionengine_modules/graphite_client.py
-%{python_sitelib}/decisionengine_modules/graphite_client.pyo
-%{python_sitelib}/decisionengine_modules/graphite_client.pyc
-%{python_sitelib}/decisionengine_modules/load_config.py
-%{python_sitelib}/decisionengine_modules/load_config.pyo
-%{python_sitelib}/decisionengine_modules/load_config.pyc
-%{python_sitelib}/decisionengine_modules/LICENSE.txt
-%{python_sitelib}/decisionengine_modules/util
-%{python_sitelib}/decisionengine_modules/AWS
-%{python_sitelib}/decisionengine_modules/glideinwms
-%{python_sitelib}/decisionengine_modules/htcondor
-%{python_sitelib}/decisionengine_modules/NERSC
-%{python_sitelib}/decisionengine_modules/GCE
-%{python_sitelib}/decisionengine_modules/graphite
+%{python3_sitelib}/decisionengine_modules/
 
 %pre
 
@@ -136,6 +123,9 @@ rm -Rf $RPM_BUILD_ROOT%{python_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Tue Mar 24 2020 Patrick Gartung <gartung@fnal.gov> - 0.3.12-1_py3
+- Build against python3.6
 
 * Tue May 7 2019 Parag Mhashilkar <parag@fnal.gov> - 0.3.12-1
 - Bug Fix: Correctly handle usecases where entries are missing in the instance performance file

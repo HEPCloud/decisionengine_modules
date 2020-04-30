@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Publishes AWS VM burn rate
 
@@ -12,6 +11,7 @@ from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGener
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.aws"
 CONSUMES = ['AWS_Burn_Rate']
 
+
 class AWSBurnRatePublisher(publisher):
 
     def consumes(self):
@@ -20,8 +20,9 @@ class AWSBurnRatePublisher(publisher):
     def graphite_context(self, data_block):
         d = {}
         # There should be only one row [0] in the AWS_Burn_Rate data block
-        d['FERMILAB.BurnRate'] = data_block.loc[0,'BurnRate'].item()
+        d['FERMILAB.BurnRate'] = data_block.loc[0, 'BurnRate'].item()
         return self.graphite_context_header, d
+
 
 def module_config_template():
     """
@@ -34,21 +35,21 @@ def module_config_template():
             "name": "AWSBurnRatePublisher",
         },
     }
-    print "Entry in channel configuration"
+    print("Entry in channel configuration")
     pprint.pprint(d)
-    print "where"
-    print "\t name - name of the class to be instantiated by task manager"
-    print "\t publish_to_graphite - publish to graphite if True"
-    print "\t graphite_host - graphite host name"
+    print("where")
+    print("\t name - name of the class to be instantiated by task manager")
+    print("\t publish_to_graphite - publish to graphite if True")
+    print("\t graphite_host - graphite host name")
+
 
 def module_config_info():
     """
     print this module configuration information
     """
 
-    print "consumes", CONSUMES
+    print("consumes", CONSUMES)
     module_config_template()
-
 
 
 def main():
@@ -74,8 +75,9 @@ def main():
         config_manager = configmanager.ConfigManager()
         config_manager.load()
         global_config = config_manager.get_global_config()
-        print "GLOBAL CONF", global_config
+        print("GLOBAL CONF", global_config)
         ds = dataspace.DataSpace(global_config)
+
 
 if __name__ == '__main__':
     main()
