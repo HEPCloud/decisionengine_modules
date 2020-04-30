@@ -109,7 +109,7 @@ install:
 
 # Environment variables
 env:
-  - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/../decisionengine/framework/logicengine/"   PYTHON_PATH=$(dirname ${TRAVIS_BUILD_DIR})
+  - LD_LIBRARY_PATH="${TRAVIS_BUILD_DIR}/../decisionengine/framework/logicengine/"   PYTHONPATH=$(dirname ${TRAVIS_BUILD_DIR})    PYTHON_PATH=${PYTHONPATH}
 
 # command to run tests
 script:
