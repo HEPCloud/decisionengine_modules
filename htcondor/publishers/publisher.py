@@ -1,21 +1,45 @@
-import six
 import abc
-import os
-import sys
-import pandas
-import htcondor
 import classad
+from functools import wraps
+import htcondor
+import logging
+import os
+import pandas
+import six
+import sys
 import traceback
 import weakref
 
-import logging
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.dataspace import datablock
-
 
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
+# used only to decorate condor_advertise which 
+# from time to time fails to advetise to OSG collector 
+# due to timeouts
+def retry_on_error( nretries=1 ):
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            logger = logging.getLogger()
+            for i in range(nretries+1):
+                try:
+# enable this logging line only when debugging
+#                    logger.error("Condor_Advertise with %d"%i)
+                    return f(*args, **kwargs)
+                except Exception as e:
+                    logger.error("Condor_Advertise Error Retry {0:d}/{1:d}".format(i, nretries) )
+                    logger.error("Condor_Advertise Error was {0:s}".format(e))
+                    # this way the except clause in condor_advertise will catch this exception
+                    if i == nretries:
+                        logger.error("Condor_Advertise Error raising")
+                        raise e
+
+        return wrapper
+
+    return decorator
 
 @six.add_metaclass(abc.ABCMeta)
 class HTCondorManifests(Publisher.Publisher):
@@ -65,6 +89,7 @@ class HTCondorManifests(Publisher.Publisher):
         """
         return None
 
+    @retry_on_error()
     def condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
