@@ -16,21 +16,21 @@ from decisionengine.framework.dataspace import datablock
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
-# used only to decorate condor_advertise which 
-# from time to time fails to advetise to OSG collector 
+# used only to decorate condor_advertise which
+# from time to time fails to advetise to OSG collector
 # due to timeouts
-def retry_on_error( nretries=1 ):
+def retry_on_error(nretries=1):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
             logger = logging.getLogger()
-            for i in range(nretries+1):
+            for i in range(nretries + 1):
                 try:
-# enable this logging line only when debugging
-#                    logger.error("Condor_Advertise with %d"%i)
+                    # enable this logging line only when debugging
+                    # logger.error("Condor_Advertise with %d"%i)
                     return f(*args, **kwargs)
                 except Exception as e:
-                    logger.error("Condor_Advertise Error Retry {0:d}/{1:d}".format(i, nretries) )
+                    logger.error("Condor_Advertise Error Retry {0:d}/{1:d}".format(i, nretries))
                     logger.error("Condor_Advertise Error was {0:s}".format(e))
                     # this way the except clause in condor_advertise will catch this exception
                     if i == nretries:
