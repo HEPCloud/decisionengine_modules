@@ -26,15 +26,12 @@ def retry_on_error(nretries=1):
             logger = logging.getLogger()
             for i in range(nretries + 1):
                 try:
-                    # enable this logging line only when debugging
                     # logger.error("Condor_Advertise with %d"%i)
                     return f(*args, **kwargs)
                 except Exception as e:
-                    logger.error("Condor_Advertise Error Retry {0:d}/{1:d}".format(i, nretries))
-                    logger.error("Condor_Advertise Error was {0:s}".format(e))
-                    # this way the except clause in condor_advertise will catch this exception
+                    logger.warning("Function {0:s} failed with {1:s} on try {2:d}/{3:d}".format(f.name, e, i, nretries))
                     if i == nretries:
-                        logger.error("Condor_Advertise Error raising")
+                        logger.error("Function {0:s} failed with {1:s} after {2:d} retry".format(f.name, e, i))
                         raise e
 
         return wrapper
