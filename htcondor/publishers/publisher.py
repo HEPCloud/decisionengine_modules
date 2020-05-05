@@ -19,14 +19,20 @@ DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 # used only to decorate condor_advertise which
 # from time to time fails to advetise to OSG collector
 # due to timeouts
+import time
 def retry_on_error(nretries=1):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
+            time2sleep = 0
             logger = logging.getLogger()
             for i in range(nretries + 1):
                 try:
                     # logger.error("Condor_Advertise with %d"%i)
+                    if i != 0:
+                        time2sleep = 2**(i-1)
+                    logger.error("HKDebug time2sleep = %d" % time2sleep )
+                    time.sleep( time2sleep )
                     return f(*args, **kwargs)
                 except Exception as e:
                     logger.warning("Function {0:s} failed with {1:s} on try {2:d}/{3:d}".format(f.name, e, i, nretries))
