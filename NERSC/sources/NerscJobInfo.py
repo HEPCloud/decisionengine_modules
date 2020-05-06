@@ -31,10 +31,10 @@ class NerscJobInfo(Source.Source):
             raise RuntimeError('constraints should be a dict')
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)
-        self.newt = newt.Newt(config.get('passwd_file'),
-                              num_retries=self.max_retries,
-                              retry_backoff_factor=self.retry_backoff_factor
-                             )
+        self.newt = newt.Newt(
+            config.get('passwd_file'),
+            num_retries=self.max_retries,
+            retry_backoff_factor=self.retry_backoff_factor)
         self.logger = logging.getLogger()
 
     def acquire(self):
