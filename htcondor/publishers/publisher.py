@@ -16,6 +16,7 @@ from decisionengine_modules.util.retry_function import retry_on_error
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
+
 @six.add_metaclass(abc.ABCMeta)
 class HTCondorManifests(Publisher.Publisher):
 
