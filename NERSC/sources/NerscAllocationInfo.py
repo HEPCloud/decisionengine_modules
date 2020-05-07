@@ -12,6 +12,9 @@ import logging
 
 PRODUCES = ['Nersc_Allocation_Info']
 
+_MAX_RETRIES = 10
+_RETRY_BACKOFF_FACTOR = 1
+
 
 class NerscAllocationInfo(Source.Source):
 
@@ -28,7 +31,12 @@ class NerscAllocationInfo(Source.Source):
 
         self.raw_results = None
         self.pandas_frame = None
-        self.newt = newt.Newt(config.get('passwd_file'))
+        self.max_retries = config.get("max_retries", _MAX_RETRIES)
+        self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)
+        self.newt = newt.Newt(
+            config.get('passwd_file'),
+            num_retries=self.max_retries,
+            retry_backoff_factor=self.retry_backoff_factor)
         self.logger = logging.getLogger()
 
     def send_query(self):
@@ -95,6 +103,8 @@ def module_config_template():
             'name': 'NerscAllocationInfo',
             'parameters': {
                 'passwd_file': '/path/to/password_file',
+                'max_retries': 10,
+                'retry_backoff_factor': 1,
                 'constraints': {
                     'usernames': ['user1', 'user2'],
                     'newt_keys': {
