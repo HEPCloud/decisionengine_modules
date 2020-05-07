@@ -28,6 +28,8 @@ class HTCondorManifests(Publisher.Publisher):
 
         self.condor_config = config.get('condor_config')
         self.x509_user_proxy = config.get('x509_user_proxy')
+        self.nretries       = config.get('nretries')
+        self.retry_interval = config.get('retry_interval')
         self.logger = logging.getLogger()
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
