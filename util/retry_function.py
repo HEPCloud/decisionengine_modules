@@ -19,9 +19,9 @@ def retry_on_error(nretries=1, retry_interval=2):
                     time.sleep(time2sleep)
                     return f(self, *args, **kwargs)
                 except Exception as e:
-                    logger.warning("Error Function {0:s} failed with {1:s} on try {2:d}/{3:d}".format(f.__name__, e, i, nretries))
+                    logger.warning("Error Function {} failed with {} on try {}/{}".format(f.__name__, e, i, nretries))
                     if i == nretries:
-                        logger.error("Error Function {0:s} failed with {1:s} after {2:d} retry".format(f.__name__, e, i))
+                        logger.error("Error Function {} failed with {} after {} retry".format(f.__name__, e, i))
                         raise e
 
         return wrapper
