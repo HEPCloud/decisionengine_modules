@@ -24,6 +24,19 @@ pipeline {
          }
       }
 
+      stage('pep8') {
+         steps {
+            echo 'prepare docker image'
+            // DOCKER_IMAGE="vitodb/decision-engine-modules-ci:jenkins"
+            sh 'docker build -t ${DOCKER_IMAGE} -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/'
+            echo 'Run pep8 tests'
+            sh '''
+            pwd
+            docker run --rm -v $PWD:$PWD -w ${PWD} ${DOCKER_IMAGE}
+            '''
+         }
+      }
+
       stage('pylint') {
          steps {
             echo 'prepare docker image'
