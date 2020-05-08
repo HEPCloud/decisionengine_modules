@@ -21,7 +21,7 @@ def retry_on_error(nretries=1, retry_interval=2):
                     if i == nretries:
                         logger.error("Error Function {:s} giving up with {:s} after {:d} retry".format(f.__name__, e, i))
                         raise e
-                    logger.warning("Function {:s} failed with {:s} on try {:d}/{:d}. Sleeping {:d} seconds".format(f.__name__, e, i, nretries,time2sleep))
+                    logger.warning("Function {:s} failed with {:s} on try {:d}/{:d}. Sleeping {:d} seconds".format(f.__name__, e, i, nretries, time2sleep))
                     time.sleep(time2sleep)
                     time2sleep *= retry_interval
 
