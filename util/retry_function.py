@@ -16,12 +16,12 @@ def retry_on_error(nretries=1, retry_interval=2):
             logger = logging.getLogger()
             for i in range(nretries + 1):
                 try:
-                    if i != 0:
-                        if time2sleep == 0:
-                            time2sleep = 1
+                    if i == 1:
+                        time2sleep = 1
+                    elif i > 1:
                         time2sleep *= retry_interval
                     time.sleep(time2sleep)
-                    f(*args, **kwargs)
+                    return f(*args, **kwargs)
                 except Exception as e:
                     logger.warning("Error Function {:s} failed with {:s} on try {:d}/{:d}".format(f.__name__, e, i, nretries))
                     if i == nretries:
