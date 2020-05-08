@@ -14,11 +14,10 @@ def retry_on_error(nretries=1, retry_interval=2):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            localself = args[0]
-            if hasattr(localself, 'nretries'):
-                nretries = localself.nretries
-            if hasattr(localself, 'retry_interval'):
-                retry_interval = localself.retry_interval
+            if hasattr(args[0], 'nretries'):
+                nretries = args[0].nretries
+            if hasattr(args[0], 'retry_interval'):
+                retry_interval = args[0].retry_interval
 
             time2sleep = 1
             logger = logging.getLogger()
