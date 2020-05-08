@@ -5,10 +5,14 @@ import time
 def retry_on_error(nretries=1, retry_interval=2):
     def decorator(f):
         @wraps(f)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(*args, **kwargs):
+            localself = args[0]
+            if hasattr(localself, 'nretries'):
+                nretries = localself.nretries
+            if hasattr(localself, 'retry_interval'):
+                retry_interval = localself.retry_interval
+
             time2sleep = 0
-            nretries       = self.nretries
-            retry_interval = self.retry_interval
             logger = logging.getLogger()
             for i in range(nretries + 1):
                 try:
@@ -17,11 +21,11 @@ def retry_on_error(nretries=1, retry_interval=2):
                             time2sleep = 1
                         time2sleep *= retry_interval
                     time.sleep(time2sleep)
-                    return f(self, *args, **kwargs)
+                    f(*args, **kwargs)
                 except Exception as e:
-                    logger.warning("Error Function {} failed with {} on try {}/{}".format(f.__name__, e, i, nretries))
+                    logger.warning("Error Function {:s} failed with {:s} on try {:d}/{:d}".format(f.__name__, e, i, nretries))
                     if i == nretries:
-                        logger.error("Error Function {} failed with {} after {} retry".format(f.__name__, e, i))
+                        logger.error("Error Function {:s} failed with {:s} after {:d} retry".format(f.__name__, e, i))
                         raise e
 
         return wrapper
