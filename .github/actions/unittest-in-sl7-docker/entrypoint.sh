@@ -12,8 +12,7 @@ make
 make liblinks
 cd -
 export PYTHONPATH=$PWD:$PYTHONPATH
-source venv-${PYVER}/bin/activate
-pip install tabulate psycopg2
+source venv/bin/activate
 pytest -v -l --tb=native decisionengine_modules > pytest.log 2>&1
 status=$?
 cat pytest.log
