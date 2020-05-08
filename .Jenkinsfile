@@ -50,7 +50,7 @@ pipeline {
             echo 'prepare docker image'
             // DOCKER_IMAGE is defined through Jenkins project
             sh 'docker build -t ${DOCKER_IMAGE} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker'
-            echo 'Run pylint tests'
+            echo 'Run unit tests'
             sh '''
             pwd
             docker run --rm -v $PWD:$PWD -w ${PWD} ${DOCKER_IMAGE}
