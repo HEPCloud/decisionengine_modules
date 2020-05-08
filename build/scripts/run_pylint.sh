@@ -48,7 +48,7 @@ process_branch() {
     PYLINT_RCFILE=/dev/null
     #PYLINT_RCFILE=$WORKSPACE/pylint.cfg
     #PYLINT_OPTIONS="--errors-only --msg-template=\"{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}\" --rcfile=$PYLINT_RCFILE"
-    PYLINT_OPTIONS="--contextmanager-decorators=contextlib.contextmanager,tf_contextlib.contextmanager --errors-only --rcfile=$PYLINT_RCFILE --disable=no-member --disable=no-name-in-module"
+    PYLINT_OPTIONS="--contextmanager-decorators=contextlib.contextmanager,tf_contextlib.contextmanager --errors-only --rcfile=$PYLINT_RCFILE --disable=no-member"
 
     # pep8 related variables
     # default: E121,E123,E126,E226,E24,E704
@@ -57,31 +57,9 @@ process_branch() {
     # E302 expected 2 blank lines, found 1
     # E303 too many blank lines (2)
     # E501 line too long (90 > 79 characters)
-# E1: Indentation
-# - E129: visually indented line with same indent as next logical line
-#
-# E2: Whitespace
-# - E221: multiple spaces before operator
-# - E241: multiple spaces after ','
-# - E272: multiple spaces before keyword
-#
-# E7: Statement
-# - E731: do not assign a lambda expression, use a def
-#
-# W5: Line break warning
-# - W503: line break before binary operator
-# - W504: line break after binary operator
-#
-# These are required to get the package.py files to test clean:
-# - F999: syntax error in doctest
-#
-# N8: PEP8-naming
-# - N801: class names should use CapWords convention
-# - N813: camelcase imported as lowercase
-# - N814: camelcase imported as constant
-#
+    # W504/W504 permit line breaks in binary operators
 
-    PEP8_OPTIONS="--ignore=E261,E265,E302,E303,E501,E129,E221,E241,E272,E731,E1004,W503,W504,F999,N801,N813,N814"
+    PEP8_OPTIONS="--ignore=E261,E265,E302,E303,E501,W503,W504"
 
     # Generate pylint config file
     #pylint --generate-rcfile > $PYLINT_RCFILE
