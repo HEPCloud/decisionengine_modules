@@ -3,11 +3,11 @@ import logging
 import time
 
 def retry_on_error(nretries=1, retry_interval=2):
-    '''Retry on error with parameters of how many times (nretries) 
+    '''Retry on error with parameters of how many times (nretries)
     and interval in seconds (retry_interval).
     If the function to be decorated is an instance method
     and the values come from a configuration,
-    then this decorator can retrieve these two parameters 
+    then this decorator can retrieve these two parameters
     from instance attributes with the same name.
     Otherwise, use the default values or pass new values to the decorator.
     '''
