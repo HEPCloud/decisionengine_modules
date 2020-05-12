@@ -66,7 +66,7 @@ class HTCondorManifests(Publisher.Publisher):
         return None
 
     def _condor_advertise(self, classads, collector_host=None,
-                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
         Advertise list of classads to the HTCondor Collector
 
@@ -111,7 +111,7 @@ class HTCondorManifests(Publisher.Publisher):
     def condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         fargs = [self, classads]
-        fkwargs = {"collector_host":collector_host, "update_ad_command":update_ad_command}
+        fkwargs = {"collector_host": collector_host, "update_ad_command": update_ad_command}
         return retry_wrapper(HTCondorManifests._condor_advertise, fargs, fkwargs, self.nretries, self.retry_interval)
 
     def publish(self, datablock):
