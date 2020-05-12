@@ -7,10 +7,8 @@ import pandas
 import six
 import sys
 import traceback
-import weakref
 
 from decisionengine.framework.modules import Publisher
-from decisionengine.framework.dataspace import datablock
 from decisionengine_modules.util.retry_function import retry_on_error
 
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
@@ -56,7 +54,7 @@ class HTCondorManifests(Publisher.Publisher):
                         self.classad_type, collector_host, constraint))
                     self.condor_advertise(ads, collector_host=collector_host,
                                           update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND)
-                except Exception as ex:
+                except Exception:
                     self.logger.error('Error running invalidating %s classads from collector_host %s' % (
                         self.classad_type, collector_host))
 
@@ -96,7 +94,7 @@ class HTCondorManifests(Publisher.Publisher):
             self.logger.info('Advertising %s classads to collector_host %s' % (
                 self.classad_type, collector_host))
             collector.advertise(ads, update_ad_command, True)
-        except Exception as ex:
+        except Exception:
             # TODO: We need to be more specific about the errors/exception
             #       For now just raise to get more info logged
             col = 'default'
@@ -144,7 +142,7 @@ class HTCondorManifests(Publisher.Publisher):
                     self.condor_advertise(ads, collector_host=collector)
             else:
                 self.logger.info('No %s classads found to advertise' % key)
-        except Exception as e:
+        except Exception:
             tb = traceback.format_exception(sys.exc_info()[0],
                                             sys.exc_info()[1],
                                             sys.exc_info()[2])
