@@ -9,7 +9,7 @@ import sys
 import traceback
 
 from decisionengine.framework.modules import Publisher
-from decisionengine_modules.util.retry_function import retry_on_error
+from decisionengine_modules.util.retry_function import retry_wrapper
 
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
@@ -65,8 +65,7 @@ class HTCondorManifests(Publisher.Publisher):
         """
         return None
 
-    @retry_on_error()
-    def condor_advertise(self, classads, collector_host=None,
+    def _condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
         Advertise list of classads to the HTCondor Collector
@@ -108,6 +107,12 @@ class HTCondorManifests(Publisher.Publisher):
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
+
+    def condor_advertise(self, classads, collector_host=None,
+                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+        fargs = [self, classads]
+        fkwargs = {"collector_host":collector_host, "update_ad_command":update_ad_command}
+        return retry_wrapper(HTCondorManifests._condor_advertise, fargs, fkwargs, self.nretries, self.retry_interval)
 
     def publish(self, datablock):
         """
