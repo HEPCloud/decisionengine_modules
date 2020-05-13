@@ -7,7 +7,7 @@ def retry_on_error(nretries=1, retry_interval=2):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            f2 = partial(f, *args, **kwargs )
+            f2 = partial(f, *args, **kwargs)
             return retry_wrapper(f2, nretries, retry_interval)
         return wrapper
     return decorator
