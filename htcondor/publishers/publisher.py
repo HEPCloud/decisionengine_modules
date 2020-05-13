@@ -7,7 +7,7 @@ import pandas
 import six
 import sys
 import traceback
-
+from functools import partial
 from decisionengine.framework.modules import Publisher
 from decisionengine_modules.util.retry_function import retry_wrapper
 
@@ -112,7 +112,8 @@ class HTCondorManifests(Publisher.Publisher):
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         fargs = [self, classads]
         fkwargs = {"collector_host": collector_host, "update_ad_command": update_ad_command}
-        return retry_wrapper(HTCondorManifests._condor_advertise, fargs, fkwargs, self.nretries, self.retry_interval)
+        f = partial(HTCondorManifests._condor_advertise, *fargs, **fkwargs)
+        return retry_wrapper(f, self.nretries, self.retry_interval)
 
     def publish(self, datablock):
         """
