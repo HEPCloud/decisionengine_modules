@@ -110,10 +110,10 @@ class HTCondorManifests(Publisher.Publisher):
 
     def condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
-        fargs = [self, classads]
-        fkwargs = {"collector_host": collector_host, "update_ad_command": update_ad_command}
-        f = partial(HTCondorManifests._condor_advertise, *fargs, **fkwargs)
-        return retry_wrapper(f, self.nretries, self.retry_interval)
+        return retry_wrapper(partial(HTCondorManifests._condor_advertise, *(self, classads),
+                                     **{"collector_host": collector_host, 
+                                        "update_ad_command": update_ad_command}),
+                             self.nretries, self.retry_interval)
 
     def publish(self, datablock):
         """
