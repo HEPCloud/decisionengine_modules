@@ -33,8 +33,8 @@ def retry_wrapper(f, nretries=1, retry_interval=2):
             elif hasattr(f, 'func'):
                 fname = f.func.__name__
             if i == nretries:
-                logger.error("Error Function {:s} giving up with {:s} after {:d} retry".format(fname, e, i))
+                logger.error("Error Function {:s} giving up with {:s} after {:d} retry".format(fname, str(e), i))
                 raise e
-            logger.warning("Function {:s} failed with {:s} on try {:d}/{:d}. Sleeping {:d} seconds".format(fname, e, i, nretries, time2sleep))
+            logger.warning("Function {:s} failed with {:s} on try {:d}/{:d}. Sleeping {:d} seconds".format(fname, str(e), i, nretries, time2sleep))
             time.sleep(time2sleep)
             time2sleep *= retry_interval
