@@ -1,5 +1,4 @@
 import importlib
-import string
 import time
 import pprint
 
@@ -26,7 +25,7 @@ def load(python_file, retries=0, timeout=0):
     for i in range(retries):
         try:
             with open(python_file, "r") as f:
-                code = "config=" + string.join(f.readlines(), "")
+                code = "config=" + "".join(f.readlines())
             if code:
                 exec(code)
             break
