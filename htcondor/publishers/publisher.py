@@ -110,7 +110,7 @@ class HTCondorManifests(Publisher.Publisher):
 
     def condor_advertise(self, classads, collector_host=None,
                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
-        return retry_wrapper(partial(HTCondorManifests._condor_advertise, *(self, classads),
+        return retry_wrapper(partial(self._condor_advertise, classads,
                                      **{"collector_host": collector_host,
                                         "update_ad_command": update_ad_command}),
                              self.nretries, self.retry_interval)
