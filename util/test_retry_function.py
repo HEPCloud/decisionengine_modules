@@ -1,11 +1,10 @@
-from retry_function import *
+from functools import partial
 import logging
-
+import decisionengine_modules.util.retry_function as retry_function
 try:
     from cStringIO import StringIO
 except ImportError:
     from io import StringIO
-
 
 success_string = "INFO:root:Hello World"
 
@@ -25,13 +24,13 @@ class Dummy:
         logger.info(foo + " " + text)
 
     def func_success(self, foo, text="World"):
-        return retry_wrapper(partial(self._func_success, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
+        return retry_function.retry_wrapper(partial(self._func_success, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
 
     def _func_failure(self, foo, text="World"):
         raise ValueError('A very specific bad thing happened.')
 
     def func_failure(self, foo, text="World"):
-        return retry_wrapper(partial(self._func_failure, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
+        return retry_function.retry_wrapper(partial(self._func_failure, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
 
 
 log_stream = StringIO()
