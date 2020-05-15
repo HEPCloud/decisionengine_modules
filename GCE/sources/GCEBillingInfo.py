@@ -100,7 +100,7 @@ class GCEBillCalculator(object):
             self.logger.error(
                 "Unable to download GCE billing file names because auth is not set up")
             return []
-        except Exception as e:
+        except Exception:
             self.logger.error(
                 "Able to auth but unable to download GCE billing files")
             return []
