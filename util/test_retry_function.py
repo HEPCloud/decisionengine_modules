@@ -7,9 +7,9 @@ except ImportError:
     from io import StringIO
 
 
-success_string="INFO:root:Hello World"
+success_string = "INFO:root:Hello World"
 
-failure_string='''WARNING:root:Function _func_failure failed with A very specific bad thing happened. on try 0/2. Sleeping 1 seconds
+failure_string = '''WARNING:root:Function _func_failure failed with A very specific bad thing happened. on try 0/2. Sleeping 1 seconds
 WARNING:root:Function _func_failure failed with A very specific bad thing happened. on try 1/2. Sleeping 2 seconds
 ERROR:root:Error Function _func_failure giving up with A very specific bad thing happened. after 2 retries'''
 
@@ -25,7 +25,7 @@ class Dummy:
         logger.info(foo + " " + text)
 
     def func_success(self, foo, text="World"):
-        return retry_wrapper( partial(self._func_success, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
+        return retry_wrapper(partial(self._func_success, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
 
     def _func_failure(self, foo, text="World"):
         raise ValueError('A very specific bad thing happened.')
@@ -48,7 +48,7 @@ def test_all():
 # testing a failure handling
     try:
         d.func_failure("Hi")
-    except:
+    except ValueError:
         pass
     finally:
         assert failure_string == log_stream.getvalue().rstrip()
