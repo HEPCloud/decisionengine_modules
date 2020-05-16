@@ -35,6 +35,6 @@ def test_all():
         # e here has [...., 'args', 'with_traceback']
         # args is (  {'sum': 8},  )
         # so, args[0] is a dictionary {'sum': 8}
-        sum2 = e.args[0]['sum']
+        sum2 = e.args[0].get('sum')
 
     assert sum2 == 10
