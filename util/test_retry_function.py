@@ -1,16 +1,6 @@
 from functools import partial
 import logging
 import decisionengine_modules.util.retry_function as retry_function
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-success_string = "INFO:root:Hello World"
-
-failure_string = '''WARNING:root:Function _func_failure failed with A very specific bad thing happened. on try 0/2. Sleeping 1 seconds
-WARNING:root:Function _func_failure failed with A very specific bad thing happened. on try 1/2. Sleeping 2 seconds
-ERROR:root:Error Function _func_failure giving up with A very specific bad thing happened. after 2 retries'''
 
 class Dummy:
 
@@ -19,35 +9,32 @@ class Dummy:
         self.nretries = 2
         self.retry_interval = 2
 
-    def _func_success(self, foo, text="World"):
-        logger = logging.getLogger()
-        logger.info(foo + " " + text)
+    def _func_success(self, foo, input2=3):
+        return foo + input2 + self.nretries + self.retry_interval
 
-    def func_success(self, foo, text="World"):
-        return retry_function.retry_wrapper(partial(self._func_success, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
+    def func_success(self, foo, input2=3):
+        return retry_function.retry_wrapper(partial(self._func_success, *(foo,), **{"input2": input2}), self.nretries, self.retry_interval)
 
-    def _func_failure(self, foo, text="World"):
-        raise ValueError('A very specific bad thing happened.')
+    def _func_failure(self, foo, input2=3):
+        raise ValueError({'sum': foo + input2 + self.nretries + self.retry_interval})
 
-    def func_failure(self, foo, text="World"):
-        return retry_function.retry_wrapper(partial(self._func_failure, *(foo,), **{"text": "World"}), self.nretries, self.retry_interval)
+    def func_failure(self, foo, input2=3):
+        return retry_function.retry_wrapper(partial(self._func_failure, *(foo,), **{"input2": input2}), self.nretries, self.retry_interval)
 
-
-log_stream = StringIO()
-logging.basicConfig(stream=log_stream, level=logging.INFO)
-mystr_handler = logging.StreamHandler()
 
 def test_all():
     d = Dummy()
-    d.func_success("Hello")
-    assert success_string == log_stream.getvalue().rstrip()
-
-    log_stream.truncate(0)
+    sum1 = d.func_success(2, input2=4)
+    assert sum1 == 10
 
 # testing a failure handling
+    sum2 = 0
     try:
-        d.func_failure("Hi")
-    except ValueError:
-        pass
-    finally:
-        assert failure_string == log_stream.getvalue().rstrip()
+        d.func_failure(2, input2=4)
+    except ValueError as e:
+        # e here has [...., 'args', 'with_traceback']
+        # args is (  {'sum': 8},  )
+        # so, args[0] is a dictionary {'sum': 8}
+        sum2 = e.args[0]['sum']
+
+    assert sum2 == 10
