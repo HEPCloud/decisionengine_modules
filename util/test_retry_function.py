@@ -27,14 +27,10 @@ def test_all():
     sum1 = d.func_success(2, input2=4)
     assert sum1 == 10
 
-# testing a failure handling
     sum2 = 0
     try:
         d.func_failure(2, input2=4)
     except ValueError as e:
-        # e here has [...., 'args', 'with_traceback']
-        # args is (  {'sum': 8},  )
-        # so, args[0] is a dictionary {'sum': 8}
         sum2 = e.args[0].get('sum')
 
     assert sum2 == 10
