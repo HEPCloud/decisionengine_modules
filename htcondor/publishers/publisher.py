@@ -1,17 +1,15 @@
-import six
 import abc
-import os
-import sys
-import pandas
-import htcondor
 import classad
-import traceback
-import weakref
-
+import htcondor
 import logging
+import os
+import pandas
+import six
+import sys
+import traceback
+from functools import partial
 from decisionengine.framework.modules import Publisher
-from decisionengine.framework.dataspace import datablock
-
+from decisionengine_modules.util.retry_function import retry_wrapper
 
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
@@ -28,6 +26,8 @@ class HTCondorManifests(Publisher.Publisher):
 
         self.condor_config = config.get('condor_config')
         self.x509_user_proxy = config.get('x509_user_proxy')
+        self.nretries = config.get('nretries')
+        self.retry_interval = config.get('retry_interval')
         self.logger = logging.getLogger()
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
@@ -54,7 +54,7 @@ class HTCondorManifests(Publisher.Publisher):
                         self.classad_type, collector_host, constraint))
                     self.condor_advertise(ads, collector_host=collector_host,
                                           update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND)
-                except Exception as ex:
+                except Exception:
                     self.logger.error('Error running invalidating %s classads from collector_host %s' % (
                         self.classad_type, collector_host))
 
@@ -65,8 +65,8 @@ class HTCondorManifests(Publisher.Publisher):
         """
         return None
 
-    def condor_advertise(self, classads, collector_host=None,
-                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+    def _condor_advertise(self, classads, collector_host=None,
+                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
         Advertise list of classads to the HTCondor Collector
 
@@ -93,7 +93,7 @@ class HTCondorManifests(Publisher.Publisher):
             self.logger.info('Advertising %s classads to collector_host %s' % (
                 self.classad_type, collector_host))
             collector.advertise(ads, update_ad_command, True)
-        except Exception as ex:
+        except Exception:
             # TODO: We need to be more specific about the errors/exception
             #       For now just raise to get more info logged
             col = 'default'
@@ -107,6 +107,13 @@ class HTCondorManifests(Publisher.Publisher):
         finally:
             if old_condor_config_env:
                 os.environ['CONDOR_CONFIG'] = old_condor_config_env
+
+    def condor_advertise(self, classads, collector_host=None,
+                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+        return retry_wrapper(partial(self._condor_advertise, classads,
+                                     **{"collector_host": collector_host,
+                                        "update_ad_command": update_ad_command}),
+                             self.nretries, self.retry_interval)
 
     def publish(self, datablock):
         """
@@ -141,7 +148,7 @@ class HTCondorManifests(Publisher.Publisher):
                     self.condor_advertise(ads, collector_host=collector)
             else:
                 self.logger.info('No %s classads found to advertise' % key)
-        except Exception as e:
+        except Exception:
             tb = traceback.format_exception(sys.exc_info()[0],
                                             sys.exc_info()[1],
                                             sys.exc_info()[2])
