@@ -14,7 +14,8 @@ pipeline {
 
       stage('clone') {
          steps {
-            sh 'git clone https://github.com/HEPCloud/decisionengine_modules.git'
+            // sh 'git clone https://github.com/HEPCloud/decisionengine_modules.git'
+            sh 'git clone https://github.com/vitodb/decisionengine_modules.git'
          }
       }
 
