@@ -116,8 +116,6 @@ script:
   - cd `dirname ${TRAVIS_BUILD_DIR}`
   - coverage run --rcfile=decisionengine_modules/.coveragerc -m pytest -v -l --tb=native decisionengine_modules
 
-# hook into coveralls
-after_success:
   - mv .coverage ${TRAVIS_BUILD_DIR}
   - cd ${TRAVIS_BUILD_DIR}
   - coveralls
