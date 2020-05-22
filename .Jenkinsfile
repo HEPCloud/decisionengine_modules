@@ -3,57 +3,73 @@ pipeline {
 
    stages {
 
-      stage('cleanup') {
+      stage('setup') {
          steps {
-            sh '''
-            pwd
-            for f in $(ls -A); do rm -rf ${f}; done
-            '''
-         }
-      }
-
-      stage('clone') {
-         steps {
-            sh 'git clone https://github.com/HEPCloud/decisionengine_modules.git'
+            echo "cleanup workspace"
+            sh 'for f in $(ls -A); do rm -rf ${f}; done'
+            // DE_MOD_REPO is defined through Jenkins project
+            echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
+            sh "git clone ${DE_MOD_REPO}"
          }
       }
 
       stage('pep8') {
          steps {
-            echo 'prepare docker image'
-            // DOCKER_IMAGE is defined through Jenkins project
-            sh 'docker build -t ${DOCKER_IMAGE} -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/'
-            echo 'Run pep8 tests'
-            sh '''
-            pwd
-            docker run --rm -v $PWD:$PWD -w ${PWD} ${DOCKER_IMAGE}
-            '''
+            script {
+                // DOCKER_IMAGE is defined through Jenkins project
+                pep8StageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
+            }
+            echo "prepare docker image ${pep8StageDockerImage}"
+            sh "docker build -t ${pep8StageDockerImage} -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/"
+            echo "Run ${STAGE_NAME} tests"
+            sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${pep8StageDockerImage}"
+            echo "cleanup docker image"
+            sh "docker rmi ${pep8StageDockerImage}"
          }
       }
 
       stage('pylint') {
          steps {
-            echo 'prepare docker image'
-            // DOCKER_IMAGE is defined through Jenkins project
-            sh 'docker build -t ${DOCKER_IMAGE} -f decisionengine_modules/.github/actions/pylint-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pylint-in-sl7-docker/'
-            echo 'Run pylint tests'
-            sh '''
-            pwd
-            docker run --rm -v $PWD:$PWD -w ${PWD} ${DOCKER_IMAGE}
-            '''
+            script {
+                // DOCKER_IMAGE is defined through Jenkins project
+                pylintStageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
+            }
+            echo "prepare docker image ${pylintStageDockerImage}"
+            sh "docker build -t ${pylintStageDockerImage} -f decisionengine_modules/.github/actions/pylint-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pylint-in-sl7-docker/"
+            echo "Run ${STAGE_NAME} tests"
+            sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${pylintStageDockerImage}"
+            echo "cleanup docker image"
+            sh "docker rmi ${pylintStageDockerImage}"
          }
       }
 
-      stage('unit tests') {
+      stage('unittest') {
          steps {
-            echo 'prepare docker image'
-            // DOCKER_IMAGE is defined through Jenkins project
-            sh 'docker build -t ${DOCKER_IMAGE} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker'
-            echo 'Run unit tests'
-            sh '''
-            pwd
-            docker run --rm -v $PWD:$PWD -w ${PWD} ${DOCKER_IMAGE}
-            '''
+            script {
+                // DOCKER_IMAGE is defined through Jenkins project
+                unittestStageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
+            }
+            echo "prepare docker image ${unittestStageDockerImage}"
+            sh "docker build -t ${unittestStageDockerImage} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker"
+            echo "Run ${STAGE_NAME} tests"
+            sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${unittestStageDockerImage}"
+            echo "cleanup docker image"
+            sh "docker rmi ${unittestStageDockerImage}"
+         }
+      }
+
+      stage('rpmbuild') {
+         steps {
+            script {
+                // DOCKER_IMAGE is defined through Jenkins project
+                rpmbuildStageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
+            }
+            echo "prepare docker image ${rpmbuildStageDockerImage}"
+            sh "docker build -t ${rpmbuildStageDockerImage} -f decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker"
+            echo "Run ${STAGE_NAME} tests"
+            sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${rpmbuildStageDockerImage}"
+            echo "cleanup docker image"
+            sh "docker rmi ${rpmbuildStageDockerImage}"
          }
       }
    }
