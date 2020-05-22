@@ -414,9 +414,6 @@ class AWSBillCalculator(object):
         # Here we add the new columns to the old format in any case
 
         # Constants
-        billingFileNameNewFormatIdentifier = r'.*with\-resources\-and\-tags\-.*.csv.zip'
-        billingFileNameNewFormatMatch = re.compile(
-            billingFileNameNewFormatIdentifier)
         billingFileDateIdentifier = r'20[0-9][0-9]\-[0-9][0-9]'
         dateExtractionMatch = re.compile(billingFileDateIdentifier)
         data_by_month = {}
