@@ -1,5 +1,3 @@
-import string
-
 """
 This data is taken from billing and arranged as dictionary of
 AccountConstants instead of separate class for each billing class.
@@ -60,7 +58,7 @@ def load_constants(constants_file):
     code = None
     config_dict = {}  # to trick pylint
     with open(constants_file, "r") as f:
-        code = "config_dict=" + string.join(f.readlines(), "")
+        code = "config_dict=" + "".join(f.readlines())
     if code:
         exec(code)
 
