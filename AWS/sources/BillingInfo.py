@@ -17,7 +17,7 @@ import pandas as pd
 import logging
 
 from decisionengine.framework.modules import Source
-import DEAccountContants  # 2to3 recommends from . import DEAccountContants
+from decisionengine_modules.AWS.sources import DEAccountContants
 
 PRODUCES = ['AWS_Billing_Info', 'AWS_Billing_Rate']
 
