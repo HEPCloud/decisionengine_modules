@@ -1,22 +1,22 @@
-"""
-Get job info from Nersc
+""" Get job info from Nersc
 """
 import argparse
+import logging
 import pprint
 import pandas as pd
-import time
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.NERSC.util import newt
-import logging
 
 PRODUCES = ['Nersc_Job_Info']
 
 _MAX_RETRIES = 10
-_RETRY_TIMEOUT = 10
+_RETRY_BACKOFF_FACTOR = 1
 # TODO this is a default column list and needs to be overriden from configuration
-COLUMN_LIST = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse', 'hostname', 'jobid', 'queue',
-               'submittime', 'reason', 'source', 'memory', 'nodes', 'rank_p', 'timereq', 'procs', 'user']
+COLUMN_LIST = ['status', 'repo', 'rank_bf', 'qos', 'name', 'timeuse',
+               'hostname', 'jobid', 'queue', 'submittime', 'reason',
+               'source', 'memory', 'nodes', 'rank_p', 'timereq',
+               'procs', 'user']
 
 
 class NerscJobInfo(Source.Source):
@@ -29,15 +29,19 @@ class NerscJobInfo(Source.Source):
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
-        self.newt = newt.Newt(config.get('passwd_file'))
-        self.logger = logging.getLogger()
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
-        self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
+        self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)
+        self.newt = newt.Newt(
+            config.get('passwd_file'),
+            num_retries=self.max_retries,
+            retry_backoff_factor=self.retry_backoff_factor)
+        self.logger = logging.getLogger()
 
-    def _acquire(self):
+    def acquire(self):
         """
-        Helper method that does heavy lifting.
-        Called from acquire
+        Method to be called from Task Manager.
+        redefines acquire from Source.py.
+        Acquire NERSC job info and return as pandas frame
         :return: `dict`
         """
         raw_results = []
@@ -74,27 +78,6 @@ class NerscJobInfo(Source.Source):
         """
         return PRODUCES
 
-    def acquire(self):
-        """
-        Method to be called from Task Manager.
-        redefines acquire from Source.py.
-        Acquire NERSC job info and return as pandas frame
-        :rtype: :obj:`~pd.DataFrame`
-        """
-        tries = 0
-        while True:
-            try:
-                return self._acquire()
-            except RuntimeError:
-                raise
-            except Exception as e:
-                if tries < self.max_retries:
-                    tries += 1
-                    time.sleep(self.retry_timeout)
-                    continue
-                else:
-                    raise RuntimeError(str(e))
-
 
 def module_config_template():
     """
@@ -107,8 +90,8 @@ def module_config_template():
             'name': 'NerscJobInfo',
             'parameters': {
                 'passwd_file': '/path/to/password_file',
+                'retry_backoff_factor': 1,
                 'max_retries': 10,
-                'retry_timeout': 10,
                 'constraints': {
                     'machines': ["edison", "cori"],
                     'newt_keys': {
