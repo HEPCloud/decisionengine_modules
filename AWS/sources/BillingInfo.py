@@ -744,8 +744,6 @@ class BillingInfo(Source.Source):
             except Exception as detail:
                 self.logger.error("In acquire: %s" % detail)
                 raise Exception(detail)
-            except Exception:
-                pass
 
         return {PRODUCES[0]: pd.DataFrame(data), PRODUCES[1]: pd.DataFrame(datarate)}
 
