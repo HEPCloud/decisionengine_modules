@@ -744,7 +744,6 @@ class BillingInfo(Source.Source):
             except Exception as detail:
                 self.logger.error("In acquire: %s" % detail)
                 raise Exception(detail)
-                print(detail)
             except Exception:
                 pass
 
