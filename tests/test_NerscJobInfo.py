@@ -54,5 +54,5 @@ class TestNerscJobInfo:
                 res = nersc_job_info.acquire()
                 assert PRODUCES == list(res.keys())
                 new_df = res[PRODUCES[0]]
-                new_df = new_df.reindex( EXPECTED_PANDAS_DFRAME.columns, axis=1 )
+                new_df = new_df.reindex(EXPECTED_PANDAS_DFRAME.columns, axis=1)
                 pandas.testing.assert_frame_equal(EXPECTED_PANDAS_DFRAME, new_df)
