@@ -1126,13 +1126,13 @@ class GlideFrontendElement(object):
         glideresource classad
         """
         if ((count_status['Total'] >= self.entry_max_glideins)
-            or (count_status['Idle'] >= self.entry_max_slots_idle)
-            or (total_glideins >= self.total_max_slots)
-            or (total_idle_glideins >= self.total_max_slots_idle)
-            or (fe_total_glideins >= self.fe_total_max_slots)
-            or (fe_total_idle_glideins >= self.fe_total_max_slots_idle)
-            or (global_total_glideins >= self.global_total_max_slots)
-                (global_total_idle_glideins >= self.global_total_max_slots_idle)):
+                or (count_status['Idle'] >= self.entry_max_slots_idle)
+                or (total_glideins >= self.total_max_slots)
+                or (total_idle_glideins >= self.total_max_slots_idle)
+                or (fe_total_glideins >= self.fe_total_max_slots)
+                or (fe_total_idle_glideins >= self.fe_total_max_slots_idle)
+                or (global_total_glideins >= self.global_total_max_slots)
+                or (global_total_idle_glideins >= self.global_total_max_slots_idle)):
 
             # Do not request more glideins under following conditions:
             # 1. Have all the running jobs I wanted
