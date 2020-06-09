@@ -15,8 +15,8 @@ from decisionengine_modules.util.retry_function import retry_wrapper
 
 PRODUCES = ["GCE_Occupancy"]
 
-_MAX_RETRIES = 10
-_RETRY_TIMEOUT = 10
+_MAX_RETRIES = 8
+_RETRY_TIMEOUT = 2
 
 
 class GceOccupancy(Source.Source):
@@ -37,7 +37,7 @@ class GceOccupancy(Source.Source):
         return self.client
 
     def acquire(self):
-        retry_wrapper(self._acquire, self.max_retries, self.retry_timeout)
+        return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout)
 
     def _acquire(self):
         d = {}
