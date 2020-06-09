@@ -61,5 +61,4 @@ class TestFigureOfMerit:
             else:
                 df = fix_column(res[k], 'AWS_Figure_Of_Merit')
                 edf = fix_column(expected_reply[k], 'AWS_Figure_Of_Merit')
-            assert utils.compare_dfs(edf, df)
-#            pd.testing.assert_frame_equal(edf, df)
+            pd.testing.assert_frame_equal(edf, df)
