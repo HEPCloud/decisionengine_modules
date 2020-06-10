@@ -19,6 +19,7 @@ EXPECTED_NAMES = ['accountName',
 
 class AccountConstants(object):
     def __init__(self, constants={}):
+
         # Initialize variables
         for k in EXPECTED_NAMES:
             setattr(self, k, None)
@@ -44,8 +45,11 @@ class AccountConstants(object):
             print(name, attr, type(attr))
 
 
+_config_dict = {}  # to trick pylint
+
+
 def load_constants(constants_file):
-    '''
+    """
     Load constants from file.
 
     :type constants_file: :obj:`file`
@@ -53,16 +57,16 @@ def load_constants(constants_file):
 
     :rtype: :obj:`AccountConstants`
 
-    '''
+    """
 
     code = None
-    config_dict = {}  # to trick pylint
+    global _config_dict
     with open(constants_file, "r") as f:
-        code = "config_dict=" + "".join(f.readlines())
+        code = "_config_dict=" + "".join(f.readlines())
     if code:
-        exec(code)
+        exec(code, globals())
 
-    return config_dict
+    return _config_dict
 
 
 if __name__ == '__main__':
