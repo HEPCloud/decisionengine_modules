@@ -425,7 +425,6 @@ class AWSBillCalculator(object):
 
         # Read in files for the merging
         zipFile = zipfile.ZipFile(zipFileName, 'r')
-        #billingFileName = string.rstrip(zipFileName, '.zip')
         billingFileName = zipFileName.rstrip('.zip')
         billCSVStr = zipFile.read(billingFileName).decode("utf-8")
         data_by_month[date_key] = billCSVStr
@@ -672,10 +671,7 @@ class BillingInfo(Source.Source):
                                                applyDiscount=i.applyDiscount,
                                                tmpDirForBuillingFiles=self.billing_files_location,
                                                verboseFlag=False)
-                #print i.accountName
-                #print 'before calculate bill call'
                 lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
-                #print 'after calculate bill call'
                 self.logger.debug('lastStartDateBilledConsideredDatetime: %s' % (
                     lastStartDateBilledConsideredDatetime))
                 self.logger.debug('CorrectedBillSummaryDict: %s' %
