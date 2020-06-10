@@ -112,8 +112,8 @@ class AWSBillCalculator(object):
             os.chdir(cwd)
         self.billCVSAggregateStr = self._aggregateBillFiles(self.data_by_month)
 
-        keylist = self.data_by_month.keys()
-        list(keylist).sort()
+        keylist = list(self.data_by_month.keys())
+        keylist.sort()
         for k in keylist:
             dt = datetime.datetime(
                 int(k.split('-')[0]), int(k.split('-')[1]), 1)
@@ -441,8 +441,8 @@ class AWSBillCalculator(object):
 
         # Constants
         billCVSAggregateStr = ''
-        keylist = data_by_month.keys()
-        list(keylist).sort()
+        keylist = list(data_by_month.keys())
+        keylist.sort()
         for k in keylist:
             billCSVStr = data_by_month[k]
             # Remove the header for all files except the first
