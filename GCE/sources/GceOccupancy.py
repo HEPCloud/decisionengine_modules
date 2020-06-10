@@ -5,7 +5,6 @@ import argparse
 import os
 import pprint
 import pandas as pd
-import time
 
 import google.auth
 import googleapiclient.discovery
