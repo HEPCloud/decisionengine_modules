@@ -1,4 +1,3 @@
-
 import argparse
 import pprint
 import pandas
@@ -77,9 +76,9 @@ class JobClustering(Transform.Transform):
         try:
             df_q = df_full_q.fillna('').query(self.job_q_expr)
             # Query job q and populate bucket totals
-            totals = [[job_expr, self.match_exprs.get(job_expr), df_q.query(job_expr).shape[0]] 
+            totals = [[job_expr, self.match_exprs.get(job_expr), df_q.query(job_expr).shape[0]]
                       for job_expr in self.match_exprs.keys()]
-            df_job_clusters = pandas.DataFrame(totals, 
+            df_job_clusters = pandas.DataFrame(totals,
                                                columns=['Job_Bucket_Criteria_Expr',
                                                         'Site_Bucket_Criteria_Expr', 'Totals'])
             self.logger.debug("Job category totals: %s" % df_job_clusters)
