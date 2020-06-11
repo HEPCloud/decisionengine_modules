@@ -6,6 +6,8 @@ from copy import deepcopy
 import os
 import time
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 """
 Newt base URL. When not specified in constructor this
@@ -16,7 +18,8 @@ _NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
 
 class Newt(object):
 
-    def __init__(self, password_file, newt_base_url=None):
+    def __init__(self, password_file, newt_base_url=None, num_retries=0,
+                 retry_backoff_factor=0):
         """
         Constructor that takes path to password file and
         optional Newt base URL
@@ -33,7 +36,23 @@ class Newt(object):
         if not self.newt_base_url.endswith("/"):
             self.newt_base_url += "/"
         self.session = requests.Session()
+        self.num_retries = num_retries
+        self.retry_backoff_factor = retry_backoff_factor
         self.expiration_time = time.time()
+        self._add_retries_to_session()
+
+    def _add_retries_to_session(self):
+        """
+        Adds retries to requests Session for requests to NEWT URLs
+        :return: void
+        """
+        retry = Retry(
+            status=self.num_retries,
+            status_forcelist=[500, ],
+            backoff_factor=self.retry_backoff_factor,
+            method_whitelist=False)
+        retry_adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount(self.newt_base_url, retry_adapter)
 
     def _login(self):
         """
@@ -46,6 +65,7 @@ class Newt(object):
             with open(self.password_file) as f:
                 postfields = "&".join([line[:-1].strip()
                                        for line in f.readlines()])
+
             r = self.session.post(login_url, data=postfields)
             r.raise_for_status()
             response_dict = r.json()
