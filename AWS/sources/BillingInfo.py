@@ -452,8 +452,6 @@ class AWSBillCalculator(object):
         # aggregate data
         billCVSAggregateStr = billCVSAggregateStr + billCSVStr
 
-
-
         if self.debugFlag:
             self.logger.debug(billCVSAggregateStr)
             self.logger.debug()
@@ -660,7 +658,6 @@ class BillingInfo(Source.Source):
         # get data for all accounts
         data = []
         datarate = []
-        self.logger.debug("Accounts {}".format(self.accounts))
         for i in self.accounts:
             try:
                 calculator = AWSBillCalculator(accountName=i.accountName,

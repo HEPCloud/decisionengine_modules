@@ -514,7 +514,6 @@ class GlideFrontendElement(object):
             gc_classad.adParams['ReqMaxGlideins'] = req_max_run
             gc_classad.adParams['ReqRemoveExcess'] = params_obj.remove_excess_str
             gc_classad.adParams.update(self.get_factory_key_ad_params(key_obj))
-            # gc_classad.adParams['ReqIdleLifetime'] = params_obj.idle_lifetime
             gc_classad.adParams['WebMonitoringURL'] = self.monitoring_web_url
             gc_classad.adParams['WebSignType'] = self.signature_type
             gc_classad.adParams['WebURL'] = self.web_url
