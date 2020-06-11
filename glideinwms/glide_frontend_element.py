@@ -1,7 +1,6 @@
 import copy
 import logging
 import math
-import string
 import sys
 
 import pandas
@@ -515,7 +514,6 @@ class GlideFrontendElement(object):
             gc_classad.adParams['ReqMaxGlideins'] = req_max_run
             gc_classad.adParams['ReqRemoveExcess'] = params_obj.remove_excess_str
             gc_classad.adParams.update(self.get_factory_key_ad_params(key_obj))
-            #gc_classad.adParams['ReqIdleLifetime'] = params_obj.idle_lifetime
             gc_classad.adParams['WebMonitoringURL'] = self.monitoring_web_url
             gc_classad.adParams['WebSignType'] = self.signature_type
             gc_classad.adParams['WebURL'] = self.web_url
@@ -593,8 +591,7 @@ class GlideFrontendElement(object):
             for attr in glidein_params_to_encrypt:
                 value = str(key_obj.encrypt_hex(
                     glidein_params_to_encrypt[attr]))
-                escaped_value = string.replace(
-                    string.replace(value, '"', '\\"'), '\n', '\\n')
+                escaped_value = value.replace('"', '\\"').replace('\n', '\\n')
                 ad_attr = '%s%s' % ('GlideinEncParam', attr)
                 gc_classad.adParams[ad_attr] = escaped_value
 
@@ -674,8 +671,7 @@ class GlideFrontendElement(object):
         # Add classad attributes that need to be encrypted
         for attr in classad_attrs_to_encrypt:
             value = str(key_obj.encrypt_hex(classad_attrs_to_encrypt[attr]))
-            escaped_value = string.replace(
-                string.replace(value, '"', '\\"'), '\n', '\\n')
+            escaped_value = value.replace('"', '\\"').replace('\n', '\\n')
             ad_attr = '%s%s' % ('GlideinEncParam', attr)
             gcg_classad.adParams[ad_attr] = escaped_value
 
@@ -1252,8 +1248,8 @@ class GlideFrontendElement(object):
         for index, row in factory_globals.iterrows():
             try:
                 # NOTE: Newline is escaped before storing into the dataframe
-                #       Unescape it to make the pub key string usable
-                pub_key = string.replace(row.get('PubKeyValue'), '\\n', '\n')
+                #       Un-escape it to make the pub key string usable
+                pub_key = row.get('PubKeyValue').replace('\\n', '\n')
                 key_obj = pubCrypto.PubRSAKey(key_str=pub_key)
             except Exception:
                 # if no valid key
