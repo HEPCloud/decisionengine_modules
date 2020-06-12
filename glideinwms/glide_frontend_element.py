@@ -1358,7 +1358,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         if not jobs_df.empty:
             # Apply filter to jobs df only if it is not empty
             # This will give jobs equivalent to job_query_expr
-            jobs_df = jobs_df.query(job_filter)
+            jobs_df = jobs_df.fillna('').query(job_filter)
         # Categorize jobs with different status criteria
         job_types = self.categorize_jobs(jobs_df)
 
