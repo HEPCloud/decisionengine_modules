@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define pyver 2.7
-%define version 1.1.3
+%define version 1.1.4
 %define release 1_py%pyver
 
 %define de_user decisionengine
