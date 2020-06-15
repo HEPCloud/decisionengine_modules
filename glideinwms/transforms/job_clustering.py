@@ -1,30 +1,19 @@
-
 import argparse
 import pprint
 import pandas
-import itertools
 
 import logging
 from decisionengine.framework.modules import Transform
-from decisionengine.framework.dataspace.datablock import DataBlock
 
 PRODUCES = ['job_clusters']
 
 CONSUMES = ['job_manifests']
 
-# EMPTY_JOB_CLUSTER = pandas.DataFrame({
-#                'Job_Bucket_Criteria_Expr': [""],
-#                'Site_Bucket_Criteria_Expr': [""],
-#                'Totals': [0],
-#                'Frontend_Group': ""
-#                },
-#                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
-
-
 # TODO
 # - what debugging logs are needed?
 # - what and how is metadata for a dataframe?
 # - do we need to validate case or type for attr content?  again onboarding?
+
 
 class JobClustering(Transform.Transform):
 
@@ -40,8 +29,9 @@ class JobClustering(Transform.Transform):
         # Creating dataframe with config info but all totals are zero
         totals = [[job_expr[0], self.match_exprs.get(
             job_expr), 0, job_expr[1]] for job_expr in self.match_exprs.keys()]
-        self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals, columns=[
-                                                  'Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
+        self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals,
+                                                  columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
+                                                           'Totals', 'Frontend_Group'])
 
         self.logger = logging.getLogger()
 
@@ -61,7 +51,6 @@ class JobClustering(Transform.Transform):
 
         self.logger.info("*** Starting job clustering ***")
         # TODO not sure if metadata is propagated or if this is the right attrs to id a datablock
-#        self.logger.info("Using job manifests data block taskmanager=%s, generation=%s" % datablock.taskmanager_id, datablock.generation_id)
 
         # Get job queue datablock
         try:
@@ -83,21 +72,26 @@ class JobClustering(Transform.Transform):
 
         totals = []
         # VERSION WITHOUT FRONTEND
-#        try:
-#            df_q = df_full_q.query(self.job_q_expr)
-#            # Query job q and populate bucket totals
-#            totals = [[job_expr, self.match_exprs.get(job_expr), df_q.query(job_expr).shape[0]] for job_expr in self.match_exprs.keys()]
-#            df_job_clusters = pandas.DataFrame(totals, columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals'])
-#            self.logger.debug("Job category totals: %s" % df_job_clusters)
-
+        """
+        try:
+            df_q = df_full_q.fillna('').query(self.job_q_expr)
+            # Query job q and populate bucket totals
+            totals = [[job_expr, self.match_exprs.get(job_expr), df_q.query(job_expr).shape[0]]
+                      for job_expr in self.match_exprs.keys()]
+            df_job_clusters = pandas.DataFrame(totals,
+                                               columns=['Job_Bucket_Criteria_Expr',
+                                                        'Site_Bucket_Criteria_Expr', 'Totals'])
+            self.logger.debug("Job category totals: %s" % df_job_clusters)
+        """
         # VERSION WITH FRONTEND, DELETE AND USE ABOVE WHEN FRONTEND IS GONE
         try:
-            df_q = df_full_q.query(self.job_q_expr)
+            df_q = df_full_q.fillna('').query(self.job_q_expr)
             # Query job q and populate bucket totals
             totals = [[job_expr[0], self.match_exprs.get(job_expr), df_q.query(
                 job_expr[0]).shape[0], job_expr[1]] for job_expr in self.match_exprs.keys()]
-            df_job_clusters = pandas.DataFrame(totals, columns=[
-                                               'Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr', 'Totals', 'Frontend_Group'])
+            df_job_clusters = pandas.DataFrame(totals,
+                                               columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
+                                                        'Totals', 'Frontend_Group'])
             self.logger.debug("Job category totals: %s" % df_job_clusters)
 
         except KeyError:
@@ -129,7 +123,8 @@ def module_config_template():
             'name': 'JobClustering',
             'parameters': {
                 'match_expressions': {
-                      "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)": ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"]
+                      "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)":
+                          ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"]
                 }
             },
         }

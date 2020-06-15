@@ -5,12 +5,12 @@ import argparse
 import os
 import pprint
 import pandas as pd
-import time
 
 import google.auth
 import googleapiclient.discovery
 
 from decisionengine.framework.modules import Source
+from decisionengine_modules.util.retry_function import retry_wrapper
 
 PRODUCES = ["GCE_Occupancy"]
 
@@ -36,19 +36,7 @@ class GceOccupancy(Source.Source):
         return self.client
 
     def acquire(self):
-        tries = 0
-        while True:
-            try:
-                return self._acquire()
-            except RuntimeError:
-                raise
-            except Exception as e:
-                if tries < self.max_retries:
-                    tries += 1
-                    time.sleep(self.retry_timeout)
-                    continue
-                else:
-                    raise RuntimeError(str(e))
+        return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout, backoff=False)
 
     def _acquire(self):
         d = {}

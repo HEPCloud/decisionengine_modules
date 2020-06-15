@@ -6,7 +6,6 @@ import logging
 import os
 import pprint
 import re
-import string
 import time
 import zipfile
 
@@ -113,7 +112,7 @@ class AWSBillCalculator(object):
             os.chdir(cwd)
         self.billCVSAggregateStr = self._aggregateBillFiles(self.data_by_month)
 
-        keylist = self.data_by_month.keys()
+        keylist = list(self.data_by_month.keys())
         keylist.sort()
         for k in keylist:
             dt = datetime.datetime(
@@ -181,7 +180,6 @@ class AWSBillCalculator(object):
                   'AWSSupportBusiness': 0.38862123489039674,
                   'AdjustedTotal': 268.9511507172487
                  }
-
         Returns:
             none
         """
@@ -427,8 +425,8 @@ class AWSBillCalculator(object):
 
         # Read in files for the merging
         zipFile = zipfile.ZipFile(zipFileName, 'r')
-        billingFileName = string.rstrip(zipFileName, '.zip')
-        billCSVStr = zipFile.read(billingFileName)
+        billingFileName = zipFileName.rstrip('.zip')
+        billCSVStr = zipFile.read(billingFileName).decode("utf-8")
         data_by_month[date_key] = billCSVStr
         return data_by_month
 
@@ -443,7 +441,7 @@ class AWSBillCalculator(object):
 
         # Constants
         billCVSAggregateStr = ''
-        keylist = data_by_month.keys()
+        keylist = list(data_by_month.keys())
         keylist.sort()
         for k in keylist:
             billCSVStr = data_by_month[k]
@@ -453,6 +451,7 @@ class AWSBillCalculator(object):
 
         # aggregate data
         billCVSAggregateStr = billCVSAggregateStr + billCSVStr
+
         if self.debugFlag:
             self.logger.debug(billCVSAggregateStr)
             self.logger.debug()
@@ -550,13 +549,13 @@ class AWSBillCalculator(object):
 
             # Sum up the costs
             try:
-                # Don't add up lines that are corrections for the educational grant, the unauthorized usage, or the final Total
-                if string.find(row[itemDescriptionCsvHeaderString], educationalGrantRowIdentifyingString) == -1 and \
-                        string.find(row[itemDescriptionCsvHeaderString], unauthorizedUsageString) == -1 and \
-                        string.find(row[itemDescriptionCsvHeaderString], totalCsvHeaderString) == -1:
-                    key = string.translate(
-                        row[ProductNameCsvHeaderString], None, ' ()')
-
+                # Don't add up lines that are corrections for the educational grant,
+                # the unauthorized usage, or the final Total
+                if (row[itemDescriptionCsvHeaderString].find(educationalGrantRowIdentifyingString) == -1
+                        and row[itemDescriptionCsvHeaderString].find(unauthorizedUsageString) == -1
+                        and row[itemDescriptionCsvHeaderString].find(totalCsvHeaderString) == -1):
+                    table = str.maketrans(dict.fromkeys(' ()'))
+                    key = row[ProductNameCsvHeaderString].translate(table)
                     # Don't add up lines that don't have a key e.g. final comments in the csv file
                     if key != '':
                         BillSummaryDict[key] += float(
@@ -564,7 +563,7 @@ class AWSBillCalculator(object):
                         BillSummaryDict[totalCsvHeaderString] += float(
                             row[unBlendedCostCsvHeaderString])
                         # Add up all data transfer charges separately
-                        if string.find(row[itemDescriptionCsvHeaderString], 'data transferred out') != -1:
+                        if row[itemDescriptionCsvHeaderString].find('data transferred out') != -1:
                             BillSummaryDict[totalDataOutCsvHeaderString] += float(
                                 row[unBlendedCostCsvHeaderString])
                             BillSummaryDict[estimatedTotalDataOutCsvHeaderString] += float(
@@ -669,10 +668,7 @@ class BillingInfo(Source.Source):
                                                applyDiscount=i.applyDiscount,
                                                tmpDirForBuillingFiles=self.billing_files_location,
                                                verboseFlag=False)
-                #print i.accountName
-                #print 'before calculate bill call'
                 lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
-                #print 'after calculate bill call'
                 self.logger.debug('lastStartDateBilledConsideredDatetime: %s' % (
                     lastStartDateBilledConsideredDatetime))
                 self.logger.debug('CorrectedBillSummaryDict: %s' %
@@ -826,4 +822,5 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     main()

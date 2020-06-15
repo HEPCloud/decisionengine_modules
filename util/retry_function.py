@@ -3,15 +3,15 @@ from functools import wraps
 import logging
 import time
 
-def retry_on_error(nretries=1, retry_interval=2):
+def retry_on_error(nretries=1, retry_interval=2, backoff=True):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            return retry_wrapper(partial(f, *args, **kwargs), nretries, retry_interval)
+            return retry_wrapper(partial(f, *args, **kwargs), nretries, retry_interval, backoff)
         return wrapper
     return decorator
 
-def retry_wrapper(f, nretries=1, retry_interval=2):
+def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True):
     '''Retry on error with parameters of how many times (nretries)
     and interval in seconds (retry_interval).
     If the function to be decorated is an instance method
@@ -20,7 +20,7 @@ def retry_wrapper(f, nretries=1, retry_interval=2):
     from instance attributes with the same name.
     Otherwise, use the default values or pass new values to the decorator.
     '''
-    time2sleep = 1
+    time2sleep = retry_interval
     logger = logging.getLogger()
     for i in range(nretries + 1):
         try:
@@ -36,4 +36,5 @@ def retry_wrapper(f, nretries=1, retry_interval=2):
                 raise e
             logger.warning("Function {} failed with {} on try {}/{}. Sleeping {:d} seconds".format(fname, e, i, nretries, time2sleep))
             time.sleep(time2sleep)
-            time2sleep *= retry_interval
+            if backoff:
+                time2sleep *= retry_interval
