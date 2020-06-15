@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 import decisionengine_modules.AWS.transforms.FigureOfMerit as FigureOfMerit
-from decisionengine_modules.util import testutils as utils
+
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 

@@ -2,16 +2,11 @@
 Get AWS capacity (running instances) information.
 """
 import boto3
-import sys
-import os
-import time
 import pprint
-import numpy as np
 import pandas as pd
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
 import logging
-import decisionengine_modules.load_config as load_config
 
 # default values
 REGION = 'us-west-2'
