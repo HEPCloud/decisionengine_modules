@@ -5,8 +5,8 @@ In this release:
 
 * Switched to python3
 * NERSC newt interface adapted to changed NERSC RESTful API
-* Improved unit tests 
-* Added Jenkins CI pipeline 
+* Improved unit tests
+* Added Jenkins CI pipeline
 
 Patches:
 -------
