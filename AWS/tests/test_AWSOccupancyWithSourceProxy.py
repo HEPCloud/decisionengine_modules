@@ -53,5 +53,6 @@ class TestAWSOccupancyWithSourceProxy:
                             ['AvailabilityZone', 'InstanceType'])
                         new_df = res.get(produces[0]).sort_values(
                             ['AvailabilityZone', 'InstanceType'])
-                        new_df.reindex()
-                        assert utils.compare_dfs(df1, new_df)
+                        new_df = new_df.reindex(df1.columns, axis=1)
+                        new_df = new_df.set_index(df1.index)
+                        pd.testing.assert_frame_equal(df1, new_df)
