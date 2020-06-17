@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 import decisionengine_modules.AWS.transforms.FigureOfMerit as FigureOfMerit
-from decisionengine_modules.util import testutils as utils
+
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -61,4 +61,4 @@ class TestFigureOfMerit:
             else:
                 df = fix_column(res[k], 'AWS_Figure_Of_Merit')
                 edf = fix_column(expected_reply[k], 'AWS_Figure_Of_Merit')
-            assert utils.compare_dfs(edf, df)
+            pd.testing.assert_frame_equal(edf, df)

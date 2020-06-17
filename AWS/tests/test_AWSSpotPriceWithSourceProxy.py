@@ -60,4 +60,5 @@ class TestAWSSpotPriceWithSourceProxy:
                         res = aws_s_p.acquire()
                         assert produces == list(res.keys())
                         new_df = fix_spot_price(res[produces[0]])
-                        assert utils.compare_dfs(expected_pandas_df, new_df)
+                        expected_pandas_df2 = expected_pandas_df.astype('object')
+                        pd.testing.assert_frame_equal(expected_pandas_df2, new_df)
