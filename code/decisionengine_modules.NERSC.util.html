@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>decisionengine_modules.NERSC.util package &#8212; decisionengine 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="decisionengine_modules.graphite package" href="decisionengine_modules.graphite.html" />
+    <link rel="prev" title="decisionengine_modules.NERSC.transforms package" href="decisionengine_modules.NERSC.transforms.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="decisionengine-modules-nersc-util-package">
+<h1>decisionengine_modules.NERSC.util package<a class="headerlink" href="#decisionengine-modules-nersc-util-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-decisionengine_modules.NERSC.util.newt">
+<span id="decisionengine-modules-nersc-util-newt-module"></span><h2>decisionengine_modules.NERSC.util.newt module<a class="headerlink" href="#module-decisionengine_modules.NERSC.util.newt" title="Permalink to this headline">¶</a></h2>
+<p>Newt API interface</p>
+<dl class="py class">
+<dt id="decisionengine_modules.NERSC.util.newt.Newt">
+<em class="property">class </em><code class="sig-prename descclassname">decisionengine_modules.NERSC.util.newt.</code><code class="sig-name descname">Newt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password_file</span></em>, <em class="sig-param"><span class="n">newt_base_url</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_retries</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">retry_backoff_factor</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/NERSC/util/newt.html#Newt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.NERSC.util.newt.Newt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="decisionengine_modules.NERSC.util.newt.Newt._add_retries_to_session">
+<code class="sig-name descname">_add_retries_to_session</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/NERSC/util/newt.html#Newt._add_retries_to_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.NERSC.util.newt.Newt._add_retries_to_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds retries to requests Session for requests to NEWT URLs
+:return: void</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.NERSC.util.newt.Newt._login">
+<code class="sig-name descname">_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/NERSC/util/newt.html#Newt._login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.NERSC.util.newt.Newt._login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Establishes newt Session
+:return: void</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.NERSC.util.newt.Newt.get_queue">
+<code class="sig-name descname">get_queue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">system</span></em>, <em class="sig-param"><span class="n">query</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/NERSC/util/newt.html#Newt.get_queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.NERSC.util.newt.Newt.get_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns information about queues controlled by
+optional query name parameter
+:param system: string system name (like ‘cori’, ‘edison’ ..)
+:param query: string query (optional)
+:return: json containing queue information</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.NERSC.util.newt.Newt.get_status">
+<code class="sig-name descname">get_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">system</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/NERSC/util/newt.html#Newt.get_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.NERSC.util.newt.Newt.get_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns system status for a given system (if provided) or all systems
+:param system: string name of the system (optional)
+:return: json containing system status</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.NERSC.util.newt.Newt.get_usage">
+<code class="sig-name descname">get_usage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/NERSC/util/newt.html#Newt.get_usage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.NERSC.util.newt.Newt.get_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns allocation and usage for the given user using NEWT IRIS API
+:param username: string username
+:return: json containing allocation and usage information for a given user</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-decisionengine_modules.NERSC.util">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-decisionengine_modules.NERSC.util" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">decisionengine</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Welcome to decisionengine_modules’s documentation!</a><ul>
+  <li><a href="decisionengine_modules.html">decisionengine_modules package</a><ul>
+  <li><a href="decisionengine_modules.NERSC.html">decisionengine_modules.NERSC package</a><ul>
+      <li>Previous: <a href="decisionengine_modules.NERSC.transforms.html" title="previous chapter">decisionengine_modules.NERSC.transforms package</a></li>
+      <li>Next: <a href="decisionengine_modules.graphite.html" title="next chapter">decisionengine_modules.graphite package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Fermi Research Alliance, LLC..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/code/decisionengine_modules.NERSC.util.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

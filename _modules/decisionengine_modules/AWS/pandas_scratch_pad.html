@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>decisionengine_modules.AWS.pandas_scratch_pad &#8212; decisionengine 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for decisionengine_modules.AWS.pandas_scratch_pad</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">job_manifests</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;JobId&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span> <span class="s2">&quot;RequestCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;RequestMemory&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;RequestTime&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;JobId&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0&quot;</span><span class="p">,</span> <span class="s2">&quot;RequestCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;RequestMemory&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;RequestTime&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;JobId&quot;</span><span class="p">:</span> <span class="s2">&quot;3.0&quot;</span><span class="p">,</span> <span class="s2">&quot;RequestCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;RequestMemory&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;RequestTime&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;JobId&quot;</span><span class="p">:</span> <span class="s2">&quot;3.1&quot;</span><span class="p">,</span> <span class="s2">&quot;RequestCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;RequestMemory&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;RequestTime&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;JobId&quot;</span><span class="p">:</span> <span class="s2">&quot;3.2&quot;</span><span class="p">,</span> <span class="s2">&quot;RequestCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;RequestMemory&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;RequestTime&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;JobId&quot;</span><span class="p">:</span> <span class="s2">&quot;6.0&quot;</span><span class="p">,</span> <span class="s2">&quot;RequestCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;RequestMemory&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;RequestTime&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">resource_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS1&quot;</span><span class="p">,</span> <span class="s2">&quot;ResourceCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;ResourceMemory&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;EC2Type&quot;</span><span class="p">:</span> <span class="s2">&quot;m4.large&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS2&quot;</span><span class="p">,</span> <span class="s2">&quot;ResourceCpus&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;ResourceMemory&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;EC2Type&quot;</span><span class="p">:</span> <span class="s2">&quot;m4.xlarge&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS3&quot;</span><span class="p">,</span> <span class="s2">&quot;ResourceCpus&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;ResourceMemory&quot;</span><span class="p">:</span> <span class="mf">7.5</span><span class="p">,</span> <span class="s2">&quot;EC2Type&quot;</span><span class="p">:</span> <span class="s2">&quot;m3.large&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS4&quot;</span><span class="p">,</span> <span class="s2">&quot;ResourceCpus&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;ResourceMemory&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;EC2Type&quot;</span><span class="p">:</span> <span class="s2">&quot;m3.xlarge&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS5&quot;</span><span class="p">,</span> <span class="s2">&quot;ResourceCpus&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;ResourceMemory&quot;</span><span class="p">:</span> <span class="mf">7.5</span><span class="p">,</span> <span class="s2">&quot;EC2Type&quot;</span><span class="p">:</span> <span class="s2">&quot;c4.xlarge&quot;</span><span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">resource_spot_price</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS1&quot;</span><span class="p">,</span> <span class="s2">&quot;SpotPrice&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS2&quot;</span><span class="p">,</span> <span class="s2">&quot;SpotPrice&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">15</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS3&quot;</span><span class="p">,</span> <span class="s2">&quot;SpotPrice&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">2</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS4&quot;</span><span class="p">,</span> <span class="s2">&quot;SpotPrice&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">12</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">:</span> <span class="s2">&quot;AWS5&quot;</span><span class="p">,</span> <span class="s2">&quot;SpotPrice&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">14</span><span class="p">}</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="load_data_frame"><a class="viewcode-back" href="../../../code/decisionengine_modules.AWS.html#decisionengine_modules.AWS.pandas_scratch_pad.load_data_frame">[docs]</a><span class="k">def</span> <span class="nf">load_data_frame</span><span class="p">(</span><span class="n">list_of_dicts</span><span class="p">):</span>
+    <span class="n">list_of_keys</span> <span class="o">=</span> <span class="n">list_of_dicts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">pandas_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">list_of_keys</span><span class="p">:</span>
+        <span class="n">pandas_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">list_of_dicts</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pandas_data</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># create jobs pandas data frame</span>
+    <span class="n">jobs_pd</span> <span class="o">=</span> <span class="n">load_data_frame</span><span class="p">(</span><span class="n">job_manifests</span><span class="p">)</span>
+
+    <span class="c1"># create resources pandas data frame</span>
+    <span class="n">resources_pd</span> <span class="o">=</span> <span class="n">load_data_frame</span><span class="p">(</span><span class="n">resource_list</span><span class="p">)</span>
+
+    <span class="c1"># create spot price pandas data frame</span>
+    <span class="n">spot_pd</span> <span class="o">=</span> <span class="n">load_data_frame</span><span class="p">(</span><span class="n">resource_spot_price</span><span class="p">)</span>
+
+    <span class="c1"># merge the spot prices into the resources_pd</span>
+    <span class="n">resource_spot_pd</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">resources_pd</span><span class="p">,</span> <span class="n">spot_pd</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ResourceName&quot;</span><span class="p">])</span>
+
+    <span class="c1"># merge the two - sort of like:</span>
+    <span class="c1">#   select *</span>
+    <span class="c1">#   from jobs_pd, resources_pd</span>
+    <span class="c1">#   where jobs_pd.RequestCpus &lt;= resources_pd.ResourceCpus</span>
+    <span class="c1">#merged_pd = pd.merge(jobs_pd, resource_spot_pd, how=&#39;outer&#39;, left_on=&#39;RequestCpus&#39;, right_on=&#39;ResourceCpus&#39;)</span>
+    <span class="n">merged_pd</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge_asof</span><span class="p">(</span>
+        <span class="n">jobs_pd</span><span class="p">,</span> <span class="n">resource_spot_pd</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;RequestCpus&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;ResourceCpus&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">merged_pd</span><span class="p">)</span>
+
+    <span class="c1"># create a new column that gives a boolean determining wether or not the row matches memory requirments</span>
+    <span class="n">merged_pd</span> <span class="o">=</span> <span class="n">merged_pd</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">Match</span><span class="o">=</span><span class="n">merged_pd</span><span class="o">.</span><span class="n">RequestMemory</span> <span class="o">&lt;=</span> <span class="n">merged_pd</span><span class="o">.</span><span class="n">ResourceMemory</span><span class="p">)</span>
+    <span class="n">merged_pd</span> <span class="o">=</span> <span class="n">merged_pd</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">estimatedCost</span><span class="o">=</span><span class="n">merged_pd</span><span class="o">.</span><span class="n">RequestTime</span> <span class="o">*</span> <span class="n">merged_pd</span><span class="o">.</span><span class="n">SpotPrice</span><span class="p">)</span>
+
+    <span class="c1"># filter for matched entries in the data frame</span>
+    <span class="n">matched_pd</span> <span class="o">=</span> <span class="n">merged_pd</span><span class="p">[(</span><span class="n">merged_pd</span><span class="o">.</span><span class="n">Match</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)]</span>
+    <span class="n">number_of_jobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_pd</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">group</span> <span class="o">=</span> <span class="n">matched_pd</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;SpotPrice&#39;</span><span class="p">,</span> <span class="s1">&#39;ResourceName&#39;</span><span class="p">])</span>
+    <span class="n">res_group</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;ResourceName&#39;</span><span class="p">]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    req = {}</span>
+<span class="sd">    limit = 5</span>
+<span class="sd">    for i in res_group:</span>
+<span class="sd">        entry_name = i[0][1]</span>
+<span class="sd">        spot_price = i[0][0]</span>
+
+<span class="sd">        print &quot;considering jobs for %s&quot; % entry_name</span>
+<span class="sd">        print &quot;number of jobs remaining: %i&quot; % number_of_jobs</span>
+<span class="sd">        print &quot;limit: %i&quot; % limit</span>
+<span class="sd">        if number_of_jobs - limit &gt; 0:</span>
+<span class="sd">            req[entry_name] = (spot_price, limit)</span>
+<span class="sd">            number_of_jobs -= limit</span>
+<span class="sd">        elif number_of_jobs &gt; 0:</span>
+<span class="sd">            req[entry_name] = (spot_price, number_of_jobs)</span>
+<span class="sd">            number_of_jobs = 0</span>
+<span class="sd">        else:</span>
+<span class="sd">            break</span>
+<span class="sd">    print &quot;number of unconsidered jobs: %i&quot; % number_of_jobs</span>
+
+<span class="sd">    for k in req.keys():</span>
+<span class="sd">        print req[k]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">decisionengine</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Fermi Research Alliance, LLC..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

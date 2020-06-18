@@ -1,0 +1,60 @@
+decisionengine\_modules.NERSC.sources package
+=============================================
+
+Submodules
+----------
+
+decisionengine\_modules.NERSC.sources.NerscAllocationInfo module
+----------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.sources.NerscAllocationInfo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.NERSC.sources.NerscAllocationInfoSourceProxy module
+---------------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.sources.NerscAllocationInfoSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.NERSC.sources.NerscFigureOfMeritSourceProxy module
+--------------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.sources.NerscFigureOfMeritSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.NERSC.sources.NerscInstancePerformance module
+---------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.sources.NerscInstancePerformance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.NERSC.sources.NerscJobInfo module
+---------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.sources.NerscJobInfo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.NERSC.sources
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>decisionengine_modules.util package &#8212; decisionengine 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="decisionengine_modules.htcondor.sources package" href="decisionengine_modules.htcondor.sources.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="decisionengine-modules-util-package">
+<h1>decisionengine_modules.util package<a class="headerlink" href="#decisionengine-modules-util-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-decisionengine_modules.util.figure_of_merit">
+<span id="decisionengine-modules-util-figure-of-merit-module"></span><h2>decisionengine_modules.util.figure_of_merit module<a class="headerlink" href="#module-decisionengine_modules.util.figure_of_merit" title="Permalink to this headline">¶</a></h2>
+<p>Calculate figure of merit</p>
+<dl class="py function">
+<dt id="decisionengine_modules.util.figure_of_merit.figure_of_merit">
+<code class="sig-prename descclassname">decisionengine_modules.util.figure_of_merit.</code><code class="sig-name descname">figure_of_merit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">performance</span></em>, <em class="sig-param"><span class="n">running</span></em>, <em class="sig-param"><span class="n">allowed</span></em>, <em class="sig-param"><span class="n">idle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_idle</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/figure_of_merit.html#figure_of_merit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.figure_of_merit.figure_of_merit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-decisionengine_modules.util.retry_function">
+<span id="decisionengine-modules-util-retry-function-module"></span><h2>decisionengine_modules.util.retry_function module<a class="headerlink" href="#module-decisionengine_modules.util.retry_function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="decisionengine_modules.util.retry_function.retry_on_error">
+<code class="sig-prename descclassname">decisionengine_modules.util.retry_function.</code><code class="sig-name descname">retry_on_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nretries</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">retry_interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">backoff</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/retry_function.html#retry_on_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.retry_function.retry_on_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.util.retry_function.retry_wrapper">
+<code class="sig-prename descclassname">decisionengine_modules.util.retry_function.</code><code class="sig-name descname">retry_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em>, <em class="sig-param"><span class="n">nretries</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">retry_interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">backoff</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/retry_function.html#retry_wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.retry_function.retry_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retry on error with parameters of how many times (nretries)
+and interval in seconds (retry_interval).
+If the function to be decorated is an instance method
+and the values come from a configuration,
+then this decorator can retrieve these two parameters
+from instance attributes with the same name.
+Otherwise, use the default values or pass new values to the decorator.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-decisionengine_modules.util.test_retry_function">
+<span id="decisionengine-modules-util-test-retry-function-module"></span><h2>decisionengine_modules.util.test_retry_function module<a class="headerlink" href="#module-decisionengine_modules.util.test_retry_function" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="decisionengine_modules.util.test_retry_function.Dummy">
+<em class="property">class </em><code class="sig-prename descclassname">decisionengine_modules.util.test_retry_function.</code><code class="sig-name descname">Dummy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Dummy'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/test_retry_function.html#Dummy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.test_retry_function.Dummy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="decisionengine_modules.util.test_retry_function.Dummy._func_failure">
+<code class="sig-name descname">_func_failure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="n">input2</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/test_retry_function.html#Dummy._func_failure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.test_retry_function.Dummy._func_failure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.util.test_retry_function.Dummy._func_success">
+<code class="sig-name descname">_func_success</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="n">input2</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/test_retry_function.html#Dummy._func_success"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.test_retry_function.Dummy._func_success" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.util.test_retry_function.Dummy.func_failure">
+<code class="sig-name descname">func_failure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="n">input2</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/test_retry_function.html#Dummy.func_failure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.test_retry_function.Dummy.func_failure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.util.test_retry_function.Dummy.func_success">
+<code class="sig-name descname">func_success</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="n">input2</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/test_retry_function.html#Dummy.func_success"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.test_retry_function.Dummy.func_success" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.util.test_retry_function.test_all">
+<code class="sig-prename descclassname">decisionengine_modules.util.test_retry_function.</code><code class="sig-name descname">test_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/test_retry_function.html#test_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.test_retry_function.test_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="decisionengine-modules-util-testutils-module">
+<h2>decisionengine_modules.util.testutils module<a class="headerlink" href="#decisionengine-modules-util-testutils-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-decisionengine_modules.util">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-decisionengine_modules.util" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">decisionengine</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Welcome to decisionengine_modules’s documentation!</a><ul>
+  <li><a href="decisionengine_modules.html">decisionengine_modules package</a><ul>
+      <li>Previous: <a href="decisionengine_modules.htcondor.sources.html" title="previous chapter">decisionengine_modules.htcondor.sources package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Fermi Research Alliance, LLC..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/code/decisionengine_modules.util.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

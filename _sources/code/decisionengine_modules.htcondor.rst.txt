@@ -1,0 +1,33 @@
+decisionengine\_modules.htcondor package
+========================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   decisionengine_modules.htcondor.publishers
+   decisionengine_modules.htcondor.sources
+
+Submodules
+----------
+
+decisionengine\_modules.htcondor.htcondor\_query module
+-------------------------------------------------------
+
+.. automodule:: decisionengine_modules.htcondor.htcondor_query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.htcondor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

@@ -1,0 +1,33 @@
+decisionengine\_modules.GCE.transforms package
+==============================================
+
+Submodules
+----------
+
+decisionengine\_modules.GCE.transforms.GceBurnRate module
+---------------------------------------------------------
+
+.. automodule:: decisionengine_modules.GCE.transforms.GceBurnRate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.GCE.transforms.GceFigureOfMerit module
+--------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.GCE.transforms.GceFigureOfMerit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.GCE.transforms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

@@ -1,0 +1,33 @@
+decisionengine\_modules.AWS.transforms package
+==============================================
+
+Submodules
+----------
+
+decisionengine\_modules.AWS.transforms.AwsBurnRate module
+---------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.transforms.AwsBurnRate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.transforms.FigureOfMerit module
+-----------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.transforms.FigureOfMerit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.AWS.transforms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

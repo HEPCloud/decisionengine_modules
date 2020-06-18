@@ -1,0 +1,24 @@
+decisionengine\_modules.graphite.publishers package
+===================================================
+
+Submodules
+----------
+
+decisionengine\_modules.graphite.publishers.generic\_publisher module
+---------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.graphite.publishers.generic_publisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.graphite.publishers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

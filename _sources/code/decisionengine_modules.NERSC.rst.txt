@@ -1,0 +1,22 @@
+decisionengine\_modules.NERSC package
+=====================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   decisionengine_modules.NERSC.publishers
+   decisionengine_modules.NERSC.sources
+   decisionengine_modules.NERSC.transforms
+   decisionengine_modules.NERSC.util
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.NERSC
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

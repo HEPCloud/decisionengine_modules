@@ -1,0 +1,42 @@
+decisionengine\_modules.NERSC.transforms package
+================================================
+
+Submodules
+----------
+
+decisionengine\_modules.NERSC.transforms.CompareNerscFactoryJobs module
+-----------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.transforms.CompareNerscFactoryJobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.NERSC.transforms.CompareNerscUserpoolSlots module
+-------------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.transforms.CompareNerscUserpoolSlots
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.NERSC.transforms.NerscFigureOfMerit module
+------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.transforms.NerscFigureOfMerit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.NERSC.transforms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

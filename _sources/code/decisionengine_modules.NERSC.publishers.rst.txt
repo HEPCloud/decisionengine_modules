@@ -1,0 +1,24 @@
+decisionengine\_modules.NERSC.publishers package
+================================================
+
+Submodules
+----------
+
+decisionengine\_modules.NERSC.publishers.NerscFigureOfMerit\_publisher module
+-----------------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.NERSC.publishers.NerscFigureOfMerit_publisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.NERSC.publishers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

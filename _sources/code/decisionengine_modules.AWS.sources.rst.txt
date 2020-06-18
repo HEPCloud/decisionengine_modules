@@ -1,0 +1,150 @@
+decisionengine\_modules.AWS.sources package
+===========================================
+
+Submodules
+----------
+
+decisionengine\_modules.AWS.sources.AWSBurnRateSourceProxy module
+-----------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSBurnRateSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AWSInstancePerformance module
+-----------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSInstancePerformance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AWSJobLimits module
+-------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSJobLimits
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AWSOccupancy module
+-------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSOccupancy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AWSOccupancyWithSourceProxy module
+----------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSOccupancyWithSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AWSSpotPrice module
+-------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSSpotPrice
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AWSSpotPriceWithSourceProxy module
+----------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AWSSpotPriceWithSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.AccountConstants\_sample module
+-------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.AccountConstants_sample
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.BillingInfo module
+------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.BillingInfo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.BillingInfoSourceProxy module
+-----------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.BillingInfoSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.DEAccountContants module
+------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.DEAccountContants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.FigureOfMeritSourceProxy module
+-------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.FigureOfMeritSourceProxy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.FinancialParameters module
+--------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.FinancialParameters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.occupancy\_config\_sample module
+--------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.occupancy_config_sample
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.sources.spot\_price\_config\_sample module
+----------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.sources.spot_price_config_sample
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.AWS.sources
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

@@ -1,0 +1,19 @@
+decisionengine\_modules.graphite package
+========================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   decisionengine_modules.graphite.publishers
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.graphite
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

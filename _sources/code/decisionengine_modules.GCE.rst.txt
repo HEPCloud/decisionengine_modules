@@ -1,0 +1,21 @@
+decisionengine\_modules.GCE package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   decisionengine_modules.GCE.publishers
+   decisionengine_modules.GCE.sources
+   decisionengine_modules.GCE.transforms
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.GCE
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>decisionengine_modules.AWS.sources.DEAccountContants &#8212; decisionengine 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for decisionengine_modules.AWS.sources.DEAccountContants</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This data is taken from billing and arranged as dictionary of</span>
+<span class="sd">AccountConstants instead of separate class for each billing class.</span>
+<span class="sd">This way is more covenient to use in programms.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">EXPECTED_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;accountName&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;accountNumber&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;credentialsProfileName&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;lastKnownBillDate&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;balanceAtDate&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;costRatePerHourInLastSixHoursAlarmThreshold&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;costRatePerHourInLastDayAlarmThreshold&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;applyDiscount&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;emailReceipientForAlarms&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;projectId&#39;</span><span class="p">,</span>
+                  <span class="p">]</span>
+
+
+<div class="viewcode-block" id="AccountConstants"><a class="viewcode-back" href="../../../../code/decisionengine_modules.AWS.sources.html#decisionengine_modules.AWS.sources.DEAccountContants.AccountConstants">[docs]</a><span class="k">class</span> <span class="nc">AccountConstants</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constants</span><span class="o">=</span><span class="p">{}):</span>
+
+        <span class="c1"># Initialize variables</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">EXPECTED_NAMES</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Set variables</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">EXPECTED_NAMES</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accountName</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">accountNumber</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">credentialsProfileName</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">lastKnownBillDate</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">balanceAtDate</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">applyDiscount</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">costRatePerHourInLastSixHoursAlarmThreshold</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">costRatePerHourInLastDayAlarmThreshold</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">emailReceipientForAlarms</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AccountConstants.info"><a class="viewcode-back" href="../../../../code/decisionengine_modules.AWS.sources.html#decisionengine_modules.AWS.sources.DEAccountContants.AccountConstants.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">EXPECTED_NAMES</span><span class="p">:</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span></div></div>
+
+
+<span class="n">_config_dict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># to trick pylint</span>
+
+
+<div class="viewcode-block" id="load_constants"><a class="viewcode-back" href="../../../../code/decisionengine_modules.AWS.sources.html#decisionengine_modules.AWS.sources.DEAccountContants.load_constants">[docs]</a><span class="k">def</span> <span class="nf">load_constants</span><span class="p">(</span><span class="n">constants_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load constants from file.</span>
+
+<span class="sd">    :type constants_file: :obj:`file`</span>
+<span class="sd">    :arg constants_file: configuration file as python dict</span>
+
+<span class="sd">    :rtype: :obj:`AccountConstants`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">code</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">global</span> <span class="n">_config_dict</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">constants_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;_config_dict=&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">code</span><span class="p">:</span>
+        <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">_config_dict</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">account_dict</span> <span class="o">=</span> <span class="n">load_constants</span><span class="p">(</span><span class="s1">&#39;AccountConstants_sample.py&#39;</span><span class="p">)</span>
+    <span class="n">instances</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">AccountConstants</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">account_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">decisionengine</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes/release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../release_notes/release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../code/index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../code/index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../code/decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Fermi Research Alliance, LLC..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

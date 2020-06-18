@@ -1,0 +1,51 @@
+decisionengine\_modules.util package
+====================================
+
+Submodules
+----------
+
+decisionengine\_modules.util.figure\_of\_merit module
+-----------------------------------------------------
+
+.. automodule:: decisionengine_modules.util.figure_of_merit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.util.retry\_function module
+---------------------------------------------------
+
+.. automodule:: decisionengine_modules.util.retry_function
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.util.test\_retry\_function module
+---------------------------------------------------------
+
+.. automodule:: decisionengine_modules.util.test_retry_function
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.util.testutils module
+---------------------------------------------
+
+.. automodule:: decisionengine_modules.util.testutils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.util
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

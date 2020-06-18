@@ -1,0 +1,24 @@
+decisionengine\_modules.htcondor.publishers package
+===================================================
+
+Submodules
+----------
+
+decisionengine\_modules.htcondor.publishers.publisher module
+------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.htcondor.publishers.publisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.htcondor.publishers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

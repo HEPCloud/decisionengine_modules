@@ -1,0 +1,42 @@
+decisionengine\_modules.GCE.publishers package
+==============================================
+
+Submodules
+----------
+
+decisionengine\_modules.GCE.publishers.GCEBurnRatePublisher module
+------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.GCE.publishers.GCEBurnRatePublisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.GCE.publishers.GCEFigureOfMerit\_publisher module
+-------------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.GCE.publishers.GCEFigureOfMerit_publisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.GCE.publishers.GCEPricePerformance\_publisher module
+----------------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.GCE.publishers.GCEPricePerformance_publisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.GCE.publishers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:

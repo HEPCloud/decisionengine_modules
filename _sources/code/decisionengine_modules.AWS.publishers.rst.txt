@@ -1,0 +1,51 @@
+decisionengine\_modules.AWS.publishers package
+==============================================
+
+Submodules
+----------
+
+decisionengine\_modules.AWS.publishers.AWS\_burn\_rate module
+-------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.publishers.AWS_burn_rate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.publishers.AWS\_figure\_of\_merit module
+--------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.publishers.AWS_figure_of_merit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.publishers.AWS\_generic\_publisher module
+---------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.publishers.AWS_generic_publisher
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+decisionengine\_modules.AWS.publishers.AWS\_price\_performance module
+---------------------------------------------------------------------
+
+.. automodule:: decisionengine_modules.AWS.publishers.AWS_price_performance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
+
+Module contents
+---------------
+
+.. automodule:: decisionengine_modules.AWS.publishers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
