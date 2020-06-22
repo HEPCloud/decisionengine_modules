@@ -61,4 +61,3 @@ def load_constants(constants_file):
         config_dict = eval(f.read())
     return config_dict
 
-
