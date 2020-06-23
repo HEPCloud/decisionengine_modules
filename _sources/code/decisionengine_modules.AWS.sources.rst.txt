@@ -67,15 +67,6 @@ decisionengine\_modules.AWS.sources.AWSSpotPriceWithSourceProxy module
    :show-inheritance:
    :private-members:
 
-decisionengine\_modules.AWS.sources.AccountConstants\_sample module
--------------------------------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.sources.AccountConstants_sample
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
 decisionengine\_modules.AWS.sources.BillingInfo module
 ------------------------------------------------------
 
