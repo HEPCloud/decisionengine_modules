@@ -76,6 +76,6 @@ class TestFactoryEntries:
         start = time.time()
         result = entries.acquire()
         end = time.time()
-        assert(end-start > TIMEOUT_WANTED)
+        assert(end - start > TIMEOUT_WANTED)
         for df in result.values():
             assert(df.dropna().empty is True)

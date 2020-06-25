@@ -62,7 +62,7 @@ class TestFactoryGlobalManifests:
         fg = factory_global.FactoryGlobalManifests(CONFIG_BAD)
         fg_df = fg.acquire()
         assert((fg_df['factoryglobal_manifests'] is None) or
-            (len(fg_df['factoryglobal_manifests']) == 0))
+               (len(fg_df['factoryglobal_manifests']) == 0))
 
     def test_acquire_bad_with_timeout(self):
         # Set by tuning nretries and the retry_interval
@@ -71,6 +71,7 @@ class TestFactoryGlobalManifests:
         start = time.time()
         fg_df = fg.acquire()
         end = time.time()
-        assert(end-start > TIMEOUT_WANTED)
+        assert(end - start > TIMEOUT_WANTED)
         assert((fg_df['factoryglobal_manifests'] is None) or
-            (len(fg_df['factoryglobal_manifests']) == 0))
+               (len(fg_df['factoryglobal_manifests']) == 0))
+

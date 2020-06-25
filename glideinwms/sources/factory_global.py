@@ -1,7 +1,6 @@
 import argparse
 from functools import partial
 import logging
-import traceback
 import pprint
 
 import pandas
@@ -51,7 +50,7 @@ class FactoryGlobalManifests(Source.Source):
         for factory in self.factories:
             collector_host = factory.get('collector_host')
             constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % \
-                    factory.get('constraint', True)
+                factory.get('constraint', True)
             classad_attrs = []
 
             try:
@@ -62,7 +61,7 @@ class FactoryGlobalManifests(Source.Source):
 
                 retry_wrapper(
                     partial(condor_status.load,
-                        *(constraint, classad_attrs, self.condor_config)),
+                            *(constraint, classad_attrs, self.condor_config)),
                     nretries=self.nretries,
                     retry_interval=self.retry_interval)
 
@@ -79,7 +78,7 @@ class FactoryGlobalManifests(Source.Source):
             except htcondor_query.QueryError as e:
                 self.logger.error('Failed to get glidefactoryglobal classads '
                                   'from collector host(s) "{}": {}'.format(
-                                   collector_host, e))
+                                      collector_host, e))
             except Exception:
                 self.logger.exception('Unexpected error fetching '
                                       'glidefactoryglobal classads from '

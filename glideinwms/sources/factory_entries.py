@@ -2,7 +2,6 @@
 import argparse
 from functools import partial
 import logging
-import traceback
 import pprint
 import pandas
 
@@ -73,7 +72,7 @@ class FactoryEntries(Source.Source):
 
                 retry_wrapper(
                     partial(condor_status.load,
-                        *(constraint, classad_attrs, self.condor_config)),
+                            *(constraint, classad_attrs, self.condor_config)),
                     nretries=self.nretries,
                     retry_interval=self.retry_interval)
 
@@ -89,8 +88,8 @@ class FactoryEntries(Source.Source):
                     dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
             except htcondor_query.QueryError as e:
                 self.logger.error('Failed to fetch glidefactory classads '
-                                    'from collector host(s) "{}": {}'.format(
-                                        collector_host, e))
+                                  'from collector host(s) "{}": {}'.format(
+                                      collector_host, e))
             except Exception:
                 self.logger.exception('Unexpected error fetching glidefactory '
                            'classads from collector host(s) '
