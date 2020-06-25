@@ -41,13 +41,11 @@ class FactoryEntries(Source.Source):
         self.subsystem_name = 'any'
         self.logger = logging.getLogger()
 
-
     def produces(self):
         """
         Return list of items produced
         """
         return PRODUCES
-
 
     def acquire(self):
         """
@@ -78,27 +76,31 @@ class FactoryEntries(Source.Source):
 
                 df = pandas.DataFrame(condor_status.stored_data)
                 if not df.empty:
-                    (col_host, sec_cols) = htcondor_query.split_collector_host(collector_host)
+                    (col_host, sec_cols) = htcondor_query.split_collector_host(
+                        collector_host)
                     df['CollectorHost'] = [col_host] * len(df)
                     if sec_cols != '':
-                        df['CollectorHosts'] = ['%s,%s' % (col_host, sec_cols)] * len(df)
+                        df['CollectorHosts'] = ['%s,%s' %
+                                                (col_host, sec_cols)] * len(df)
                     else:
                         df['CollectorHosts'] = [col_host] * len(df)
 
-                    dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
+                    dataframe = pandas.concat([dataframe, df],
+                                              ignore_index=True, sort=True)
             except htcondor_query.QueryError as e:
                 self.logger.error('Failed to fetch glidefactory classads '
                                   'from collector host(s) "{}": {}'.format(
                                       collector_host, e))
             except Exception:
                 self.logger.exception('Unexpected error fetching glidefactory '
-                           'classads from collector host(s) '
-                           '"{}"'.format(collector_host))
+                                      'classads from collector host(s) '
+                                      '"{}"'.format(collector_host))
 
         results = {}
         if not dataframe.empty:
             for key, value in self._entry_gridtype_map.items():
-                results[key] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(value)))]
+                results[key] = dataframe.loc[
+                    (dataframe.GLIDEIN_GridType.isin(list(value)))]
         else:
             # There were no entry classads in the factory collector or
             # quering the collector failed
