@@ -1,11 +1,14 @@
 import argparse
+from functools import partial
+import logging
 import traceback
 import pprint
+
 import pandas
 
 from decisionengine.framework.modules import Source
-import logging
 from decisionengine_modules.htcondor import htcondor_query
+from decisionengine_modules.util.retry_function import retry_wrapper
 
 
 PRODUCES = ['factoryglobal_manifests']
@@ -21,6 +24,12 @@ class FactoryGlobalManifests(Source.Source):
 
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
+
+        # The combination of nretries=10 and retry_interval=2 adds up to just
+        # over 15 minutes
+        self.nretries = config.get('nretries', 0)
+        self.retry_interval = config.get('retry_interval', 0)
+
         self.subsystem_name = 'any'
         self.logger = logging.getLogger()
 
@@ -41,7 +50,8 @@ class FactoryGlobalManifests(Source.Source):
 
         for factory in self.factories:
             collector_host = factory.get('collector_host')
-            constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % factory.get('constraint', True)
+            constraint = '(%s)&&(glideinmytype=="glidefactoryglobal")' % \
+                    factory.get('constraint', True)
             classad_attrs = []
 
             try:
@@ -50,7 +60,12 @@ class FactoryGlobalManifests(Source.Source):
                     pool_name=collector_host,
                     group_attr=['Name'])
 
-                condor_status.load(constraint, classad_attrs, self.condor_config)
+                retry_wrapper(
+                    partial(condor_status.load,
+                        *(constraint, classad_attrs, self.condor_config)),
+                    nretries=self.nretries,
+                    retry_interval=self.retry_interval)
+
                 df = pandas.DataFrame(condor_status.stored_data)
                 if not df.empty:
                     (col_host, sec_cols) = htcondor_query.split_collector_host(collector_host)
@@ -61,17 +76,15 @@ class FactoryGlobalManifests(Source.Source):
                         df['CollectorHosts'] = [col_host] * len(df)
 
                     dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
-            except htcondor_query.QueryError:
-                self.logger.warning('Failed to get glidefactoryglobal classads from collector host(s) "%s"' %
-                                    collector_host)
-                self.logger.error('Failed to get glidefactoryglobal classads from collector host(s) "%s". '
-                                  'Traceback: %s' % (collector_host, traceback.format_exc()))
+            except htcondor_query.QueryError as e:
+                self.logger.error('Failed to get glidefactoryglobal classads '
+                                  'from collector host(s) "{}": {}'.format(
+                                   collector_host, e))
             except Exception:
-                self.logger.warning('Unexpected error fetching glidefactoryglobal classads '
-                                    'from collector host(s) "%s"' % collector_host)
-                self.logger.error('Unexpected error fetching glidefactoryglobal classads '
-                                  'from collector host(s) "%s". Traceback: %s' %
-                                  (collector_host, traceback.format_exc()))
+                self.logger.exception('Unexpected error fetching '
+                                      'glidefactoryglobal classads from '
+                                      'collector host(s) '"{}"''.format(
+                                          collector_host))
 
         return {PRODUCES[0]: dataframe}
 
@@ -86,10 +99,22 @@ def module_config_template():
             'module': 'decisionengine_modules.glideinwms.sources.factory_client',
             'name': 'FactoryGlobalManifests',
             'parameters': {
-                'collector_host': 'factory_collector.com',
                 'condor_config': '/path/to/condor_config',
-                'classad_attrs': [],
-            }
+                'nretries': 10,
+                'retry_interval': 2,
+                'factories': [
+                    {
+                        'collector_host': 'factory_collector.com',
+                        'classad_attrs': []
+                    },
+                    {
+                        'collector_host': 'factory_collector-2.com',
+                        'classad_attrs': [],
+                        'constraints': 'HTCondor classad query constraints',
+                    },
+                ],
+            },
+            'schedule': 120,
         }
     }
     print('Entry in channel configuration')
