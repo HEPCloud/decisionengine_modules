@@ -41,7 +41,6 @@ CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT = {
 }
 
 
-
 class TestFactoryEntries:
 
     def test_produces(self):

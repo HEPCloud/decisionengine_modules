@@ -74,4 +74,3 @@ class TestFactoryGlobalManifests:
         assert(end - start > TIMEOUT_WANTED)
         assert((fg_df['factoryglobal_manifests'] is None) or
                (len(fg_df['factoryglobal_manifests']) == 0))
-
