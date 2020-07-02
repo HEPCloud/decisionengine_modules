@@ -1,5 +1,6 @@
 import os
 import pprint
+import time
 
 import mock
 
@@ -21,6 +22,17 @@ CONFIG_FACTORY_ENTRIES = {
 
 CONFIG_FACTORY_ENTRIES_BAD = {
     'condor_config': 'condor_config',
+    'factories': [
+        {
+            'collector_host': 'dummy_collector.fnal.gov',
+        },
+    ]
+}
+
+CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT = {
+    'condor_config': 'condor_config',
+    'nretries': 6,
+    'retry_interval': 2,
     'factories': [
         {
             'collector_host': 'dummy_collector.fnal.gov',
@@ -52,5 +64,17 @@ class TestFactoryEntries:
     def test_acquire_bad(self):
         entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD)
         result = entries.acquire()
+        for df in result.values():
+            assert(df.dropna().empty is True)
+
+    def test_acquire_bad_with_timeout(self):
+        # Set by tuning nretries and the retry_interval
+        TIMEOUT_WANTED = 60
+        entries = factory_entries.FactoryEntries(
+            CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT)
+        start = time.time()
+        result = entries.acquire()
+        end = time.time()
+        assert(end - start > TIMEOUT_WANTED)
         for df in result.values():
             assert(df.dropna().empty is True)

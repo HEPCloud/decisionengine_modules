@@ -27,7 +27,7 @@ setup_python_venv() {
 
     source $VENV/bin/activate
 
-    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3"
+    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet"
     echo "Installing $pip_packages ..."
     pip install --quiet $pip_packages
     if [ $? -ne 0 ]; then
