@@ -5,14 +5,44 @@ import pandas
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
 config_test_match_exprs = {
-    'match_expressions': {
-        ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_1"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-        ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)", "group_2"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-        ("VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_3"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"],
-        ("VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)", "group_4"): ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"],
-        ("VO_Name=='nova'", "group_5"): ["GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1", "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"]
-    },
-    'job_q_expr': "JobStatus==1"
+    "match_expressions": [
+        {
+            "job_bucket_criteria_expr": "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+            "frontend_group": "group_1",
+            "site_bucket_criteria_expr": [
+                "GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"
+            ]
+        },
+        {
+            "job_bucket_criteria_expr": "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",
+            "frontend_group": "group_2",
+            "site_bucket_criteria_expr": [
+                "GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"
+            ]
+        },
+        {
+            "job_bucket_criteria_expr": "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+            "frontend_group": "group_3",
+            "site_bucket_criteria_expr": [
+                "GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"
+            ]
+        },
+        {
+            "job_bucket_criteria_expr": "VO_Name=='cms' and RequestCpus==2 and (MaxWallTimeMins>60*12 and MaxWallTimeMins<= 60*24)",
+            "frontend_group": "group_4",
+            "site_bucket_criteria_expr": [
+                "GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS > 1"
+            ]
+        },
+        {
+            "job_bucket_criteria_expr": "VO_Name=='nova'",
+            "frontend_group": "group_5",
+            "site_bucket_criteria_expr": [
+                "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS == 1", "GLIDEIN_Supported_VOs.str.contains('Nova') and GLIDEIN_CPUS > 1"
+            ]
+        }
+    ],
+    "job_q_expr": "JobStatus==1"
 }
 
 # input with valid job_q data
