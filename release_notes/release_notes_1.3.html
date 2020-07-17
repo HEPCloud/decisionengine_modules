@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Release 1.2.0 &#8212; decisionengine 1.1.1 documentation</title>
+    <title>Release 1.3.0 &#8212; decisionengine 1.1.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Decisionengine_modules" href="../unittest.html" />
-    <link rel="prev" title="Release 1.3.0" href="release_notes_1.3.html" />
+    <link rel="next" title="Release 1.2.0" href="release_notes_1.2.html" />
+    <link rel="prev" title="Welcome to decisionengine_modules’ documentation!" href="../index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,20 +33,39 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="release-1-2-0">
-<h1>Release 1.2.0<a class="headerlink" href="#release-1-2-0" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="release-1-3-0">
+<h1>Release 1.3.0<a class="headerlink" href="#release-1-3-0" title="Permalink to this headline">¶</a></h1>
 <p>In this release:</p>
 <ul class="simple">
-<li><p>Switched to python3</p></li>
-<li><p>NERSC newt interface adapted to changed NERSC RESTful API</p></li>
-<li><p>Improved unit tests</p></li>
-<li><p>Added Jenkins CI pipeline</p></li>
+<li><p>Introduced Jsonnet based configuration system</p></li>
+<li><p>Improved error handling</p></li>
 </ul>
-</div>
-<div class="section" id="patches">
-<h1>Patches:<a class="headerlink" href="#patches" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/30d928b67a442206ad7fe7114b44ff6a2b9ff404">30d928b</a>
-:   clone version 1.2.0 of decisionengine</p>
+<div class="section" id="full-list-of-commits-since-version-1-2-0">
+<h2>Full list of commits since version 1.2.0<a class="headerlink" href="#full-list-of-commits-since-version-1-2-0" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e8c8e2414a00db919ff9b7aa99b7711689fb9eab">e8c8e24</a>
+:   Update to split a tuple key into two separate keys, this allows python config file to be JSON compliant config file (#254)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/fbb5d28d5ded0dfa3a544c2c3fb5861f57948258">fbb5d28</a>
+:   add jsonnet dependency in build/scripts/utils.sh for unit tests (#252)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/95a0a323ab41186db996c73d90078ec08407223f">95a0a32</a>
+:   decisionengine_modules/glideinwms:  Added retry to factory queries (#250)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/77f894a26a3ec8b9d05d2593249e984a1e1ec7d1">77f894a</a>
+:   Aws (#249)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/3be5be1671ae669c4821dec7d1c341fdd3602cd8">3be5be1</a>
+:   Set theme jekyll-theme-slate</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a73e7f85819cfcc76c1004d0a1f17e375e5821e1">a73e7f8</a>
+:   Doc (#247)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/f8aa96d34cca7e51b44ce23fd20fd41ab0675683">f8aa96d</a>
+:   Adding editor config file, see <a class="reference external" href="https://editorconfig.org/">https://editorconfig.org/</a> (#248)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/1ab1720dbdae9fac7f0dc42d3ac17104b5fb816b">1ab1720</a>
+:   Issue no. 237 (#245)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5edc8f9eea131f6757bc0b6107bf589b27005ea4">5edc8f9</a>
+:   Issue 227 (#243)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e6047f2d5405b5387bb683a6110ad89bd3824d42">e6047f2</a>
+:   GCE channel goes OFFLINE on a timeout (#242)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/63e36275a5bb91904464299f6df003ac3cb10f57">63e3627</a>
+:   Aws billing (#241)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c3626b96c382a2e7fe827028cbfcf3631ef1f2ce">c3626b9</a>
+:   1.1.3/fix (#239)</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ae7c5a6b9985e2270459635f315fd30a706352f8">ae7c5a6</a>
 :   Jenkins pipeline improvements (#236)</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/310befdbf805fd6168132b852b881a4c6f5ed9dc">310befd</a>
@@ -102,6 +121,7 @@
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a7e0af9572cc62987008dd8d7164cc1efc37921f">a7e0af9</a>
 :   Only run Github Actions for python3.6 (#24)</p>
 </div>
+</div>
 
 
           </div>
@@ -121,9 +141,9 @@
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="release_notes_1.3.html">Release 1.3.0</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 1.2.0</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#patches">Patches:</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 1.3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html#patches">Patches:</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../unittest.html">Decisionengine_modules</a></li>
@@ -138,8 +158,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="release_notes_1.3.html" title="previous chapter">Release 1.3.0</a></li>
-      <li>Next: <a href="../unittest.html" title="next chapter">Decisionengine_modules</a></li>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to decisionengine_modules’ documentation!</a></li>
+      <li>Next: <a href="release_notes_1.2.html" title="next chapter">Release 1.2.0</a></li>
   </ul></li>
 </ul>
 </div>
@@ -173,7 +193,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/release_notes/release_notes_1.2.rst.txt"
+      <a href="../_sources/release_notes/release_notes_1.3.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
