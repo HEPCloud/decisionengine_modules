@@ -45,7 +45,7 @@ setup_git_product() {
     product_git_repo=$1
     wspace=${2:-`pwd`}
     cd $wspace
-    git clone $product_git_repo
+    git clone --single-branch --branch 1.3  $product_git_repo
 }
 
 
