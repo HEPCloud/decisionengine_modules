@@ -50,10 +50,10 @@ class BillingInfo(Source.Source):
         # get data for all accounts
         data = []
         datarate = []
-        globalConf = {'graphite_host':'dummy', 'graphite_context_billing': 'dummy', 'outputPath': self.billing_files_location}
+        globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': self.billing_files_location}
         for i in self.accounts:
-            constantsDict = {'credentialsProfileName': i.credentialsProfileName, 'accountNumber': i.accountNumber,\
-                             'bucketBillingName': str(i.accountNumber) + '-dlt-utilization', 'lastKnownBillDate': i.lastKnownBillDate, \
+            constantsDict = {'credentialsProfileName': i.credentialsProfileName, 'accountNumber': i.accountNumber,
+                             'bucketBillingName': str(i.accountNumber) + '-dlt-utilization', 'lastKnownBillDate': i.lastKnownBillDate,
                              'balanceAtDate': i.balanceAtDate, 'applyDiscount': i.applyDiscount}
 
             try:

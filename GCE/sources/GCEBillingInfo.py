@@ -51,12 +51,12 @@ class GCEBillingInfo(Source.Source):
 
         :rtype: :obj:`~pd.DataFrame`
         """
-        constantsDict = {'projectId': self.projectId, 'credentialsProfileName': self.credentialsProfileName, 'accountNumber': self.accountNumber,\
-                         'bucketBillingName': 'billing-' + str(self.projectId),'lastKnownBillDate': self.lastKnownBillDate, \
+        constantsDict = {'projectId': self.projectId, 'credentialsProfileName': self.credentialsProfileName, 'accountNumber': self.accountNumber,
+                         'bucketBillingName': 'billing-' + str(self.projectId), 'lastKnownBillDate': self.lastKnownBillDate,
                          'balanceAtDate': self.balanceAtDate, 'applyDiscount': self.applyDiscount}
-        globalConf = {'graphite_host':'dummy', 'graphite_context_billing': 'dummy', 'outputPath': self.localFileDir}
+        globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': self.localFileDir}
         try:
-            calculator = GCEBillCalculator( None, globalConf, constantsDict, self.logger )
+            calculator = GCEBillCalculator(None, globalConf, constantsDict, self.logger)
 
             lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
 
