@@ -62,8 +62,8 @@ class BillingInfo(Source.Source):
                     lastStartDateBilledConsideredDatetime))
                 self.logger.debug('CorrectedBillSummaryDict: %s' %
                                   (CorrectedBillSummaryDict))
-                self.logger.debug('CorrectedMonthlyBillSummaryList: %s' % (
-                    calculator.CorrectedMonthlyBillSummaryList,))
+#                self.logger.debug('CorrectedMonthlyBillSummaryList: %s' % (
+#                    calculator.CorrectedMonthlyBillSummaryList,))
                 # data is a list, CorrectedBillSummaryDict is a dict, so we have to append it as a list of dict.
                 # data += calculator.CorrectedMonthlyBillSummaryList
                 data += [CorrectedBillSummaryDict]
@@ -97,7 +97,8 @@ class BillingInfo(Source.Source):
                                 'costRatePerHourInLastSixHours': costRatePerHourInLastSixHours,
                                 'costRatePerHourInLastDay': costRatePerHourInLastDay}
                 datarate += [dataratedict]
-                if calculator.verboseFlag:
+#                if calculator.verboseFlag:
+                if False:
                     self.logger.debug('---')
                     self.logger.debug('Alarm Computation for %s Account Finished at %s' % (
                         calculator.accountName, time.strftime("%c")))
