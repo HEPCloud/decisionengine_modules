@@ -1,17 +1,9 @@
-import copy
-import csv
 import datetime
-import io
 import logging
 import os
 import pprint
-import re
 import time
-import zipfile
-
-import boto3
 import pandas as pd
-from boto3.session import Session
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.AWS.sources import DEAccountContants
