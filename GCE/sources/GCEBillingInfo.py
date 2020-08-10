@@ -4,7 +4,7 @@ import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-from GCEBillAnalysis import GCEBillCalculator
+from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
 PRODUCES = ['GCE_Billing_Info']
 

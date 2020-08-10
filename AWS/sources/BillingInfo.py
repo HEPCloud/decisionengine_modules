@@ -7,7 +7,7 @@ import pandas as pd
 
 from decisionengine.framework.modules import Source
 from decisionengine_modules.AWS.sources import DEAccountContants
-from AWSBillAnalysis import AWSBillCalculator
+from bill_calculator_hep.AWSBillAnalysis import AWSBillCalculator
 PRODUCES = ['AWS_Billing_Info', 'AWS_Billing_Rate']
 
 class BillingInfo(Source.Source):
