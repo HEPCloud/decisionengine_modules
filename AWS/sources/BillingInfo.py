@@ -23,6 +23,7 @@ class BillingInfo(Source.Source):
         acconts_config_file = args[0]['billing_configuration']
         self.logger = logging.getLogger()
         self.billing_files_location = args[0]['dst_dir_for_s3_files']
+        self.verbose_flag = int(args[0]['verbose_flag'])
         # Load kown accounts configuration
         account_dict = DEAccountContants.load_constants(acconts_config_file)
         self.accounts = []
@@ -62,8 +63,6 @@ class BillingInfo(Source.Source):
                     lastStartDateBilledConsideredDatetime))
                 self.logger.debug('CorrectedBillSummaryDict: %s' %
                                   (CorrectedBillSummaryDict))
-#                self.logger.debug('CorrectedMonthlyBillSummaryList: %s' % (
-#                    calculator.CorrectedMonthlyBillSummaryList,))
                 # data is a list, CorrectedBillSummaryDict is a dict, so we have to append it as a list of dict.
                 # data += calculator.CorrectedMonthlyBillSummaryList
                 data += [CorrectedBillSummaryDict]
@@ -97,12 +96,11 @@ class BillingInfo(Source.Source):
                                 'costRatePerHourInLastSixHours': costRatePerHourInLastSixHours,
                                 'costRatePerHourInLastDay': costRatePerHourInLastDay}
                 datarate += [dataratedict]
-#                if calculator.verboseFlag:
-                if False:
+                if self.verbose_flag:
                     self.logger.debug('---')
                     self.logger.debug('Alarm Computation for %s Account Finished at %s' % (
                         calculator.accountName, time.strftime("%c")))
-                    self.logger.debug()
+                    self.logger.debug('')
                     self.logger.debug(
                         'Last Start Date Billed Considered: {}'.format(lastStartDateBilledConsideredDatetime.strftime(
                             '%m/%d/%y %H:%M')))
@@ -116,16 +114,16 @@ class BillingInfo(Source.Source):
                         'One day before that: {}'.format(oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')))
                     self.logger.debug('Adjusted Total Now from Date of Last Known Balance: ${}'.format(
                                       CorrectedBillSummaryDict['Total']))
-                    self.logger.debug()
+                    self.logger.debug('')
                     self.logger.debug(
                         'Cost In the Last Six Hours: ${}'.format(costInLastSixHours))
                     self.logger.debug('Cost Rate Per Hour In the Last Six Hours: ${} / h'.format(costRatePerHourInLastSixHours))
-                    self.logger.debug()
+                    self.logger.debug('')
                     self.logger.debug('Cost In the Last Day: ${}'.format(costInLastDay))
                     self.logger.debug(
                         'Cost Rate Per Hour In the Last Day: ${} / h'.format(costRatePerHourInLastDay))
                     self.logger.debug('---')
-                    self.logger.debug()
+                    self.logger.debug('')
 
             except Exception as detail:
                 self.logger.error("In acquire: %s" % detail)
