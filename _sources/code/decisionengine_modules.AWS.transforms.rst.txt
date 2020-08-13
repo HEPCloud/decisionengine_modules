@@ -22,7 +22,6 @@ decisionengine\_modules.AWS.transforms.FigureOfMerit module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

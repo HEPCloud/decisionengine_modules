@@ -13,7 +13,6 @@ decisionengine\_modules.NERSC.publishers.NerscFigureOfMerit\_publisher module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

@@ -13,7 +13,6 @@ decisionengine\_modules.NERSC.util.newt module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

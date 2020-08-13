@@ -86,7 +86,6 @@ decisionengine\_modules.AWS.pandas\_scratch\_pad module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

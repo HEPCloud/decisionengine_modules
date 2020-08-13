@@ -40,7 +40,6 @@ decisionengine\_modules.util.testutils module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

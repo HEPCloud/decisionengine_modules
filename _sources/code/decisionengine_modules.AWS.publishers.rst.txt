@@ -40,7 +40,6 @@ decisionengine\_modules.AWS.publishers.AWS\_price\_performance module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

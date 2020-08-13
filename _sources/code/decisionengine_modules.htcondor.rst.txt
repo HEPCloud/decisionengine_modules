@@ -22,7 +22,6 @@ decisionengine\_modules.htcondor.htcondor\_query module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

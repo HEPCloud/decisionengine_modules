@@ -49,7 +49,6 @@ decisionengine\_modules.NERSC.sources.NerscJobInfo module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

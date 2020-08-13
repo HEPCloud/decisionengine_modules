@@ -49,7 +49,6 @@ decisionengine\_modules.htcondor.sources.source module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

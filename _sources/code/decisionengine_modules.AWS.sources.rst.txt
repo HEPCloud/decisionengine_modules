@@ -130,7 +130,6 @@ decisionengine\_modules.AWS.sources.spot\_price\_config\_sample module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

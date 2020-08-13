@@ -31,7 +31,6 @@ decisionengine\_modules.NERSC.transforms.NerscFigureOfMerit module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

@@ -13,7 +13,6 @@ decisionengine\_modules.graphite.publishers.generic\_publisher module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 

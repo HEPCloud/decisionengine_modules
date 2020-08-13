@@ -67,7 +67,6 @@ decisionengine\_modules.GCE.sources.GceOccupancy module
    :show-inheritance:
    :private-members:
 
-
 Module contents
 ---------------
 
