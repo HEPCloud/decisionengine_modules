@@ -32,7 +32,8 @@ class NerscAllocationInfo(Source.Source):
         self.raw_results = None
         self.pandas_frame = None
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
-        self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)
+        self.retry_backoff_factor = config.get("retry_backoff_factor",
+                                               _RETRY_BACKOFF_FACTOR)
         self.newt = newt.Newt(
             config.get('passwd_file'),
             num_retries=self.max_retries,
@@ -138,12 +139,26 @@ def main():
         '--configinfo',
         action='store_true',
         help='prints config template along with produces and consumes info')
+    parser.add_argument(
+        '--acquire-with-config',
+        action='store',
+        metavar='CONFIG_FILE',
+        help='Tries to contact NERSC with the provided config file and pulls '
+        'data according to config')
     args = parser.parse_args()
 
     if args.configtemplate:
         module_config_template()
     elif args.configinfo:
         module_config_info()
+    elif args.acquire_with_config:
+        from ast import literal_eval
+        with open(args.acquire_with_config, 'r') as f:
+            config_string = "".join(f.readlines())
+            config = literal_eval(config_string)
+        n = NerscAllocationInfo(config['sources']['NerscAllocationInfo']
+                                ['parameters'])
+        print(n.acquire())
     else:
         pass
 

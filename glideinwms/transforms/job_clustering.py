@@ -85,7 +85,7 @@ class JobClustering(Transform.Transform):
         """
         # VERSION WITH FRONTEND, DELETE AND USE ABOVE WHEN FRONTEND IS GONE
         try:
-            df_q = df_full_q.fillna('').query(self.job_q_expr)
+            df_q = df_full_q.query(self.job_q_expr)
             # Query job q and populate bucket totals
             totals = [[job_expr.get('job_bucket_criteria_expr'), job_expr.get('site_bucket_criteria_expr'),
                        df_q.query(job_expr.get('job_bucket_criteria_expr')).shape[0],
