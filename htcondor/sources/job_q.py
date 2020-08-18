@@ -51,6 +51,8 @@ class JobQ(Source.Source):
                               condor_config=self.condor_config)
                 df = pandas.DataFrame(condor_q.stored_data)
                 if not df.empty:
+                    df[['RequestMaxInputRate']] = df[['RequestMaxInputRate']].fillna(value=0)
+                    df[['DESIRED_Sites']] = df[['DESIRED_Sites']].fillna(value='')
                     # Add schedd name and collector host to job records
                     df['ScheddName'] = pandas.Series(
                         [schedd] * len(condor_q.stored_data))
