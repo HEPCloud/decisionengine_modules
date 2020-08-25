@@ -14,12 +14,27 @@ pipeline {
                         script {
                             // DOCKER_IMAGE is defined through Jenkins project
                             pep8StageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
+                            // Set custom Build Name
+                            if (params.ghprbPullId) {
+                                currentBuild.displayName="${BUILD_NUMBER}#PR#${ghprbPullId}"
+                            } else {
+                                currentBuild.displayName="${BUILD_NUMBER}#${BRANCH}"
+                            }
                         }
                         echo "cleanup workspace"
                         sh 'for f in $(ls -A); do rm -rf ${f}; done'
                         // DE_MOD_REPO is defined through Jenkins project
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
-                        sh "git clone ${DE_MOD_REPO}"
+                        sh '''
+                            git clone ${DE_MOD_REPO}
+                            echo ghprbPullId: ${ghprbPullId}
+                            if [[ -n ${ghprbPullId} ]]; then
+                                cd decisionengine_modules
+                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
+                                git checkout merge${ghprbPullId}
+                                cd ..
+                            fi
+                        '''
                         echo "prepare docker image ${pep8StageDockerImage}"
                         sh "docker build -t ${pep8StageDockerImage} -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/"
                         echo "Run ${STAGE_NAME} tests"
@@ -50,7 +65,16 @@ pipeline {
                         sh 'for f in $(ls -A); do rm -rf ${f}; done'
                         // DE_MOD_REPO is defined through Jenkins project
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
-                        sh "git clone ${DE_MOD_REPO}"
+                        sh '''
+                            git clone ${DE_MOD_REPO}
+                            echo ghprbPullId: ${ghprbPullId}
+                            if [[ -n ${ghprbPullId} ]]; then
+                                cd decisionengine_modules
+                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
+                                git checkout merge${ghprbPullId}
+                                cd ..
+                            fi
+                        '''
                         echo "prepare docker image ${pylintStageDockerImage}"
                         sh "docker build -t ${pylintStageDockerImage} -f decisionengine_modules/.github/actions/pylint-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pylint-in-sl7-docker/"
                         echo "Run ${STAGE_NAME} tests"
@@ -81,7 +105,16 @@ pipeline {
                         sh 'for f in $(ls -A); do rm -rf ${f}; done'
                         // DE_MOD_REPO is defined through Jenkins project
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
-                        sh "git clone ${DE_MOD_REPO}"
+                        sh '''
+                            git clone ${DE_MOD_REPO}
+                            echo ghprbPullId: ${ghprbPullId}
+                            if [[ -n ${ghprbPullId} ]]; then
+                                cd decisionengine_modules
+                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
+                                git checkout merge${ghprbPullId}
+                                cd ..
+                            fi
+                        '''
                         echo "prepare docker image ${unit_testsStageDockerImage}"
                         sh "docker build -t ${unit_testsStageDockerImage} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker"
                         echo "Run ${STAGE_NAME} tests"
@@ -111,7 +144,16 @@ pipeline {
                         sh 'for f in $(ls -A); do rm -rf ${f}; done'
                         // DE_MOD_REPO is defined through Jenkins project
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
-                        sh "git clone ${DE_MOD_REPO}"
+                        sh '''
+                            git clone ${DE_MOD_REPO}
+                            echo ghprbPullId: ${ghprbPullId}
+                            if [[ -n ${ghprbPullId} ]]; then
+                                cd decisionengine_modules
+                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
+                                git checkout merge${ghprbPullId}
+                                cd ..
+                            fi
+                        '''
                         echo "prepare docker image ${rpmbuildStageDockerImage}"
                         sh "docker build -t ${rpmbuildStageDockerImage} -f decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker"
                         echo "Run ${STAGE_NAME} tests"
