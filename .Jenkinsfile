@@ -15,8 +15,8 @@ pipeline {
                             // DOCKER_IMAGE is defined through Jenkins project
                             pep8StageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
                             // Set custom Build Name
-                            if (params.ghprbPullId) {
-                                currentBuild.displayName="${BUILD_NUMBER}#PR#${ghprbPullId}"
+                            if (params.GITHUB_PR_NUMBER) {
+                                currentBuild.displayName="${BUILD_NUMBER}#PR#${GITHUB_PR_NUMBER}"
                             } else {
                                 currentBuild.displayName="${BUILD_NUMBER}#${BRANCH}"
                             }
@@ -27,11 +27,11 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo ghprbPullId: ${ghprbPullId}
-                            if [[ -n ${ghprbPullId} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
+                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
                                 cd decisionengine_modules
-                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
-                                git checkout merge${ghprbPullId}
+                                git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
+                                git checkout merge${GITHUB_PR_NUMBER}
                                 cd ..
                             fi
                         '''
@@ -67,11 +67,11 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo ghprbPullId: ${ghprbPullId}
-                            if [[ -n ${ghprbPullId} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
+                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
                                 cd decisionengine_modules
-                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
-                                git checkout merge${ghprbPullId}
+                                git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
+                                git checkout merge${GITHUB_PR_NUMBER}
                                 cd ..
                             fi
                         '''
@@ -107,11 +107,11 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo ghprbPullId: ${ghprbPullId}
-                            if [[ -n ${ghprbPullId} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
+                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
                                 cd decisionengine_modules
-                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
-                                git checkout merge${ghprbPullId}
+                                git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
+                                git checkout merge${GITHUB_PR_NUMBER}
                                 cd ..
                             fi
                         '''
@@ -146,11 +146,11 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo ghprbPullId: ${ghprbPullId}
-                            if [[ -n ${ghprbPullId} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
+                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
                                 cd decisionengine_modules
-                                git fetch origin pull/${ghprbPullId}/merge:merge${ghprbPullId}
-                                git checkout merge${ghprbPullId}
+                                git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
+                                git checkout merge${GITHUB_PR_NUMBER}
                                 cd ..
                             fi
                         '''
