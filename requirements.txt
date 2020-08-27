@@ -15,3 +15,4 @@ bill-calculator-hep-mapsacosta == 0.0.7 --install-option="--index-url='https://t
 mock
 pytest
 tabulate
+pyyaml
