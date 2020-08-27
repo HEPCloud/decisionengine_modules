@@ -28,7 +28,7 @@ class TestGCEBillingInfo:
 
     def test_unable_to_download_filelist(self):
         constantsDict = {'projectId': 'hepcloud-fnal', 'credentialsProfileName': 'BillingBlah', 'accountNumber': 1111,
-                         'bucketBillingName': 'billing-', 'lastKnownBillDate': '10/01/18 00:00',
+                         'bucketBillingName': 'billing-hepcloud-fnal', 'lastKnownBillDate': '10/01/18 00:00',
                          'balanceAtDate': 100.0, 'applyDiscount': True}
         globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': '.'}
 
