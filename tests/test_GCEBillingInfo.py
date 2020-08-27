@@ -1,5 +1,6 @@
 #from decisionengine_modules.GCE.sources import GCEBillingInfo
 from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
+import logging
 # TODO
 # The GCEBillingInfo module needs to be refactored so that tests
 # can be written.  Then tests can be written to test smaller bits
@@ -8,7 +9,7 @@ from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 # can't be set in the test. Depending on how this testing is done
 # you may be able to mock around this.
 
-config_billing_info = {'projectId': 'hepcloud-fnal',
+#config_billing_info = {'projectId': 'hepcloud-fnal',
                        'lastKnownBillDate': '10/01/18 00:00',  # '%m/%d/%y %H:%M'
                        'balanceAtDate': 100.0,    # $
                        'accountName': 'None',
@@ -18,22 +19,24 @@ config_billing_info = {'projectId': 'hepcloud-fnal',
                        'botoConfig': ".boto",
                        'localFileDir': "."}
 
+constantsDict = {'projectId': 'hepcloud-fnal', 'credentialsProfileName': 'BillingBlah', 'accountNumber': 1111,
+                 'bucketBillingName': 'billing-', 'lastKnownBillDate': '10/01/18 00:00',
+                 'balanceAtDate': 100.0, 'applyDiscount': True}
+globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': '.'}
+
+
 
 class TestGCEBillingInfo:
 
     def test_produces(self):
         produces = ['GCE_Billing_Info']
-        bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info)
+#        bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info)
+        bi_pub = GCEBillingInfo(None, globalConf, constantsDict, logging.getLogger())
         assert bi_pub.produces() == produces
 
     def test_unable_to_download_filelist(self):
 
-        constantsDict = {'projectId': 'hepcloud-fnal', 'credentialsProfileName': 'BillingBlah', 'accountNumber': 1111,
-                         'bucketBillingName': 'billing-', 'lastKnownBillDate': '10/01/18 00:00',
-                         'balanceAtDate': 100.0, 'applyDiscount': True}
-        globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': '.'}
- 
-        calculator = GCEBillCalculator(None, globalConf, constantsDict, None)
+        calculator = GCEBillCalculator(None, globalConf, constantsDict, logging.getLogger())
 
 #        calculator = GCEBillingInfo.GCEBillCalculator(projectId='hepcloud-fnal',
 #                                                      accountProfileName='BillingBlah',
