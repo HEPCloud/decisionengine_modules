@@ -5,7 +5,7 @@ google_auth
 google-api-python-client
 gcs-oauth2-boto-plugin
 pandas
-bill-calculator-hep-mapsacosta == 0.0.5 --install-option="--index-url='https://test.pypi.org/simple'" \
+bill-calculator-hep-mapsacosta == 0.0.7 --install-option="--index-url='https://test.pypi.org/simple'" \
                   --install-option="--no-deps"
 
 # commented out until we drop python2 support
