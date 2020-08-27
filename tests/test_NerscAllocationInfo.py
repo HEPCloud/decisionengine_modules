@@ -25,7 +25,13 @@ CONFIG = {
 }
 
 PRODUCES = ["Nersc_Allocation_Info"]
-EXPECTED_PANDAS_DFRAME = pandas.DataFrame([{u'uid': 72048, u'firstname': u'Steven', u'middlename': u'C', u'projectId': 54807, u'currentAlloc': 374400000000.0, u'userAlloc': 0.0, u'repoType': u'REPO', u'repoName': u'm2612', u'lastname': u'Timm', u'userAllocPct': 2.0, u'usedAlloc': 560.0, u'name': u'timm'}])
+EXPECTED_PANDAS_DFRAME = pandas.DataFrame(
+    [{u'uid': 72048, u'firstname': u'Steven', u'middlename': u'C',
+        u'projectId': 54807, u'currentAlloc': 374400000000.0,
+        u'userAlloc': 0.0, u'repoType': u'REPO', u'repoName': u'm2612',
+        u'lastname': u'Timm', u'userAllocPct': 2.0, u'usedAlloc': 560.0,
+        u'name': u'timm'}])
+
 
 class TestNerscAllocationInfo:
 
