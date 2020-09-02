@@ -34,14 +34,5 @@ class TestGCEBillingInfo:
 
         calculator = GCEBillCalculator(None, globalConf, constantsDict, logging.getLogger())
 
-#        calculator = GCEBillingInfo.GCEBillCalculator(projectId='hepcloud-fnal',
-#                                                      accountProfileName='BillingBlah',
-#                                                      accountNumber=1111,
-#                                                      lastKnownBillDate='10/01/18 00:00',
-#                                                      balanceAtDate=100.0,
-#                                                      applyDiscount=True,
-#                                                      botoConfig=".boto",
-#                                                      localFileDir=".")
-
         file_list = calculator._downloadBillFiles()
         assert file_list == []
