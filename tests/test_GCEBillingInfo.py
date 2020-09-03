@@ -1,5 +1,6 @@
 from decisionengine_modules.GCE.sources import GCEBillingInfo
-
+from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
+import logging
 # TODO
 # The GCEBillingInfo module needs to be refactored so that tests
 # can be written.  Then tests can be written to test smaller bits
@@ -18,7 +19,6 @@ config_billing_info = {'projectId': 'hepcloud-fnal',
                        'botoConfig': ".boto",
                        'localFileDir': "."}
 
-
 class TestGCEBillingInfo:
 
     def test_produces(self):
@@ -27,14 +27,12 @@ class TestGCEBillingInfo:
         assert bi_pub.produces() == produces
 
     def test_unable_to_download_filelist(self):
-        calculator = GCEBillingInfo.GCEBillCalculator(projectId='hepcloud-fnal',
-                                                      accountProfileName='BillingBlah',
-                                                      accountNumber=1111,
-                                                      lastKnownBillDate='10/01/18 00:00',
-                                                      balanceAtDate=100.0,
-                                                      applyDiscount=True,
-                                                      botoConfig=".boto",
-                                                      localFileDir=".")
+        constantsDict = {'projectId': 'hepcloud-fnal', 'credentialsProfileName': 'BillingBlah', 'accountNumber': 1111,
+                         'bucketBillingName': 'billing-hepcloud-fnal', 'lastKnownBillDate': '10/01/18 00:00',
+                         'balanceAtDate': 100.0, 'applyDiscount': True}
+        globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': '.'}
+
+        calculator = GCEBillCalculator(None, globalConf, constantsDict, logging.getLogger())
 
         file_list = calculator._downloadBillFiles()
         assert file_list == []

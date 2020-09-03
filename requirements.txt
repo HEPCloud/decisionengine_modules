@@ -13,3 +13,4 @@ pandas
 mock
 pytest
 tabulate
+pyyaml

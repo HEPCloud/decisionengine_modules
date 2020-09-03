@@ -104,7 +104,7 @@ install:
 
   - cd ${TRAVIS_BUILD_DIR}
   - pip install -r requirements.txt
-
+  - pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
   - pip install coveralls
 
 # Environment variables
