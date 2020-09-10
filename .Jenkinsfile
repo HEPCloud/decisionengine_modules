@@ -16,7 +16,11 @@ pipeline {
                             pep8StageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
                             // Set custom Build Name
                             if (params.GITHUB_PR_NUMBER) {
-                                currentBuild.displayName="${BUILD_NUMBER}#PR#${GITHUB_PR_NUMBER}"
+                                if (params.GITHUB_PR_STATE == 'CLOSED') {
+                                    currentBuild.displayName="${BUILD_NUMBER}#PR#${GITHUB_PR_NUMBER}#CLOSED"
+                                } else {
+                                    currentBuild.displayName="${BUILD_NUMBER}#PR#${GITHUB_PR_NUMBER}"
+                                }
                             } else {
                                 currentBuild.displayName="${BUILD_NUMBER}#${BRANCH}"
                             }
@@ -27,8 +31,8 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
-                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
+                            if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
                                 cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
@@ -67,8 +71,8 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
-                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
+                            if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
                                 cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
@@ -107,8 +111,8 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
-                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
+                            if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
                                 cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
@@ -146,8 +150,8 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
-                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER}
-                            if [[ -n ${GITHUB_PR_NUMBER} ]]; then
+                            echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
+                            if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
                                 cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
