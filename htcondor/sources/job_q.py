@@ -1,11 +1,11 @@
 import argparse
+import logging
+import numpy
+import pandas
 import pprint
 import traceback
 
-import pandas
-
 from decisionengine.framework.modules import Source
-import logging
 from decisionengine_modules.htcondor import htcondor_query
 
 PRODUCES = ['job_manifests']
