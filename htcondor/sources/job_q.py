@@ -27,6 +27,7 @@ class JobQ(Source.Source):
         self.constraint = self.parameters.get('constraint', True)
         self.classad_attrs = self.parameters.get('classad_attrs')
         self.logger = logging.getLogger()
+        self.correction_map = self.parameters.get('correction_map')
 
     def produces(self):
         """
@@ -49,10 +50,13 @@ class JobQ(Source.Source):
                 condor_q.load(constraint=self.constraint,
                               format_list=self.classad_attrs,
                               condor_config=self.condor_config)
+                for eachDict in condor_q.stored_data:
+                    for eachKey in eachDict:
+                        eachVal  = eachDict[eachKey]
+                        if (eachVal is None) or (isinstance(eachVal, float) and (eachVal is numpy.nan)):
+                            eachDict[eachKey] = self.correction_map[eachKey]
                 df = pandas.DataFrame(condor_q.stored_data)
                 if not df.empty:
-                    df[['RequestMaxInputRate']] = df[['RequestMaxInputRate']].fillna(value=0)
-                    df[['DESIRED_Sites']] = df[['DESIRED_Sites']].fillna(value='')
                     # Add schedd name and collector host to job records
                     df['ScheddName'] = pandas.Series(
                         [schedd] * len(condor_q.stored_data))
