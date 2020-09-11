@@ -47,8 +47,7 @@ class StartdManifests(source.ResourceManifests):
                                self.condor_config)
 
             for eachDict in condor_status.stored_data:
-                for eachKey in eachDict:
-                    eachVal = eachDict[eachKey]
+                for eachKey,eachVal in eachDict.items():
                     if (eachVal is None) or (isinstance(eachVal, float) and (eachVal is numpy.nan)):
                         eachDict[eachKey] = self.correction_map[eachKey]
 
