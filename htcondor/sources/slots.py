@@ -48,9 +48,9 @@ class StartdManifests(source.ResourceManifests):
 
             for eachDict in condor_status.stored_data:
                 for eachKey in eachDict:
-                    eachVal  = eachDict[eachKey]
+                    eachVal = eachDict[eachKey]
                     if (eachVal is None) or (isinstance(eachVal, float) and (eachVal is numpy.nan)):
-                        eachDict[eachKey] = self.correction_map[ eachKey ]
+                        eachDict[eachKey] = self.correction_map[eachKey]
 
             dataframe = pandas.DataFrame(condor_status.stored_data)
             if not dataframe.empty:
@@ -62,12 +62,10 @@ class StartdManifests(source.ResourceManifests):
                     dataframe['CollectorHosts'] = [collector_host] * len(dataframe)
         except htcondor_query.QueryError:
             self.logger.warning('Query error fetching classads from collector host(s) "%s"' % self.collector_host)
-            self.logger.error('Query error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc())
-)
+            self.logger.error('Query error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
         except Exception:
             self.logger.warning('Unexpected error fetching classads from collector host(s) "%s"' % self.collector_host)
-            self.logger.error('Unexpected error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_e
-xc()))
+            self.logger.error('Unexpected error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
 
         return dataframe
 

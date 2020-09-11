@@ -52,7 +52,7 @@ class JobQ(Source.Source):
                               condor_config=self.condor_config)
                 for eachDict in condor_q.stored_data:
                     for eachKey in eachDict:
-                        eachVal  = eachDict[eachKey]
+                        eachVal = eachDict[eachKey]
                         if (eachVal is None) or (isinstance(eachVal, float) and (eachVal is numpy.nan)):
                             eachDict[eachKey] = self.correction_map[eachKey]
                 df = pandas.DataFrame(condor_q.stored_data)
