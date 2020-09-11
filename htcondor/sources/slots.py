@@ -1,8 +1,8 @@
 import argparse
-import pprint
-import pandas
 import numpy
-
+import pandas
+import pprint
+import traceback
 from decisionengine_modules.htcondor.sources import source
 from decisionengine_modules.htcondor import htcondor_query
 
