@@ -31,7 +31,7 @@ CONFIG_BAD = {
 
 CONFIG_BAD_WITH_TIMEOUT = {
     'condor_config': 'condor_config',
-    'nretries': 6,
+    'nretries': 2,
     'retry_interval': 2,
     'factories': [
         {
@@ -65,12 +65,11 @@ class TestFactoryGlobalManifests:
                (len(fg_df['factoryglobal_manifests']) == 0))
 
     def test_acquire_bad_with_timeout(self):
-        # Set by tuning nretries and the retry_interval
-        TIMEOUT_WANTED = 60
         fg = factory_global.FactoryGlobalManifests(CONFIG_BAD_WITH_TIMEOUT)
         start = time.time()
         fg_df = fg.acquire()
         end = time.time()
-        assert(end - start > TIMEOUT_WANTED)
+        # Set by tuning nretries and the retry_interval
+        assert(end - start > 5)
         assert((fg_df['factoryglobal_manifests'] is None) or
                (len(fg_df['factoryglobal_manifests']) == 0))
