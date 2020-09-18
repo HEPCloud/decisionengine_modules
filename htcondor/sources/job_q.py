@@ -50,10 +50,12 @@ class JobQ(Source.Source):
                 condor_q.load(constraint=self.constraint,
                               format_list=self.classad_attrs,
                               condor_config=self.condor_config)
-                for eachDict in condor_q.stored_data:
-                    for eachKey, eachVal in eachDict.items():
-                        if (eachVal is None) or (isinstance(eachVal, float) and (eachVal is numpy.nan)):
-                            eachDict[eachKey] = self.correction_map[eachKey]
+
+                for eachDict in condor_status.stored_data:
+                    for key, value in self.correction_map.items():
+                        if eachDict.get(key) is None:
+                            eachDict[key] = value
+
                 df = pandas.DataFrame(condor_q.stored_data)
                 if not df.empty:
                     # Add schedd name and collector host to job records

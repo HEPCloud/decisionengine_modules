@@ -26,7 +26,7 @@ class ResourceManifests(Source.Source):
         self.classad_attrs = config.get('classad_attrs')
         self.group_attr = config.get('group_attr', ['Name'])
         self.subsystem_name = config.get('subsystem_name')
-
+        self.correction_map = self.parameters.get('correction_map', {})
 
     def __repr__(self):
         return self.__str__()
@@ -68,6 +68,11 @@ class ResourceManifests(Source.Source):
 
             condor_status.load(self.constraint, self.classad_attrs,
                                self.condor_config)
+
+            for eachDict in condor_status.stored_data:
+                for key, value in self.correction_map.items():
+                    if eachDict.get(key) is None:
+                        eachDict[key] = value
 
             dataframe = pandas.DataFrame(condor_status.stored_data)
             if not dataframe.empty:
