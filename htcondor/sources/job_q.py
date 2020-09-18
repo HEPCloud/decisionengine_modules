@@ -51,7 +51,7 @@ class JobQ(Source.Source):
                               format_list=self.classad_attrs,
                               condor_config=self.condor_config)
 
-                for eachDict in condor_status.stored_data:
+                for eachDict in condor_q.stored_data:
                     for key, value in self.correction_map.items():
                         if eachDict.get(key) is None:
                             eachDict[key] = value
