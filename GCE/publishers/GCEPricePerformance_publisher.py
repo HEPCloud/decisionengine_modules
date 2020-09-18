@@ -3,15 +3,9 @@ Publishes price / performance data
 
 """
 import argparse
-import os
-import copy
 import pprint
-import pandas as pd
 
 from decisionengine_modules.graphite.publishers.generic_publisher import GenericPublisher as publisher
-import decisionengine.framework.configmanager.ConfigManager as configmanager
-import decisionengine.framework.dataspace.datablock as datablock
-import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 import logging
 

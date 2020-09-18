@@ -2,15 +2,10 @@
 Publishes price / performance data
 
 """
-import os
-import copy
 import pprint
-import pandas as pd
 
 from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
-import decisionengine.framework.configmanager.ConfigManager as configmanager
 import decisionengine.framework.dataspace.datablock as datablock
-import decisionengine.framework.dataspace.dataspace as dataspace
 import decisionengine_modules.graphite_client as graphite
 
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud.aws"
@@ -78,24 +73,6 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
-    else:
-        config_manager = configmanager.ConfigManager()
-        config_manager.load()
-        global_config = config_manager.get_global_config()
-        print("GLOBAL CONF", global_config)
-        ds = dataspace.DataSpace(global_config)
-
-        data_block = datablock.DataBlock(ds,
-                                         # '5CC840DD-88B9-45CE-9DA2-FF531289AC66',
-                                         'C56E0AAF-99D3-42A8-88A3-921E30C1879C',
-                                         1)
-
-        pp_info = AWSPricePerformancePublisher({"publish_to_graphite": True,
-                                                "graphite_host": "fifemondata.fnal.gov",
-                                                "graphite_port": 2104,
-                                                "graphite_context": "hepcloud.aws",
-                                                "output_file": "%s/de_data/AWS_price_perf.csv" % (os.environ.get('HOME'),)})
-        rc = pp_info.publish(data_block)
 
 
 if __name__ == '__main__':
