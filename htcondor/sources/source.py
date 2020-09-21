@@ -13,6 +13,14 @@ from decisionengine_modules.htcondor import htcondor_query
 class ResourceManifests(Source.Source):
 
     def __init__(self, config):
+        """
+        In config files such as job_classification.jsonnet or Nersc.jsonnet,
+        put a dictionary named correction_map with keys corresponding to classad_attrs
+        and values that the operators want to be default values for the classad_attrs.
+        But here, we make available the option of an empty dictionary
+        because some classes that extend this class might not have correction_map
+        avaiable in its config file.
+        """
         super(ResourceManifests, self).__init__(config)
         if not config:
             config = {}
