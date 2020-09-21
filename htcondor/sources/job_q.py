@@ -1,6 +1,5 @@
 import argparse
 import logging
-import numpy
 import pandas
 import pprint
 import traceback

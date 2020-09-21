@@ -1,6 +1,4 @@
 import argparse
-import numpy
-import pandas
 import pprint
 from decisionengine_modules.htcondor.sources import source
 
