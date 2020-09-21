@@ -14,6 +14,11 @@ PRODUCES = ['job_manifests']
 class JobQ(Source.Source):
 
     def __init__(self, config):
+        """
+        In config files such as job_classification.jsonnet or Nersc.jsonnet,
+        put a dictionary named correction_map with keys corresponding to classad_attrs
+        and values that the operators want to be default values for the classad_attrs.
+        """
         super(JobQ, self).__init__(config)
 
         if not self.parameters:
