@@ -12,17 +12,15 @@ import pytest
 
 gwms_modules_available = True
 try:
-    from glideinwms.frontend import checkFrontend
-    with open(checkFrontend.__file__) as fd:
-        line = fd.readline()
+    from glideinwms.lib import glideinWMSVersion
 except ImportError:
-    checkFrontend = None
+    glideinWMSVersion = None
     gwms_modules_available = False
 
 gwms_modules_python3 = False
-if gwms_modules_available:
+if gwms_modules_available and glideinWMSVersion is not None:
     try:
-        with open(checkFrontend.__file__) as fd:
+        with open(glideinWMSVersion.__file__) as fd:
             line = fd.readline()
             gwms_modules_python3 = "python3" in line
     except Exception:
