@@ -1,4 +1,5 @@
 import os
+import pytest
 
 # These modules are not used here, adding the import to test for the presence
 # of modules used in glide_frontend_element
@@ -11,11 +12,9 @@ try:
 except ImportError:
     gwms_modules_available = False
 
-from decisionengine_modules.glideinwms import glide_frontend_element
-
 
 def test_glideinwms_import():
-    assert gwms_modules_available
+    assert gwms_modules_available, "glideinwms package is required to test glide_frontend_element"
 
 
 FRONTEND_CFG = {
@@ -91,27 +90,32 @@ FRONTEND_CFG = {
             'workdir': '/var/lib/gwms-frontend/vofrontend/group_cms'}}}
 
 
+@pytest.mark.skipif(
+    not gwms_modules_available,
+    reason="glide_frontend_element cannot be tested w/o glideinwms")
 class TestGlideFrontendElement:
+    if gwms_modules_available:
+        from decisionengine_modules.glideinwms import glide_frontend_element
 
     @staticmethod
     def read_fe_config(fpath):
         # to read the configuration in form a fixture file
         if not os.path.isfile(fpath):
             raise RuntimeError(
-                'Error reading Frontend config for DE %s. '
-                'Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' %
+                "Error reading Frontend config for DE %s. "
+                "Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration." %
                 fpath)
         fe_cfg = eval(open(fpath, 'r').read())
         if not isinstance(fe_cfg, dict):
-            raise ValueError('Frontend config for DE in %s is invalid' %
+            raise ValueError("Frontend config for DE in %s is invalid" %
                              fpath)
         return fe_cfg
 
     def test_compute_glidein_max_running(self):
         # fe_cfg = self.read_fe_config("de_frontend_config")
         fe_cfg = FRONTEND_CFG
-        gfe = glide_frontend_element.get_gfe_obj("CMS", "CMS",
-                                                 fe_cfg, "glideinwms")
+        gfe = self.glide_frontend_element.get_gfe_obj("CMS", "CMS",
+                                                      fe_cfg, "glideinwms")
         gfe.entry_fraction_glidein_running = 1.15
         assert gfe.compute_glidein_max_running({'Idle': 412}, 971, 0) == 1591
         assert gfe.compute_glidein_max_running({'Idle': 100}, 100, 0) == 230
