@@ -47,13 +47,16 @@ setup_git_product() {
     wspace=${2:-`pwd`}
     cd $wspace
     git clone $product_git_repo
+    # optional $3 is the branch
+    [ -n "$3" ] && git checkout $3
 }
 
 
 setup_glideinwms() {
     dir=$1
+    # Python 3 version of GlideinWMS is in branch_v3_9 of https://github.com/glideinWMS/glideinwms.git
     glideinwms_git_repo="https://github.com/glideinWMS/glideinwms.git"
-    setup_git_product "$glideinwms_git_repo" $dir
+    setup_git_product "$glideinwms_git_repo" $dir branch_v3_9
 }
 
 

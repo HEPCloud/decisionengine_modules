@@ -1,20 +1,44 @@
 import os
 import pytest
 
-# These modules are not used here, adding the import to test for the presence
-# of modules used in glide_frontend_element
+# Test for the presence of modules used in glide_frontend_element
+# Not testing all imports of glide_frontend_element which are
+# from glideinwms.frontend import glideinFrontendConfig
+# from glideinwms.frontend import glideinFrontendInterface
+# from glideinwms.frontend import glideinFrontendPlugins
+# from glideinwms.lib import pubCrypto
+# Using a simple one, assuming that is glideinwms is in the PYTHONPATH,
+# all modules are
+
 gwms_modules_available = True
 try:
-    from glideinwms.frontend import glideinFrontendConfig
-    from glideinwms.frontend import glideinFrontendInterface
-    from glideinwms.frontend import glideinFrontendPlugins
-    from glideinwms.lib import pubCrypto
+    from glideinwms.frontend import checkFrontend
+    with open(checkFrontend.__file__) as fd:
+        line = fd.readline()
 except ImportError:
+    checkFrontend = None
     gwms_modules_available = False
+
+gwms_modules_python3 = False
+if gwms_modules_available:
+    try:
+        with open(checkFrontend.__file__) as fd:
+            line = fd.readline()
+            gwms_modules_python3 = "python3" in line
+    except Exception:
+        # Assuming no Python 3 glideinwms if something goes wrong
+        pass
 
 
 def test_glideinwms_import():
-    assert gwms_modules_available, "glideinwms package is required to test glide_frontend_element"
+    assert gwms_modules_available, "glideinwms package is required"
+
+
+@pytest.mark.skipif(
+    not gwms_modules_available,
+    reason="Python version of glideinwms cannot be tested w/o glideinwms")
+def test_glideinwms_python3():
+    assert gwms_modules_python3, "a Python3 version of glideinwms is required"
 
 
 FRONTEND_CFG = {
@@ -91,8 +115,8 @@ FRONTEND_CFG = {
 
 
 @pytest.mark.skipif(
-    not gwms_modules_available,
-    reason="glide_frontend_element cannot be tested w/o glideinwms")
+    not gwms_modules_available or not gwms_modules_python3,
+    reason="glide_frontend_element cannot be tested w/o Python 3 glideinwms")
 class TestGlideFrontendElement:
     if gwms_modules_available:
         from decisionengine_modules.glideinwms import glide_frontend_element
