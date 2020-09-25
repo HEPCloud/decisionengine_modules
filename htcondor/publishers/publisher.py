@@ -5,8 +5,6 @@ import logging
 import os
 import pandas
 import six
-import sys
-import traceback
 from functools import partial
 from decisionengine.framework.modules import Publisher
 from decisionengine_modules.util.retry_function import retry_wrapper
@@ -176,7 +174,6 @@ def dataframe_to_classads(dataframe):
             elif isinstance(value, str):
                 ad_dict[key] = value.lstrip("b'").rstrip("'")
             else:
-                t = type(value)
                 ad_dict[key] = value
         ad = classad.ClassAd()
         ad.update(ad_dict)
