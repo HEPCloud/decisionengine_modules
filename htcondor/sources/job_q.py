@@ -1,11 +1,10 @@
 import argparse
+import logging
+import pandas
 import pprint
 import traceback
 
-import pandas
-
 from decisionengine.framework.modules import Source
-import logging
 from decisionengine_modules.htcondor import htcondor_query
 
 PRODUCES = ['job_manifests']
@@ -14,6 +13,11 @@ PRODUCES = ['job_manifests']
 class JobQ(Source.Source):
 
     def __init__(self, config):
+        """
+        In config files such as job_classification.jsonnet or Nersc.jsonnet,
+        put a dictionary named correction_map with keys corresponding to classad_attrs
+        and values that the operators want to be default values for the classad_attrs.
+        """
         super(JobQ, self).__init__(config)
 
         if not self.parameters:
@@ -27,6 +31,7 @@ class JobQ(Source.Source):
         self.constraint = self.parameters.get('constraint', True)
         self.classad_attrs = self.parameters.get('classad_attrs')
         self.logger = logging.getLogger()
+        self.correction_map = self.parameters.get('correction_map')
 
     def produces(self):
         """
@@ -49,6 +54,12 @@ class JobQ(Source.Source):
                 condor_q.load(constraint=self.constraint,
                               format_list=self.classad_attrs,
                               condor_config=self.condor_config)
+
+                for eachDict in condor_q.stored_data:
+                    for key, value in self.correction_map.items():
+                        if eachDict.get(key) is None:
+                            eachDict[key] = value
+
                 df = pandas.DataFrame(condor_q.stored_data)
                 if not df.empty:
                     # Add schedd name and collector host to job records

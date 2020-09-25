@@ -27,8 +27,8 @@ class JobClustering(Transform.Transform):
         self.job_q_expr = config.get('job_q_expr')
 
         # Creating dataframe with config info but all totals are zero
-        totals = [[job_expr[0], self.match_exprs.get(
-            job_expr), 0, job_expr[1]] for job_expr in self.match_exprs.keys()]
+        totals = [[job_expr.get('job_bucket_criteria_expr'), job_expr.get('site_bucket_criteria_expr'),
+                   0, job_expr.get('frontend_group')] for job_expr in self.match_exprs]
         self.EMPTY_JOB_CLUSTER = pandas.DataFrame(totals,
                                                   columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
                                                            'Totals', 'Frontend_Group'])
@@ -85,10 +85,11 @@ class JobClustering(Transform.Transform):
         """
         # VERSION WITH FRONTEND, DELETE AND USE ABOVE WHEN FRONTEND IS GONE
         try:
-            df_q = df_full_q.fillna('').query(self.job_q_expr)
+            df_q = df_full_q.query(self.job_q_expr)
             # Query job q and populate bucket totals
-            totals = [[job_expr[0], self.match_exprs.get(job_expr), df_q.query(
-                job_expr[0]).shape[0], job_expr[1]] for job_expr in self.match_exprs.keys()]
+            totals = [[job_expr.get('job_bucket_criteria_expr'), job_expr.get('site_bucket_criteria_expr'),
+                       df_q.query(job_expr.get('job_bucket_criteria_expr')).shape[0],
+                       job_expr.get('frontend_group')] for job_expr in self.match_exprs]
             df_job_clusters = pandas.DataFrame(totals,
                                                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
                                                         'Totals', 'Frontend_Group'])

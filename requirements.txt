@@ -4,7 +4,9 @@ boto3
 google_auth
 google-api-python-client
 gcs-oauth2-boto-plugin
+packaging
 pandas
+six >= 1.13.0
 
 # commented out until we drop python2 support
 ## classad ##
@@ -13,3 +15,4 @@ pandas
 mock
 pytest
 tabulate
+pyyaml

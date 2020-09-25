@@ -27,14 +27,15 @@ setup_python_venv() {
 
     source $VENV/bin/activate
 
-    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3"
+    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet"
     echo "Installing $pip_packages ..."
     pip install --quiet $pip_packages
     if [ $? -ne 0 ]; then
         echo "Installing $pip_packages ... FAILED"
     fi
     pip install classad htcondor
-
+    pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+    pip install pyyaml
     # Need this because some strange control sequences when using default TERM=xterm
     export TERM="linux"
 

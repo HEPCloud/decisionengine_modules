@@ -45,9 +45,6 @@ class AccountConstants(object):
             print(name, attr, type(attr))
 
 
-_config_dict = {}  # to trick pylint
-
-
 def load_constants(constants_file):
     """
     Load constants from file.
@@ -59,18 +56,7 @@ def load_constants(constants_file):
 
     """
 
-    code = None
-    global _config_dict
+    config_dict = None
     with open(constants_file, "r") as f:
-        code = "_config_dict=" + "".join(f.readlines())
-    if code:
-        exec(code, globals())
-
-    return _config_dict
-
-
-if __name__ == '__main__':
-    account_dict = load_constants('AccountConstants_sample.py')
-    instances = map(lambda x: AccountConstants(x), account_dict.values())
-    for i in instances:
-        i.info()
+        config_dict = eval(f.read())
+    return config_dict
