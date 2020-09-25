@@ -116,7 +116,7 @@ FRONTEND_CFG = {
     not gwms_modules_available or not gwms_modules_python3,
     reason="glide_frontend_element cannot be tested w/o Python 3 glideinwms")
 class TestGlideFrontendElement:
-    if gwms_modules_available:
+    if gwms_modules_available and gwms_modules_python3:
         from decisionengine_modules.glideinwms import glide_frontend_element
 
     @staticmethod
