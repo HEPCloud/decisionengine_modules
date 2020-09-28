@@ -22,12 +22,12 @@ setup_python_venv() {
     PIP_EXE=pip
 
     if [ ! -d $VENV ] ; then
-      $VIRTUALENV_EXE $VENV
+      $VIRTUALENV_EXE --system-site-packages $VENV
     fi
 
     source $VENV/bin/activate
 
-    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet"
+    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet m2crypto"
     echo "Installing $pip_packages ..."
     pip install --quiet $pip_packages
     if [ $? -ne 0 ]; then
