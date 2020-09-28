@@ -61,9 +61,10 @@ setup_git_product() {
     product_git_repo=$1
     wspace=${2:-`pwd`}
     cd $wspace
-    git clone $product_git_repo
+    pwd
+    git clone -v $product_git_repo
     # optional $3 is the branch
-    [ -n "$3" ] && ( cd "$(git_get_directory "$product_git_repo"))"; git checkout $3; )
+    [ -n "$3" ] && ( pwd; ls; cd "$(git_get_directory "$product_git_repo"))"; git checkout $3; )
 }
 
 
