@@ -62,9 +62,9 @@ setup_git_product() {
     wspace=${2:-`pwd`}
     cd $wspace
     pwd
-    git clone -v $product_git_repo
+    git clone $product_git_repo
     # optional $3 is the branch
-    [ -n "$3" ] && ( echo "MMDB (`pwd`):`ls`"; echo "MMDB (`git_get_directory "$product_git_repo"`): `ls "$(git_get_directory "$product_git_repo")"`"; cd $(git_get_directory "$product_git_repo"); git checkout $3; )
+    [ -n "$3" ] && ( cd $(git_get_directory "$product_git_repo"); git checkout $3; )
 }
 
 
