@@ -42,13 +42,28 @@ setup_python_venv() {
 }
 
 
+git_get_directory() {
+    # Derive one from the repository name
+    # Try using "humanish" part of source repo if user didn't specify one
+    # adapted from:
+    # https://github.com/git/git/blob/cb9d69ad638fe34d214cf9cb2850e38be6e6d639/contrib/examples/git-clone.sh#L224
+    # 1 - git URL or bundle path
+    if [ -f "$1" ]; then
+        # Cloning from a bundle
+        echo "$1" | sed -e 's|/*\.bundle$||' -e 's|.*/||g'
+    else
+        echo "$1" | sed -e 's|/$||' -e 's|:*/*\.git$||' -e 's|.*[/:]||g'
+    fi
+}
+
+
 setup_git_product() {
     product_git_repo=$1
     wspace=${2:-`pwd`}
     cd $wspace
     git clone $product_git_repo
     # optional $3 is the branch
-    [ -n "$3" ] && git checkout $3
+    [ -n "$3" ] && ( cd "$(git_get_directory "$product_git_repo"))"; git checkout $3; )
 }
 
 
