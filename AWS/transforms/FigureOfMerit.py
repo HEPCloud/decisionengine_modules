@@ -9,9 +9,6 @@ import pandas as pd
 import sys
 
 from decisionengine.framework.modules import Transform
-import decisionengine.framework.configmanager.ConfigManager as configmanager
-import decisionengine.framework.dataspace.datablock as datablock
-import decisionengine.framework.dataspace.dataspace as dataspace
 
 CONSUMES = ['provisioner_resource_spot_prices',
             'Performance_Data',
@@ -170,23 +167,6 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
-    else:
-        config_manager = configmanager.ConfigManager()
-        config_manager.load()
-        global_config = config_manager.get_global_config()
-        print("GLOBAL CONF %s" % (global_config,))
-        ds = dataspace.DataSpace(global_config)
-
-        data_block = datablock.DataBlock(ds,
-                                         "AWS_Calculations_with_source_proxy",
-                                         "F70B4110-E66D-49CA-9333-4A983A679F37",
-                                         1,
-                                         109)
-
-        fm_info = FigureOfMerit({})
-        rc = fm_info.transform(data_block)
-        print("INFO")
-        print(rc)
 
 
 if __name__ == '__main__':
