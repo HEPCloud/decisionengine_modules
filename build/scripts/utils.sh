@@ -58,9 +58,9 @@ setup_glideinwms() {
 
 
 setup_de_framework() {
-    dir=$1
-    de_framework_git_repo="https://github.com/HEPCloud/decisionengine.git"
-    setup_git_product "$de_framework_git_repo" $dir
+    wspace=${1:-`pwd`}
+    cd $wspace
+    git clone --depth 1 --branch 1.4.0-rc https://github.com/HEPCloud/decisionengine.git
 }
 
 

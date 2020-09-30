@@ -88,7 +88,7 @@ install:
 
   # Pull down decisionengine/master
   - cd $(dirname ${TRAVIS_BUILD_DIR})
-  - git clone https://github.com/HEPCloud/decisionengine.git
+  - git clone --depth 1 --branch 1.4.0-rc https://github.com/HEPCloud/decisionengine.git
 
   # run cmake and build logic engine
   - sudo apt-get -y install cmake g++
