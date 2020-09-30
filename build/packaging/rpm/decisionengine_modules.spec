@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 1.4.0rc
-%define release 1_py3
+%define release 1
 
 %define de_user decisionengine
 %define de_group decisionengine
