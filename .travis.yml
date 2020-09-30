@@ -98,6 +98,12 @@ install:
   - make
   - make liblinks
 
+  # Pull down glideinwms/branch_v3_9
+  - cd $(dirname ${TRAVIS_BUILD_DIR})
+  - git clone https://github.com/glideinWMS/glideinwms.git
+  - cd glideinwms
+  - git checkout branch_v3_9
+
   # pull in any listed python requirements
   - cd ${TRAVIS_BUILD_DIR}/../decisionengine/
   - pip install -r requirements.txt
@@ -105,6 +111,7 @@ install:
   - cd ${TRAVIS_BUILD_DIR}
   - pip install -r requirements.txt
   - pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+  - python -m pip install m2crypto
   - pip install coveralls
 
 # Environment variables

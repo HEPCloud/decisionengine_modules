@@ -22,12 +22,12 @@ setup_python_venv() {
     PIP_EXE=pip
 
     if [ ! -d $VENV ] ; then
-      $VIRTUALENV_EXE $VENV
+      $VIRTUALENV_EXE --system-site-packages $VENV
     fi
 
     source $VENV/bin/activate
 
-    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet"
+    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet m2crypto"
     echo "Installing $pip_packages ..."
     pip install --quiet $pip_packages
     if [ $? -ne 0 ]; then
@@ -42,18 +42,36 @@ setup_python_venv() {
 }
 
 
+git_get_directory() {
+    # Derive one from the repository name
+    # Try using "humanish" part of source repo if user didn't specify one
+    # adapted from:
+    # https://github.com/git/git/blob/cb9d69ad638fe34d214cf9cb2850e38be6e6d639/contrib/examples/git-clone.sh#L224
+    # 1 - git URL or bundle path
+    if [ -f "$1" ]; then
+        # Cloning from a bundle
+        echo "$1" | sed -e 's|/*\.bundle$||' -e 's|.*/||g'
+    else
+        echo "$1" | sed -e 's|/$||' -e 's|:*/*\.git$||' -e 's|.*[/:]||g'
+    fi
+}
+
+
 setup_git_product() {
     product_git_repo=$1
     wspace=${2:-`pwd`}
     cd $wspace
     git clone $product_git_repo
+    # optional $3 is the branch
+    [ -n "$3" ] && ( cd $(git_get_directory "$product_git_repo"); git checkout $3; )
 }
 
 
 setup_glideinwms() {
     dir=$1
+    # Python 3 version of GlideinWMS is in branch_v3_9 of https://github.com/glideinWMS/glideinwms.git
     glideinwms_git_repo="https://github.com/glideinWMS/glideinwms.git"
-    setup_git_product "$glideinwms_git_repo" $dir
+    setup_git_product "$glideinwms_git_repo" $dir branch_v3_9
 }
 
 
