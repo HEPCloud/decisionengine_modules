@@ -128,7 +128,7 @@ pipeline {
                         echo "prepare docker image ${unit_testsStageDockerImage}"
                         sh "docker build -t ${unit_testsStageDockerImage} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${unit_testsStageDockerImage}"
+                        sh "docker run --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${unit_testsStageDockerImage}"
                     }
                     post {
                         always {
