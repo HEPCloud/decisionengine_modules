@@ -31,13 +31,15 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
+                            cd decisionengine_modules
+                            echo "checkout ${BRANCH} branch"
+                            git checkout ${BRANCH}
                             echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
                             if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
-                                cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
-                                cd ..
                             fi
+                            cd ..
                         '''
                         echo "prepare docker image ${pep8StageDockerImage}"
                         sh "docker build -t ${pep8StageDockerImage} -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/"
@@ -71,13 +73,15 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
+                            cd decisionengine_modules
+                            echo "checkout ${BRANCH} branch"
+                            git checkout ${BRANCH}
                             echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
                             if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
-                                cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
-                                cd ..
                             fi
+                            cd ..
                         '''
                         echo "prepare docker image ${pylintStageDockerImage}"
                         sh "docker build -t ${pylintStageDockerImage} -f decisionengine_modules/.github/actions/pylint-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pylint-in-sl7-docker/"
@@ -111,13 +115,15 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
+                            cd decisionengine_modules
+                            echo "checkout ${BRANCH} branch"
+                            git checkout ${BRANCH}
                             echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
                             if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
-                                cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
-                                cd ..
                             fi
+                            cd ..
                         '''
                         echo "prepare docker image ${unit_testsStageDockerImage}"
                         sh "docker build -t ${unit_testsStageDockerImage} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker"
@@ -150,13 +156,15 @@ pipeline {
                         echo "clone decisionengine_modules code from ${DE_MOD_REPO}"
                         sh '''
                             git clone ${DE_MOD_REPO}
+                            cd decisionengine_modules
+                            echo "checkout ${BRANCH} branch"
+                            git checkout ${BRANCH}
                             echo GITHUB_PR_NUMBER: ${GITHUB_PR_NUMBER} - GITHUB_PR_STATE: ${GITHUB_PR_STATE}
                             if [[ -n ${GITHUB_PR_NUMBER} && ${GITHUB_PR_STATE} == OPEN ]]; then
-                                cd decisionengine_modules
                                 git fetch origin pull/${GITHUB_PR_NUMBER}/merge:merge${GITHUB_PR_NUMBER}
                                 git checkout merge${GITHUB_PR_NUMBER}
-                                cd ..
                             fi
+                            cd ..
                         '''
                         echo "prepare docker image ${rpmbuildStageDockerImage}"
                         sh "docker build -t ${rpmbuildStageDockerImage} -f decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker"
