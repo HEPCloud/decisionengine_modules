@@ -4,8 +4,6 @@ Publishes AWS VM burn rate
 """
 import pprint
 
-import decisionengine.framework.dataspace.dataspace as dataspace
-import decisionengine.framework.configmanager.ConfigManager as configmanager
 from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
 
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud_priv.de.aws"
@@ -71,12 +69,6 @@ def main():
         module_config_template()
     elif args.configinfo:
         module_config_info()
-    else:
-        config_manager = configmanager.ConfigManager()
-        config_manager.load()
-        global_config = config_manager.get_global_config()
-        print("GLOBAL CONF", global_config)
-        ds = dataspace.DataSpace(global_config)
 
 
 if __name__ == '__main__':

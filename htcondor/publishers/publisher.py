@@ -5,8 +5,6 @@ import logging
 import os
 import pandas
 import six
-import sys
-import traceback
 from functools import partial
 from decisionengine.framework.modules import Publisher
 from decisionengine_modules.util.retry_function import retry_wrapper
@@ -149,10 +147,7 @@ class HTCondorManifests(Publisher.Publisher):
             else:
                 self.logger.info('No %s classads found to advertise' % key)
         except Exception:
-            tb = traceback.format_exception(sys.exc_info()[0],
-                                            sys.exc_info()[1],
-                                            sys.exc_info()[2])
-            self.logger.error(tb)
+            self.logger.exception("Failed to publish")
 
 
 def dataframe_to_classads(dataframe):
@@ -168,9 +163,18 @@ def dataframe_to_classads(dataframe):
         #       extremely undesired/unexpected issues. Better to remove
         #       NaN values before converting a dataframe row to classad.
         ad_dict = {}
-        for key in record:
-            if pandas.notnull(record[key]):
-                ad_dict[key] = record[key]
+        for key, value in record.items():
+            if pandas.isnull(value):
+                continue
+            # The massage below is needed to handle Issue #263
+            # https://github.com/HEPCloud/decisionengine_modules/issues/263
+            # after switch to python3
+            if isinstance(value, bytes):
+                ad_dict[key] = value.decode("latin-1")
+            elif isinstance(value, str):
+                ad_dict[key] = value.lstrip("b'").rstrip("'")
+            else:
+                ad_dict[key] = value
         ad = classad.ClassAd()
         ad.update(ad_dict)
         ads.append(ad)
