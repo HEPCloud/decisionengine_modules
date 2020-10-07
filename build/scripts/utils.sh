@@ -67,7 +67,7 @@ setup_git_product() {
 
 
 setup_glideinwms() {
-    dir=$1
+    dir=${1:-`pwd`}
     # Python 3 version of GlideinWMS is in branch_v3_9 of https://github.com/glideinWMS/glideinwms.git
     glideinwms_git_repo="https://github.com/glideinWMS/glideinwms.git"
     setup_git_product "$glideinwms_git_repo" $dir branch_v3_9
