@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Release 1.4.0 &#8212; decisionengine 1.1.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Release 1.3.0" href="release_notes_1.3.html" />
+    <link rel="prev" title="Welcome to decisionengine_modules’ documentation!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="release-1-4-0">
+<h1>Release 1.4.0<a class="headerlink" href="#release-1-4-0" title="Permalink to this headline">¶</a></h1>
+<p>In this release:</p>
+<ul class="simple">
+<li><p>Works with python3 glideinWMS package</p></li>
+<li><p>Uses new AWS bill calculator</p></li>
+<li><p>Improved Jenkins CI pipeline</p></li>
+</ul>
+<div class="section" id="issues-fixes-in-this-release">
+<h2>Issues fixes in this release<a class="headerlink" href="#issues-fixes-in-this-release" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/59">59</a> : Replace AWS Billing and GCE Billing modules with revamped bill Calculator code (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/71f25ead76f53355be1dc13f280880744d861cfa">71f25ea</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/246">246</a> : Modify NERSCAllocation main() so that it can be run standalone (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/11ce772e808e9d2a408aaa9a4f53d1c7d19e1a7f">11ce772</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/263">263</a> : Python3 encodes hex strings differently, resulting in malformed htcondor classads (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/13a24e4c99fb8915651200685bdd9a98b0302c61">13a24e4</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/255">255</a> : Add option to config of condor/sources/job_q.py and slots.py (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/6f65af466364f9c28480fefef0ba4136d4ff8cec">6f65af4</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="full-list-of-commits-since-version-1-3-0">
+<h2>Full list of commits since version 1.3.0<a class="headerlink" href="#full-list-of-commits-since-version-1-3-0" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/42f62d3d50e88df52719c50cd7159ccdbec81e77">42f62d3</a>
+:   remove py3 from package name</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/6e56c4d2cdd7a8dee9e87adb310f4aefd5c19962">6e56c4d</a>
+:   bump version number</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/6433dba66071a6b3c0cbfcd1c971d454013549bb">6433dba</a>
+:   Add support to test any branch in Jenkins for DE modules repo (#276)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/60db1b3a43e7916aca427d88c44bc56e4d7e0f09">60db1b3</a>
+:   Accommodate breaking changes to framework’s configuration system. (#273)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/13a24e4c99fb8915651200685bdd9a98b0302c61">13a24e4</a>
+:   Fix263 (#272)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a866e479f057c485dabc15c891d050cdf7f5fcf0">a866e47</a>
+:   Correct ‘file_cache is unavailable when using oauth2client &gt;= 4.0.0’ (#267)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2c8206479a1cbe4a1aeba31b0d0aaf69e459af00">2c82064</a>
+:   Fix requirements.txt for #266 (#268)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/6f65af466364f9c28480fefef0ba4136d4ff8cec">6f65af4</a>
+:   A more generic solution for the issue 255 (#265)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/df08cb41a253460ca7a1ebc0936ed099251db611">df08cb4</a>
+:   Speed up tests. (#264)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/057e5788aaf99ae87d1cd05a3e53f2c6cf897b1c">057e578</a>
+:   Update Jenkins pipeline to properly test closing PR (#262)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a28f2723327a6a29fc094f92bd831b6c888185f0">a28f272</a>
+:   Adding Jenkins pipeline documentation (#261)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/71f25ead76f53355be1dc13f280880744d861cfa">71f25ea</a>
+:   T59 (#258)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/90b658089230713b9ca7739620507603f621bce9">90b6580</a>
+:   Updating Jenkins pipeline configuration (#260)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b4bd7598cd747477bcf35745b6d520a275ffdbb8">b4bd759</a>
+:   dealing with 2 columnsindividually (#257)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/11ce772e808e9d2a408aaa9a4f53d1c7d19e1a7f">11ce772</a>
+:   decisionengine_modules/NERSC:  Can run NerscAllocationInfo.py without (#256)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/4a70465b2096e0d57aa1ed9a78aacf0dc2c9a338">4a70465</a>
+:   doc: add release notes</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">decisionengine</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 1.4.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.3.html">Release 1.3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../code/index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code/index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code/decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to decisionengine_modules’ documentation!</a></li>
+      <li>Next: <a href="release_notes_1.3.html" title="next chapter">Release 1.3.0</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Fermi Research Alliance, LLC..
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/release_notes/release_notes_1.4.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
