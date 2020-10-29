@@ -60,7 +60,7 @@ setup_glideinwms() {
 setup_de_framework() {
     wspace=${1:-`pwd`}
     cd $wspace
-    git clone --depth 1 --branch 1.4.0 https://github.com/HEPCloud/decisionengine.git
+    git clone --depth 1 --branch 1.4.1 https://github.com/HEPCloud/decisionengine.git
 }
 
 
