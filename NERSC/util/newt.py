@@ -48,7 +48,7 @@ class Newt(object):
         """
         retry = Retry(
             status=self.num_retries,
-            status_forcelist=[500, ],
+            status_forcelist=[500, 502, 503, 504, 507],
             backoff_factor=self.retry_backoff_factor,
             method_whitelist=False)
         retry_adapter = HTTPAdapter(max_retries=retry)
