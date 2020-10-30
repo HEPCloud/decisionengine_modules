@@ -1,3 +1,24 @@
+Release 1.4.1
+-------------
+
+In this release:
+
+* Bug fixes to 1.4.0 release 
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- `281 <https://github.com/HEPCloud/decisionengine_modules/issues/281>`_ : New exception in NERSC newt get_usage (`4d1301e <https://github.com/HEPCloud/decisionengine_modules/commit/4d1301e9ca4d3a28856b4e8f6a4a4b82a1993fe5>`_)
+
+
+Full list of commits since version 1.4.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`4d1301e <https://github.com/HEPCloud/decisionengine_modules/commit/4d1301e9ca4d3a28856b4e8f6a4a4b82a1993fe5>`_
+:   decisionengine_modules/NERSC/util:  Added more 5xx codes to retry (#285)
+
+
+
 Release 1.4.0
 -------------
 
