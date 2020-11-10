@@ -1,3 +1,22 @@
+Release 1.4.2
+-------------
+
+In this release:
+
+* Bug fixes to 1.4.1 release 
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- `282 <https://github.com/HEPCloud/decisionengine_modules/issues/282>`_ : Decision Engine classad encoding problems make multiple exceptions in the factory (`c16f0ac <https://github.com/HEPCloud/decisionengine_modules/commit/c16f0acc5e4607c0c8424ae6112572845f96e89c>`_)
+
+
+Full list of commits since version 1.4.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`c16f0ac <https://github.com/HEPCloud/decisionengine_modules/commit/c16f0acc5e4607c0c8424ae6112572845f96e89c>`_
+:   Another fix to malformed strings (#288)
+
 Release 1.4.1
 -------------
 
