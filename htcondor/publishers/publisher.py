@@ -172,7 +172,10 @@ def dataframe_to_classads(dataframe):
             if isinstance(value, bytes):
                 ad_dict[key] = value.decode("latin-1")
             elif isinstance(value, str):
-                ad_dict[key] = value.lstrip("b'").rstrip("'")
+                if value.startswith("b'"):
+                    ad_dict[key] = value[2:].rstrip("'")
+                else:
+                    ad_dict[key] = value
             else:
                 ad_dict[key] = value
         ad = classad.ClassAd()
