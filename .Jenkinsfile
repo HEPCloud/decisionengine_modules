@@ -42,7 +42,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${pep8StageDockerImage}"
-                        sh "docker build --pull -t ${pep8StageDockerImage} -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/"
+                        sh "docker build --pull --tag ${pep8StageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg USER=\$(id -u) --build-arg GROUP=\$(id -g) -f decisionengine_modules/.github/actions/pep8-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pep8-in-sl7-docker/"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${pep8StageDockerImage}"
                         sh 'for artifact_file in pep8.*.log pylint.*.log results.*.log mail.results; do mv -v ${artifact_file} ${STAGE_NAME}.${artifact_file}; done'
@@ -84,7 +84,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${pylintStageDockerImage}"
-                        sh "docker build --pull -t ${pylintStageDockerImage} -f decisionengine_modules/.github/actions/pylint-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pylint-in-sl7-docker/"
+                        sh "docker build --pull --tag ${pylintStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg USER=\$(id -u) --build-arg GROUP=\$(id -g) -f decisionengine_modules/.github/actions/pylint-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/pylint-in-sl7-docker/"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${pylintStageDockerImage}"
                         sh 'for artifact_file in pep8.*.log pylint.*.log results.*.log mail.results; do mv -v ${artifact_file} ${STAGE_NAME}.${artifact_file}; done'
@@ -126,7 +126,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${unit_testsStageDockerImage}"
-                        sh "docker build --pull -t ${unit_testsStageDockerImage} -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker"
+                        sh "docker build --pull --tag ${unit_testsStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg USER=\$(id -u) --build-arg GROUP=\$(id -g) -f decisionengine_modules/.github/actions/unittest-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/unittest-in-sl7-docker"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${unit_testsStageDockerImage}"
                     }
@@ -167,7 +167,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${rpmbuildStageDockerImage}"
-                        sh "docker build --pull -t ${rpmbuildStageDockerImage} -f decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker"
+                        sh "docker build --pull --tag ${rpmbuildStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg USER=\$(id -u) --build-arg GROUP=\$(id -g) -f decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker/Dockerfile.jenkins decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${rpmbuildStageDockerImage}"
                     }
