@@ -1,3 +1,6 @@
+---
+name: run unit tests in SL7 container
+
 on: [pull_request, push]
 
 jobs:
