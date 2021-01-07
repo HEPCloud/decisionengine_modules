@@ -108,7 +108,7 @@ install:
   # Actually test our modules
   - cd ${TRAVIS_BUILD_DIR}
   - pip install -r requirements.txt
-  - pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+  - pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.10
   - python -m pip install m2crypto
   - pip install coveralls
 
