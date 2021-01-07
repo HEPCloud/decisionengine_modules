@@ -7,6 +7,7 @@ This way is more covenient to use in programms.
 EXPECTED_NAMES = ['accountName',
                   'accountNumber',
                   'credentialsProfileName',
+                  'bucketBillingName',
                   'lastKnownBillDate',
                   'balanceAtDate',
                   'costRatePerHourInLastSixHoursAlarmThreshold',
