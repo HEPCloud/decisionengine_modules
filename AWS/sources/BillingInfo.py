@@ -46,7 +46,7 @@ class BillingInfo(Source.Source):
         globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': self.billing_files_location, 'accountDirs': 1}
         for i in self.accounts:
             constantsDict = {'credentialsProfileName': i.credentialsProfileName, 'accountNumber': i.accountNumber,
-                             'bucketBillingName': str(i.accountNumber) + '-dlt-utilization', 'lastKnownBillDate': i.lastKnownBillDate,
+                             'bucketBillingName': i.bucketBillingName, 'lastKnownBillDate': i.lastKnownBillDate,
                              'balanceAtDate': i.balanceAtDate, 'applyDiscount': i.applyDiscount}
             try:
                 calculator = AWSBillCalculator(i.accountName, globalConf, constantsDict, self.logger)
