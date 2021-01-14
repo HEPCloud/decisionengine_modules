@@ -33,7 +33,7 @@ setup_python_venv() {
         echo "Installing $pip_packages ... FAILED"
     fi
     pip install htcondor
-    pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+    pip3 install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.10
     pip install pyyaml
     # Need this because some strange control sequences when using default TERM=xterm
     export TERM="linux"
