@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Release 1.5.0 &mdash; decisionengine 1.1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Release 1.4.2" href="release_notes_1.4.html" />
+    <link rel="prev" title="Welcome to decisionengine_modules’ documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> decisionengine
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 1.5.0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#issues-fixed-in-this-release">Issues fixed in this release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#full-list-of-commits-since-version-1-4-2">Full list of commits since version 1.4.2</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.4.html">Release 1.4.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.4.html#release-1-4-1">Release 1.4.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.4.html#release-1-4-0">Release 1.4.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.3.html">Release 1.3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../code/index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code/index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code/decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">decisionengine</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Release 1.5.0</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/release_notes/release_notes_1.5.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="release-1-5-0">
+<h1>Release 1.5.0<a class="headerlink" href="#release-1-5-0" title="Permalink to this headline">¶</a></h1>
+<p>In this release:</p>
+<ul class="simple">
+<li><p>New AWS bill calculator</p></li>
+<li><p>Bug fixes</p></li>
+</ul>
+<div class="section" id="issues-fixed-in-this-release">
+<h2>Issues fixed in this release<a class="headerlink" href="#issues-fixed-in-this-release" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/271">271</a> : Change configuration so the bill-calculator-hep-mapsacosta library doesn’t write stuff to stdout (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5410c46330ad6ce48654c360f1b1cfc7cb05895c">5410c46</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/283">283</a> : Change DEAccountConstants.py to allow more variables through (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7a650322a3aa7480be4cbb5419e4a07d71dd495d">7a65032</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/293">293</a> : Unit test tests/test_job_q.py is failing (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/f5006fb30ad3ae74b2192cbedf0d0245bff038d4">f5006fb</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/263">263</a> : Python3 encodes hex strings differently, resulting in malformed htcondor classads (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c16f0acc5e4607c0c8424ae6112572845f96e89c">c16f0</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/289">289</a> : Travis CI fails after decisionenigine transitioned to pybind11 (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2bec1da203da5ec3d2cbecc33925a924bdd8e724">2bec1da</a>)</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/281">281</a> : New exception in NERSC newt get_usage (<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/398dc421ded5b7789340d5fbe71f4af5b352a8e3">398dc42</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="full-list-of-commits-since-version-1-4-2">
+<h2>Full list of commits since version 1.4.2<a class="headerlink" href="#full-list-of-commits-since-version-1-4-2" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5410c46330ad6ce48654c360f1b1cfc7cb05895c">5410c46</a> : new bill calculator package (#303)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7a650322a3aa7480be4cbb5419e4a07d71dd495d">7a65032</a> : Resolving issue 283 (#301)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/1a2c3e4f57e60925dc374f386d8bca3ba9fa3e7e">1a2c3e4</a>
+:   Fix syntax errors and pylint bits (#300)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/976c4a43ffd3a8e1d13df42a1a3d6f71d3be0fd7">976c4a4</a>
+:   Minor linting of actions (#297)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c43f31163691e2c0e6e4782940499ed8fce8ae89">c43f311</a>
+:   Drop redundant action, pep8speaks is already doing this (#296)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/10691e4a96141f9e412bbf26120f86fae9d3a8c6">10691e4</a>
+:   Add support to use custom docker layer as base of the docker image (#295)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/f5006fb30ad3ae74b2192cbedf0d0245bff038d4">f5006fb</a>
+:   fix for unit test test_job_q issue 293 (#294)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/0b588efbd5f3034a827f9a72bed6ad8518d5c061">0b588ef</a>
+:   Update workflow per changes at github (#292)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7841d198b7f5ad9068f10bf2842f203dc7e95188">7841d19</a>
+:   Updated Jenkins configuration documentation (#291)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c08ffce3b3499acb785f7c8f2ce4ff353c559f60">c08ffce</a>
+:   edited release notes</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c16f0acc5e4607c0c8424ae6112572845f96e89c">c16f0ac</a>
+:   Another fix to malformed strings (#288)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2bec1da203da5ec3d2cbecc33925a924bdd8e724">2bec1da</a>
+:   Fix #289 where TravisCI is missing changes from <a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/ea7ade57ca825afb0afbfa5ebd49820b16786d8b">https://github.com/HEPCloud/decisionengine/commit/ea7ade57ca825afb0afbfa5ebd49820b16786d8b</a> (#290)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/8647bb2bfaf89bf99589b7820ed422a9ad378e92">8647bb2</a>
+:   Update to current python test matrix (#287)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/234a78eb57f0f67ade6d112a20a27649448b55c6">234a78e</a>
+:   update release notes</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/398dc421ded5b7789340d5fbe71f4af5b352a8e3">398dc42</a>
+:   decisionengine_modules/NERSC/util:  Added more 5xx codes to retry (#285)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d2df8610f9c12edf6b142c164a10ba2372bb4848">d2df861</a>
+:   force docker pull when building the docker container to make sure to use an updated base layer (#280)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/9a78d22817ae7d757b8448a874d90a38aa9e13b1">9a78d22</a>
+:   added 1.4.0 release notes</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5d3b7ec3da7361139b6662f081341502cdbab371">5d3b7ec</a>
+:   Updating Dockerfile for unittest (#279)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e16531e23e871ca91baf364d3eb600144d99c281">e16531e</a>
+:   Provide default for util function. (#278)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/02f17389c8bdd58e8b41821d8c0137e8147aa1c7">02f1738</a>
+:   set RPM version number to 1.5.0rc and drop py3 suffix (#277)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/664b9fe0d5eaeb3c3409dc38962b5c84c0d9d0b5">664b9fe</a>
+:   Add timeout support for unit test on Jenkins for DE modules repo (#274)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e392a3c5a39a79ebac6ff8d64cb202085e5ecf16">e392a3c</a>
+:   Added initial unit test for glide_frontend_element.py (#269)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2f0069f3855b2568f0c390ada5ad93d8fcdabfe7">2f0069f</a>
+:   Updated DE modules Jenkins documentation</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="release_notes_1.4.html" class="btn btn-neutral float-right" title="Release 1.4.2" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to decisionengine_modules’ documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Fermi Research Alliance, LLC..
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
