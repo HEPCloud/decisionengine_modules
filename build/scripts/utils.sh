@@ -76,6 +76,7 @@ setup_glideinwms() {
 
 setup_de_framework() {
     dir=$1
+    cd ${dir}
     git clone --depth 1 --branch 1.5.0 https://github.com/HEPCloud/decisionengine.git
 }
 
