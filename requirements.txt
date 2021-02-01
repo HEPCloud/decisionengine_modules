@@ -7,13 +7,12 @@ gcs-oauth2-boto-plugin
 packaging
 pandas
 six >= 1.13.0
-sphinx_rtd_theme
-
-# commented out until we drop python2 support
-## classad ##
+htcondor >= 8.9.11
 
 # for tests
 mock
 pytest
+pytest-cov >= 2.11.1
 tabulate
 pyyaml
+sphinx_rtd_theme

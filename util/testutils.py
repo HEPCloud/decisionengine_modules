@@ -1,7 +1,10 @@
-
-import classad
-import datetime
-import pandas as pd
+'''
+    Utils to simplify testing
+'''
+# These imports needed for the `eval` blocks
+from classad import classad  # noqa
+import datetime              # noqa
+import pandas as pd          # noqa
 
 
 def input_from_file(fname):

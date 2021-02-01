@@ -26,7 +26,7 @@ setup_python_venv() {
     fi
 
     source $VENV/bin/activate
-    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet m2crypto pytest-timeout"
+    pip_packages="pylint pycodestyle pytest mock tabulate pandas google-api-python-client boto boto3 gcs_oauth2_boto_plugin urllib3 jsonnet m2crypto pytest-timeout pytest-cov"
     echo "Installing $pip_packages ..."
     pip install --quiet $pip_packages
     if [ $? -ne 0 ]; then
