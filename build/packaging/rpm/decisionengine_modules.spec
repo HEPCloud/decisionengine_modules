@@ -36,15 +36,6 @@ BuildArch:      x86_64
 BuildRequires: python36-devel
 BuildRequires: python3-rpm-macros
 Requires: python3
-#BuildRequires:  cmake numpy numpy-f2py python-pandas
-#BuildRequires:  boost-python boost-regex boost-system
-#Requires:       numpy >= 1.7.1
-#Requires:       numpy-f2py >= 1.7.1
-#Requires:       python-pandas >= 0.17.1
-#Requires:       boost-python >= 1.53.0
-#Requires:       boost-regex >= 1.53.0
-#Requires:       boost-system >= 1.53.0
-
 
 %description
 The Decision Engine is a critical component of the HEPCloud Facility. It
