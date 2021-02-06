@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decisionengine_modules.htcondor.htcondor_query &mdash; decisionengine 1.1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decisionengine
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.5.html">Release 1.5.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.4.html">Release 1.4.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.4.html#release-1-4-1">Release 1.4.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.4.html#release-1-4-0">Release 1.4.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.3.html">Release 1.3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/release_notes_1.2.html#patches">Patches:</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../unittest.html">Decisionengine_modules</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code/decisionengine_modules.html">decisionengine_modules package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decisionengine</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decisionengine_modules.htcondor.htcondor_query</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decisionengine_modules.htcondor.htcondor_query</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/pyhon</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">htcondor</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="QueryError"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.QueryError">[docs]</a><span class="k">class</span> <span class="nc">QueryError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thrown when there are exceptions using htcondor python bindings or commands</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_str</span><span class="p">):</span>
+        <span class="ne">RuntimeError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Query"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.Query">[docs]</a><span class="nd">@six</span><span class="o">.</span><span class="n">add_metaclass</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pure virtual class to have a minimum set of methods defined</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Query.fetch"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.Query.fetch">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">condor_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the classad attributes specified in the format_list</span>
+<span class="sd">        matching the constraint</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Query.load"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.Query.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">condor_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the data and store it in self.stored_data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">format_list</span><span class="p">,</span> <span class="n">condor_config</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Query.fetch_stored"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.Query.fetch_stored">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_stored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param constraint_func: A boolean function, with only one argument</span>
+<span class="sd">                                (data el). If None, return all the data.</span>
+<span class="sd">        :type constraint_func :obj: `Boolean function`</span>
+
+<span class="sd">        @rtype: dict</span>
+<span class="sd">        @return: Same as fetch(), but limited to constraint_func(el)==True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">apply_constraint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_data</span><span class="p">,</span> <span class="n">constraint_func</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CondorQuery"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.CondorQuery">[docs]</a><span class="k">class</span> <span class="nc">CondorQuery</span><span class="p">(</span><span class="n">Query</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fully implemented class for CondorQuery</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_str</span><span class="p">,</span> <span class="n">group_attr</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resource_str</span> <span class="o">=</span> <span class="n">resource_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_attr</span> <span class="o">=</span> <span class="n">group_attr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span> <span class="o">=</span> <span class="n">pool_name</span>
+        <span class="n">Query</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="c1"># @abc.abstractmethod</span>
+    <span class="c1"># def fetch(self, constraint=None, format_list=None):</span>
+    <span class="c1">#    &quot;&quot;&quot;</span>
+    <span class="c1">#    Fetch the results using htcondor-python bindings</span>
+    <span class="c1">#    &quot;&quot;&quot;</span>
+    <span class="c1">#    return</span>
+
+
+<div class="viewcode-block" id="CondorQ"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.CondorQ">[docs]</a><span class="k">class</span> <span class="nc">CondorQ</span><span class="p">(</span><span class="n">CondorQuery</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to implement condor_q</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedd_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedd_name</span> <span class="o">=</span> <span class="n">schedd_name</span>
+        <span class="n">CondorQuery</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;schedd&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;ClusterId&#39;</span><span class="p">,</span> <span class="s1">&#39;ProcId&#39;</span><span class="p">],</span>
+                             <span class="n">pool_name</span><span class="o">=</span><span class="n">pool_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CondorQ.fetch"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.CondorQ.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">condor_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch job classads</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">constraint</span> <span class="o">=</span> <span class="n">bindings_friendly_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="n">bindings_friendly_attrs</span><span class="p">(</span><span class="n">format_list</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">old_condor_config_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CONDOR_CONFIG&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">condor_config</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">condor_config</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CONDOR_CONFIG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">condor_config</span>
+            <span class="n">htcondor</span><span class="o">.</span><span class="n">reload_config</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span><span class="p">:</span>
+                <span class="n">collector</span> <span class="o">=</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">Collector</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">collector</span> <span class="o">=</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">Collector</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedd_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">schedd</span> <span class="o">=</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">Schedd</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">schedd</span> <span class="o">=</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">Schedd</span><span class="p">(</span>
+                    <span class="n">collector</span><span class="o">.</span><span class="n">locate</span><span class="p">(</span><span class="n">htcondor</span><span class="o">.</span><span class="n">DaemonTypes</span><span class="o">.</span><span class="n">Schedd</span><span class="p">,</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">schedd_name</span><span class="p">))</span>
+            <span class="n">classads</span> <span class="o">=</span> <span class="n">schedd</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+            <span class="c1">#results_dict = list2dict(results, self.group_attr)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">eval_classad_expr</span><span class="p">(</span><span class="n">classads</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="n">format_list</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedd_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedd_name</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span>
+            <span class="n">err_str</span> <span class="o">=</span> <span class="s1">&#39;Error querying schedd </span><span class="si">%s</span><span class="s1"> in pool </span><span class="si">%s</span><span class="s1"> using python bindings: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">QueryError</span><span class="p">(</span><span class="n">err_str</span><span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">old_condor_config_env</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CONDOR_CONFIG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_condor_config_env</span>
+
+        <span class="k">return</span> <span class="n">results</span></div></div>
+
+
+<div class="viewcode-block" id="CondorStatus"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.CondorStatus">[docs]</a><span class="k">class</span> <span class="nc">CondorStatus</span><span class="p">(</span><span class="n">CondorQuery</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to implement condor_status</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subsystem_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">subsystem_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">subsystem_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">subsystem_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">subsystem_name</span>
+        <span class="k">if</span> <span class="n">group_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">group_attr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+
+        <span class="n">CondorQuery</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subsystem_str</span><span class="p">,</span> <span class="n">group_attr</span><span class="p">,</span>
+                             <span class="n">pool_name</span><span class="o">=</span><span class="n">pool_name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CondorStatus.fetch"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.CondorStatus.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">condor_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch resource classads and return a list of evaluated classads</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">constraint</span> <span class="o">=</span> <span class="n">bindings_friendly_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="n">bindings_friendly_attrs</span><span class="p">(</span><span class="n">format_list</span><span class="p">)</span>
+        <span class="n">adtype</span> <span class="o">=</span> <span class="n">resource_str_to_py_adtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource_str</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">old_condor_config_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CONDOR_CONFIG&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">condor_config</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">condor_config</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CONDOR_CONFIG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">condor_config</span>
+            <span class="n">htcondor</span><span class="o">.</span><span class="n">reload_config</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span><span class="p">:</span>
+                <span class="n">collector</span> <span class="o">=</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">Collector</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">collector</span> <span class="o">=</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">Collector</span><span class="p">()</span>
+
+            <span class="n">classads</span> <span class="o">=</span> <span class="n">collector</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">adtype</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">eval_classad_expr</span><span class="p">(</span><span class="n">classads</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="n">format_list</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_name</span>
+            <span class="n">err_str</span> <span class="o">=</span> <span class="s1">&#39;Error querying pool </span><span class="si">%s</span><span class="s1"> using python bindings: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">p</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">QueryError</span><span class="p">(</span><span class="n">err_str</span><span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">old_condor_config_env</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CONDOR_CONFIG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_condor_config_env</span>
+
+        <span class="k">return</span> <span class="n">results</span></div></div>
+
+
+<div class="viewcode-block" id="apply_constraint"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.apply_constraint">[docs]</a><span class="k">def</span> <span class="nf">apply_constraint</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">constraint_func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a subset of data that satisfies constraint_function</span>
+<span class="sd">    If constraint_func is None, return back entire data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">constraint_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">outdata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">constraint_func</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="n">outdata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">outdata</span></div>
+
+
+<div class="viewcode-block" id="resource_str_to_py_adtype"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.resource_str_to_py_adtype">[docs]</a><span class="k">def</span> <span class="nf">resource_str_to_py_adtype</span><span class="p">(</span><span class="n">resource_str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given the resource string return equivalent classad type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">adtypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;any&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
+        <span class="s1">&#39;collector&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Collector</span><span class="p">,</span>
+        <span class="s1">&#39;generic&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Generic</span><span class="p">,</span>
+        <span class="s1">&#39;grid&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Grid</span><span class="p">,</span>
+        <span class="s1">&#39;had&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">HAD</span><span class="p">,</span>
+        <span class="s1">&#39;license&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">License</span><span class="p">,</span>
+        <span class="s1">&#39;master&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Master</span><span class="p">,</span>
+        <span class="s1">&#39;negotiator&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Negotiator</span><span class="p">,</span>
+        <span class="s1">&#39;schedd&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Schedd</span><span class="p">,</span>
+        <span class="s1">&#39;startd&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Startd</span><span class="p">,</span>
+        <span class="s1">&#39;submitter&#39;</span><span class="p">:</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Submitter</span>
+    <span class="p">}</span>
+    <span class="c1"># Default to startd ads, even if resource_str is empty</span>
+    <span class="k">return</span> <span class="n">adtypes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">resource_str</span><span class="p">,</span> <span class="n">htcondor</span><span class="o">.</span><span class="n">AdTypes</span><span class="o">.</span><span class="n">Startd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bindings_friendly_constraint"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.bindings_friendly_constraint">[docs]</a><span class="k">def</span> <span class="nf">bindings_friendly_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the constraint to format that can be used with python bindings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">constraint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">constraint</span></div>
+
+
+<div class="viewcode-block" id="bindings_friendly_attrs"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.bindings_friendly_attrs">[docs]</a><span class="k">def</span> <span class="nf">bindings_friendly_attrs</span><span class="p">(</span><span class="n">format_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the format_list into attrs that can be used with python bindings</span>
+<span class="sd">    Python bindings should take care of the typing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">format_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">format_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="n">format_list</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">format_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">format_list</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">attrs</span></div>
+
+
+<div class="viewcode-block" id="list2dict"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.list2dict">[docs]</a><span class="k">def</span> <span class="nf">list2dict</span><span class="p">(</span><span class="n">list_data</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a list to a dictionary and group the results based on</span>
+<span class="sd">    attributes specified by attr_name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">attr_list</span> <span class="o">=</span> <span class="n">attr_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">attr_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr_name</span><span class="p">]</span>
+
+    <span class="n">dict_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">list_el</span> <span class="ow">in</span> <span class="n">list_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">dict_name</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">attr_name</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">an</span> <span class="ow">in</span> <span class="n">list_el</span><span class="p">:</span>
+                    <span class="n">dict_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_el</span><span class="p">[</span><span class="n">an</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Try lower cases</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">list_el</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">an</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                            <span class="n">dict_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">list_el</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                            <span class="k">break</span>
+            <span class="n">dict_name</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dict_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_name</span> <span class="o">=</span> <span class="n">list_el</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span>
+        <span class="n">dict_el</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">list_el</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">a</span> <span class="ow">in</span> <span class="n">attr_list</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">list_el</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;ExprTree&#39;</span><span class="p">):</span>
+                        <span class="c1"># Try to evaluate the condor expr and use its value</span>
+                        <span class="c1"># If cannot be evaluated, keep the expr as is</span>
+                        <span class="n">a_value</span> <span class="o">=</span> <span class="n">list_el</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">a_value</span> <span class="o">!=</span> <span class="s1">&#39;Undefined&#39;</span><span class="p">:</span>
+                            <span class="c1"># Cannot use classad.Value.Undefined for</span>
+                            <span class="c1"># for comparison as it gets cast to int</span>
+                            <span class="n">dict_el</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">a_value</span>
+                    <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">list_el</span><span class="p">[</span><span class="n">a</span><span class="p">])</span> <span class="o">!=</span> <span class="s1">&#39;Undefined&#39;</span><span class="p">:</span>
+                        <span class="c1"># No need for Undefined check to see if</span>
+                        <span class="c1"># attribute exists in the fetched classad</span>
+                        <span class="n">dict_el</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">list_el</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1"># Do not fail</span>
+                    <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">dict_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_data</span><span class="p">:</span>
+            <span class="n">dict_data</span><span class="p">[</span><span class="n">dict_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dict_data</span><span class="p">[</span><span class="n">dict_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_el</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dict_data</span></div>
+
+
+<div class="viewcode-block" id="eval_classad_expr"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.eval_classad_expr">[docs]</a><span class="k">def</span> <span class="nf">eval_classad_expr</span><span class="p">(</span><span class="n">classads</span><span class="p">,</span> <span class="n">format_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the classads into list of classads</span>
+<span class="sd">    Guarantees any attribute in format_list to be added with default value None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">classad_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">classad</span> <span class="ow">in</span> <span class="n">classads</span><span class="p">:</span>
+        <span class="c1"># Initialize the required attributes from format_list</span>
+        <span class="k">if</span> <span class="n">format_list</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">format_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">dict_el</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">format_list</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_el</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">classad</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;Requirements&#39;</span><span class="p">,</span> <span class="s1">&#39;START&#39;</span><span class="p">):</span>
+                <span class="c1"># Requirements and START cannot be evaluated until the</span>
+                <span class="c1"># jobs and slots match. This causes issues so better to</span>
+                <span class="c1"># bypass.</span>
+                <span class="c1"># TODO: If we come accross other user configured attributes</span>
+                <span class="c1">#       then we need to identify how to resolve this issue.</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">classad</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;ExprTree&#39;</span><span class="p">):</span>
+                    <span class="n">a_value</span> <span class="o">=</span> <span class="n">classad</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">a_value</span> <span class="o">!=</span> <span class="s1">&#39;Undefined&#39;</span><span class="p">:</span>
+                        <span class="c1"># Cannot use classad.Value.Undefined</span>
+                        <span class="c1"># for comparison as it gets cast to int</span>
+                        <span class="n">dict_el</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">a_value</span>
+                <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">classad</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span> <span class="o">!=</span> <span class="s1">&#39;Undefined&#39;</span><span class="p">:</span>
+                    <span class="c1"># No need for Undefined check to see if</span>
+                    <span class="c1"># attribute exists in the fetched classad</span>
+                    <span class="n">dict_el</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">classad</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="c1"># Do not delete this block until we resolve the TODO above.</span>
+        <span class="c1"># Useful for identifying the attribute that causes the problem.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        import cPickle</span>
+<span class="sd">        import pprint</span>
+<span class="sd">        try:</span>
+<span class="sd">            s = cPickle.dumps(dict_el)</span>
+<span class="sd">        except:</span>
+<span class="sd">            pprint.pprint(&#39;------------- PICKLE ERROR ---------------&#39;)</span>
+<span class="sd">            for key in dict_el:</span>
+<span class="sd">                try:</span>
+<span class="sd">                    s = cPickle.dumps(dict_el[key])</span>
+<span class="sd">                except:</span>
+<span class="sd">                    pprint.pprint(&#39;------- KEY: %s&#39; % key)</span>
+<span class="sd">                    pprint.pprint(&#39;------- VAL: %s&#39; % dict_el[key])</span>
+<span class="sd">                    pprint.pprint(&#39;------- VAL_TYPE: %s&#39; % type(dict_el[key]))</span>
+<span class="sd">                    raise</span>
+<span class="sd">            pprint.pprint(dict_el)</span>
+<span class="sd">            pprint.pprint(&#39;------------- PICKLE ERROR ---------------&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">classad_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_el</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">classad_list</span></div>
+
+
+<div class="viewcode-block" id="split_collector_host"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.split_collector_host">[docs]</a><span class="k">def</span> <span class="nf">split_collector_host</span><span class="p">(</span><span class="n">collector_host</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given the collector_host string extract primary collector_host</span>
+<span class="sd">    which is the first collector host in the list and sort the secondary</span>
+<span class="sd">    collectors. Return a tuple of primary collector and CSV secondary</span>
+<span class="sd">    collector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collector_host</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">hosts</span> <span class="o">=</span> <span class="n">collector_host</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">hosts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">secondary</span> <span class="o">=</span> <span class="n">hosts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">secondary</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">hosts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secondary</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s1">&#39;collector_host should be a comman or space separated string but found </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">collector_host</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Fermi Research Alliance, LLC..
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

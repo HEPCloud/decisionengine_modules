@@ -110,7 +110,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.util.figure_of_merit">decisionengine_modules.util.figure_of_merit module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.util.retry_function">decisionengine_modules.util.retry_function module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.util.test_retry_function">decisionengine_modules.util.test_retry_function module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#decisionengine-modules-util-testutils-module">decisionengine_modules.util.testutils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.util.testutils">decisionengine_modules.util.testutils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.util">Module contents</a></li>
 </ul>
 </li>
@@ -261,8 +261,31 @@ Otherwise, use the default values or pass new values to the decorator.</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="decisionengine-modules-util-testutils-module">
-<h2>decisionengine_modules.util.testutils module<a class="headerlink" href="#decisionengine-modules-util-testutils-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-decisionengine_modules.util.testutils">
+<span id="decisionengine-modules-util-testutils-module"></span><h2>decisionengine_modules.util.testutils module<a class="headerlink" href="#module-decisionengine_modules.util.testutils" title="Permalink to this headline">¶</a></h2>
+<p>Utils to simplify testing</p>
+<dl class="py function">
+<dt id="decisionengine_modules.util.testutils.compare_dfs">
+<code class="sig-prename descclassname">decisionengine_modules.util.testutils.</code><code class="sig-name descname">compare_dfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df1</span></em>, <em class="sig-param"><span class="n">df2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/testutils.html#compare_dfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.testutils.compare_dfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>for some reason df.equals does not work here
+but if I compare cell by cell it works
+:type df1: <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>
+:arg df1: data frame instance
+:type df2: <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>
+:arg df2: data frame instance
+:rtype: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code> - True if equal</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.util.testutils.input_from_file">
+<code class="sig-prename descclassname">decisionengine_modules.util.testutils.</code><code class="sig-name descname">input_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/testutils.html#input_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.testutils.input_from_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.util.testutils.raw_input_from_file">
+<code class="sig-prename descclassname">decisionengine_modules.util.testutils.</code><code class="sig-name descname">raw_input_from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/util/testutils.html#raw_input_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.util.testutils.raw_input_from_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-decisionengine_modules.util">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-decisionengine_modules.util" title="Permalink to this headline">¶</a></h2>

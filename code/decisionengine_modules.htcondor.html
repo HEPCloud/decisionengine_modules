@@ -108,7 +108,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">decisionengine_modules.htcondor package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#decisionengine-modules-htcondor-htcondor-query-module">decisionengine_modules.htcondor.htcondor_query module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.htcondor.htcondor_query">decisionengine_modules.htcondor.htcondor_query module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-decisionengine_modules.htcondor">Module contents</a></li>
 </ul>
 </li>
@@ -220,8 +220,210 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="decisionengine-modules-htcondor-htcondor-query-module">
-<h2>decisionengine_modules.htcondor.htcondor_query module<a class="headerlink" href="#decisionengine-modules-htcondor-htcondor-query-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-decisionengine_modules.htcondor.htcondor_query">
+<span id="decisionengine-modules-htcondor-htcondor-query-module"></span><h2>decisionengine_modules.htcondor.htcondor_query module<a class="headerlink" href="#module-decisionengine_modules.htcondor.htcondor_query" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQ">
+<em class="property">class </em><code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">CondorQ</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">schedd_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pool_name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#CondorQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery" title="decisionengine_modules.htcondor.htcondor_query.CondorQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">decisionengine_modules.htcondor.htcondor_query.CondorQuery</span></code></a></p>
+<p>Class to implement condor_q</p>
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_cache">
+<code class="sig-name descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_negative_cache">
+<code class="sig-name descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_negative_cache_version">
+<code class="sig-name descname">_abc_negative_cache_version</code><em class="property"> = 215</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_registry">
+<code class="sig-name descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQ._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQ.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">constraint</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">format_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">condor_config</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#CondorQ.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQ.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch job classads</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQuery">
+<em class="property">class </em><code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">CondorQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resource_str</span></em>, <em class="sig-param"><span class="n">group_attr</span></em>, <em class="sig-param"><span class="n">pool_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">env</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#CondorQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decisionengine_modules.htcondor.htcondor_query.Query" title="decisionengine_modules.htcondor.htcondor_query.Query"><code class="xref py py-class docutils literal notranslate"><span class="pre">decisionengine_modules.htcondor.htcondor_query.Query</span></code></a></p>
+<p>Fully implemented class for CondorQuery</p>
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_cache">
+<code class="sig-name descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_negative_cache">
+<code class="sig-name descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_negative_cache_version">
+<code class="sig-name descname">_abc_negative_cache_version</code><em class="property"> = 215</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_registry">
+<code class="sig-name descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorStatus">
+<em class="property">class </em><code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">CondorStatus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subsystem_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pool_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">group_attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#CondorStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decisionengine_modules.htcondor.htcondor_query.CondorQuery" title="decisionengine_modules.htcondor.htcondor_query.CondorQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">decisionengine_modules.htcondor.htcondor_query.CondorQuery</span></code></a></p>
+<p>Class to implement condor_status</p>
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_cache">
+<code class="sig-name descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_negative_cache">
+<code class="sig-name descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_negative_cache_version">
+<code class="sig-name descname">_abc_negative_cache_version</code><em class="property"> = 215</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_registry">
+<code class="sig-name descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorStatus._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.htcondor.htcondor_query.CondorStatus.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">constraint</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">format_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">condor_config</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#CondorStatus.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.CondorStatus.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch resource classads and return a list of evaluated classads</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query">
+<em class="property">class </em><code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">Query</code><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#Query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Pure virtual class to have a minimum set of methods defined</p>
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query._abc_cache">
+<code class="sig-name descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query._abc_negative_cache">
+<code class="sig-name descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query._abc_negative_cache_version">
+<code class="sig-name descname">_abc_negative_cache_version</code><em class="property"> = 215</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query._abc_registry">
+<code class="sig-name descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query.fetch">
+<em class="property">abstract </em><code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">constraint</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">format_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">condor_config</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#Query.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the classad attributes specified in the format_list
+matching the constraint</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query.fetch_stored">
+<code class="sig-name descname">fetch_stored</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">constraint_func</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#Query.fetch_stored"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query.fetch_stored" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>constraint_func</strong> – A boolean function, with only one argument
+(data el). If None, return all the data.</p>
+</dd>
+</dl>
+<p>&#64;rtype: dict
+&#64;return: Same as fetch(), but limited to constraint_func(el)==True</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decisionengine_modules.htcondor.htcondor_query.Query.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">constraint</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">format_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">condor_config</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#Query.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.Query.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the data and store it in self.stored_data</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="decisionengine_modules.htcondor.htcondor_query.QueryError">
+<em class="property">exception </em><code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">QueryError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">err_str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#QueryError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.QueryError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+<p>Thrown when there are exceptions using htcondor python bindings or commands</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.apply_constraint">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">apply_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">constraint_func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#apply_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.apply_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a subset of data that satisfies constraint_function
+If constraint_func is None, return back entire data</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.bindings_friendly_attrs">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">bindings_friendly_attrs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">format_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#bindings_friendly_attrs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.bindings_friendly_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the format_list into attrs that can be used with python bindings
+Python bindings should take care of the typing</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.bindings_friendly_constraint">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">bindings_friendly_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">constraint</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#bindings_friendly_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.bindings_friendly_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the constraint to format that can be used with python bindings</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.eval_classad_expr">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">eval_classad_expr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classads</span></em>, <em class="sig-param"><span class="n">format_list</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#eval_classad_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.eval_classad_expr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the classads into list of classads
+Guarantees any attribute in format_list to be added with default value None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.list2dict">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">list2dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_data</span></em>, <em class="sig-param"><span class="n">attr_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#list2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.list2dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a list to a dictionary and group the results based on
+attributes specified by attr_name</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.resource_str_to_py_adtype">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">resource_str_to_py_adtype</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resource_str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#resource_str_to_py_adtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.resource_str_to_py_adtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the resource string return equivalent classad type</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decisionengine_modules.htcondor.htcondor_query.split_collector_host">
+<code class="sig-prename descclassname">decisionengine_modules.htcondor.htcondor_query.</code><code class="sig-name descname">split_collector_host</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">collector_host</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/htcondor/htcondor_query.html#split_collector_host"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decisionengine_modules.htcondor.htcondor_query.split_collector_host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the collector_host string extract primary collector_host
+which is the first collector host in the list and sort the secondary
+collectors. Return a tuple of primary collector and CSV secondary
+collector.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-decisionengine_modules.htcondor">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-decisionengine_modules.htcondor" title="Permalink to this headline">¶</a></h2>
