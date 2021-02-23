@@ -180,7 +180,7 @@
 <span class="sd">    Thrown when there are exceptions using htcondor python bindings or commands</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_str</span><span class="p">):</span>
         <span class="ne">RuntimeError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_str</span><span class="p">)</span></div>
 
 
@@ -190,13 +190,13 @@
 <span class="sd">    Pure virtual class to have a minimum set of methods defined</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stored_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Query.fetch"><a class="viewcode-back" href="../../../code/decisionengine_modules.htcondor.html#decisionengine_modules.htcondor.htcondor_query.Query.fetch">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
@@ -230,7 +230,7 @@
 <span class="sd">    Fully implemented class for CondorQuery</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_str</span><span class="p">,</span> <span class="n">group_attr</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_str</span><span class="p">,</span> <span class="n">group_attr</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
@@ -252,7 +252,7 @@
 <span class="sd">    Class to implement condor_q</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedd_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schedd_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">schedd_name</span> <span class="o">=</span> <span class="n">schedd_name</span>
         <span class="n">CondorQuery</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;schedd&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;ClusterId&#39;</span><span class="p">,</span> <span class="s1">&#39;ProcId&#39;</span><span class="p">],</span>
                              <span class="n">pool_name</span><span class="o">=</span><span class="n">pool_name</span><span class="p">)</span>
@@ -307,7 +307,7 @@
 <span class="sd">    Class to implement condor_status</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subsystem_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subsystem_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pool_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">subsystem_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">subsystem_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">else</span><span class="p">:</span>

@@ -185,7 +185,7 @@
 
 
 <div class="viewcode-block" id="AccountConstants"><a class="viewcode-back" href="../../../../code/decisionengine_modules.AWS.sources.html#decisionengine_modules.AWS.sources.DEAccountContants.AccountConstants">[docs]</a><span class="k">class</span> <span class="nc">AccountConstants</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constants</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constants</span><span class="o">=</span><span class="p">{}):</span>
 
         <span class="c1"># Initialize variables</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">EXPECTED_NAMES</span><span class="p">:</span>
@@ -195,7 +195,7 @@
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">EXPECTED_NAMES</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accountName</span><span class="p">,</span>
                                                <span class="bp">self</span><span class="o">.</span><span class="n">accountNumber</span><span class="p">,</span>
                                                <span class="bp">self</span><span class="o">.</span><span class="n">credentialsProfileName</span><span class="p">,</span>
