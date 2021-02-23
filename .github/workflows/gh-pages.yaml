@@ -25,11 +25,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y python3-pip python3-psycopg2 latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
-        sudo pip install -U pip
-        sudo pip3 install sphinx
+        sudo python3 -m pip install -U pip
+        sudo python3 -m pip install sphinx
 
     - name: Install required modules for AST to parse the codebase
-      run: pip3 install -r requirements.txt
+      run: python3 -m pip install -r requirements.txt
 
     - name: Setup safe/unique tmp dir for out of tree storage
       run: rm -rf /tmp/${{ github.sha }}
@@ -40,10 +40,9 @@ jobs:
         cd ..
         touch __init__.py
 
-    - name: Set PYTHONPATH
-      run: echo "PYTHONPATH=${GITHUB_WORKSPACE}/../" >> $GITHUB_ENV
-
     - name: Run sphinx to make docs
+      env:
+        PYTHONPATH: ${{ github.workspace }}/../:${{ github.workspace }}
       run: |
         cd doc
         make rst html latexpdf
