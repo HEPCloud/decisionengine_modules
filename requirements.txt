@@ -1,18 +1,25 @@
 # for runtime
-boto
-boto3
-google_auth
-google-api-python-client
-gcs-oauth2-boto-plugin
-packaging
-pandas
+boto >= 2.49.0
+boto3 >= 1.17.10
+google_auth >= 1.27.0
+google-api-python-client >= 1.12.8
+gcs-oauth2-boto-plugin >= 2.7
+packaging >= 20.9
+pandas >= 1.1.5
 six >= 1.13.0
 htcondor >= 8.9.11
 
+# not in pypi
+https://test-files.pythonhosted.org/packages/f4/a5/17a14b4ef85bc412a0ddb771771de3f562430328b0d83da6091a4131bb26/bill_calculator_hep_mapsacosta-0.0.10-py3-none-any.whl
+
 # for tests
-mock
-pytest
+mock >= 4.0.3
+pytest >= 6.2.2
 pytest-cov >= 2.11.1
-tabulate
-pyyaml
-sphinx_rtd_theme
+pytest-flake8 >= 1.0.7
+tabulate >= 0.8.8
+toml >= 0.10.2
+pyyaml >= 5.4.1
+
+# for doc
+sphinx_rtd_theme >= 0.5.1
