@@ -11,11 +11,11 @@ job_manifests = [
 ]
 
 resource_list = [
-    {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large"},
-    {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge"},
-    {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},
-    {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge"},
-    {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}
+    {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large"},   # noqa: E241
+    {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge"},  # noqa: E241
+    {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},   # noqa: E241
+    {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge"},  # noqa: E241
+    {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}   # noqa: E241
 ]
 
 resource_spot_price = [
@@ -32,6 +32,7 @@ def load_data_frame(list_of_dicts):
     for key in list_of_keys:
         pandas_data[key] = pd.Series([d[key] for d in list_of_dicts])
     return pd.DataFrame(pandas_data)
+
 
 if __name__ == "__main__":
     # Set the display to a more reasonable value
@@ -51,7 +52,7 @@ if __name__ == "__main__":
 
     # Because pandas has difficulties in doing unordered outer joins, we will perform a sql query to do our join
     # This query only returns joined rows where the job requirements match the entry offerings
-    pysql = lambda q: pdsql.sqldf(q, globals())
+    pysql = lambda q: pdsql.sqldf(q, globals())  # noqa: E731
     join_sql = """
     select * from jobs_pd, resource_spot_pd
     where jobs_pd.RequestCpus <= resource_spot_pd.ResourceCpus and

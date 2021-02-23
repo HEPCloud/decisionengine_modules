@@ -89,7 +89,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/../:${{ github.workspace }}
         run: |
           cd ${{ github.workspace }}/decisionengine_modules
-          pytest --cov-report term --cov-report xml
+          pytest --cov-report term --cov-report xml --cov=decisionengine_modules --no-cov-on-fail
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
@@ -143,3 +143,77 @@ jobs:
         run: |
           cd doc
           make rst html latexpdf
+
+  run_flake8:
+    name: Run pytest-flake8 against code tree
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: checkout DE Modules
+        uses: actions/checkout@v2
+        with:
+          path: decisionengine_modules
+
+      - name: checkout DE Framework
+        uses: actions/checkout@v2
+        with:
+          path: decisionengine
+          repository: HEPCloud/decisionengine
+
+      - name: checkout GlideinWMS for python3
+        uses: actions/checkout@v2
+        with:
+          path: glideinwms
+          repository: glideinWMS/glideinwms
+          ref: branch_v3_9
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.cache/pip
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: Note Python version/implementation
+        run: |
+          which python3
+          python3 -c 'import sys; print(sys.version)'
+          python3 -c 'import platform; print(platform.python_implementation())'
+          python3 -m pip cache dir
+
+      - name: Install dependencies for GlideinWMS
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade wheel
+          python3 -m pip install -r ${{ github.workspace }}/glideinwms/requirements.txt
+
+      - name: Install dependencies for DE Framework
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade wheel
+          python3 -m pip install --upgrade pytest
+          python3 -m pip install -r ${{ github.workspace }}/decisionengine/requirements.txt
+
+      - name: Install DE Modules dependencies
+        run: |
+          cd ${{ github.workspace }}/decisionengine_modules
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade pytest
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+
+      - name: Run Flake8 Tests on Python ${{ matrix.python-version }}
+        env:
+          PYTHONPATH: ${{ github.workspace }}/../:${{ github.workspace }}
+        run: |
+          cd ${{ github.workspace }}/decisionengine_modules
+          pytest -m flake8 --flake8

@@ -292,7 +292,7 @@ def list2dict(list_data, attr_name):
                         # No need for Undefined check to see if
                         # attribute exists in the fetched classad
                         dict_el[a] = list_el[a]
-                except Exception as e:
+                except Exception:
                     # Do not fail
                     pass
 
@@ -334,7 +334,7 @@ def eval_classad_expr(classads, format_list=None):
                     # No need for Undefined check to see if
                     # attribute exists in the fetched classad
                     dict_el[attr] = classad[attr]
-            except Exception as e:
+            except Exception:
                 pass
 
         # Do not delete this block until we resolve the TODO above.
@@ -375,7 +375,7 @@ def split_collector_host(collector_host):
         primary = hosts[0]
         secondary = hosts[1:]
         secondary.sort()
-        return (hosts[0], ','.join(secondary))
+        return (primary, ','.join(secondary))
     else:
         RuntimeError(
             'collector_host should be a comman or space separated string but found %s' % collector_host)

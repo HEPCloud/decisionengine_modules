@@ -1,9 +1,5 @@
-import os
-import pytest
 import mock
 import pandas
-import pprint
-from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.glideinwms.publishers import fe_group_classads
 
 
@@ -39,7 +35,7 @@ class TestGlideinWMSManifests:
         assert(p.consumes() == consumes)
 
     def test_publish(self):
-        p = fe_group_classads.GlideinWMSManifests(config)
+        fe_group_classads.GlideinWMSManifests(config)
         with mock.patch.object(fe_group_classads.GlideinWMSManifests, 'publish_to_htcondor') as publish_to_htcondor:
             publish_to_htcondor.return_value = None
             # TODO: Complete this test when we have detailed contents of the

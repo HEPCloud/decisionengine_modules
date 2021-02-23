@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 from decisionengine.framework.modules import Transform
@@ -29,9 +28,9 @@ class CloudRequests(Transform.Transform):
         return pd.DataFrame(pandas_data)
 
     def transform(self, DataBlock):
-        job_manifests_pd = DataBlock["job_manifests"]
-        resources_pd = DataBlock["provisioner_resources"]
-        spot_pd = DataBlock["provisioner_resource_spot_prices"]
+        #job_manifests_pd = DataBlock["job_manifests"]
+        #resources_pd = DataBlock["provisioner_resources"]
+        #spot_pd = DataBlock["provisioner_resource_spot_prices"]
 
         # If this were a real transform, we'd do a lot of data manipulation here
         # instead, because Tony is still learning Pandas and ran out of time for

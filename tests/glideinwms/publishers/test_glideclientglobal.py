@@ -1,9 +1,5 @@
-import os
-import pytest
 import mock
 import pandas
-import pprint
-from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.glideinwms.publishers import glideclientglobal
 
 
@@ -38,7 +34,7 @@ class TestGlideClientGlobalManifests:
         assert(p.consumes() == consumes)
 
     def test_publish(self):
-        p = glideclientglobal.GlideClientGlobalManifests(config)
+        glideclientglobal.GlideClientGlobalManifests(config)
         with mock.patch.object(glideclientglobal.GlideClientGlobalManifests, 'publish_to_htcondor') as publish_to_htcondor:
             publish_to_htcondor.return_value = None
             # TODO: Complete this test when we have detailed contents of the

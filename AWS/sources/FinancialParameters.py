@@ -92,7 +92,7 @@ def main():
             }
         }
         MyFP = FinancialParameters(myparams)
-        mydf = MyFP.acquire()
+        MyFP.acquire()
 
 
 if __name__ == "__main__":

@@ -2,15 +2,10 @@
 Fill in data from Instane Performance CSV file
 """
 import pprint
-import sys
 import os
-import csv
-import numpy as np
 import pandas as pd
 
 from decisionengine.framework.modules import Source
-import logging
-import decisionengine_modules.load_config as load_config
 
 PRODUCES = ['Performance_Data']
 

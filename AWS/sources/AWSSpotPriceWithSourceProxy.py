@@ -3,18 +3,12 @@ Get AWS spot price information
 """
 
 import datetime
-import sys
-import os
 import time
-import copy
-import numpy as np
 import pandas as pd
 import pprint
 import boto3
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
-import logging
-import decisionengine_modules.load_config as load_config
 
 # default values
 REGION = 'us-west-2'
@@ -49,7 +43,7 @@ class SpotPriceData(object):
         try:
             if (self.data['AvailabilityZone'], self.data['InstanceType']) == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
-        except Exception as e:
+        except Exception:
             pass
 
         return -1

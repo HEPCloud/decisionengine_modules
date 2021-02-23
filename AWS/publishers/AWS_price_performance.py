@@ -5,7 +5,6 @@ Publishes price / performance data
 import pprint
 
 from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGenericPublisher as publisher
-import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine_modules.graphite_client as graphite
 
 DEFAULT_GRAPHITE_CONTEXT = "hepcloud.aws"
