@@ -8,8 +8,7 @@ le_builddir=dependencies/decisionengine/framework/logicengine/cxx/build
 mkdir $le_builddir
 cd $le_builddir
 cmake3 -Wno-dev  -DPYVER=$PYVER ..
-make
-make liblinks
+make install
 cd -
 export PYTHONPATH=$PWD:$PYTHONPATH
 source venv/bin/activate
