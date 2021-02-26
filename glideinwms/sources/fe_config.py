@@ -1,10 +1,7 @@
 import os
 import argparse
 import pprint
-import pandas
-import numpy
 
-from decisionengine_modules.htcondor.sources import source
 from glideinwms.frontend import glideinFrontendConfig
 
 
@@ -88,7 +85,7 @@ class FrontendConfiguration():
 
 
     def get_proxy_descript_data(self, group):
-        proxy_list = self.group_descript[group].merged_data['Proxies']
+        #proxy_list = self.group_descript[group].merged_data['Proxies']
         proxy_descript_attrs = [
             'ProxySecurityClasses', 'ProxyTrustDomains', 'ProxyTypes',
             'ProxyKeyFiles', 'ProxyPilotFiles',

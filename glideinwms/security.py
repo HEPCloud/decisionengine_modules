@@ -104,7 +104,7 @@ class Credential:
                          (self.creation_script))
             try:
                 condorExe.iexe_cmd(self.creation_script)
-            except Exception as e:
+            except Exception:
                 logger.exception(
                     "Creating credential using %s failed" % (self.creation_script))
                 self.advertize = False
@@ -139,7 +139,7 @@ class Credential:
             data_fd = open(cred_file)
             cred_data = data_fd.read()
             data_fd.close()
-        except Exception as e:
+        except Exception:
             # This credential should not be advertised
             self.advertize = False
             logger.exception("Failed to read credential %s: " % cred_file)
@@ -225,7 +225,7 @@ class Credential:
         try:
             output += "key_fname = %s\n" % self.key_fname
             output += "pilot_fname = %s\n" % self.pilot_fname
-        except Exception as e:
+        except Exception:
             pass
         output += "vm_id = %s\n" % self.vm_id
         output += "vm_type = %s\n" % self.vm_type

@@ -1,5 +1,4 @@
 from functools import partial
-import logging
 import decisionengine_modules.util.retry_function as retry_function
 
 class Dummy:

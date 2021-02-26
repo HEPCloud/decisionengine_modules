@@ -6,7 +6,6 @@ import argparse
 import pprint
 
 from decisionengine_modules.graphite.publishers.generic_publisher import GenericPublisher as publisher
-import decisionengine.framework.dataspace.datablock as datablock
 import decisionengine_modules.graphite_client as graphite
 import logging
 

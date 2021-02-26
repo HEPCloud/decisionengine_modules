@@ -1,5 +1,4 @@
 import os
-import argparse
 import pprint
 import tempfile
 
@@ -80,7 +79,7 @@ class FrontendConfiguration():
 
 
     def get_proxy_descript_data(self, group):
-        proxy_list = self.group_descript[group].merged_data['Proxies']
+        #proxy_list = self.group_descript[group].merged_data['Proxies']
         proxy_descript_attrs = [
             'ProxySecurityClasses', 'ProxyTrustDomains', 'ProxyTypes',
             'ProxyKeyFiles', 'ProxyPilotFiles',

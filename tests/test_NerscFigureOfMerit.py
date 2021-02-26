@@ -61,6 +61,6 @@ class TestNerscFigureOfMerit:
         for key, value in res.items():
             try:
                 assert expected_transform_output[key].equals(value)
-            except Exception as e:
+            except Exception:
                 print(key, " fail\n",
                       expected_transform_output[key], "\n", value)

@@ -75,8 +75,8 @@ class FOMOrderPlugin(ResourceOrderPlugin):
         try:
             self._ordered_resources = rss_foms.sort_values(
                 by=['FOM', 'EntryName'], ascending=ascending).reset_index(drop=True)
-        except KeyError as e:
-            logger.error('Unable to find Figure of Merrit "FOM" in the dataframe columns %s' % list(self.resources.columns))
+        except KeyError:
+            logger.exception('Unable to find Figure of Merrit "FOM" in the dataframe columns %s' % list(self.resources.columns))
 
 
     def eligible_resources(self, constraint=None, limit=None):

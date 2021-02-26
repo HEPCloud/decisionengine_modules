@@ -11,7 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import sphinx_rtd_theme
+import sphinx_rtd_theme  # noqa: F401
 import sys
 import time
 

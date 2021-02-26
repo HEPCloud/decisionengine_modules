@@ -2,7 +2,6 @@
 Query Resource Limits from another channel with the factory source
 """
 import pprint
-import pandas as pd
 import argparse
 
 from decisionengine.framework.modules import SourceProxy

@@ -1,5 +1,4 @@
 import os
-import six
 import unittest
 
 import pandas as pd

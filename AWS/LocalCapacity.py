@@ -1,5 +1,3 @@
-from random import randint
-
 from decisionengine.framework.modules import Source
 
 PRODUCES = ["local_slots"]

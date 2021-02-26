@@ -1,22 +1,24 @@
-import numpy as np
 import pandas as pd
+
+from decisionengine.framework.modules import Source
 
 class ProvisionerResourceList(Source):
     PRODUCES = ["provisioner_resources"]
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         pass
 
-    def produces(self): return PRODUCES
+    def produces(self):
+        return self.PRODUCES
 
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
         resource_list = [
-            {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large"},
-            {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge"},
-            {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},
-            {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge"},
-            {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}
+            {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8,   "EC2Type": "m4.large"},   # noqa: E241
+            {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16,  "EC2Type": "m4.xlarge"},  # noqa: E241
+            {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},   # noqa: E241
+            {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15,  "EC2Type": "m3.xlarge"},  # noqa: E241
+            {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}   # noqa: E241
         ]
         resource_keys = resource_list[0].keys()
         pandas_data = {}

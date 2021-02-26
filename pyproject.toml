@@ -1,4 +1,13 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+build-backend = "setuptools.build_meta"
+
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-l -v --durations=0 --cov=decisionengine_modules --cov-report term --no-cov-on-fail --cov-branch"
+addopts = "-l -v --durations=0"
 testpaths = '.'
+flake8-max-line-length = "120"
+flake8-ignore = "E501 E303 E302 E261 E265 W503 W504"
+flake8-show-source = "True"
+flake8-statistics = "True"
+

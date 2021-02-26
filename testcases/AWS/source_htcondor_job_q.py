@@ -1,15 +1,17 @@
-import numpy as np
 import pandas as pd
+
+from decisionengine.framework.modules import Source
 
 class HTCondorJobQ(Source):
     PRODUCES = ["job_manifests"]
 
-    def __init__ (self, params_dict):
+    def __init__(self, params_dict):
         self.desired_attrs = params_dict["desired_attrs"]
         self.constraint = params_dict["constraint"]
         self.schedd_name = params_dict["schedd_name"]
 
-    def produces(self): return PRODUCES
+    def produces(self):
+        return self.PRODUCES
 
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
@@ -27,4 +29,4 @@ class HTCondorJobQ(Source):
         for key in manifest_keys:
             pandas_data[key] = pd.Series([d[key] for d in job_manifests])
 
-        return { "job_manifests" : pd.DataFrame(pandas_data) }
+        return {"job_manifests": pd.DataFrame(pandas_data)}

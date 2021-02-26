@@ -1,6 +1,5 @@
 
 import pprint
-import argparse
 
 from decisionengine.framework.modules import SourceProxy
 

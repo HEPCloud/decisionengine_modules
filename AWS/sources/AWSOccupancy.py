@@ -2,11 +2,8 @@
 Get AWS capacity (running instances) information.
 """
 import boto3
-import sys
 import os
-import time
 import pprint
-import numpy as np
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -39,7 +36,7 @@ class OccupancyData(object):
             if (self.data['AvailabilityZone'], self.data['InstanceType']) == (other.data['AvailabilityZone'], other.data['InstanceType']):
                 return 0
 
-        except Exception as e:
+        except Exception:
             pass
 
         return -1

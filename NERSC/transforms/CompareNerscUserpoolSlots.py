@@ -5,7 +5,6 @@ import argparse
 import pprint
 import logging
 
-import logging
 from decisionengine.framework.modules import Transform
 
 CONSUMES = ['startd_manifests', 'Factory_Entries_LCF', 'Nersc_Job_Info']

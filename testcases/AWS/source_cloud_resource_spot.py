@@ -1,13 +1,15 @@
-import numpy as np
 import pandas as pd
+
+from decisionengine.framework.modules import Source
 
 class AWSSpotPrice(Source):
     PRODUCES = ["provisioner_resource_spot_prices"]
 
-    def __init__ (self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         pass
 
-    def produces(self): return PRODUCES
+    def produces(self):
+        return self.PRODUCES
 
     # The DataBlock given to the source is t=0
     def acquire(self, DataBlock):
@@ -24,4 +26,4 @@ class AWSSpotPrice(Source):
         for key in resource_keys:
             pandas_data[key] = pd.Series([d[key] for d in resource_list])
 
-        return { "provisioner_resource_spot_prices": pd.DataFrame(pandas_data) }
+        return {"provisioner_resource_spot_prices": pd.DataFrame(pandas_data)}
