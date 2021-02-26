@@ -44,6 +44,7 @@ jobs:
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
+          fetch-depth: 0
 
       - name: checkout GlideinWMS for python3
         uses: actions/checkout@v2
@@ -63,26 +64,42 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
+      - name: Fixup PATH for python libs
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Install dependencies for GlideinWMS
         run: |
+          set -x
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade wheel
           python3 -m pip install -r ${{ github.workspace }}/glideinwms/requirements.txt
 
       - name: Install dependencies for DE Framework
         run: |
+          set -x
+          cd ${{ github.workspace }}/decisionengine
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade wheel
           python3 -m pip install --upgrade pytest
-          python3 -m pip install -r ${{ github.workspace }}/decisionengine/requirements.txt
+          python3 -m pip install --user Cython
+          python3 -m pip install --user numpy
+          python3 setup.py bdist_wheel
+          python3 -m pip install --user dist/decisionengine*.whl
 
       - name: Install DE Modules dependencies
         run: |
+          set -x
           cd ${{ github.workspace }}/decisionengine_modules
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade pytest
           python3 -m pip install -r requirements.txt
           python3 -m pip install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+
+      - name: Note DE Framework used in testing
+        run: |
+          set -x
+          python3 -c 'from decisionengine.framework import __version__; print("testing with framework", __version__)'
+          python3 -c 'import decisionengine.framework; print(decisionengine.framework.__file__)'
 
       - name: Run Unit Tests on Python ${{ matrix.python-version }}
         env:
@@ -192,26 +209,33 @@ jobs:
 
       - name: Install dependencies for GlideinWMS
         run: |
+          set -x
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade wheel
           python3 -m pip install -r ${{ github.workspace }}/glideinwms/requirements.txt
 
       - name: Install dependencies for DE Framework
         run: |
+          set -x
+          cd ${{ github.workspace }}/decisionengine
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade wheel
           python3 -m pip install --upgrade pytest
-          python3 -m pip install -r ${{ github.workspace }}/decisionengine/requirements.txt
+          python3 -m pip install --user Cython
+          python3 -m pip install --user numpy
+          python3 setup.py bdist_wheel
+          python3 -m pip install --user dist/decisionengine*.whl
 
       - name: Install DE Modules dependencies
         run: |
+          set -x
           cd ${{ github.workspace }}/decisionengine_modules
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade pytest
           python3 -m pip install -r requirements.txt
           python3 -m pip install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
 
-      - name: Run Flake8 Tests on Python ${{ matrix.python-version }}
+      - name: Run Flake8 checks
         env:
           PYTHONPATH: ${{ github.workspace }}/../:${{ github.workspace }}
         run: |

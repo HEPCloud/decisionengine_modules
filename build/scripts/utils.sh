@@ -77,7 +77,13 @@ setup_glideinwms() {
 setup_de_framework() {
     dir=$1
     de_framework_git_repo="https://github.com/HEPCloud/decisionengine.git"
-    setup_git_product "$de_framework_git_repo" $dir
+    if [[ ! -e de_framework ]]; then
+        setup_git_product "$de_framework_git_repo" $dir
+        mv decisionengine de_framework
+        cd de_framework
+        python3 setup.py develop --user
+    fi
+    python3 -c 'from decisionengine.framework import __version__'
 }
 
 

@@ -4,6 +4,7 @@ boto3 >= 1.17.10
 google_auth >= 1.27.0
 google-api-python-client >= 1.12.8
 gcs-oauth2-boto-plugin >= 2.7
+numpy >= 1.19
 packaging >= 20.9
 pandas >= 1.1.5
 six >= 1.13.0
