@@ -26,6 +26,15 @@ Developer Documentation
    unittest.rst
 
 
+Jenkins CI pipeline
+===================
+
+.. toctree::
+   :maxdepth: 1
+
+   jenkins.rst
+
+
 
 Source code
 ===========
