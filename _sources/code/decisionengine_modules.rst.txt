@@ -17,6 +17,15 @@ Subpackages
 Submodules
 ----------
 
+decisionengine\_modules.about module
+------------------------------------
+
+.. automodule:: decisionengine_modules.about
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :private-members:
+
 decisionengine\_modules.graphite\_client module
 -----------------------------------------------
 
