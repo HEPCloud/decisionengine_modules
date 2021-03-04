@@ -3,7 +3,7 @@ Generic publisher for graphana
 
 """
 import abc
-import six
+import logging
 
 from decisionengine.framework.modules import Publisher
 import decisionengine_modules.graphite_client as graphite
@@ -13,8 +13,7 @@ DEFAULT_GRAPHITE_PORT = 2004
 DEFAULT_GRAPHITE_CONTEXT = ""
 
 
-@six.add_metaclass(abc.ABCMeta)
-class GenericPublisher(Publisher.Publisher):
+class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
         self.graphite_host = config.get('graphite_host', DEFAULT_GRAPHITE_HOST)
@@ -43,12 +42,19 @@ class GenericPublisher(Publisher.Publisher):
         """
         if not self.consumes():
             return
-        data = data_block[self.consumes()[0]]
+        product = self.consumes()[0]
+        try:
+            data = data_block[product]
+        except KeyError:
+            logging.getLogger().\
+                error(f"Failed to extract {product} from data block.")
+            return
         if self.graphite_host and self.publush_to_graphite:
-            end_point = graphite.Graphite(
-                host=self.graphite_host, pickle_port=self.graphite_port)
-            end_point.send_dict(self.graphite_context(data)[0], self.graphite_context(
-                data)[1], debug_print=False, send_data=True)
+            end_point = graphite.Graphite(host=self.graphite_host,
+                                          pickle_port=self.graphite_port)
+            end_point.send_dict(self.graphite_context(data)[0],
+                                self.graphite_context(data)[1],
+                                debug_print=False, send_data=True)
         csv_data = data.to_csv(self.output_file, index=False)
         if not self.output_file:
-            print(csv_data)
+            logging.getLogger().debug(csv_data)
