@@ -55,4 +55,6 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
             end_point.send_dict(self.graphite_context(data)[0],
                                 self.graphite_context(data)[1],
                                 debug_print=False, send_data=True)
-        data.to_csv(self.output_file, index=False)
+        csv_data = data.to_csv(self.output_file, index=False)
+        if not self.output_file:
+            logging.getLogger().debug(csv_data)
