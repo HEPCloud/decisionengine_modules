@@ -45,7 +45,7 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         product = self.consumes()[0]
         try:
             data = data_block[product]
-        except KeyError as e:
+        except KeyError:
             logging.getLogger().\
                 error(f"Failed to extract {product} from data block.")
             return
