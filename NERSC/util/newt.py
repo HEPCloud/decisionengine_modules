@@ -50,7 +50,7 @@ class Newt(object):
             status=self.num_retries,
             status_forcelist=[500, 502, 503, 504, 507],
             backoff_factor=self.retry_backoff_factor,
-            method_whitelist=False)
+            allowed_methods=False)
         retry_adapter = HTTPAdapter(max_retries=retry)
         self.session.mount(self.newt_base_url, retry_adapter)
 
