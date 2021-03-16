@@ -2,7 +2,7 @@ import time
 import pickle
 import struct
 import socket
-import sys
+import logging
 
 
 def sanitize_key(key):
@@ -26,7 +26,7 @@ class Graphite(object):
         """send data contained in dictionary as {k: v} to graphite dataset
         $namespace.k with current timestamp"""
         if data is None:
-            sys.stderr.write("Warning: send_dict called with no data\n")
+            logging.getLogger.warning("Warning: send_dict called with no data")
             return
         now = int(time.time())
         post_data = []
@@ -35,7 +35,7 @@ class Graphite(object):
             t = (namespace + "." + k, (now, v))
             post_data.append(t)
             if debug_print:
-                print(t)
+                logging.getLogger.debug(f"{t}")
         # pickle data
         payload = pickle.dumps(post_data, protocol=2)
         header = struct.pack("!L", len(payload))
@@ -47,8 +47,7 @@ class Graphite(object):
                 s.connect((self.graphite_host, self.graphite_pickle_port))
                 s.sendall(message)
             except socket.error as detail:
-                sys.stderr.write("Error sending data to graphite at %s:%d: %s\n" % (
-                    self.graphite_host, self.graphite_pickle_port, detail))
+                logging.getLogger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}: {detail}")
             finally:
                 s.close()
 

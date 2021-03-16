@@ -1,4 +1,5 @@
 import time
+import logging
 
 """
 Load python object
@@ -28,9 +29,11 @@ def load(python_file, retries=0, timeout=0):
                 exec(code)
             break
         except IOError:
+            logging.getLogger.warning(f"config load failed in de_modules, {retries-i} retries")
             time.sleep(timeout)
     else:
-        raise RuntimeError('can not load %s' % (python_file,))
+        logging.getLogger().exception(f"cannot load {python_file}")
+        raise RuntimeError()
 
     return config
 
