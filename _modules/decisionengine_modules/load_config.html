@@ -168,6 +168,7 @@
             
   <h1>Source code for decisionengine_modules.load_config</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Load python object</span>
@@ -197,9 +198,11 @@
                 <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
             <span class="k">break</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;config load failed in de_modules, {retries-i} retries&quot;</span><span class="p">)</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;can not load </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">python_file</span><span class="p">,))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;cannot load </span><span class="si">{python_file}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">config</span></div>
 
