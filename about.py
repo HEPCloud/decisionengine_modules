@@ -6,7 +6,7 @@ try:
     # This is built by setuptools_scm
     from .version import version as __version__  # noqa: F401
 except ImportError:
-    __version__ = '1.7.0rc0'
+    __version__ = '1.6.0'
 
 __title__ = 'decisionengine_modules'
 __description__ = 'The HEPCloud Decision Engine Framework'

@@ -78,7 +78,7 @@ setup_de_framework() {
     dir=$1
     de_framework_git_repo="https://github.com/HEPCloud/decisionengine.git"
     if [[ ! -e de_framework ]]; then
-        setup_git_product "$de_framework_git_repo" $dir
+        setup_git_product "$de_framework_git_repo" $dir 1.6
         mv decisionengine de_framework
         cd de_framework
         python3 setup.py develop --user
