@@ -4,7 +4,7 @@ Release 1.6.0
 In this release:
 
 * Adapt to decisionengine framework migration to setuptools.
-* Drop cmake step before runninbg unit tests.
+* Drop cmake step before running unit tests.
 * Enhanced logging.
 * Bug fixes.
 
