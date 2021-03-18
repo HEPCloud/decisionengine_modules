@@ -13,7 +13,7 @@ import glideinwms.creation.lib.cvWConsts
 import glideinwms.creation.lib.cvWParamDict
 import glideinwms.creation.lib.xslt
 
-from  decisionengine_modules.glideinwms import glideinwms_config_lib
+from decisionengine_modules.glideinwms import glideinwms_config_lib
 
 def frontend_to_de_config(frontend_workdir='/var/lib/gwms-frontend/vofrontend'):
     fe_configuration = glideinwms_config_lib.FrontendConfiguration(
