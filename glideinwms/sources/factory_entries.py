@@ -61,6 +61,7 @@ class FactoryEntries(Source.Source):
             constraint = '(%s)&&(glideinmytype=="glidefactory")' % \
                 factory.get('constraint', True)
             classad_attrs = factory.get('classad_attrs')
+            correction_map = factory.get('correction_map')
 
             try:
                 condor_status = htcondor_query.CondorStatus(
@@ -73,6 +74,12 @@ class FactoryEntries(Source.Source):
                             *(constraint, classad_attrs, self.condor_config)),
                     nretries=self.nretries,
                     retry_interval=self.retry_interval)
+
+                if correction_map is not None:
+                    for eachDict in condor_status.stored_data:
+                        for key, value in correction_map.items():
+                            if eachDict.get(key) is None:
+                                eachDict[key] = value
 
                 df = pandas.DataFrame(condor_status.stored_data)
                 if not df.empty:
