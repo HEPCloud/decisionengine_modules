@@ -15,7 +15,7 @@ CONSUMES = ['GCE_Figure_Of_Merit']
 
 class GCEFigureOfMeritPublisher(publisher):
     def __init__(self, config):
-        super(GCEFigureOfMeritPublisher, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def consumes(self):

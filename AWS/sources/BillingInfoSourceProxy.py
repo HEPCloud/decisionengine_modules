@@ -11,7 +11,7 @@ class BillingInfoSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(BillingInfoSourceProxy, self).__init__(config)
+        super().__init__(config)
 
 
     def produces(self):
@@ -27,7 +27,7 @@ class BillingInfoSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        data = super(BillingInfoSourceProxy, self).acquire()
+        data = super().acquire()
         if not set(PRODUCES).issubset(set(data.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return data

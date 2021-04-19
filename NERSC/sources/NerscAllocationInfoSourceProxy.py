@@ -20,7 +20,7 @@ class NerscAllocationInfoSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        nerscai = super(NerscAllocationInfoSourceProxy, self).acquire()
+        nerscai = super().acquire()
         if not set(PRODUCES).issubset(set(nerscai.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (
                 type(self).__name__, PRODUCES))

@@ -13,7 +13,7 @@ CONSUMES = ['aws_instance_limits', 'spot_occupancy_config']
 class AWSFactoryEntryDataPublisher(Publisher.Publisher):
 
     def __init__(self, config):
-        super(AWSFactoryEntryDataPublisher, self).__init__(config)
+        super().__init__(config)
         if not config:
             config = {}
         if not isinstance(config, dict):

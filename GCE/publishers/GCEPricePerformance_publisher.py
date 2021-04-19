@@ -15,7 +15,7 @@ CONSUMES = ['GCE_Price_Performance']
 
 class GCEPricePerformancePublisher(publisher):
     def __init__(self, config):
-        super(GCEPricePerformancePublisher, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def consumes(self):

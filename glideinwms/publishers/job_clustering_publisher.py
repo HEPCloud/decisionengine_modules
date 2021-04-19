@@ -15,7 +15,7 @@ CONSUMES = ['job_clusters']
 
 class JobClusteringPublisher(publisher):
     def __init__(self, config):
-        super(JobClusteringPublisher, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def consumes(self):

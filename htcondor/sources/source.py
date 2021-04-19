@@ -19,7 +19,7 @@ class ResourceManifests(Source.Source):
         because some classes that extend this class might not have correction_map
         avaiable in its config file.
         """
-        super(ResourceManifests, self).__init__(config)
+        super(Source.Source, self).__init__(config)
         if not config:
             config = {}
         if not isinstance(config, dict):

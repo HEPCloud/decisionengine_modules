@@ -38,7 +38,7 @@ def get_gfe_obj(fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom'):
     return gfe_obj
 
 
-class GlideFrontendElement(object):
+class GlideFrontendElement:
     """
     Class that implements the functionality of a GlideinWMS Frontend Element
     """
@@ -1271,7 +1271,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
     """
 
     def __init__(self, fe_group, acct_group, fe_cfg):
-        super(GlideFrontendElementFOM, self).__init__(fe_group,
+        super().__init__(fe_group,
                                                       acct_group, fe_cfg)
         # Sum of all the glidein requests from different job filters
         self.total_glidein_requests = {}

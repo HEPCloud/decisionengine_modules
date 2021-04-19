@@ -21,7 +21,7 @@ PRODUCES = ["GCE_Burn_Rate"]
 
 class GceBurnRate(Transform.Transform):
     def __init__(self, config):
-        super(GceBurnRate, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def transform(self, data_block):

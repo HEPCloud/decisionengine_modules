@@ -24,7 +24,7 @@ AVAILABILITY_ZONE = ''  # any
 PRODUCES = ['provisioner_resource_spot_prices']
 
 
-class SpotPriceData(object):
+class SpotPriceData:
     """
     Spot Price data element
     """
@@ -51,7 +51,7 @@ class SpotPriceData(object):
         return -1
 
 
-class AWSSpotPriceForRegion(object):
+class AWSSpotPriceForRegion:
     """
     Spot price data and methods
     """

@@ -15,7 +15,7 @@ CONSUMES = ['Nersc_Figure_Of_Merit']
 
 class NerscFigureOfMeritPublisher(publisher):
     def __init__(self, config):
-        super(NerscFigureOfMeritPublisher, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def consumes(self):

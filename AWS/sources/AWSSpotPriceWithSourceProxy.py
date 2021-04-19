@@ -22,7 +22,7 @@ AVAILABILITY_ZONE = ''  # any
 PRODUCES = ['provisioner_resource_spot_prices']
 
 
-class SpotPriceData(object):
+class SpotPriceData:
     """
     Spot Price data element
     """
@@ -49,7 +49,7 @@ class SpotPriceData(object):
         return -1
 
 
-class AWSSpotPriceForRegion(object):
+class AWSSpotPriceForRegion:
     """
     Spot price data and methods
     """
@@ -164,7 +164,7 @@ class AWSSpotPriceForRegion(object):
 
 class AWSSpotPrice(SourceProxy.SourceProxy):
     def __init__(self, *args, **kwargs):
-        super(AWSSpotPrice, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def produces(self, schema_id_list):
         return PRODUCES
@@ -177,7 +177,7 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
         """
 
         # Load known accounts configuration
-        account_conf = super(AWSSpotPrice, self).acquire()
+        account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
             raise RuntimeError(
                 'Wrong configuration %s. Only one key is expected' % (account_conf,))

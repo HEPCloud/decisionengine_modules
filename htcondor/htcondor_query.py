@@ -19,7 +19,7 @@ class QueryError(RuntimeError):
 
 
 @six.add_metaclass(abc.ABCMeta)
-class Query(object):
+class Query:
     """
     Pure virtual class to have a minimum set of methods defined
     """

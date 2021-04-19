@@ -6,7 +6,7 @@ import six
 logger = logging.getLogger()
 
 @six.add_metaclass(abc.ABCMeta)
-class ResourceOrderPlugin(object):
+class ResourceOrderPlugin:
 
     """
     Pure virtual class to have a minimum set of methods defined

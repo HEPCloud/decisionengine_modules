@@ -9,7 +9,7 @@ CONSUMES = ['glideclientglobal_manifests']
 class GlideClientGlobalManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
-        super(GlideClientGlobalManifests, self).__init__(config)
+        super().__init__(config)
         self.classad_type = 'glideclientglobal'
 
 

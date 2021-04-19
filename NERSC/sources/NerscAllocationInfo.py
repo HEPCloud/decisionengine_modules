@@ -23,14 +23,13 @@ class NerscAllocationInfo(Source.Source):
     """
 
     def __init__(self, config):
-        super(NerscAllocationInfo, self).__init__(config)
+        super().__init__(config)
 
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
 
         self.raw_results = None
-        self.pandas_frame = None
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_backoff_factor = config.get("retry_backoff_factor",
                                                _RETRY_BACKOFF_FACTOR)
@@ -67,18 +66,11 @@ class NerscAllocationInfo(Source.Source):
                 results = [x for x in results if x[k] in values]
         self.raw_results = results
 
-    def raw_results_to_pandas_frame(self):
-        """
-        Convert the acquired external info into Pandas Frame format
-        """
-        self.pandas_frame = pd.DataFrame(self.raw_results)
-
     def produces(self, name_schema_id_list=None):
         """
         Method to be called from Task Manager.
         Copied from Source.py
         """
-
         return PRODUCES
 
     def acquire(self):
@@ -88,10 +80,8 @@ class NerscAllocationInfo(Source.Source):
         Acquire NERSC allocation info and return as pandas frame
         :rtype: :obj:`~pd.DataFrame`
         """
-
         self.send_query()
-        self.raw_results_to_pandas_frame()
-        return {PRODUCES[0]: self.pandas_frame}
+        return {PRODUCES[0]: pd.DataFrame(self.raw_results)}
 
 
 def module_config_template():

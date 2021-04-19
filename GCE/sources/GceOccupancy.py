@@ -26,7 +26,7 @@ _RETRY_TIMEOUT = 10
 class GceOccupancy(Source.Source):
 
     def __init__(self, config):
-        super(GceOccupancy, self).__init__(config)
+        super().__init__(config)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config["credential"]
         credentials, self.project = google.auth.default()
 

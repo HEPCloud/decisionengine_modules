@@ -10,7 +10,7 @@ PRODUCES = ['job_manifests']
 class JobQSourceProxy(SourceProxy.SourceProxy):
 
     def __init__(self, config):
-        super(JobQSourceProxy, self).__init__(config)
+        super().__init__(config)
 
 
     def produces(self):
@@ -25,7 +25,7 @@ class JobQSourceProxy(SourceProxy.SourceProxy):
         Acquire jobs from the HTCondor Schedd
         :rtype: :obj:`~pd.DataFrame`
         """
-        job_manifests = super(JobQSourceProxy, self).acquire()
+        job_manifests = super().acquire()
         if not set(PRODUCES).issubset(set(job_manifests.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return job_manifests

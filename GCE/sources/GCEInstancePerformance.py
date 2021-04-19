@@ -16,7 +16,7 @@ PRODUCES = ['GCE_Instance_Performance']
 class GCEInstancePerformance(Source.Source):
 
     def __init__(self, config):
-        super(GCEInstancePerformance, self).__init__(config)
+        super().__init__(config)
         self.csv_file = config.get('csv_file')
         if not self.csv_file:
             raise RuntimeError("No csv file found in configuration")

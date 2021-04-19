@@ -9,7 +9,7 @@ CONSUMES = ['decisionenginemonitor_manifests']
 class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
-        super(DecisionEngineMonitorManifests, self).__init__(config)
+        super().__init__(config)
         self.classad_type = 'glideclientmonitor'
 
 

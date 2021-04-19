@@ -23,7 +23,7 @@ PRODUCES = ["Nersc_Price_Performance", "Nersc_Figure_Of_Merit"]
 
 class NerscFigureOfMerit(Transform.Transform):
     def __init__(self, config):
-        super(NerscFigureOfMerit, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def transform(self, data_block):

@@ -12,7 +12,7 @@ import logging
 REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
 
-class OccupancyData(object):
+class OccupancyData:
     """
     Occupancy data element
     """
@@ -38,7 +38,7 @@ class OccupancyData(object):
         return not self == other
 
 
-class OccupancyForRegion(object):
+class OccupancyForRegion:
     """
     AWS capacity data and metods
     """
@@ -125,7 +125,7 @@ class OccupancyForRegion(object):
 
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, *args, **kwargs):
-        super(AWSOccupancy, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.logger = logging.getLogger()
 
     def produces(self):
@@ -140,7 +140,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         """
 
         # Load kown accounts configuration
-        account_conf = super(AWSOccupancy, self).acquire()
+        account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
             raise RuntimeError(
                 'Wrong configuration %s. Only one key is expected' % (account_conf,))

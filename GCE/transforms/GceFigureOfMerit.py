@@ -26,7 +26,7 @@ PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 
 class GceFigureOfMerit(Transform.Transform):
     def __init__(self, config):
-        super(GceFigureOfMerit, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def transform(self, data_block):

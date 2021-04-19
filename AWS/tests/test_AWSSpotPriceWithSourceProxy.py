@@ -35,7 +35,7 @@ def fix_spot_price(df):
     return out_df
 
 
-class SessionMock(object):
+class SessionMock:
     def client(self, service=None, region_name=None):
         return None
 

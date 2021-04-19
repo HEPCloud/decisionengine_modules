@@ -18,7 +18,7 @@ EXPECTED_NAMES = ['accountName',
                   ]
 
 
-class AccountConstants(object):
+class AccountConstants:
     def __init__(self, constants={}):
 
         # Initialize variables

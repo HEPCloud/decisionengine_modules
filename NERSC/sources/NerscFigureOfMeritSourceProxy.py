@@ -10,7 +10,7 @@ PRODUCES = ['Nersc_Figure_Of_Merit']
 class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
     def __init__(self, config):
-        super(NerscFigureOfMeritSourceProxy, self).__init__(config)
+        super().__init__(config)
 
     def produces(self):
         return PRODUCES
@@ -22,7 +22,7 @@ class NerscFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(NerscFigureOfMeritSourceProxy, self).acquire()
+        fom = super().acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (
                 type(self).__name__, PRODUCES))

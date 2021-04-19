@@ -12,7 +12,7 @@ class GceFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(GceFigureOfMeritSourceProxy, self).__init__(config)
+        super().__init__(config)
 
 
     def acquire(self):
@@ -22,7 +22,7 @@ class GceFigureOfMeritSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(GceFigureOfMeritSourceProxy, self).acquire()
+        fom = super().acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'GCE_Figure_Of_Merit': fom.get('GCE_Figure_Of_Merit')}

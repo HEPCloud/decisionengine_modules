@@ -20,7 +20,7 @@ class NerscJobInfo(Source.Source):
     """
 
     def __init__(self, config):
-        super(NerscJobInfo, self).__init__(config)
+        super().__init__(config)
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')

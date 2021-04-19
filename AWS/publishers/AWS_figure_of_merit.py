@@ -12,7 +12,7 @@ CONSUMES = ['AWS_Figure_Of_Merit']
 
 class AWSFOMPublisher(publisher):
     def __init__(self, *args, **kwargs):
-        super(AWSFOMPublisher, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def consumes(self):
         return CONSUMES

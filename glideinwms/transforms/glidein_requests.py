@@ -36,7 +36,7 @@ class GlideinRequestManifests(Transform.Transform):
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
-        super(GlideinRequestManifests, self).__init__(config)
+        super().__init__(config)
 
         # VO to which this transform should be applied
         self.acct_group = config.get('accounting_group', 'CMS')

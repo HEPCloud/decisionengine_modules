@@ -16,7 +16,7 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
     """
 
     def __init__(self, config):
-        super(GCEResourceLimits, self).__init__(config)
+        super().__init__(config)
         self.entry_limit_attrs = config.get('entry_limit_attrs')
         self.logger = logging.getLogger()
 
@@ -33,7 +33,7 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        factory_data = super(GCEResourceLimits, self).acquire()
+        factory_data = super().acquire()
         df_factory_data = factory_data.get(self.data_keys[0])
         df_entry_limits = df_factory_data[self.entry_limit_attrs]
         return {PRODUCES[0]: df_entry_limits}

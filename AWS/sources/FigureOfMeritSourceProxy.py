@@ -14,7 +14,7 @@ class FigureOfMeritSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(FigureOfMeritSourceProxy, self).__init__(config)
+        super().__init__(config)
 
 
     def produces(self):
@@ -28,7 +28,7 @@ class FigureOfMeritSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        fom = super(FigureOfMeritSourceProxy, self).acquire()
+        fom = super().acquire()
         if not set(PRODUCES).issubset(set(fom.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return {'AWS_Figure_Of_Merit': fom.get('AWS_Figure_Of_Merit')}

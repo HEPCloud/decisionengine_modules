@@ -12,7 +12,7 @@ class JobClusteringSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(JobClusteringSourceProxy, self).__init__(config)
+        super().__init__(config)
 
 
     def produces(self):
@@ -29,7 +29,7 @@ class JobClusteringSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        job_clusters = super(JobClusteringSourceProxy, self).acquire()
+        job_clusters = super().acquire()
         if not set(PRODUCES).issubset(set(job_clusters.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return job_clusters

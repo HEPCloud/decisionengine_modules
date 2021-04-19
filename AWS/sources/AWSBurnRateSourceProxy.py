@@ -10,8 +10,7 @@ class AWSBurnRateSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(AWSBurnRateSourceProxy, self).__init__(config)
-
+        super().__init__(config)
 
     def produces(self):
         """
@@ -19,14 +18,13 @@ class AWSBurnRateSourceProxy(SourceProxy.SourceProxy):
         """
         return PRODUCES
 
-
     def acquire(self):
         """
         Acquire required info and return as pandas frame
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        data = super(AWSBurnRateSourceProxy, self).acquire()
+        data = super().acquire()
         if not set(PRODUCES).issubset(set(data.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return data

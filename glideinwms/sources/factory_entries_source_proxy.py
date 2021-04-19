@@ -15,7 +15,7 @@ class FactoryEntriesSourceProxy(SourceProxy.SourceProxy):
 
 
     def __init__(self, config):
-        super(FactoryEntriesSourceProxy, self).__init__(config)
+        super().__init__(config)
 
 
     def produces(self):
@@ -32,7 +32,7 @@ class FactoryEntriesSourceProxy(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
-        entries = super(FactoryEntriesSourceProxy, self).acquire()
+        entries = super().acquire()
         if not set(PRODUCES).issubset(set(entries.keys())):
             raise RuntimeError('SourceProxy %s not configured with all dataproducts %s' % (type(self).__name__, PRODUCES))
         return entries

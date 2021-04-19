@@ -25,7 +25,7 @@ expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
 produces = ['AWS_Occupancy']
 
 
-class SessionMock(object):
+class SessionMock:
     def resource(self, service=None, region_name=None):
         return None
 

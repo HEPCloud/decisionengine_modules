@@ -9,7 +9,7 @@ PRODUCES = ["financial_params"]
 class FinancialParameters(Source.Source):
 
     def __init__(self, config):
-        super(FinancialParameters, self).__init__(config)
+        super().__init__(config)
         self.financial_parameters_dict = config.get('financial_parameters')
 
     def produces(self):

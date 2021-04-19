@@ -11,7 +11,7 @@ PRODUCES = ['GCE_Billing_Info']
 class GCEBillingInfo(Source.Source):
 
     def __init__(self, config):
-        super(GCEBillingInfo, self).__init__(config)
+        super().__init__(config)
         # Load configuration "constants"
         self.projectId = config.get('projectId')
         self.credentialsProfileName = config.get(

@@ -19,7 +19,7 @@ CONFIG = {
 PRODUCES = ["GCE_Occupancy"]
 
 
-class MockRequest(object):
+class MockRequest:
 
     def execute(self):
         with open(os.path.join(DATA_DIR, "GceOccupancy.input.fixture.json"), "r") as f:
@@ -27,7 +27,7 @@ class MockRequest(object):
             return data
 
 
-class MockInstances(object):
+class MockInstances:
 
     def aggregatedList(self, project):
         return MockRequest()
@@ -36,7 +36,7 @@ class MockInstances(object):
         return None
 
 
-class MockClient(object):
+class MockClient:
 
     def instances(self):
         return MockInstances()

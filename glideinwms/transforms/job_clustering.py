@@ -18,7 +18,7 @@ CONSUMES = ['job_manifests']
 class JobClustering(Transform.Transform):
 
     def __init__(self, config):
-        super(JobClustering, self).__init__(config)
+        super().__init__(config)
 
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')

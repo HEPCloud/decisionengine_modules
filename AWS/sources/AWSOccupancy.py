@@ -15,7 +15,7 @@ REGION = 'us-west-2'
 PRODUCES = ['AWS_Occupancy']
 
 
-class OccupancyData(object):
+class OccupancyData:
     """
     Occupancy data element
     """
@@ -42,7 +42,7 @@ class OccupancyData(object):
         return -1
 
 
-class OccupancyForRegion(object):
+class OccupancyForRegion:
     """
     AWS capacity data and metods
     """

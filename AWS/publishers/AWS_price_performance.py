@@ -13,7 +13,7 @@ CONSUMES = ['AWS_Price_Performance']
 
 class AWSPricePerformancePublisher(publisher):
     def __init__(self, *args, **kwargs):
-        super(AWSPricePerformancePublisher, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def consumes(self):
         return CONSUMES

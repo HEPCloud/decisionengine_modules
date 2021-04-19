@@ -21,7 +21,7 @@ PRODUCES = ["AWS_Burn_Rate"]
 
 class AwsBurnRate(Transform.Transform):
     def __init__(self, config):
-        super(AwsBurnRate, self).__init__(config)
+        super().__init__(config)
         self.logger = logging.getLogger()
 
     def transform(self, data_block):
