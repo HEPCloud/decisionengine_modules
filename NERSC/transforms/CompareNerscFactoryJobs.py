@@ -1,18 +1,15 @@
 """
 Compare jobs on factory and Nersc
 """
-import argparse
-import pprint
 
 import pandas as pd
 
 import logging
 from decisionengine.framework.modules import Transform
 
-CONSUMES = ['job_manifests', 'Nersc_Job_Info']
-PRODUCES = ['nersc_factory_jobs_comparison']
-
-
+@Transform.consumes(job_manifests=pd.DataFrame,
+                    Nersc_Job_Info=pd.DataFrame)
+@Transform.produces(nersc_factory_jobs_comparison=dict)
 class CompareNerscFactoryJobs(Transform.Transform):
     """
     Transform that consumes nersc jobs and factory jobs data,
@@ -20,20 +17,7 @@ class CompareNerscFactoryJobs(Transform.Transform):
     """
 
     def __init__(self, param_dict):
-        self.param_dict = param_dict
         self.logger = logging.getLogger()
-
-    def consumes(self):
-        """
-        Method to be called from Task Manager. Show the list of keys to consume.
-        """
-        return CONSUMES
-
-    def produces(self):
-        """
-        Method to be called from Task Manager. Show the list of keys to produce.
-        """
-        return PRODUCES
 
     def transform(self, data_block):
         """
@@ -148,50 +132,4 @@ class CompareNerscFactoryJobs(Transform.Transform):
         return {'nersc_factory_jobs_comparison': results}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-    template = {
-        'nersc_factory_jobs_comparison': {
-            'module': 'modules.NERSC.transforms.compare_nersc_factory_jobs',
-            'name': 'CompareNerscFactoryJobs',
-            'parameters': {}
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Transform.describe(CompareNerscFactoryJobs)

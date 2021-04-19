@@ -1,4 +1,5 @@
 import os
+import pandas
 import pprint
 
 import mock
@@ -25,8 +26,7 @@ class TestFactoryClientManifests:
 
     def test_produces(self):
         fc = factory_client.FactoryClientManifests(CONFIG)
-        produces = ['factoryclient_manifests']
-        assert(fc.produces() == produces)
+        assert fc._produces == {'factoryclient_manifests': pandas.DataFrame}
 
     def test_acquire(self):
         fc = factory_client.FactoryClientManifests(CONFIG)

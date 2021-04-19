@@ -1,5 +1,6 @@
 import mock
 import pandas
+
 from decisionengine_modules.glideinwms.publishers import decisionenginemonitor
 
 
@@ -29,9 +30,8 @@ expected_constraint = {
 class TestDecisionEngineMonitorManifests:
 
     def test_consumes(self):
-        consumes = ['decisionenginemonitor_manifests']
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
-        assert(p.consumes() == consumes)
+        assert p._consumes == {'decisionenginemonitor_manifests': pandas.DataFrame}
 
     def test_publish(self):
         decisionenginemonitor.DecisionEngineMonitorManifests(config)
@@ -44,4 +44,4 @@ class TestDecisionEngineMonitorManifests:
     def test_create_invalidate_constraint(self):
         p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
         p.create_invalidate_constraint(request_df)
-        assert(p.invalidate_ads_constraint == expected_constraint)
+        assert p.invalidate_ads_constraint == expected_constraint

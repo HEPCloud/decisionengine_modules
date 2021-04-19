@@ -1,4 +1,3 @@
-import pprint
 
 import pandas
 
@@ -31,16 +30,14 @@ valid_output_dict = {"FNAL_HEPCLOUD_GOOGLE_us-central1-a_custom-16-32768.fig_of_
 class TestGCEFigureOfMeritPublisher:
 
     def test_consumes(self):
-        consumes = ['GCE_Figure_Of_Merit']
         fom_pub = GCEFigureOfMerit_publisher.GCEFigureOfMeritPublisher(
             config_fom_pub)
-        assert fom_pub.consumes() == consumes
+        assert fom_pub._consumes == {'GCE_Figure_Of_Merit': pandas.DataFrame}
 
     def test_graphite_context(self):
         fom_pub = GCEFigureOfMerit_publisher.GCEFigureOfMeritPublisher(
             config_fom_pub)
         output = fom_pub.graphite_context(valid_datablock)
-        pprint.pprint(output)
         assert output[0] == "hepcloud.de.gce"
         assert output[1].get(
             "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit") == 0

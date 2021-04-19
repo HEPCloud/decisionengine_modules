@@ -5,41 +5,31 @@ saves it into the output file acording to design document.
 """
 import pandas as pd
 import numpy as np
-import pprint
 import sys
 
 from decisionengine.framework.modules import Transform
 from decisionengine_modules.util.figure_of_merit import figure_of_merit
-import logging
-
-"""
-IMPORTANT: Please do not change order of these keys and always
-           append new keys rather than pre-pend or insert.
-"""
-
-CONSUMES = ["GCE_Instance_Performance",
-            "Factory_Entries_GCE",
-            "GCE_Occupancy"]
-
-PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 
 
+@Transform.consumes(GCE_Instance_Performance=pd.DataFrame,
+                    Factory_Entries_GCE=pd.DataFrame,
+                    GCE_Occupancy=pd.DataFrame)
+@Transform.produces(GCE_Price_Performance=pd.DataFrame,
+                    GCE_Figure_Of_Merit=pd.DataFrame)
 class GceFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = logging.getLogger()
 
     def transform(self, data_block):
 
-        performance = data_block[CONSUMES[0]]
+        performance = self.GCE_Instance_Performance(data_block)
         performance["PricePerformance"] = np.where(performance["PerfTtbarTotal"] > 0,
                                                    (performance["OnDemandPrice"] /
                                                     performance["PerfTtbarTotal"]),
                                                    sys.float_info.max)
 
-        factory_entries = data_block[CONSUMES[1]].fillna(0)
-
-        gce_occupancy = data_block[CONSUMES[2]].fillna(0)
+        factory_entries = self.Factory_Entries_GCE(data_block).fillna(0)
+        gce_occupancy = self.GCE_Occupancy(data_block).fillna(0)
 
         figures_of_merit = []
 
@@ -74,69 +64,9 @@ class GceFigureOfMerit(Transform.Transform):
             figures_of_merit.append({"EntryName": entry_name,
                                      "FigureOfMerit": fom})
 
-        return {PRODUCES[0]: performance.filter(["EntryName",
-                                                 "PricePerformance"]),
-                PRODUCES[1]: pd.DataFrame(figures_of_merit)}
-
-    def consumes(self, name_list=None):
-        return CONSUMES
-
-    def produces(self, name_schema_id_list=None):
-        return PRODUCES
+        return {'GCE_Price_Performance': performance.filter(["EntryName",
+                                                             "PricePerformance"]),
+                'GCE_Figure_Of_Merit': pd.DataFrame(figures_of_merit)}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    d = {
-        "GceFigureOfMerit": {
-            "module": "modules.GCE.transforms.GceFigureOfMerit",
-            "name": "GceFigureOfMerit",
-            "parameters": {
-            }
-        }
-    }
-
-    print("Entry in channel cofiguration")
-    pprint.pprint(d)
-    print("where")
-    print("\t name - name of the class to be instantiated by task manager")
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-
-    print("consumes", CONSUMES)
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    """
-    Call this a a test unit or use as CLI of this module
-    """
-    import argparse
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--configtemplate",
-                        action="store_true",
-                        help="prints the expected module configuration")
-
-    parser.add_argument("--configinfo",
-                        action="store_true",
-                        help="prints config template along with produces and consumes info")
-
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-
-
-if __name__ == "__main__":
-    main()
+Transform.describe(GceFigureOfMerit)

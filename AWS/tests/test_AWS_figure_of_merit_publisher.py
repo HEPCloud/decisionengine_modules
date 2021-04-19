@@ -16,7 +16,6 @@ except TypeError:
     EXPECTED_REPLY = pd.read_csv(os.path.join(DATA_DIR,
                                               "expected_AWS_figure_of_merit_pub.csv"))
 OUTPUT_FILE = "AWS_figure_of_merit_pub.csv"
-CONSUMES = ["AWS_Figure_Of_Merit"]
 
 
 def create_datablock():
@@ -49,7 +48,7 @@ class TestAWSFOMPublisher(unittest.TestCase):
             pass
 
     def test_consumes(self):
-        self.assertTrue(self.publisher.consumes() == CONSUMES)
+        self.assertTrue(self.publisher._consumes == {'AWS_Figure_Of_Merit': pd.DataFrame})
 
     def test_transform(self):
         data_block = create_datablock()

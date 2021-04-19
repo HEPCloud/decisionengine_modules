@@ -1,33 +1,39 @@
 import os.path
-import argparse
-import pprint
 import pandas
 import numpy
 import traceback
 
 import logging
+
 from decisionengine.framework.modules import Transform
+from decisionengine.framework.modules.Transform import Parameter
 from decisionengine_modules.glideinwms import glide_frontend_element
 from decisionengine_modules.glideinwms import resource_dist_plugins
 
 
-PRODUCES = ['glideclientglobal_manifests', 'glideclient_manifests']
-
-CONSUMES = [
+_CONSUMES = [
     'factoryglobal_manifests', 'job_manifests', 'job_clusters',
     'Factory_Entries_LCF', 'startd_manifests', 'Factory_Entries_AWS',
     'Grid_Figure_Of_Merit', 'GCE_Figure_Of_Merit', 'AWS_Figure_Of_Merit',
     'Nersc_Figure_Of_Merit',
 ]
 
-SUPPORTED_ENTRY_TYPES = [
+_SUPPORTED_ENTRY_TYPES = [
     'Factory_Entries_LCF', 'Factory_Entries_AWS', 'Factory_Entries_Grid', 'Factory_Entries_GCE'
 ]
 
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
 
-
+@Transform.supports_config(Parameter('accounting_group', type=str, default='CMS'),
+                           Parameter('job_filter', type=str, default='ClusterId > 0'),
+                           Parameter('fe_config_group', type=str, default='CMS'),
+                           Parameter('fom_resource_constraint'),
+                           Parameter('fom_resource_limit'),
+                           Parameter('de_frontend_config', type=str, default='/var/lib/gwms-frontend/vofrontend/de_frontend_config'))
+@Transform.consumes(**dict.fromkeys(_CONSUMES, pandas.DataFrame))
+@Transform.produces(glideclientglobal_manifests=pandas.DataFrame,
+                    glideclient_manifests=pandas.DataFrame)
 class GlideinRequestManifests(Transform.Transform):
 
     def __init__(self, config):
@@ -54,18 +60,6 @@ class GlideinRequestManifests(Transform.Transform):
 
         self.logger = logging.getLogger()
 
-    def consumes(self):
-        """
-        Return list of items consumed
-        """
-        return CONSUMES
-
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return PRODUCES
-
     def transform(self, datablock):
         """
         Make all necessary calculations
@@ -85,14 +79,14 @@ class GlideinRequestManifests(Transform.Transform):
             # Get factory global classad dataframe
             factory_globals = datablock.get('factoryglobal_manifests')
             entries = pandas.DataFrame(pandas.concat(
-                [datablock.get(et) for et in SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True))
+                [datablock.get(et) for et in _SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True))
             if entries.empty:
                 # There are no entries to request resources from
                 self.logger.info(
                     'There are no entries to request resources from')
                 return {
-                    CONSUMES[0]: pandas.DataFrame(),
-                    CONSUMES[1]: pandas.DataFrame()
+                    _CONSUMES[0]: pandas.DataFrame(),
+                    _CONSUMES[1]: pandas.DataFrame()
                 }
 
             # Sanitize 'auto' in GLIDEIN_CPUS and convert it to a valid int
@@ -211,31 +205,6 @@ class GlideinRequestManifests(Transform.Transform):
             limit=self.fom_resource_limit)
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-
-    template = {
-        't_clientglobal_manifests': {
-            'module': 'modules.glideinwms.t_client_global',
-            'name': 'GlideinRequestManifests',
-            'parameters': {
-            }
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
 def sanitize_glidein_cpus(row):
     if str(row['GLIDEIN_CPUS']).lower() == 'auto':
         row['GLIDEIN_CPUS'] = row['GLIDEIN_ESTIMATED_CPUS']
@@ -243,27 +212,4 @@ def sanitize_glidein_cpus(row):
     return row
 
 
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Transform.describe(GlideinRequestManifests)

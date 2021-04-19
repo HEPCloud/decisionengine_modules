@@ -1,4 +1,3 @@
-import pprint
 
 import pandas
 
@@ -42,16 +41,14 @@ valid_output_dict = {
 class TestGCEPricePerformancePublisher:
 
     def test_consumes(self):
-        consumes = ['GCE_Price_Performance']
         pp_pub = GCEPricePerformance_publisher.GCEPricePerformancePublisher(
             config_pp_pub)
-        assert pp_pub.consumes() == consumes
+        assert pp_pub._consumes == {'GCE_Price_Performance': pandas.DataFrame}
 
     def test_graphite_context(self):
         pp_pub = GCEPricePerformance_publisher.GCEPricePerformancePublisher(
             config_pp_pub)
         output = pp_pub.graphite_context(valid_datablock)
-        pprint.pprint(output)
         assert output[0] == "hepcloud.de.gce"
         assert output[1].get(
             "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.price_perf") == 1.49842271293

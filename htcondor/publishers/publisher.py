@@ -7,21 +7,21 @@ import pandas
 import six
 from functools import partial
 from decisionengine.framework.modules import Publisher
+from decisionengine.framework.modules.Publisher import Parameter
 from decisionengine_modules.util.retry_function import retry_wrapper
 
 DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
 
+@Publisher.supports_config(Parameter('condor_config', type=str),
+                           Parameter('x509_user_proxy', type=str),
+                           Parameter('nretries', type=int),
+                           Parameter('retry_interval', type=int, comment="Number of seconds to wait between retries."))
 @six.add_metaclass(abc.ABCMeta)
 class HTCondorManifests(Publisher.Publisher):
 
     def __init__(self, config):
-        if not config:
-            config = {}
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
-
         self.condor_config = config.get('condor_config')
         self.x509_user_proxy = config.get('x509_user_proxy')
         self.nretries = config.get('nretries')
@@ -56,12 +56,12 @@ class HTCondorManifests(Publisher.Publisher):
                     self.logger.error('Error running invalidating %s classads from collector_host %s' % (
                         self.classad_type, collector_host))
 
-    @abc.abstractmethod
-    def consumes(self):
-        """
-        Return list of items consumed
-        """
-        return None
+    @classmethod
+    def consumes_dataframes(cls, *product_names):
+        def decorator(cls):
+            cls._consumes = dict.fromkeys(product_names, pandas.DataFrame)
+            return cls
+        return decorator
 
     def _condor_advertise(self, classads, collector_host=None,
                           update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
@@ -121,7 +121,7 @@ class HTCondorManifests(Publisher.Publisher):
 
         :type datablock: :obj:`DataBlock`
         """
-        for key in self.consumes():
+        for key in self._consumes:
             dataframe = datablock.get(key)
             self.publish_to_htcondor(key, dataframe)
             self.create_invalidate_constraint(dataframe)

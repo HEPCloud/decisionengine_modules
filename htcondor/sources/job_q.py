@@ -1,15 +1,19 @@
-import argparse
 import logging
 import pandas
-import pprint
 import traceback
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.htcondor import htcondor_query
 
-PRODUCES = ['job_manifests']
 
-
+@Source.supports_config(Parameter('collector_host', type=str),
+                        Parameter('schedds', default=[None]),
+                        Parameter('condor_config', type=str),
+                        Parameter('constraint', default=True),
+                        Parameter('classad_attrs', type=list),
+                        Parameter('correction_map', type=dict))
+@Source.produces(job_manifests=pandas.DataFrame)
 class JobQ(Source.Source):
 
     def __init__(self, config):
@@ -20,24 +24,13 @@ class JobQ(Source.Source):
         """
         super().__init__(config)
 
-        if not self.parameters:
-            self.parameters = {}
-        if not isinstance(self.parameters, dict):
-            raise RuntimeError('parameters for module config should be a dict')
-
-        self.collector_host = self.parameters.get('collector_host')
-        self.schedds = self.parameters.get('schedds', [None])
-        self.condor_config = self.parameters.get('condor_config')
-        self.constraint = self.parameters.get('constraint', True)
-        self.classad_attrs = self.parameters.get('classad_attrs')
+        self.collector_host = config.get('collector_host')
+        self.schedds = config.get('schedds', [None])
+        self.condor_config = config.get('condor_config')
+        self.constraint = config.get('constraint', True)
+        self.classad_attrs = config.get('classad_attrs')
         self.logger = logging.getLogger()
-        self.correction_map = self.parameters.get('correction_map')
-
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return PRODUCES
+        self.correction_map = config.get('correction_map')
 
     def acquire(self):
         """
@@ -79,57 +72,4 @@ class JobQ(Source.Source):
         return {'job_manifests': dataframe}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-
-    template = {
-        'job_manifests': {
-            'module': 'modules.htcondor.s_job_q',
-            'name': 'JobQ',
-            'parameters': {
-                'collector_host': 'factory_collector.com',
-                'schedds': ['job_schedd1', 'job_schedd2'],
-                'condor_config': '/path/to/condor_config',
-                'constraints': 'HTCondor job query constraints',
-                'classad_attrs': '[]',
-            }
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Source.describe(JobQ)

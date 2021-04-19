@@ -1271,8 +1271,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
     """
 
     def __init__(self, fe_group, acct_group, fe_cfg):
-        super().__init__(fe_group,
-                                                      acct_group, fe_cfg)
+        super().__init__(fe_group, acct_group, fe_cfg)
         # Sum of all the glidein requests from different job filters
         self.total_glidein_requests = {}
 

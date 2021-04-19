@@ -10,7 +10,6 @@ OUTPUT_FILE = "AWS_price_perf_pub.csv"
 
 EXPECTED_REPLY = pd.read_csv(os.path.join(DATA_DIR,
                                           "expected_AWS_price_perf_pub.csv"))
-CONSUMES = ["AWS_Price_Performance"]
 
 
 def create_datablock():
@@ -36,7 +35,7 @@ class TestAWSPPPublisher(unittest.TestCase):
             pass
 
     def test_consumes(self):
-        self.assertTrue(self.publisher.consumes() == CONSUMES)
+        self.assertTrue(self.publisher._consumes == {'AWS_Price_Performance': pd.DataFrame})
 
     def test_transform(self):
         data_block = create_datablock()

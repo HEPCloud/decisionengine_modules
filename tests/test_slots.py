@@ -1,4 +1,5 @@
 import os
+import pandas
 import pprint
 
 import mock
@@ -19,9 +20,8 @@ CONFIG = {
 class TestStartdManifests:
 
     def test_produces(self):
-        produces = ['startd_manifests']
         s = slots.StartdManifests(CONFIG)
-        assert(s.produces() == produces)
+        assert s._produces == {'startd_manifests': pandas.DataFrame}
 
     def test_acquire(self):
         s = slots.StartdManifests(CONFIG)

@@ -1,9 +1,7 @@
 """
 Get GCE occupancies
 """
-import argparse
 import os
-import pprint
 import pandas as pd
 
 import google.auth
@@ -15,14 +13,17 @@ import oauth2client
 from packaging import version
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.util.retry_function import retry_wrapper
-
-PRODUCES = ["GCE_Occupancy"]
 
 _MAX_RETRIES = 10
 _RETRY_TIMEOUT = 10
 
 
+@Source.supports_config(Parameter('credential', type=str, comment="file that stores credentials in JSON"),
+                        Parameter('max_retries', default=_MAX_RETRIES),
+                        Parameter('retry_timeout', default=_RETRY_TIMEOUT))
+@Source.produces(GCE_Occupancy=pd.DataFrame)
 class GceOccupancy(Source.Source):
 
     def __init__(self, config):
@@ -36,9 +37,6 @@ class GceOccupancy(Source.Source):
             cache_discovery=use_cache)
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
-
-    def produces(self, name_schema_id_list=None):
-        return PRODUCES
 
     def _get_client(self):
         return self.client
@@ -71,55 +69,7 @@ class GceOccupancy(Source.Source):
             request = self._get_client().instances().aggregatedList_next(previous_request=request,
                                                                          previous_response=response)
         df = pd.DataFrame(d.values())
-        return {PRODUCES[0]: df}
+        return {'GCE_Occupancy': df}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-    template = {
-        'gce_occupancy': {
-            'module': 'decisionengine_modules.GCE.sources.GceOccupancy',
-            'name': 'GceOccupancy',
-            'parameters': {
-                'credential': '/etc/gwms-frontend/credentials/monitoring.json',
-                'max_retries': 10,
-                'retry_timeout': 10,
-            }
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Source.describe(GceOccupancy)

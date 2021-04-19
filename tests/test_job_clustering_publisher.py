@@ -48,9 +48,8 @@ valid_output_dict = {"VO_Name=='cms'_and_RequestCpus==1_and_(MaxWallTimeMins>0_a
 class TestJobClusteringPublisher:
 
     def test_consumes(self):
-        consumes = ['job_clusters']
         pub = job_clustering_publisher.JobClusteringPublisher(config_pub)
-        assert pub.consumes() == consumes
+        assert pub._consumes == {'job_clusters': pandas.DataFrame}
 
     def test_graphite_context(self):
         pub = job_clustering_publisher.JobClusteringPublisher(config_pub)

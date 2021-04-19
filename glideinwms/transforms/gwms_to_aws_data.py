@@ -1,13 +1,6 @@
-
-import argparse
-import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Transform
-
-PRODUCES = ['aws_instance_limits', 'spot_occupancy_config']
-
-CONSUMES = ['Factory_Entries_AWS']
 
 _ATTR_TRANSLATION_MAP = {
     'GLIDEIN_Supported_VOs': 'AWSProfile',
@@ -16,25 +9,15 @@ _ATTR_TRANSLATION_MAP = {
     'GlideinConfigPerEntryMaxGlideins': 'MaxLimit',
 }
 
-
+@Transform.consumes(Factory_Entries_AWS=pd.DataFrame)
+@Transform.produces(aws_instance_limits=pd.DataFrame,
+                    spot_occupancy_config=pd.DataFrame)
 class AWSFactoryEntryData(Transform.Transform):
-
-    def consumes(self):
-        """
-        Return list of items consumed
-        """
-        return CONSUMES
-
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return PRODUCES
 
     def transform(self, datablock):
 
         # Get the dataframe containing AWS entries
-        aws_entries = datablock.get(CONSUMES[0])
+        aws_entries = self.Factory_Entries_AWS(datablock)
 
         limits_df = pd.DataFrame()
         so_config_dict = {}
@@ -76,51 +59,4 @@ class AWSFactoryEntryData(Transform.Transform):
                 'spot_occupancy_config': pd.DataFrame.from_dict(so_config_dict)}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-
-    template = {
-        'gwms_to_aws_data': {
-            'module': 'modules.glideinwms.t_gwms_to_aws_config',
-            'name': 'AWSFactoryEntryData',
-            'parameters': '{}',
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Transform.describe(AWSFactoryEntryData)

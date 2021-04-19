@@ -1,17 +1,19 @@
-import argparse
-import pprint
 import pandas
 
 import logging
+from decisionengine.framework.modules import Publisher
 from decisionengine_modules.htcondor.publishers import publisher
+
+# FIXME: Awkward entanglements between subclass and base class.
 
 # TODO: Enable publishing of glideresource_manifests
 #'glideclient_manifests', 'glideresource_manifests',
-CONSUMES = [
+_CONSUMES = [
     'glideclient_manifests', 'Factory_Entries_Grid', 'Factory_Entries_AWS', 'Factory_Entries_GCE', 'Factory_Entries_LCF'
 ]
+_CONSUMES_DICT = dict.fromkeys(_CONSUMES, pandas.DataFrame)
 
-
+@Publisher.consumes(**_CONSUMES_DICT)
 class GlideinWMSManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
@@ -24,12 +26,6 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
             'allow_lcf_requests': 'Factory_Entries_LCF'
         }
         self.classad_type = 'glideclient'
-
-    def consumes(self):
-        """
-        Return list of items produced
-        """
-        return CONSUMES
 
     def publish(self, datablock):
         requests_df = datablock.get('glideclient_manifests')
@@ -80,53 +76,4 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                     self.invalidate_ads_constraint[collector_host] = constraint
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-
-    template = {
-        'glideinwms_manifests': {
-            'module': 'decisionengine_modules.glideinwms.publishers.fe_group_classads',
-            'name': 'GlideinWMSManifests',
-            'parameters': {
-                'condor_config': '/path/to/condor_config',
-            }
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('consumes %s' % CONSUMES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Publisher.describe(GlideinWMSManifests)

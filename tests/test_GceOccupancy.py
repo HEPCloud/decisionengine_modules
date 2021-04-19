@@ -6,6 +6,7 @@ import mock
 import pandas as pd
 
 from decisionengine_modules.GCE.sources import GceOccupancy
+from decisionengine.framework.modules.Module import verify_products
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CSV_FILE = os.path.join(DATA_DIR, "GceOccupancy.output.fixture.csv")
@@ -16,7 +17,7 @@ CONFIG = {
     "credential": os.path.join(DATA_DIR, "monitoring.json")
 }
 
-PRODUCES = ["GCE_Occupancy"]
+_PRODUCES = {"GCE_Occupancy": pd.DataFrame}
 
 
 class MockRequest:
@@ -50,7 +51,7 @@ class TestGceOccupancy:
             with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
                 client.return_value = MockClient()
                 occupancy = GceOccupancy.GceOccupancy(CONFIG)
-                assert occupancy.produces() == PRODUCES
+                assert occupancy._produces == _PRODUCES
 
     def test_acquire(self):
         with mock.patch.object(google.auth, "default") as default:
@@ -59,5 +60,5 @@ class TestGceOccupancy:
                 client.return_value = MockClient()
                 occupancy = GceOccupancy.GceOccupancy(CONFIG)
                 res = occupancy.acquire()
-                assert PRODUCES == list(res.keys())
-                assert EXPECTED_DF.equals(res.get(PRODUCES[0]))
+                verify_products(occupancy, res)
+                assert EXPECTED_DF.equals(res.get('GCE_Occupancy'))

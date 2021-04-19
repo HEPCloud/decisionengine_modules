@@ -3,7 +3,9 @@ Generic AWS publisher
 
 """
 import abc
+import pandas
 import six
+
 from decisionengine.framework.modules import Publisher
 import decisionengine_modules.graphite_client as graphite
 
@@ -15,19 +17,22 @@ DEFAULT_GRAPHITE_CONTEXT = ""
 @six.add_metaclass(abc.ABCMeta)
 class AWSGenericPublisher(Publisher.Publisher):
 
-    def __init__(self, *args, **kwargs):
-        self.graphite_host = args[0].get(
+    def __init__(self, config):
+        self.graphite_host = config.get(
             'graphite_host', DEFAULT_GRAPHITE_HOST)
-        self.graphite_port = args[0].get(
+        self.graphite_port = config.get(
             'graphite_port', DEFAULT_GRAPHITE_PORT)
-        self.graphite_context_header = args[0].get(
+        self.graphite_context_header = config.get(
             'graphite_context', DEFAULT_GRAPHITE_CONTEXT)
-        self.publush_to_graphite = args[0].get('publish_to_graphite')
-        self.output_file = args[0].get('output_file')
+        self.publish_to_graphite = config.get('publish_to_graphite')
+        self.output_file = config.get('output_file')
 
-    @abc.abstractmethod
-    def consumes(self):  # this must be implemented by the inherited class
-        return None
+    @classmethod
+    def consumes_dataframe(cls, product_name):
+        def decorator(cls):
+            cls._consumes = {product_name: pandas.DataFrame}
+            return cls
+        return decorator
 
     @abc.abstractmethod
     # this must be implemented by the inherited class
@@ -42,14 +47,16 @@ class AWSGenericPublisher(Publisher.Publisher):
         :arg data_block: data block
 
         """
-        if not self.consumes():
+        if not self._consumes:
             return
-        data = data_block[self.consumes()[0]]
-        if self.graphite_host and self.publush_to_graphite:
-            end_point = graphite.Graphite(
-                host=self.graphite_host, pickle_port=self.graphite_port)
-            end_point.send_dict(self.graphite_context(data)[0], self.graphite_context(
-                data)[1], debug_print=False, send_data=True)
+        data = data_block[list(self._consumes.keys())[0]]
+        if self.graphite_host and self.publish_to_graphite:
+            end_point = graphite.Graphite(host=self.graphite_host,
+                                          pickle_port=self.graphite_port)
+            end_point.send_dict(self.graphite_context(data)[0],
+                                self.graphite_context(data)[1],
+                                debug_print=False,
+                                send_data=True)
         csv_data = data.to_csv(self.output_file, index=False)
         if not self.output_file:
             print(csv_data)
