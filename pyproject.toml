@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
-minversion = "6.0"
+minversion = "6.2"
 addopts = "-l -v --durations=0"
 testpaths = '.'
 flake8-max-line-length = "120"

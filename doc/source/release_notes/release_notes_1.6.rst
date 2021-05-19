@@ -1,3 +1,19 @@
+Release 1.6.2
+-------------
+
+Patch level (bug fix) release.
+
+Fixed imports and a typo. Released to have the same version number of the framework.
+
+
+
+Full list of commits since version 1.6.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`9a9f99d <https://github.com/HEPCloud/decisionengine/commit/9a9f99d592e18594e56795999f617cadd861a9b9>`_:   Fix import (#321)
+
+`d502bf1 <https://github.com/HEPCloud/decisionengine/commit/d502bf1c269636fa90ab78a61644e07441646ceb>`_:   fix typo
+
 Release 1.6.0
 -------------
 
