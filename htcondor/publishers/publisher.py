@@ -4,7 +4,6 @@ import htcondor
 import logging
 import os
 import pandas
-import six
 from functools import partial
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.modules.Publisher import Parameter
@@ -18,8 +17,7 @@ DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
                            Parameter('x509_user_proxy', type=str),
                            Parameter('nretries', type=int),
                            Parameter('retry_interval', type=int, comment="Number of seconds to wait between retries."))
-@six.add_metaclass(abc.ABCMeta)
-class HTCondorManifests(Publisher.Publisher):
+class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
         self.condor_config = config.get('condor_config')

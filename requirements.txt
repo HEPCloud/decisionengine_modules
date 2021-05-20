@@ -7,7 +7,6 @@ gcs-oauth2-boto-plugin >= 2.7
 numpy >= 1.19
 packaging >= 20.9
 pandas >= 1.1.5
-six >= 1.13.0
 htcondor >= 8.9.11
 
 # not in pypi

@@ -4,7 +4,6 @@ Generic AWS publisher
 """
 import abc
 import pandas
-import six
 
 from decisionengine.framework.modules import Publisher
 import decisionengine_modules.graphite_client as graphite
@@ -14,8 +13,7 @@ DEFAULT_GRAPHITE_PORT = 2004
 DEFAULT_GRAPHITE_CONTEXT = ""
 
 
-@six.add_metaclass(abc.ABCMeta)
-class AWSGenericPublisher(Publisher.Publisher):
+class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
         self.graphite_host = config.get(

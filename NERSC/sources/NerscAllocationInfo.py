@@ -86,13 +86,4 @@ class NerscAllocationInfo(Source.Source):
         return {'Nersc_Allocation_Info': pd.DataFrame(self.send_query())}
 
 
-#    elif args.acquire_with_config:
-#        from ast import literal_eval
-#        with open(args.acquire_with_config, 'r') as f:
-#            config_string = "".join(f.readlines())
-#            config = literal_eval(config_string)
-#        n = NerscAllocationInfo(config['sources']['NerscAllocationInfo']
-#                                ['parameters'])
-#        print(n.acquire())
-
 Source.describe(NerscAllocationInfo)

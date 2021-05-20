@@ -8,7 +8,7 @@ import logging
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 from decisionengine_modules.glideinwms import glide_frontend_element
-from decisionengine_modules.glideinwms import resource_dist_plugins
+from decisionengine_modules.glideinwms.resource_dist_plugins import fom_eligible_resources
 
 
 _CONSUMES = [
@@ -37,11 +37,6 @@ _SUPPORTED_ENTRY_TYPES = [
 class GlideinRequestManifests(Transform.Transform):
 
     def __init__(self, config):
-        if not config:
-            config = {}
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
-
         super().__init__(config)
 
         # VO to which this transform should be applied
@@ -81,13 +76,9 @@ class GlideinRequestManifests(Transform.Transform):
             entries = pandas.DataFrame(pandas.concat(
                 [datablock.get(et) for et in _SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True))
             if entries.empty:
-                # There are no entries to request resources from
-                self.logger.info(
-                    'There are no entries to request resources from')
-                return {
-                    _CONSUMES[0]: pandas.DataFrame(),
-                    _CONSUMES[1]: pandas.DataFrame()
-                }
+                self.logger.info('There are no entries to request resources from')
+                return dict.fromkeys(
+                    ['glideclientglobal_manifests', 'glideclient_manifests'], pandas.DataFrame())
 
             # Sanitize 'auto' in GLIDEIN_CPUS and convert it to a valid int
             entries = self.sanitize_entries(entries)
@@ -95,21 +86,23 @@ class GlideinRequestManifests(Transform.Transform):
             # TODO: This will be influenced once we can configure different
             #       resource selection plugins. Currently supports FOM only.
             foms = {
-                'Grid_Figure_Of_Merit': datablock.get('Grid_Figure_Of_Merit'),
-                'GCE_Figure_Of_Merit': datablock.get('GCE_Figure_Of_Merit'),
-                'AWS_Figure_Of_Merit': datablock.get('AWS_Figure_Of_Merit'),
-                'Nersc_Figure_Of_Merit': datablock.get('Nersc_Figure_Of_Merit')
+                'Grid_Figure_Of_Merit': self.Grid_Figure_Of_Merit(),
+                'GCE_Figure_Of_Merit': self.GCE_Figure_Of_Merit(),
+                'AWS_Figure_Of_Merit': self.AWS_Figure_Of_Merit(),
+                'Nersc_Figure_Of_Merit': self.Nersc_Figure_Of_Merit()
             }
-            fom_entries = self.shortlist_entries(foms)
+            fom_entries = fom_eligible_resources(foms,
+                                                 constraint=self.fom_resource_constraint,
+                                                 limit=self.fom_resource_limit)
             self.logger.debug('Figure of Merits')
             self.logger.debug(fom_entries)
 
             # Get the jobs dataframe
-            jobs_df = datablock.get('job_manifests')
+            jobs_df = self.job_manifests()
             # Get the job clusters dataframe
-            job_clusters_df = datablock.get('job_clusters')
+            job_clusters_df = self.job_clusters()
             # Get HTCondor slots dataframe
-            slots_df = datablock.get('startd_manifests')
+            slots_df = self.startd_manifests()
 
             # self.logger.info(job_clusters_df)
             for index, row in job_clusters_df.iterrows():
@@ -197,12 +190,6 @@ class GlideinRequestManifests(Transform.Transform):
             raise ValueError('Frontend config for DE in %s is invalid' %
                              self.de_frontend_configfile)
         return fe_cfg
-
-    def shortlist_entries(self, foms):
-        fom_plugin = resource_dist_plugins.FOMOrderPlugin(foms)
-        return fom_plugin.eligible_resources(
-            constraint=self.fom_resource_constraint,
-            limit=self.fom_resource_limit)
 
 
 def sanitize_glidein_cpus(row):

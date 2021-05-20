@@ -3,7 +3,6 @@ import abc
 import htcondor
 import logging
 import os
-import six
 import sys
 
 logger = logging.getLogger()
@@ -18,8 +17,7 @@ class QueryError(RuntimeError):
         RuntimeError.__init__(self, err_str)
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Query:
+class Query(metaclass=abc.ABCMeta):
     """
     Pure virtual class to have a minimum set of methods defined
     """

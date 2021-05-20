@@ -24,7 +24,7 @@ resources = {
 }
 
 
-class TestFOMOrderPlugin():
+class TestFOMOrderPlugin:
 
     def test_order_resources(self):
         test_df = pandas.DataFrame({
@@ -37,8 +37,8 @@ class TestFOMOrderPlugin():
                 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10]
         })
 
-        fom_plugin = resource_dist_plugins.FOMOrderPlugin(resources)
-        assert(test_df.equals(fom_plugin._ordered_resources))
+        ordered_resources = resource_dist_plugins.order_resources(resources)
+        assert test_df.equals(ordered_resources)
 
     def test_eligible_resources(self):
         test_df = pandas.DataFrame({
@@ -51,10 +51,8 @@ class TestFOMOrderPlugin():
                 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10]
         })
 
-        fom_plugin = resource_dist_plugins.FOMOrderPlugin(resources)
-
-        # all resources are returned correctly
-        assert(test_df.equals(fom_plugin.eligible_resources()))
+        eligible_resources = resource_dist_plugins.fom_eligible_resources(resources)
+        assert test_df.equals(eligible_resources)
 
     def test_eligible_resources_with_constraints(self):
         test_df = pandas.DataFrame({
@@ -65,11 +63,9 @@ class TestFOMOrderPlugin():
                 0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05,
                 0.10, 0.10, 0.10, 0.15, 0.30]
         })
-        fom_plugin = resource_dist_plugins.FOMOrderPlugin(resources)
-        # constraint works correctly
-        fom_df = fom_plugin.eligible_resources(
-            constraint='FOM < 1').reset_index(drop=True)
-        assert(test_df.equals(fom_df))
+        fom_df = resource_dist_plugins.fom_eligible_resources(
+            resources, constraint='FOM < 1').reset_index(drop=True)
+        assert test_df.equals(fom_df)
 
     def test_eligible_resources_with_constraints_limit(self):
         test_df = pandas.DataFrame({
@@ -79,8 +75,6 @@ class TestFOMOrderPlugin():
                 0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10
             ]
         })
-        fom_plugin = resource_dist_plugins.FOMOrderPlugin(resources)
-        # constraint works correctly
-        fom_df = fom_plugin.eligible_resources(
-            constraint='FOM < 1', limit=8).reset_index(drop=True)
-        assert(test_df.equals(fom_df))
+        fom_df = resource_dist_plugins.fom_eligible_resources(
+            resources, constraint='FOM < 1', limit=8).reset_index(drop=True)
+        assert test_df.equals(fom_df)

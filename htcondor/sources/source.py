@@ -1,4 +1,3 @@
-import six
 import abc
 import traceback
 import pandas
@@ -16,8 +15,7 @@ from decisionengine_modules.htcondor import htcondor_query
                         Parameter('group_attr', default=['Name']),
                         Parameter('subsystem_name', type=str),
                         Parameter('correction_map', default={}))
-@six.add_metaclass(abc.ABCMeta)
-class ResourceManifests(Source.Source):
+class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
         """
