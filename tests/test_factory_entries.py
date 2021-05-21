@@ -1,4 +1,5 @@
 import os
+import pandas
 import pprint
 import time
 
@@ -45,11 +46,10 @@ class TestFactoryEntries:
 
     def test_produces(self):
         entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-        produces = [
-            'Factory_Entries_Grid', 'Factory_Entries_AWS',
-            'Factory_Entries_GCE', 'Factory_Entries_LCF'
-        ]
-        assert(entries.produces() == produces)
+        produces = dict.fromkeys(['Factory_Entries_Grid', 'Factory_Entries_AWS',
+                                  'Factory_Entries_GCE', 'Factory_Entries_LCF'],
+                                 pandas.DataFrame)
+        assert(entries._produces == produces)
 
     def test_acquire(self):
         entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)

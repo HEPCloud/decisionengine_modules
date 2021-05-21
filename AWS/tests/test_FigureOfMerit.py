@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 
+from decisionengine.framework.modules.Module import verify_products
 import decisionengine_modules.AWS.transforms.FigureOfMerit as FigureOfMerit
 
 
@@ -10,11 +11,13 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 expected_reply = {'AWS_Figure_Of_Merit': pd.read_csv(os.path.join(DATA_DIR, 'expected_figure_of_merit.csv')),
                   'AWS_Price_Performance': pd.read_csv(os.path.join(DATA_DIR, 'expected_price_performance.csv'))
                   }
-consumes = ['provisioner_resource_spot_prices',
-            'Performance_Data',
-            'Job_Limits', 'AWS_Occupancy']
+consumes = dict.fromkeys(['provisioner_resource_spot_prices',
+                          'Performance_Data',
+                          'Job_Limits',
+                          'AWS_Occupancy'],
+                         pd.DataFrame)
 
-produces = ['AWS_Price_Performance', 'AWS_Figure_Of_Merit']
+produces = dict.fromkeys(['AWS_Price_Performance', 'AWS_Figure_Of_Merit'], pd.DataFrame)
 
 
 def create_datablock():
@@ -41,19 +44,17 @@ class TestFigureOfMerit:
 
     def test_consumes(self):
         fom = FigureOfMerit.FigureOfMerit(create_datablock())
-        assert fom.consumes() == consumes
+        assert fom._consumes == consumes
 
     def test_produces(self):
         fom = FigureOfMerit.FigureOfMerit(create_datablock())
-        assert fom.produces() == produces
+        assert fom._produces == produces
 
     def test_transform(self):
         data_block = create_datablock()
         fom = FigureOfMerit.FigureOfMerit(data_block)
         res = fom.transform(data_block)
-        r_keys = list(res.keys()).sort()
-        p_keys = produces.sort()
-        assert p_keys == r_keys
+        verify_products(fom, res)
         for k in expected_reply.keys():
             if k == 'AWS_Price_Performance':
                 df = fix_column(res[k], 'AWS_Price_Performance')

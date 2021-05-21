@@ -2,6 +2,7 @@ import os
 
 import mock
 import pandas
+import typing
 
 import decisionengine.framework.config.ChannelConfigHandler as configmanager
 import decisionengine.framework.dataspace.dataspace as dataspace
@@ -29,14 +30,14 @@ CONFIG = {
                           "GlideinConfigPerFrontendMaxIdle"]
 }
 
-PRODUCES = ["GCE_Resource_Limits"]
+_PRODUCES = {"GCE_Resource_Limits": typing.Any}
 
 
 def test_produces():
     with mock.patch.object(configmanager, "ChannelConfigHandler"), \
          mock.patch.object(dataspace, "DataSpace"):
         gce_resource_limits = GCEResourceLimits.GCEResourceLimits(CONFIG)
-        assert gce_resource_limits.produces() == PRODUCES
+        assert gce_resource_limits._produces == _PRODUCES
 
 def test_acquire():
     with mock.patch.object(configmanager, "ChannelConfigHandler"), \
@@ -46,5 +47,5 @@ def test_acquire():
         factory_entries = utils.input_from_file(FIXTURE_FILE)
         factory_data.return_value = {"Factory_Entries_GCE": pandas.DataFrame(factory_entries)}
         gce_limits = gce_resource_limits.acquire()
-        assert PRODUCES == list(gce_limits.keys())
-        assert CONFIG.get("entry_limit_attrs").sort() == list(gce_limits.get(PRODUCES[0])).sort()
+        assert _PRODUCES.keys() == gce_limits.keys()
+        assert CONFIG.get("entry_limit_attrs").sort() == list(gce_limits.get('GCE_Resource_Limits')).sort()

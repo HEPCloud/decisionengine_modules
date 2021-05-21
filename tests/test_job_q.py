@@ -1,4 +1,5 @@
 import os
+import pandas
 import pprint
 
 import mock
@@ -21,9 +22,8 @@ CONFIG_CQ = {
 class TestJobQ:
 
     def test_produces(self):
-        produces = ["job_manifests"]
         jq = job_q.JobQ(CONFIG_CQ)
-        assert(jq.produces() == produces)
+        assert jq._produces == {'job_manifests': pandas.DataFrame}
 
     def test_condorq(self):
         jq = job_q.JobQ(CONFIG_CQ)

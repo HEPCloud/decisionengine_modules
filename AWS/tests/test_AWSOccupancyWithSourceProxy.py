@@ -22,10 +22,10 @@ account = {'spot_occupancy_config': pd.read_csv(
 expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
                                               'AWSOcupancyWithSourceProxy_expected_acquire.csv'))
 
-produces = ['AWS_Occupancy']
+produces = {'AWS_Occupancy': pd.DataFrame}
 
 
-class SessionMock(object):
+class SessionMock:
     def resource(self, service=None, region_name=None):
         return None
 
@@ -34,7 +34,7 @@ class TestAWSOccupancyWithSourceProxy:
     def test_produces(self):
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
             aws_occ = Occupancy.AWSOccupancy(config)
-            assert (aws_occ.produces() == produces)
+            assert aws_occ._produces == produces
 
     def test_acquire(self):
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
@@ -48,10 +48,10 @@ class TestAWSOccupancyWithSourceProxy:
                                                                  'occupancy.fixture'))
                         get_instances.return_value = cap
                         res = aws_occ.acquire()
-                        assert produces == list(res.keys())
+                        assert produces.keys() == res.keys()
                         df1 = expected_pandas_df.sort_values(
                             ['AvailabilityZone', 'InstanceType'])
-                        new_df = res.get(produces[0]).sort_values(
+                        new_df = res.get('AWS_Occupancy').sort_values(
                             ['AvailabilityZone', 'InstanceType'])
                         new_df = new_df.reindex(df1.columns, axis=1)
                         new_df = new_df.set_index(df1.index)

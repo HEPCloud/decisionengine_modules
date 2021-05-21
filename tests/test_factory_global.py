@@ -1,4 +1,5 @@
 import os
+import pandas
 import pprint
 import time
 
@@ -45,8 +46,7 @@ class TestFactoryGlobalManifests:
 
     def test_produces(self):
         fg = factory_global.FactoryGlobalManifests(CONFIG)
-        produces = ['factoryglobal_manifests']
-        assert(fg.produces() == produces)
+        assert fg._produces == {'factoryglobal_manifests': pandas.DataFrame}
 
     def test_acquire(self):
         fg = factory_global.FactoryGlobalManifests(CONFIG)

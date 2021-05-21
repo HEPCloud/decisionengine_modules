@@ -1,18 +1,27 @@
-import argparse
 from functools import partial
 import logging
-import pprint
 
 import pandas
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.util.retry_function import retry_wrapper
 
 
-PRODUCES = ['factoryglobal_manifests']
+@Source.supports_config(Parameter('condor_config', type=str),
+                        Parameter('factories', default=[],
+                                  comment="""Supported entries are of the form:
 
-
+  {
+     'collector_host': 'factory_collector-2.com',
+     'classad_attrs': [],
+     'constraints': 'HTCondor classad query constraints'
+  }
+"""),
+                        Parameter('nretries', default=0),
+                        Parameter('retry_interval', default=0))
+@Source.produces(factoryglobal_manifests=pandas.DataFrame)
 class FactoryGlobalManifests(Source.Source):
 
     def __init__(self, config):
@@ -31,12 +40,6 @@ class FactoryGlobalManifests(Source.Source):
 
         self.subsystem_name = 'any'
         self.logger = logging.getLogger()
-
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return PRODUCES
 
     def acquire(self):
         """
@@ -85,70 +88,7 @@ class FactoryGlobalManifests(Source.Source):
                                       'collector host(s) '"{}"''.format(
                                           collector_host))
 
-        return {PRODUCES[0]: dataframe}
+        return {'factoryglobal_manifests': dataframe}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-
-    template = {
-        'factoryglobal_manifests': {
-            'module': 'decisionengine_modules.glideinwms.sources.factory_client',
-            'name': 'FactoryGlobalManifests',
-            'parameters': {
-                'condor_config': '/path/to/condor_config',
-                'nretries': 10,
-                'retry_interval': 2,
-                'factories': [
-                    {
-                        'collector_host': 'factory_collector.com',
-                        'classad_attrs': []
-                    },
-                    {
-                        'collector_host': 'factory_collector-2.com',
-                        'classad_attrs': [],
-                        'constraints': 'HTCondor classad query constraints',
-                    },
-                ],
-            },
-            'schedule': 120,
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Source.describe(FactoryGlobalManifests)

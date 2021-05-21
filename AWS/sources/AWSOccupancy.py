@@ -2,20 +2,19 @@
 Get AWS capacity (running instances) information.
 """
 import boto3
-import os
-import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
+
 import logging
 import decisionengine_modules.load_config as load_config
 
 # default values
 REGION = 'us-west-2'
-PRODUCES = ['AWS_Occupancy']
 
 
-class OccupancyData(object):
+class OccupancyData:
     """
     Occupancy data element
     """
@@ -42,7 +41,7 @@ class OccupancyData(object):
         return -1
 
 
-class OccupancyForRegion(object):
+class OccupancyForRegion:
     """
     AWS capacity data and metods
     """
@@ -126,14 +125,24 @@ class OccupancyForRegion(object):
   '''
 
 
+@Source.supports_config(Parameter('occupancy_configuration',
+                                  type=str,
+                                  comment='''Python file containing (dynamic) account configuration.  The format of the file is
+
+  {
+    "ProfileName1": ["RegionName1"],
+    "ProfileName2": ["RegionName2", RegionName3"]
+    ...
+  }
+
+where the keys ("ProfileName*") are the name of an account profile (e.g. "hepcloud-rnd"
+and the entries in the lists (e.g. "RegionName1") are the name of a region (eg. "us-west-2").
+'''))
+@Source.produces(AWS_Occupancy=pd.DataFrame)
 class AWSOccupancy(Source.Source):
     def __init__(self, configdict):
         self.config_file = configdict['occupancy_configuration']
-        self.account_dict = {}
         self.logger = logging.getLogger()
-
-    def produces(self, schema_id_list):
-        return PRODUCES
 
     def acquire(self):
         """
@@ -143,13 +152,13 @@ class AWSOccupancy(Source.Source):
         :arg spot_price_history: list of spotprice data (:class:`SpotPriceData`)
         """
 
-        # Load kown accounts configuration
+        # Load known accounts configuration
         # account configuration is dynamic
-        self.account_dict = load_config.load(self.config_file, 5, 20)
+        account_dict = load_config.load(self.config_file, 5, 20)
         occupancy_data = []
         self.logger.debug('account_dict %s' % (self.account_dict,))
-        for account in self.account_dict:
-            for region in self.account_dict[account]:
+        for account in account_dict:
+            for region in account_dict[account]:
                 occcupancy = OccupancyForRegion(region, profile_name=account)
                 instances = occcupancy.get_ec2_instances()
                 if instances:
@@ -158,75 +167,8 @@ class AWSOccupancy(Source.Source):
                         occupancy_data += data
 
         oc_list = [i.data for i in occupancy_data]
-        return {PRODUCES[0]: pd.DataFrame(oc_list)}
+        return {'AWS_Occupancy': pd.DataFrame(oc_list)}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    d = {"AWSOccupancy": {
-        "module": "modules.AWS.sources.AWSOccupancy",
-        "name": "AWSSpotOccupancy",
-        "parameters": {
-            "occupancy_configuration": "%s/de_config/AWS_occupancy_config.py" % (os.environ.get('HOME'),),
-        },
-        "schedule": 60 * 60,
-    }
-    }
-
-    config = {"ProfileName1":
-              ["RegionName1"],
-              }
-
-    print("Entry in channel cofiguration")
-    pprint.pprint(d)
-    print("where")
-    print("\t name - name of the class to be instantiated by task manager")
-    print("\t spot_price_configuration - configuration required to get AWS spot price information")
-    print("\t Example:")
-    print("-------------")
-    pprint.pprint(config)
-    print("where")
-    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
-    print("\t RegionName1 - name of region (example: us-west-2)")
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    """
-    Call this a a test unit or use as CLI of this module
-    """
-    import argparse
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--configtemplate',
-                        action='store_true',
-                        help='prints the expected module configuration')
-
-    parser.add_argument('--configinfo',
-                        action='store_true',
-                        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        occupancy = AWSOccupancy(
-            {'occupancy_configuration': 'occupancy_config_sample.py'})
-        rc = occupancy.acquire()
-        print("INFO")
-        print(rc)
-
-
-if __name__ == "__main__":
-    main()
+Source.describe(AWSOccupancy,
+                sample_config={'occupancy_configuration': 'occupancy_config_sample.py'})

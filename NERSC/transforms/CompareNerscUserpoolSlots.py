@@ -1,16 +1,20 @@
 """
 Compare slots on Nersc and startd
 """
-import argparse
-import pprint
+import pandas
 import logging
 
 from decisionengine.framework.modules import Transform
-
-CONSUMES = ['startd_manifests', 'Factory_Entries_LCF', 'Nersc_Job_Info']
-PRODUCES = ['nersc_userpool_slots_comparison']
+from decisionengine.framework.modules.Transform import Parameter
 
 
+@Transform.supports_config(Parameter('entry_nersc_map',
+                                     type=dict,
+                                     comment="Maps jobs on NERSC to entry name"))
+@Transform.consumes(startd_manifests=pandas.DataFrame,
+                    Factory_Entries_LCF=pandas.DataFrame,
+                    Nersc_Job_Info=pandas.DataFrame)
+@Transform.produces(nersc_userpool_slots_comparison=dict)
 class CompareNerscUserpoolSlots(Transform.Transform):
     """
     Transform that consumes nersc slots and userpool slots as input,
@@ -18,21 +22,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
     """
 
     def __init__(self, param_dict):
-        self.param_dict = param_dict
         self.entry_nersc_map = param_dict['entry_nersc_map']
-        self.logger = logging.getLogger()
-
-    def consumes(self):
-        """
-        Method to be called from Task Manager. Show the list of keys to consume.
-        """
-        return CONSUMES
-
-    def produces(self):
-        """
-        Method to be called from Task Manager. Show the list of keys to produce.
-        """
-        return PRODUCES
 
     def transform(self, data_block):
         """
@@ -104,55 +94,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         results['userpool.count'] = total_slots_userpool
         results['relative_diff'] = rel_diff
 
-        return {PRODUCES[0]: results}
+        return {'nersc_userpool_slots_comparison': results}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-    template = {
-        'nersc_userpool_slots_comparison': {
-            'module': 'modules.NERSC.transforms.compare_nersc_userpool_slots',
-            'name': 'CompareNerscUserpoolSlots',
-            'parameters': {
-                'entry_nersc_map': 'map <jobs on nersc, entry name>'
-            }
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Transform.describe(CompareNerscUserpoolSlots)

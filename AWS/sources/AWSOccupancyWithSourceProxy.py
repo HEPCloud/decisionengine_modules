@@ -2,17 +2,13 @@
 Get AWS capacity (running instances) information.
 """
 import boto3
-import pprint
 import pandas as pd
 
-import decisionengine.framework.modules.SourceProxy as SourceProxy
+from decisionengine.framework.modules import Source, SourceProxy
 import logging
 
-# default values
-REGION = 'us-west-2'
-PRODUCES = ['AWS_Occupancy']
 
-class OccupancyData(object):
+class OccupancyData:
     """
     Occupancy data element
     """
@@ -38,7 +34,7 @@ class OccupancyData(object):
         return not self == other
 
 
-class OccupancyForRegion(object):
+class OccupancyForRegion:
     """
     AWS capacity data and metods
     """
@@ -123,13 +119,11 @@ class OccupancyForRegion(object):
   '''
 
 
+@Source.produces(AWS_Occupancy=pd.DataFrame)
 class AWSOccupancy(SourceProxy.SourceProxy):
-    def __init__(self, *args, **kwargs):
-        super(AWSOccupancy, self).__init__(*args, **kwargs)
+    def __init__(self, config):
+        super().__init__(config)
         self.logger = logging.getLogger()
-
-    def produces(self):
-        return PRODUCES
 
     def acquire(self):
         """
@@ -140,17 +134,18 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         """
 
         # Load kown accounts configuration
-        account_conf = super(AWSOccupancy, self).acquire()
+        account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
             raise RuntimeError(
                 'Wrong configuration %s. Only one key is expected' % (account_conf,))
-        self.account_dict = {}
+        account_dict = {}
         for k in account_conf:
-            self.account_dict = account_conf[k].to_dict()
-        self.logger.debug('account_dict %s' % (self.account_dict,))
+            # FIXME: We overwrite the 'account_dict' member for each iteration of this loop?
+            account_dict = account_conf[k].to_dict()
+        self.logger.debug('account_dict %s' % (account_dict,))
         occupancy_data = []
-        for account in self.account_dict:
-            for region in self.account_dict[account]:
+        for account in account_dict:
+            for region in account_dict[account]:
                 occcupancy = OccupancyForRegion(region, profile_name=account)
                 instances = occcupancy.get_ec2_instances()
                 if instances:
@@ -160,81 +155,11 @@ class AWSOccupancy(SourceProxy.SourceProxy):
 
         oc_list = [i.data for i in occupancy_data]
         # to fix the test failure
-        return {PRODUCES[0]: pd.DataFrame(oc_list)}
+        return {'AWS_Occupancy': pd.DataFrame(oc_list)}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    d = {"AWSOccupancy": {
-        "module": "modules.AWS.sources.AWSOccupancyWithSourceProxy",
-        "name": "AWSSpotOccupancy",
-        "parameters": {
-            "channel_name": "source_channel_name",
-            "Dataproducts": "list of data keys to retrieve from source channel data",
-            "retries": "<number of retries to acquire data>",
-            "retry_timeout": "<retry timeout>"
-        },
-        "schedule": 60 * 60,
-    }
-    }
-
-    config = {"ProfileName1":
-              ["RegionName1"],
-              }
-
-    print("Entry in channel cofiguration")
-    pprint.pprint(d)
-    print("where")
-    print("\t name - name of the class to be instantiated by task manager")
-    print("\t spot_price_configuration - configuration required to get AWS spot price information")
-    print("\t Example:")
-    print("-------------")
-    pprint.pprint(config)
-    print("where")
-    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
-    print("\t RegionName1 - name of region (example: us-west-2)")
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    """
-    Call this a a test unit or use as CLI of this module
-    """
-    import argparse
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--configtemplate',
-                        action='store_true',
-                        help='prints the expected module configuration')
-
-    parser.add_argument('--configinfo',
-                        action='store_true',
-                        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        occupancy = AWSOccupancy({"channel_name": "channel_aws_config_data",
-                                  "Dataproducts": ["spot_occupancy_config"],
-                                  "retries": 3,
-                                  "retry_timeout": 20,
-                                  })
-        rc = occupancy.acquire()
-        print("INFO")
-        print(rc)
-
-
-if __name__ == "__main__":
-    main()
+Source.describe(AWSOccupancy,
+                sample_config={"channel_name": "channel_aws_config_data",
+                               "Dataproducts": ["spot_occupancy_config"],
+                               "retries": 3,
+                               "retry_timeout": 20})

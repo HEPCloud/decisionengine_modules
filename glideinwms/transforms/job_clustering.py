@@ -1,24 +1,23 @@
-import argparse
-import pprint
 import pandas
 
 import logging
 from decisionengine.framework.modules import Transform
-
-PRODUCES = ['job_clusters']
-
-CONSUMES = ['job_manifests']
+from decisionengine.framework.modules.Transform import Parameter
 
 # TODO
 # - what debugging logs are needed?
 # - what and how is metadata for a dataframe?
 # - do we need to validate case or type for attr content?  again onboarding?
 
-
+@Transform.supports_config(Parameter('match_expressions',
+                                     default={"VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)":
+                                              ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"]}))
+@Transform.consumes(job_manifests=pandas.DataFrame)
+@Transform.produces(job_clusters=pandas.DataFrame)
 class JobClustering(Transform.Transform):
 
     def __init__(self, config):
-        super(JobClustering, self).__init__(config)
+        super().__init__(config)
 
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
@@ -34,18 +33,6 @@ class JobClustering(Transform.Transform):
                                                            'Totals', 'Frontend_Group'])
 
         self.logger = logging.getLogger()
-
-    def consumes(self):
-        """
-        Return list of items consumed
-        """
-        return CONSUMES
-
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return PRODUCES
 
     def transform(self, datablock):
 
@@ -113,56 +100,4 @@ class JobClustering(Transform.Transform):
         return {'job_clusters': df_job_clusters}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-
-    template = {
-        't_job_categorization': {
-            'module': 'decisionengine.modules.glideinwms.t_job_clustering',
-            'name': 'JobClustering',
-            'parameters': {
-                'match_expressions': {
-                      "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)":
-                          ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"]
-                }
-            },
-        }
-    }
-    print('Job categorization')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Transform.describe(JobClustering)

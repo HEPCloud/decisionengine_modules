@@ -1,5 +1,6 @@
 import mock
 import pandas
+
 from decisionengine_modules.glideinwms.publishers import fe_group_classads
 
 
@@ -32,7 +33,7 @@ class TestGlideinWMSManifests:
         consumes = ['glideclient_manifests', 'Factory_Entries_Grid',
                     'Factory_Entries_AWS', 'Factory_Entries_GCE', 'Factory_Entries_LCF']
         p = fe_group_classads.GlideinWMSManifests(config)
-        assert(p.consumes() == consumes)
+        assert p._consumes == dict.fromkeys(consumes, pandas.DataFrame)
 
     def test_publish(self):
         fe_group_classads.GlideinWMSManifests(config)
@@ -45,4 +46,4 @@ class TestGlideinWMSManifests:
     def test_create_invalidate_constraint(self):
         p = fe_group_classads.GlideinWMSManifests(config)
         p.create_invalidate_constraint(request_df)
-        assert(p.invalidate_ads_constraint == expected_constraint)
+        assert p.invalidate_ads_constraint == expected_constraint

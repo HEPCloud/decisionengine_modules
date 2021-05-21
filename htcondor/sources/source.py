@@ -1,14 +1,21 @@
-import six
 import abc
 import traceback
 import pandas
+import logging
 
 from decisionengine.framework.modules import Source
-import logging
+from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.htcondor import htcondor_query
 
-@six.add_metaclass(abc.ABCMeta)
-class ResourceManifests(Source.Source):
+
+@Source.supports_config(Parameter('collector_host', type=str),
+                        Parameter('condor_config', type=str),
+                        Parameter('constraint', default=True),
+                        Parameter('classad_attrs', type=list),
+                        Parameter('group_attr', default=['Name']),
+                        Parameter('subsystem_name', type=str),
+                        Parameter('correction_map', default={}))
+class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
         """
@@ -19,12 +26,7 @@ class ResourceManifests(Source.Source):
         because some classes that extend this class might not have correction_map
         avaiable in its config file.
         """
-        super(ResourceManifests, self).__init__(config)
-        if not config:
-            config = {}
-        if not isinstance(config, dict):
-            raise RuntimeError('parameters for module config should be a dict')
-
+        super(Source.Source, self).__init__(config)
         self.logger = logging.getLogger()
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
@@ -40,14 +42,6 @@ class ResourceManifests(Source.Source):
 
     def __str__(self):
         return '%s' % vars(self)
-
-
-    @abc.abstractmethod
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return
 
 
     @abc.abstractmethod

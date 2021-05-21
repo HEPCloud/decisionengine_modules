@@ -16,7 +16,7 @@ URL will be used.
 _NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
 
 
-class Newt(object):
+class Newt:
 
     def __init__(self, password_file, newt_base_url=None, num_retries=0,
                  retry_backoff_factor=0):

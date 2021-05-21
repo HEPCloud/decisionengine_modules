@@ -1,21 +1,32 @@
 """
 Get allocation info from Nersc
 """
-import argparse
-import pprint
-
 import pandas as pd
-
-from decisionengine.framework.modules import Source
-from decisionengine_modules.NERSC.util import newt
 import logging
 
-PRODUCES = ['Nersc_Allocation_Info']
+from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
+from decisionengine_modules.NERSC.util import newt
 
 _MAX_RETRIES = 10
 _RETRY_BACKOFF_FACTOR = 1
 
 
+@Source.supports_config(Parameter('constraints',
+                                  type=dict,
+                                  comment="""Supports the layout:
+
+  {
+     'usernames': ['user1', 'user2'],
+     'newt_keys': {
+        'rname': ['m2612', 'm2696'],
+        'repo_type': ["STR", ],
+  }
+"""),
+                        Parameter('max_retries', default=_MAX_RETRIES),
+                        Parameter('retry_backoff_factor', default=_RETRY_BACKOFF_FACTOR),
+                        Parameter('passwd_file', type=str, comment="Path to password file"))
+@Source.produces(Nersc_Allocation_Info=pd.DataFrame)
 class NerscAllocationInfo(Source.Source):
 
     """
@@ -23,14 +34,12 @@ class NerscAllocationInfo(Source.Source):
     """
 
     def __init__(self, config):
-        super(NerscAllocationInfo, self).__init__(config)
+        super().__init__(config)
 
         self.constraints = config.get('constraints')
         if not isinstance(self.constraints, dict):
             raise RuntimeError('constraints should be a dict')
 
-        self.raw_results = None
-        self.pandas_frame = None
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_backoff_factor = config.get("retry_backoff_factor",
                                                _RETRY_BACKOFF_FACTOR)
@@ -65,21 +74,7 @@ class NerscAllocationInfo(Source.Source):
                 k = 'repoType'
             if values:
                 results = [x for x in results if x[k] in values]
-        self.raw_results = results
-
-    def raw_results_to_pandas_frame(self):
-        """
-        Convert the acquired external info into Pandas Frame format
-        """
-        self.pandas_frame = pd.DataFrame(self.raw_results)
-
-    def produces(self, name_schema_id_list=None):
-        """
-        Method to be called from Task Manager.
-        Copied from Source.py
-        """
-
-        return PRODUCES
+        return results
 
     def acquire(self):
         """
@@ -88,80 +83,7 @@ class NerscAllocationInfo(Source.Source):
         Acquire NERSC allocation info and return as pandas frame
         :rtype: :obj:`~pd.DataFrame`
         """
-
-        self.send_query()
-        self.raw_results_to_pandas_frame()
-        return {PRODUCES[0]: self.pandas_frame}
+        return {'Nersc_Allocation_Info': pd.DataFrame(self.send_query())}
 
 
-def module_config_template():
-    """
-    Print template for this module configuration
-    """
-    template = {
-        'nersc_allocation_info': {
-            'module': 'decisionengine_modules.NERSC.sources.NerscAllocationInfo',
-            'name': 'NerscAllocationInfo',
-            'parameters': {
-                'passwd_file': '/path/to/password_file',
-                'max_retries': 10,
-                'retry_backoff_factor': 1,
-                'constraints': {
-                    'usernames': ['user1', 'user2'],
-                    'newt_keys': {
-                        'rname': ['m2612', 'm2696'],
-                        'repo_type': ["STR", ],
-                    }
-                }
-            }
-        }
-    }
-    print('Entry in channel configuration')
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    Print module information
-    """
-    print('produces %s' % PRODUCES)
-    module_config_template()
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--configtemplate',
-        action='store_true',
-        help='prints the expected module configuration')
-
-    parser.add_argument(
-        '--configinfo',
-        action='store_true',
-        help='prints config template along with produces and consumes info')
-    parser.add_argument(
-        '--acquire-with-config',
-        action='store',
-        metavar='CONFIG_FILE',
-        help='Tries to contact NERSC with the provided config file and pulls '
-        'data according to config')
-    args = parser.parse_args()
-
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    elif args.acquire_with_config:
-        from ast import literal_eval
-        with open(args.acquire_with_config, 'r') as f:
-            config_string = "".join(f.readlines())
-            config = literal_eval(config_string)
-        n = NerscAllocationInfo(config['sources']['NerscAllocationInfo']
-                                ['parameters'])
-        print(n.acquire())
-    else:
-        pass
-
-
-if __name__ == '__main__':
-    main()
+Source.describe(NerscAllocationInfo)

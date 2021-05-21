@@ -171,14 +171,12 @@ class TestJobClustering:
     # Validate log messages
 
     def test_produces(self):
-        produces = ['job_clusters']
         job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        assert job_clusters.produces() == produces
+        assert job_clusters._produces == {'job_clusters': pandas.DataFrame}
 
     def test_consumes(self):
-        consumes = ['job_manifests']
         job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        assert job_clusters.consumes() == consumes
+        assert job_clusters._consumes == {'job_manifests': pandas.DataFrame}
 
     def test_transform_valid(self):
         job_clusters = job_clustering.JobClustering(config_test_match_exprs)

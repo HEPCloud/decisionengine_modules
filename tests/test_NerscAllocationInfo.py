@@ -6,6 +6,7 @@ import pandas
 from decisionengine_modules.util import testutils as utils
 from decisionengine_modules.NERSC.sources import NerscAllocationInfo
 from decisionengine_modules.NERSC.util import newt
+from decisionengine.framework.modules.Module import verify_products
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 ALLOCATIONS_FIXTURE_FILE = os.path.join(
@@ -24,7 +25,7 @@ CONFIG = {
     }
 }
 
-PRODUCES = ["Nersc_Allocation_Info"]
+_PRODUCES = {"Nersc_Allocation_Info": pandas.DataFrame}
 EXPECTED_PANDAS_DFRAME = pandas.DataFrame(
     [{u'uid': 72048, u'firstname': u'Steven', u'middlename': u'C',
         u'projectId': 54807, u'currentAlloc': 374400000000.0,
@@ -37,7 +38,7 @@ class TestNerscAllocationInfo:
 
     def test_produces(self):
         nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
-        assert nersc_allocations.produces() == PRODUCES
+        assert nersc_allocations._produces == _PRODUCES
 
     def test_acquire(self):
 
@@ -50,5 +51,5 @@ class TestNerscAllocationInfo:
         with mock.patch.object(newt.Newt, "get_usage") as f:
             f.side_effect = side_effect_get_usage
             res = nersc_allocations.acquire()
-            assert PRODUCES == list(res.keys())
-            assert EXPECTED_PANDAS_DFRAME.equals(res[PRODUCES[0]])
+            verify_products(nersc_allocations, res)
+            assert EXPECTED_PANDAS_DFRAME.equals(res['Nersc_Allocation_Info'])

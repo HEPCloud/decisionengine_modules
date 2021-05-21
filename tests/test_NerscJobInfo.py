@@ -6,6 +6,7 @@ import pandas
 from decisionengine_modules.util import testutils as utils
 from decisionengine_modules.NERSC.sources import NerscJobInfo
 from decisionengine_modules.NERSC.util import newt
+from decisionengine.framework.modules.Module import verify_products
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 TEST_FIXTURE_FILE = os.path.join(DATA_DIR, "newt_jobs.cs.test.fixture")
@@ -22,7 +23,7 @@ CONFIG = {
     }
 }
 
-PRODUCES = ["Nersc_Job_Info"]
+_PRODUCES = {"Nersc_Job_Info": pandas.DataFrame}
 
 """
 expected correctly filtered results
@@ -41,7 +42,7 @@ class TestNerscJobInfo:
 
     def test_produces(self):
         nersc_job_info = NerscJobInfo.NerscJobInfo(CONFIG)
-        assert nersc_job_info.produces() == PRODUCES
+        assert nersc_job_info._produces == _PRODUCES
 
     def test_acquire(self):
         nersc_job_info = NerscJobInfo.NerscJobInfo(CONFIG)
@@ -52,7 +53,7 @@ class TestNerscJobInfo:
                 get_queue.return_value = utils.input_from_file(
                     JOBS_FIXTURE_FILE)
                 res = nersc_job_info.acquire()
-                assert PRODUCES == list(res.keys())
-                new_df = res[PRODUCES[0]]
+                verify_products(nersc_job_info, res)
+                new_df = res['Nersc_Job_Info']
                 new_df = new_df.reindex(EXPECTED_PANDAS_DFRAME.columns, axis=1)
                 pandas.testing.assert_frame_equal(EXPECTED_PANDAS_DFRAME, new_df)

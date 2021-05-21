@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 
+from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.AWS.transforms import AwsBurnRate
 
-produces = ["AWS_Burn_Rate"]
+produces = {"AWS_Burn_Rate": pd.DataFrame}
 
 config = {
 }
@@ -86,8 +87,7 @@ data_block = {
 }
 
 expected_transform_output = {
-    produces[0]: pd.DataFrame([{
-        "BurnRate": 0.7455}])
+    'AWS_Burn_Rate': pd.DataFrame([{"BurnRate": 0.7455}])
 }
 
 
@@ -95,14 +95,14 @@ class TestAwsBurnRate:
 
     def test_produces(self):
         aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
-        assert aws_burn_rate.produces() == produces
+        assert aws_burn_rate._produces == produces
 
     def test_transform(self):
         aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
         res = aws_burn_rate.transform(data_block)
-        assert produces.sort() == list(res.keys()).sort()
+        verify_products(aws_burn_rate, res)
 
-        expected_df = expected_transform_output[produces[0]]
-        res_df = res[produces[0]]
+        expected_df = expected_transform_output['AWS_Burn_Rate']
+        res_df = res['AWS_Burn_Rate']
         assert np.isclose(expected_df["BurnRate"],
                           res_df["BurnRate"])

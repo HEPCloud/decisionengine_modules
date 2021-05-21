@@ -1,17 +1,24 @@
-import argparse
 import logging
-import pprint
 import pandas as pd
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
 from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
-PRODUCES = ['GCE_Billing_Info']
 
+@Source.supports_config(Parameter('projectId', type=str),
+                        Parameter('credentialsProfileName', type=str, comment="not currently used"),
+                        Parameter('accountNumber', type=int, comment="not currently used"),
+                        Parameter('lastKnownBillDate', type=str, comment="in the form '%m/%d/%y %H:%M'"),
+                        Parameter('balanceAtData', type=float, comment="in dollars"),
+                        Parameter('applyDiscount', type=bool, comment="DLT discount does not apply to credits"),
+                        Parameter('botoConfig', comment="not currently used"),
+                        Parameter('localFileDir', type=dir, comment="location for downloaded billing files"))
+@Source.produces(GCE_Billing_Info=pd.DataFrame)
 class GCEBillingInfo(Source.Source):
 
     def __init__(self, config):
-        super(GCEBillingInfo, self).__init__(config)
+        super().__init__(config)
         # Load configuration "constants"
         self.projectId = config.get('projectId')
         self.credentialsProfileName = config.get(
@@ -27,12 +34,6 @@ class GCEBillingInfo(Source.Source):
         self.localFileDir = config.get('localFileDir')
 
         self.logger = logging.getLogger()
-
-    def produces(self):
-        """
-        Return list of items produced
-        """
-        return PRODUCES
 
     def acquire(self):
         """
@@ -55,63 +56,7 @@ class GCEBillingInfo(Source.Source):
         except Exception as detail:
             self.logger.error(detail)
 
-        return {PRODUCES[0]: pd.DataFrame([CorrectedBillSummaryDict])}
+        return {'GCE_Billing_Info': pd.DataFrame([CorrectedBillSummaryDict])}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    template = {
-        "GCEBillingInfo": {
-            "module": "modules.GCE.sources.GCEBillingInfo",
-            "name": "GCEBillingInfo",
-            "parameters": {
-                'projectId': 'Blah',
-                'lastKnownBillDate': '01/01/18 00:00',  # '%m/%d/%y %H:%M'
-                'balanceAtDate': 100.0,    # $
-                'accountName': 'Blah',
-                'accountNumber': 1111,
-                'credentialsProfileName': 'BillingBlah',
-                'applyDiscount': True,  # DLT discount does not apply to credits
-                'botoConfig': "path_to_file",
-                'locaFileDir': "dir_for_billing_files"
-            },
-            "schedule": 24 * 60 * 60,
-        }
-    }
-
-    print("GCE Billing Info")
-    pprint.pprint(template)
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--configtemplate',
-                        action='store_true',
-                        help='prints the expected module configuration')
-
-    parser.add_argument('--configinfo',
-                        action='store_true',
-                        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        pass
-
-
-if __name__ == "__main__":
-    main()
+Source.describe(GCEBillingInfo)

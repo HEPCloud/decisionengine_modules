@@ -4,18 +4,10 @@ saves it into the output file acording to design document.
 
 """
 import copy
-import pprint
 import pandas as pd
 import sys
 
 from decisionengine.framework.modules import Transform
-
-CONSUMES = ['provisioner_resource_spot_prices',
-            'Performance_Data',
-            'Job_Limits', 'AWS_Occupancy']
-
-PRODUCES = ['AWS_Price_Performance',
-            'AWS_Figure_Of_Merit']
 
 DEFAULT_MAX_LIMIT = 20
 BIG_NUMBER = sys.float_info.max
@@ -39,7 +31,15 @@ def figure_of_merit(RunningVms, MaxLimit, PricePerf):
     return fm
 
 
+@Transform.consumes(provisioner_resource_spot_prices=pd.DataFrame,
+                    Performance_Data=pd.DataFrame,
+                    Job_Limits=pd.DataFrame,
+                    AWS_Occupancy=pd.DataFrame)
+@Transform.produces(AWS_Price_Performance=pd.DataFrame,
+                    AWS_Figure_Of_Merit=pd.DataFrame)
 class FigureOfMerit(Transform.Transform):
+    def __init__(self, config):
+        super().__init__(config)
 
     def transform(self, data_block):
         """
@@ -51,10 +51,10 @@ class FigureOfMerit(Transform.Transform):
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
-        spot_price_data = data_block.get('provisioner_resource_spot_prices')
-        perf_data = data_block.get('Performance_Data')
-        occup_data = data_block.get('AWS_Occupancy')
-        job_limits_data = data_block.get('Job_Limits')
+        spot_price_data = self.provisioner_resource_spot_prices(data_block)
+        perf_data = self.Performance_Data(data_block)
+        occup_data = self.AWS_Occupancy(data_block)
+        job_limits_data = self.Job_Limits(data_block)
 
         price_perf_rows = []
         fom_rows = []
@@ -113,61 +113,8 @@ class FigureOfMerit(Transform.Transform):
         price_perf_df.reindex(sorted(price_perf_df.columns), axis=1)
         fom_df = pd.DataFrame(fom_rows)
         fom_df.reindex(sorted(fom_df.columns), axis=1)
-        return {PRODUCES[0]: price_perf_df, PRODUCES[1]: fom_df}
-
-    def consumes(self):
-        return CONSUMES
-
-    def produces(self):
-        return PRODUCES
+        return {'AWS_Price_Performance': price_perf_df,
+                'AWS_Figure_Of_Merit': fom_df}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    d = {"FigureOfMerit": {
-        "module": "modules.AWS.transforms.FigureOfMerit",
-        "name": "FigureOfMerit",
-    },
-    }
-    print("Entry in channel cofiguration")
-    pprint.pprint(d)
-    print("where")
-    print("\t name - name of the class to be instantiated by task manager")
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-
-    print("consumes", CONSUMES)
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    """
-    Call this a a test unit or use as CLI of this module
-    """
-    import argparse
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--configtemplate',
-                        action='store_true',
-                        help='prints the expected module configuration')
-
-    parser.add_argument('--configinfo',
-                        action='store_true',
-                        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-
-
-if __name__ == '__main__':
-    main()
+Transform.describe(FigureOfMerit)

@@ -1,5 +1,6 @@
 import mock
 import pandas
+
 from decisionengine_modules.glideinwms.publishers import glideclientglobal
 
 
@@ -29,9 +30,8 @@ expected_constraint = {
 class TestGlideClientGlobalManifests:
 
     def test_consumes(self):
-        consumes = ['glideclientglobal_manifests']
         p = glideclientglobal.GlideClientGlobalManifests(config)
-        assert(p.consumes() == consumes)
+        assert p._consumes == {'glideclientglobal_manifests': pandas.DataFrame}
 
     def test_publish(self):
         glideclientglobal.GlideClientGlobalManifests(config)
@@ -44,4 +44,4 @@ class TestGlideClientGlobalManifests:
     def test_create_invalidate_constraint(self):
         p = glideclientglobal.GlideClientGlobalManifests(config)
         p.create_invalidate_constraint(request_df)
-        assert(p.invalidate_ads_constraint == expected_constraint)
+        assert p.invalidate_ads_constraint == expected_constraint

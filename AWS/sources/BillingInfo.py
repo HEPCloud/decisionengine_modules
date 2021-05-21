@@ -1,35 +1,46 @@
 import datetime
 import logging
-import os
-import pprint
 import time
 import pandas as pd
 
 from decisionengine.framework.modules import Source
+from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.AWS.sources import DEAccountContants
 from bill_calculator_hep.AWSBillAnalysis import AWSBillCalculator
-PRODUCES = ['AWS_Billing_Info', 'AWS_Billing_Rate']
 
+
+@Source.supports_config(Parameter('billing_configuration',
+                                  type=dict,
+                                  comment="""Configuration required to get AWS billing information.  Supports the layout:
+
+  {
+    'AWSRnDAccountConstants': {
+       'lastKnownBillDate': '08/01/16 00:00',  # '%m/%d/%y %H:%M'
+       'balanceAtDate': 3839.16,  # $
+       'accountName': 'RnD',
+       'accountNumber': 159067897602,
+       'credentialsProfileName': 'BillingRnD',
+       'applyDiscount': True,  # DLT discount does not apply to credits
+       'costRatePerHourInLastSixHoursAlarmThreshold': 2,  # $ / h # $10/h
+       'costRatePerHourInLastDayAlarmThreshold': 2,  # $ / h # $10/h
+       'emailReceipientForAlarms': 'fermilab-cloud-facility-rnd@fnal.gov'
+     }
+  }"""),
+                        Parameter('dst_dir_for_s3_files', type=str, comment="Directory for AWS billing files"),
+                        Parameter('verbose_flag', type=bool))
+@Source.produces(AWS_Billing_Info=pd.DataFrame,
+                 AWS_Billing_Rate=pd.DataFrame)
 class BillingInfo(Source.Source):
-    def __init__(self, *args, **kwargs):
-        acconts_config_file = args[0]['billing_configuration']
+    def __init__(self, config):
+        acconts_config_file = config['billing_configuration']
         self.logger = logging.getLogger()
-        self.billing_files_location = args[0]['dst_dir_for_s3_files']
-        self.verbose_flag = int(args[0]['verbose_flag'])
+        self.billing_files_location = config['dst_dir_for_s3_files']
+        self.verbose_flag = int(config['verbose_flag'])
         # Load kown accounts configuration
         account_dict = DEAccountContants.load_constants(acconts_config_file)
         self.accounts = []
         for k, val in account_dict.items():
             self.accounts.append(DEAccountContants.AccountConstants(val))
-
-    def produces(self, schema_id_list):
-        """
-        Method to be called from Task Manager.
-        Copied from Source.py
-        Do not know why schema_id_list is needed here.
-        """
-
-        return PRODUCES
 
     def acquire(self):
         """
@@ -121,86 +132,10 @@ class BillingInfo(Source.Source):
                 self.logger.error("In acquire: %s" % detail)
                 raise Exception(detail)
 
-        return {PRODUCES[0]: pd.DataFrame(data), PRODUCES[1]: pd.DataFrame(datarate)}
+        return {'AWS_Billing_Info': pd.DataFrame(data),
+                'AWS_Billing_Rate': pd.DataFrame(datarate)}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    d = {"BillingInfo": {
-        "module": "modules.AWS.sources.BillingInfo",
-        "name": "BillingInfo",
-        "parameters": {
-            "billing_configuration": "%s/de_config/AccountConstants_my.py" % (os.environ.get('HOME'),),
-            "dst_dir_for_s3_files": "%s/de_tmp_aws_files" % (os.environ.get('HOME'),),
-        },
-        "schedule": 6 * 60 * 60,
-    }
-    }
-    account_info = {'AWSRnDAccountConstants':
-                    {
-                        'lastKnownBillDate': '08/01/16 00:00',  # '%m/%d/%y %H:%M'
-                        'balanceAtDate': 3839.16,  # $
-                        'accountName': 'RnD',
-                        'accountNumber': 159067897602,
-                        'credentialsProfileName': 'BillingRnD',
-                        'applyDiscount': True,  # DLT discount does not apply to credits
-                        'costRatePerHourInLastSixHoursAlarmThreshold': 2,  # $ / h # $10/h
-                        'costRatePerHourInLastDayAlarmThreshold': 2,  # $ / h # $10/h
-                        'emailReceipientForAlarms': 'fermilab-cloud-facility-rnd@fnal.gov'
-                    }
-                    }
-
-    print("Entry in channel configuration")
-    pprint.pprint(d)
-    print("where")
-    print("\t name - name of the class to be instantiated by task manager")
-    print("\t billing_configuration - configuration requred to get AWS billing information")
-    print("\t Example of Billing configuration file:")
-    print("-------------")
-    pprint.pprint(account_info)
-    print("-------------")
-    print("\t dst_dir_for_s3_files - directory for AWS billing files")
-    print("\t schedule - execution period")
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    """
-    Call this a a test unit or use as CLI of this module
-    """
-    import argparse
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--configtemplate',
-                        action='store_true',
-                        help='prints the expected module configuration')
-
-    parser.add_argument('--configinfo',
-                        action='store_true',
-                        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        bi = BillingInfo({'billing_configuration': '/etc/decisionengine/modules.conf/AccountConstants_my.py',
-                          'dst_dir_for_s3_files': '/var/lib/decisionengine/awsfiles'})
-        rc = bi.acquire()
-        print("INFO")
-        print(rc)
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    main()
+Source.describe(BillingInfo,
+                sample_config={'billing_configuration': '/etc/decisionengine/modules.conf/AccountConstants_my.py',
+                               'dst_dir_for_s3_files': '/var/lib/decisionengine/awsfiles'})

@@ -1,6 +1,9 @@
 from decisionengine_modules.GCE.sources import GCEBillingInfo
 from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
+
 import logging
+import pandas
+
 # TODO
 # The GCEBillingInfo module needs to be refactored so that tests
 # can be written.  Then tests can be written to test smaller bits
@@ -22,9 +25,8 @@ config_billing_info = {'projectId': 'hepcloud-fnal',
 class TestGCEBillingInfo:
 
     def test_produces(self):
-        produces = ['GCE_Billing_Info']
         bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info)
-        assert bi_pub.produces() == produces
+        assert bi_pub._produces == {'GCE_Billing_Info': pandas.DataFrame}
 
     def test_unable_to_download_filelist(self):
         constantsDict = {'projectId': 'hepcloud-fnal', 'credentialsProfileName': 'BillingBlah', 'accountNumber': 1111,

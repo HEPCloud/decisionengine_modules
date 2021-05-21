@@ -24,7 +24,7 @@ expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
                                               'AWSSpotPriceWithSourceProxy_expected_acquire.csv'),
                                  float_precision='high')
 
-produces = ['provisioner_resource_spot_prices']
+produces = {'provisioner_resource_spot_prices': pd.DataFrame}
 
 
 def fix_spot_price(df):
@@ -35,7 +35,7 @@ def fix_spot_price(df):
     return out_df
 
 
-class SessionMock(object):
+class SessionMock:
     def client(self, service=None, region_name=None):
         return None
 
@@ -44,7 +44,7 @@ class TestAWSSpotPriceWithSourceProxy:
     def test_produces(self):
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
             aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
-            assert (aws_s_p.produces('a') == produces)
+            assert aws_s_p._produces == produces
 
     def test_acquire(self):
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
@@ -58,7 +58,7 @@ class TestAWSSpotPriceWithSourceProxy:
                                                                   'spot_price.fixture'))
                         get_price.return_value = sp_d
                         res = aws_s_p.acquire()
-                        assert produces == list(res.keys())
-                        new_df = fix_spot_price(res[produces[0]])
+                        assert produces.keys() == res.keys()
+                        new_df = fix_spot_price(res['provisioner_resource_spot_prices'])
                         expected_pandas_df2 = expected_pandas_df.astype('object')
                         pd.testing.assert_frame_equal(expected_pandas_df2, new_df)

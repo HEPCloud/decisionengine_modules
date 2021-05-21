@@ -5,10 +5,9 @@ Get AWS spot price information
 import datetime
 import time
 import pandas as pd
-import pprint
 import boto3
 
-import decisionengine.framework.modules.SourceProxy as SourceProxy
+from decisionengine.framework.modules import Source, SourceProxy
 
 # default values
 REGION = 'us-west-2'
@@ -19,10 +18,9 @@ PRODUCT_DESCRIPTIONS = ['Linux/UNIX']
 DRY_RUN = False
 MAX_RESULTS = 1000
 AVAILABILITY_ZONE = ''  # any
-PRODUCES = ['provisioner_resource_spot_prices']
 
 
-class SpotPriceData(object):
+class SpotPriceData:
     """
     Spot Price data element
     """
@@ -49,7 +47,7 @@ class SpotPriceData(object):
         return -1
 
 
-class AWSSpotPriceForRegion(object):
+class AWSSpotPriceForRegion:
     """
     Spot price data and methods
     """
@@ -162,12 +160,10 @@ class AWSSpotPriceForRegion(object):
         return ll
 
 
+@Source.produces(provisioner_resource_spot_prices=pd.DataFrame)
 class AWSSpotPrice(SourceProxy.SourceProxy):
-    def __init__(self, *args, **kwargs):
-        super(AWSSpotPrice, self).__init__(*args, **kwargs)
-
-    def produces(self, schema_id_list):
-        return PRODUCES
+    def __init__(self, config):
+        super().__init__(config)
 
     def acquire(self):
         """
@@ -177,16 +173,16 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
         """
 
         # Load known accounts configuration
-        account_conf = super(AWSSpotPrice, self).acquire()
+        account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
             raise RuntimeError(
                 'Wrong configuration %s. Only one key is expected' % (account_conf,))
-        self.account_dict = {}
+        account_dict = {}
         for k in account_conf:
-            self.account_dict = account_conf[k].to_dict()
+            account_dict = account_conf[k].to_dict()
         sp_data = []
-        for account in self.account_dict:
-            for region, instances in self.account_dict[account].items():
+        for account in account_dict:
+            for region, instances in account_dict[account].items():
                 spot_price_info = AWSSpotPriceForRegion(
                     region, profile_name=account)
                 spot_price_info.init_query(instance_types=instances)
@@ -198,82 +194,11 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
         sp_list = [i.data for i in sp_data]
         column_names = ['AccountName', 'AvailabilityZone',
                         'InstanceType', 'ProductDescription', 'SpotPrice', 'Timestamp']
-        return {PRODUCES[0]: pd.DataFrame(sp_list, columns=column_names)}
+        return {'provisioner_resource_spot_prices': pd.DataFrame(sp_list, columns=column_names)}
 
 
-def module_config_template():
-    """
-    print a template for this module configuration data
-    """
-
-    d = {"AWSSpotPrice": {
-        "module": "modules.AWS.sources.AWSSpotPriceWithSourceProxy",
-        "name": "AWSSpotPrice",
-        "parameters": {
-            "channel_name": "source_channel_name",
-            "Dataproducts": "list of data keys to retrieve from source channel data",
-            "retries": "<number of retries to acquire data>",
-            "retry_timeout": "<retry timeout>"
-        },
-        "schedule": 60 * 60,
-    }
-    }
-
-    config = {"ProfileName1":
-              {"RegionName1": ["Instance1", ], },
-              }
-
-    print("Entry in channel cofiguration")
-    pprint.pprint(d)
-    print("where")
-    print("\t name - name of the class to be instantiated by task manager")
-    print("\t spot_price_configuration - configuration required to get AWS spot price information")
-    print("\t Example:")
-    print("-------------")
-    pprint.pprint(config)
-    print("where")
-    print("\t ProfileName1 - name of account profile (example: hepcloud-rnd)")
-    print("\t RegionName1 - name of region (example: us-west-2)")
-    print("\t Instance1 - name of instance. If the list of instances is empty, price information for all instances is acquired")
-
-
-def module_config_info():
-    """
-    print this module configuration information
-    """
-    print("produces", PRODUCES)
-    module_config_template()
-
-
-def main():
-    """
-    Call this a a test unit or use as CLI of this module
-    """
-    import argparse
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--configtemplate',
-                        action='store_true',
-                        help='prints the expected module configuration')
-
-    parser.add_argument('--configinfo',
-                        action='store_true',
-                        help='prints config template along with produces and consumes info')
-    args = parser.parse_args()
-    if args.configtemplate:
-        module_config_template()
-    elif args.configinfo:
-        module_config_info()
-    else:
-        sprice = AWSSpotPrice({"channel_name": "channel_aws_config_data",
+Source.describe(AWSSpotPrice,
+                sample_config={"channel_name": "channel_aws_config_data",
                                "Dataproducts": ["spot_occupancy_config"],
                                "retries": 3,
-                               "retry_timeout": 20,
-                               })
-        rc = sprice.acquire()
-        print("INFO")
-        print(rc)
-
-
-if __name__ == "__main__":
-    main()
+                               "retry_timeout": 20})

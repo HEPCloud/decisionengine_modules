@@ -17,7 +17,7 @@ def sanitize_key(key):
     return key
 
 
-class Graphite(object):
+class Graphite:
     def __init__(self, host="fifemondata.fnal.gov", pickle_port=2004):
         self.graphite_host = host
         self.graphite_pickle_port = pickle_port
