@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -235,13 +238,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-awsspotprice-module">decisionengine_modules.AWS.AWSSpotPrice module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-cloudbudget-module">decisionengine_modules.AWS.CloudBudget module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-cloudrequests-module">decisionengine_modules.AWS.CloudRequests module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-hpcallocation-module">decisionengine_modules.AWS.HPCAllocation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-htcondorjobq-module">decisionengine_modules.AWS.HTCondorJobQ module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-localcapacity-module">decisionengine_modules.AWS.LocalCapacity module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#decisionengine-modules-aws-provisionerresourcelist-module">decisionengine_modules.AWS.ProvisionerResourceList module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#module-decisionengine_modules.AWS.pandas_scratch_pad">decisionengine_modules.AWS.pandas_scratch_pad module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="decisionengine_modules.AWS.html#module-decisionengine_modules.AWS">Module contents</a></li>
 </ul>
@@ -378,12 +375,12 @@ While we are at it, add a few other useful bits</p>
 <div class="section" id="module-decisionengine_modules.graphite_client">
 <span id="decisionengine-modules-graphite-client-module"></span><h2>decisionengine_modules.graphite_client module<a class="headerlink" href="#module-decisionengine_modules.graphite_client" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="decisionengine_modules.graphite_client.Graphite">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decisionengine_modules.graphite_client.</span></code><code class="sig-name descname"><span class="pre">Graphite</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fifemondata.fnal.gov'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pickle_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2004</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/graphite_client.html#Graphite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.graphite_client.Graphite" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="decisionengine_modules.graphite_client.Graphite">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">decisionengine_modules.graphite_client.</span></span><span class="sig-name descname"><span class="pre">Graphite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fifemondata.fnal.gov'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pickle_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2004</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/graphite_client.html#Graphite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.graphite_client.Graphite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt id="decisionengine_modules.graphite_client.Graphite.send_dict">
-<code class="sig-name descname"><span class="pre">send_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">send_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/graphite_client.html#Graphite.send_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.graphite_client.Graphite.send_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="decisionengine_modules.graphite_client.Graphite.send_dict">
+<span class="sig-name descname"><span class="pre">send_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">send_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/graphite_client.html#Graphite.send_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.graphite_client.Graphite.send_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>send data contained in dictionary as {k: v} to graphite dataset
 $namespace.k with current timestamp</p>
 </dd></dl>
@@ -391,16 +388,16 @@ $namespace.k with current timestamp</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decisionengine_modules.graphite_client.sanitize_key">
-<code class="sig-prename descclassname"><span class="pre">decisionengine_modules.graphite_client.</span></code><code class="sig-name descname"><span class="pre">sanitize_key</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/graphite_client.html#sanitize_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.graphite_client.sanitize_key" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="decisionengine_modules.graphite_client.sanitize_key">
+<span class="sig-prename descclassname"><span class="pre">decisionengine_modules.graphite_client.</span></span><span class="sig-name descname"><span class="pre">sanitize_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/graphite_client.html#sanitize_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.graphite_client.sanitize_key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="module-decisionengine_modules.load_config">
 <span id="decisionengine-modules-load-config-module"></span><h2>decisionengine_modules.load_config module<a class="headerlink" href="#module-decisionengine_modules.load_config" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="decisionengine_modules.load_config.load">
-<code class="sig-prename descclassname"><span class="pre">decisionengine_modules.load_config.</span></code><code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">python_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/load_config.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.load_config.load" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="decisionengine_modules.load_config.load">
+<span class="sig-prename descclassname"><span class="pre">decisionengine_modules.load_config.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">python_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decisionengine_modules/load_config.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decisionengine_modules.load_config.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load constants from file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

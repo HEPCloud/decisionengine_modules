@@ -14,64 +14,10 @@ Subpackages
 Submodules
 ----------
 
-decisionengine\_modules.AWS.AWSSpotPrice module
------------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.AWSSpotPrice
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-decisionengine\_modules.AWS.CloudBudget module
-----------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.CloudBudget
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-decisionengine\_modules.AWS.CloudRequests module
-------------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.CloudRequests
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-decisionengine\_modules.AWS.HPCAllocation module
-------------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.HPCAllocation
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-decisionengine\_modules.AWS.HTCondorJobQ module
------------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.HTCondorJobQ
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
 decisionengine\_modules.AWS.LocalCapacity module
 ------------------------------------------------
 
 .. automodule:: decisionengine_modules.AWS.LocalCapacity
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-decisionengine\_modules.AWS.ProvisionerResourceList module
-----------------------------------------------------------
-
-.. automodule:: decisionengine_modules.AWS.ProvisionerResourceList
    :members:
    :undoc-members:
    :show-inheritance:
