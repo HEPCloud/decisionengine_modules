@@ -3,16 +3,24 @@ Release 1.6.2
 
 Patch level (bug fix) release.
 
-Fixed imports and a typo. Released to have the same version number of the framework.
+Correction map for GlideinWMS Factory Entries added. (#323, PR#324)
+Fixed imports and a typo. 
 
 
 
 Full list of commits since version 1.6.1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`9a9f99d <https://github.com/HEPCloud/decisionengine/commit/9a9f99d592e18594e56795999f617cadd861a9b9>`_:   Fix import (#321)
+`4f6e313 <https://github.com/HEPCloud/decisionengine_modules/commit/4f6e31332176be8b4aa972792543d6446f41d266>`_:   Correction map implemented too
 
-`d502bf1 <https://github.com/HEPCloud/decisionengine/commit/d502bf1c269636fa90ab78a61644e07441646ceb>`_:   fix typo
+`bdf4324 <https://github.com/HEPCloud/decisionengine_modules/commit/bdf432494ce066afe23279cbc13b41b3f80838b3>`_:   releasing 1.6.2-0.1.rc1
+
+`53c7d6c <https://github.com/HEPCloud/decisionengine_modules/commit/53c7d6c428df08368e96793203248f621f349eec>`_:   getting ready to release 1.6.2
+
+`9a9f99d <https://github.com/HEPCloud/decisionengine_modules/commit/9a9f99d592e18594e56795999f617cadd861a9b9>`_:   Fix import (#321)
+
+`d502bf1 <https://github.com/HEPCloud/decisionengine_modules/commit/d502bf1c269636fa90ab78a61644e07441646ceb>`_:   fix typo
+
 
 Release 1.6.0
 -------------

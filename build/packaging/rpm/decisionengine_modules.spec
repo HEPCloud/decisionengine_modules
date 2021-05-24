@@ -1,7 +1,7 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
 %define version 1.6.2
-%define release 0.1.rc1
+%define release 0.2.rc2
 
 %define de_user decisionengine
 %define de_group decisionengine
@@ -114,6 +114,10 @@ rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Mon May 24 2021 Marco Mambelli <marcom@fnal.gov> 1.6.2-0.2
+- Release notes on https://hepcloud.github.io/decisionengine_modules/release_notes/release_notes_1.6.html
+- Bug fix release 1.6.2 (and RC 1,2)
 
 * Tue Mar 24 2020 Patrick Gartung <gartung@fnal.gov> - 0.3.12-1_py3
 - Build against python3.6
