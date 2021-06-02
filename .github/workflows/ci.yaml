@@ -53,6 +53,13 @@ jobs:
           repository: glideinWMS/glideinwms
           ref: branch_v3_9
 
+      - name: checkout HEPCloud/contrib
+        uses: actions/checkout@v2
+        with:
+          path: HEPCloud_contrib
+          repository:  HEPCloud/contrib 
+          fetch-depth: 0
+
       - name: Cache pip
         uses: actions/cache@v2
         with:
@@ -73,6 +80,14 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade wheel
           python3 -m pip install -r ${{ github.workspace }}/glideinwms/requirements.txt
+
+      - name: Install billing-calculator
+        run: |
+          set -x
+          cd ${{ github.workspace }}/HEPCloud_contrib/billing-calculator/
+          python3 -m pip install --upgrade wheel
+          python3 setup.py bdist_wheel
+          python3 -m pip install ${{ github.workspace }}/HEPCloud_contrib/billing-calculator/dist/*.whl
 
       - name: Install dependencies for DE Framework
         run: |
