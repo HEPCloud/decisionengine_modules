@@ -6,7 +6,7 @@ In this release:
 
 Planned:
 * Structured logging
-* Migration to setuptools
+* Migrated to setuptools package development library. This build system is the standard vanilla python build system provided with the python distribution. Build configurations have been updated and rpm packaging remains the primary distribution method.
 
 Issues fixed in this release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
