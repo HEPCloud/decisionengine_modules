@@ -26,7 +26,9 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
         """
 
         factory_data = super().acquire()
-        df_factory_data = factory_data.get(self.data_keys[0])
+        if len(factory_data) != 1:
+            raise RuntimeError("Incorrect number of elements in data block.")
+        df_factory_data = factory_data.popitem()[1]
         df_entry_limits = df_factory_data[self.entry_limit_attrs]
         return {'GCE_Resource_Limits': df_entry_limits}
 
