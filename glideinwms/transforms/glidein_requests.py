@@ -86,10 +86,10 @@ class GlideinRequestManifests(Transform.Transform):
             # TODO: This will be influenced once we can configure different
             #       resource selection plugins. Currently supports FOM only.
             foms = {
-                'Grid_Figure_Of_Merit': self.Grid_Figure_Of_Merit(),
-                'GCE_Figure_Of_Merit': self.GCE_Figure_Of_Merit(),
-                'AWS_Figure_Of_Merit': self.AWS_Figure_Of_Merit(),
-                'Nersc_Figure_Of_Merit': self.Nersc_Figure_Of_Merit()
+                'Grid_Figure_Of_Merit': self.Grid_Figure_Of_Merit(datablock),
+                'GCE_Figure_Of_Merit': self.GCE_Figure_Of_Merit(datablock),
+                'AWS_Figure_Of_Merit': self.AWS_Figure_Of_Merit(datablock),
+                'Nersc_Figure_Of_Merit': self.Nersc_Figure_Of_Merit(datablock)
             }
             fom_entries = fom_eligible_resources(foms,
                                                  constraint=self.fom_resource_constraint,
@@ -98,11 +98,11 @@ class GlideinRequestManifests(Transform.Transform):
             self.logger.debug(fom_entries)
 
             # Get the jobs dataframe
-            jobs_df = self.job_manifests()
+            jobs_df = self.job_manifests(datablock)
             # Get the job clusters dataframe
-            job_clusters_df = self.job_clusters()
+            job_clusters_df = self.job_clusters(datablock)
             # Get HTCondor slots dataframe
-            slots_df = self.startd_manifests()
+            slots_df = self.startd_manifests(datablock)
 
             # self.logger.info(job_clusters_df)
             for index, row in job_clusters_df.iterrows():

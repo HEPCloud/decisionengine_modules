@@ -26,7 +26,7 @@ class FinancialParameters(Source.Source):
         Read the financial parameters from the config file and
         return as a dataframe
         """
-        return {'financial_parameters': pandas.DataFrame(self.financial_parameters_dict)}
+        return {'financial_params': pandas.DataFrame(self.financial_parameters_dict)}
 
 
 Source.describe(FinancialParameters,
