@@ -2,6 +2,7 @@ import os
 
 import mock
 import pandas
+import pytest
 import typing
 
 import decisionengine.framework.config.ChannelConfigHandler as configmanager
@@ -32,7 +33,6 @@ CONFIG = {
 
 _PRODUCES = {"GCE_Resource_Limits": typing.Any}
 
-
 def test_produces():
     with mock.patch.object(configmanager, "ChannelConfigHandler"), \
          mock.patch.object(dataspace, "DataSpace"):
@@ -49,3 +49,8 @@ def test_acquire():
         gce_limits = gce_resource_limits.acquire()
         assert _PRODUCES.keys() == gce_limits.keys()
         assert CONFIG.get("entry_limit_attrs").sort() == list(gce_limits.get('GCE_Resource_Limits')).sort()
+
+def test_config():
+    CONFIG['Dataproducts'].insert(0, "bad")
+    with pytest.raises(RuntimeError, match="Only one element may be specified"):
+        GCEResourceLimits.GCEResourceLimits(CONFIG)

@@ -17,6 +17,8 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
         self.entry_limit_attrs = config.get('entry_limit_attrs')
+        if len(self.data_keys) != 1:
+            raise RuntimeError("Only one element may be specified in the 'Dataproducts' parameter.")
 
     def acquire(self):
         """
@@ -26,8 +28,7 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
         """
 
         factory_data = super().acquire()
-        if len(factory_data) != 1:
-            raise RuntimeError("Incorrect number of elements in data block.")
+        assert len(factory_data) == 1
         df_factory_data = factory_data.popitem()[1]
         df_entry_limits = df_factory_data[self.entry_limit_attrs]
         return {'GCE_Resource_Limits': df_entry_limits}
