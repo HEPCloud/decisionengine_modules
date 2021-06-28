@@ -26,7 +26,7 @@ class Graphite:
         """send data contained in dictionary as {k: v} to graphite dataset
         $namespace.k with current timestamp"""
         if data is None:
-            logging.getLogger.warning("Warning: send_dict called with no data")
+            logging.getLogger().warning("Warning: send_dict called with no data")
             return
         now = int(time.time())
         post_data = []
@@ -35,21 +35,24 @@ class Graphite:
             t = (namespace + "." + k, (now, v))
             post_data.append(t)
             if debug_print:
-                logging.getLogger.debug(f"{t}")
+                logging.getLogger().debug(f"{t}")
         # pickle data
         payload = pickle.dumps(post_data, protocol=2)
         header = struct.pack("!L", len(payload))
         message = header + payload
+
+        if not send_data:
+            return
         # throw data at graphite
-        if send_data:
-            s = socket.socket()
-            try:
-                s.connect((self.graphite_host, self.graphite_pickle_port))
-                s.sendall(message)
-            except socket.error as detail:
-                logging.getLogger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}: {detail}")
-            finally:
-                s.close()
+
+        s = socket.socket()
+        try:
+            s.connect((self.graphite_host, self.graphite_pickle_port))
+            s.sendall(message)
+        except socket.error as detail:
+            logging.getLogger().exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}: {detail}")
+        finally:
+            s.close()
 
 
 if __name__ == "__main__":
