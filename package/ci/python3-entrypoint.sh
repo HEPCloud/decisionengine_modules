@@ -32,8 +32,8 @@ python3 -m pip install --user decisionengine/dist/decisionengine*.whl
 # Install DE Modules dependencies
 python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade pytest
-python3 -m pip install -r decisionengine_modules/requirements.txt
-
+python3 -m pip install -e . --user
+python3 -m pip install -e .[develop] --user
 
 echo''
 python3 -m pip list
@@ -42,6 +42,5 @@ python3 -m pip list
 set -o pipefail
 
 # run the python "module/command"
-# cd decisionengine_modules
-export PYTHONPATH=${PWD}/../:${PWD}:${PYTHONPATH}
+export PYTHONPATH=${PWD}/src:${PYTHONPATH}
 python3 ${CMD} 2>&1 | tee ${LOGFILE}
