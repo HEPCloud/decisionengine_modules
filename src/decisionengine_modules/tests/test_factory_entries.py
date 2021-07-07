@@ -45,12 +45,12 @@ CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT = {
 CONFIG_FACTORY_ENTRIES_CORMAP = {
     "condor_config": "/etc/condor/condor_config",
     "factories": [
-        { 
+        {
             "collector_host": "dummy_collector.fnal.gov",
             "classad_attrs": ['GLIDEIN_GridType', "GLIDEIN_CMSSite", 'GLIDEIN_Resource_Slots'],
             "correction_map": {
-                "GLIDEIN_Resource_Slots":'DummySlots',
-                "GLIDEIN_CMSSite":'DummySite'
+                "GLIDEIN_Resource_Slots": 'DummySlots',
+                "GLIDEIN_CMSSite": 'DummySite'
             }
         },
     ]
@@ -72,8 +72,8 @@ class TestFactoryEntries:
             pprint.pprint(entries.acquire())
 
     def test_acquire_correctionmap(self):
-        d1 = {'GLIDEIN_Resource_Slots': ['DummySlots', 'DummySlots'] }
-        d2 = {'GLIDEIN_CMSSite': ['DummySite', 'DummySite'] }
+        d1 = {'GLIDEIN_Resource_Slots': ['DummySlots', 'DummySlots']}
+        d2 = {'GLIDEIN_CMSSite': ['DummySite', 'DummySite']}
         df1 = pd.DataFrame(data=d1)
         df2 = pd.DataFrame(data=d2)
 
@@ -82,8 +82,8 @@ class TestFactoryEntries:
             f.return_value = utils.input_from_file(FIXTURE_FILE)
             dummypd = entries.acquire()
             dummypd2 = dummypd['Factory_Entries_Grid']
-            assert( df1.equals( dummypd2[['GLIDEIN_Resource_Slots']]) )
-            assert( df2.equals( dummypd2[['GLIDEIN_CMSSite']]) )
+            assert(df1.equals(dummypd2[['GLIDEIN_Resource_Slots']]))
+            assert(df2.equals(dummypd2[['GLIDEIN_CMSSite']]))
 
     def test_acquire_live(self):
         entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
