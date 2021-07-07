@@ -1,42 +1,33 @@
 ---
-name: run unit tests in SL7 container
+name: Test in EL7 container
 
-on: [pull_request, push]
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - '**'          # matches every branch
+      - '!gh-pages'   # excludes gh-pages branch
 
 jobs:
-  unit_test_job:
+  pytest:
     runs-on: ubuntu-latest
-    name: A job to run unit tests
+    name: A job to test the decision engine framework on EL7
+    timeout-minutes: 30
+
     steps:
-      - name: Sparse checkout
-        shell: bash
-        run: |
-          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          BRANCH="${GITHUB_REF/#refs\/heads\//}"
-          # Following code is based on logs of actions/checkout@v, with sparseCheckout stuff inserted in the middle
-          echo "Syncing repository: $GITHUB_REPOSITORY"
-          echo "Working directory is '$(pwd)' GITHUB_WORKSPACE=$GITHUB_WORKSPACE BRANCH=$BRANCH"
-          git version
-          git init $GITHUB_WORKSPACE
-          git remote add origin https://github.com/$GITHUB_REPOSITORY
-          git config --local gc.auto 0
-          # Now interesting part
-          git config core.sparseCheckout true
-          # Add here contents of sparse-checkout line by line
-          echo ".github" >> .git/info/sparse-checkout
-          git -c protocol.version=2 fetch --no-tags --prune --progress --depth=10 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
-          git checkout --progress --force -B ${BRANCH} refs/remotes/origin/${BRANCH}
-        id: sparse-checkout
-      - name: Checkout
+      - name: Checkout code tree
         uses: actions/checkout@v2
         with:
-          path: 'decisionengine_modules'
-      - name: unit test action step
-        id: unit_test
-        uses: ./.github/actions/unittest-in-sl7-docker
-      - name: Archive unittest log
-        if: always()
-        uses: actions/upload-artifact@v1
+          fetch-depth: 0
+
+      - name: Run the tests in a container (SL7/HEPCloud-CI)
+        uses: ./.github/actions/python-command-in-sl7-container
+
+      - name: Archive logs
+        uses: actions/upload-artifact@v2
         with:
-          name: pytest-log
+          name: test-log
           path: pytest.log
+          if-no-files-found: error

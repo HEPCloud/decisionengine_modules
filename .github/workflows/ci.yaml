@@ -82,18 +82,24 @@ jobs:
           python3 -m pip install --upgrade wheel
           python3 -m pip install --upgrade pytest
           python3 -m pip install --user Cython
-          python3 -m pip install --user numpy
           python3 setup.py bdist_wheel
           python3 -m pip install --user dist/decisionengine*.whl
 
-      - name: Install DE Modules dependencies
+      - name: Install DE Modules dependencies (runtime)
         run: |
           set -x
           cd ${{ github.workspace }}/decisionengine_modules
           python3 -m pip install --upgrade pip
+          python3 -m pip install -e . --user
+          python3 -m pip list --user
+      
+      - name: Install dependencies (unit tests)
+        run: |
+          set -x
+          cd ${{ github.workspace }}/decisionengine_modules
           python3 -m pip install --upgrade pytest
-          python3 -m pip install -r requirements.txt
-          python3 -m pip install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+          python3 -m pip install -e .[develop] --user
+          python3 -m pip list --user
 
       - name: Note DE Framework used in testing
         run: |
@@ -150,9 +156,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip python3-psycopg2 latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-          python -m pip install sphinx
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -e .[develop] --user
+          python3 -m pip list --user
+          python3 -m pip install sphinx
 
       - name: Build documentation
         env:
@@ -232,8 +239,8 @@ jobs:
           cd ${{ github.workspace }}/decisionengine_modules
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade pytest
-          python3 -m pip install -r requirements.txt
-          python3 -m pip install --index-url https://test.pypi.org/simple --no-deps bill-calculator-hep-mapsacosta==0.0.9
+          python3 -m pip install -e .[develop] --user
+          python3 -m pip list --user
 
       - name: Run Flake8 checks
         env:
