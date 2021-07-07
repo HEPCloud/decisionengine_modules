@@ -1,6 +1,6 @@
 #%define version __DECISIONENGINE_RPM_VERSION__
 #%define release __DECISIONENGINE_RPM_RELEASE__
-%define version 1.7.0rc
+%define version 1.6.99.post2
 %define release 1
 
 %define de_user decisionengine
@@ -114,6 +114,11 @@ rm -Rf $RPM_BUILD_ROOT%{python3_sitelib}/decisionengine_modules/testcases
 %preun
 
 %changelog
+
+* Tue Jul 6 2021 Marco Mambelli <marcom@fnal.gov> - 1.6.99.post2-1
+- 1.6.99 are development releases for 1.7.0
+- Release notes at https://hepcloud.github.io/decisionengine_modules/release_notes/release_notes_1.7.html
+- DE modules 1.7.0 (RC 1 to 2)
 
 * Tue Mar 24 2020 Patrick Gartung <gartung@fnal.gov> - 0.3.12-1_py3
 - Build against python3.6
