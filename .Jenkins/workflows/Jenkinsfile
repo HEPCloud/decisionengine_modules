@@ -47,11 +47,11 @@ pipeline {
                         echo "prepare docker image ${flake8StageDockerImage}"
                         sh "docker build --pull --tag ${flake8StageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/Dockerfile decisionengine_modules/package/ci/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${flake8StageDockerImage} \"-m pytest -m flake8 --flake8 decisionengine_modules\" \"flake8.log\""
+                        sh "docker run --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${flake8StageDockerImage} \"-m pytest -m flake8 --flake8\" \"flake8.log\""
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: "flake8.log"
+                            archiveArtifacts artifacts: "decisionengine_modules/flake8.log"
                             echo "cleanup docker image ${flake8StageDockerImage}"
                             sh "docker rmi ${flake8StageDockerImage}"
                         }
@@ -91,11 +91,11 @@ pipeline {
                         echo "prepare docker image ${unit_testsStageDockerImage}"
                         sh "docker build --pull --tag ${unit_testsStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/Dockerfile decisionengine_modules/package/ci/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${unit_testsStageDockerImage} \"-m pytest --cov-report term --cov=decisionengine_modules --no-cov-on-fail decisionengine_modules\" \"pytest.log\""
+                        sh "docker run --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${unit_testsStageDockerImage} \"-m pytest --cov-report term --cov=decisionengine_modules --no-cov-on-fail\" \"pytest.log\""
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: "pytest.log"
+                            archiveArtifacts artifacts: "decisionengine_modules/pytest.log"
                             echo "cleanup docker image ${unit_testsStageDockerImage}"
                             sh "docker rmi ${unit_testsStageDockerImage}"
                             }
@@ -135,11 +135,11 @@ pipeline {
                         echo "prepare docker image ${rpmbuildStageDockerImage}"
                         sh "docker build --pull --tag ${rpmbuildStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/Dockerfile decisionengine_modules/package/ci/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --entrypoint decisionengine_modules/.github/actions/rpmbuild-in-sl7-docker/entrypoint.sh --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}:${WORKSPACE} -w ${WORKSPACE} ${rpmbuildStageDockerImage}"
+                        sh "docker run --rm --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${rpmbuildStageDockerImage} \"setup.py bdist_rpm\" \"rpmbuild.log\""
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: "rpmbuild.tar"
+                            archiveArtifacts artifacts: "decisionengine_modules/rpmbuild.log,decisionengine_modules/dist/*.rpm"
                             echo "cleanup docker image ${rpmbuildStageDockerImage}"
                             sh "docker rmi ${rpmbuildStageDockerImage}"
                         }
