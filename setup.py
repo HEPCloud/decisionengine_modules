@@ -23,7 +23,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 runtime_require = [
     "boto >= 2.49.0", "boto3 >= 1.17.10", "google_auth >= 1.16.0, < 2dev",
     "google-api-python-client >= 1.12.8", "gcs-oauth2-boto-plugin >= 2.7",
-    "packaging >= 20.9", "htcondor >= 8.9.11", "urllib3 >= 1.26.0",
+    "htcondor >= 8.9.11", "urllib3 >= 1.25.6",
     "bill-calculator-hep >= 0.1.2",
     "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
@@ -36,6 +36,7 @@ devel_req = [
     "pytest >= 6.2.2", "pytest-cov >= 2.11.1", "pytest-flake8 >= 1.0.7",
     "tabulate >= 0.8.8", "toml >= 0.10.2", "pyyaml >= 5.4.1",
     "sphinx >= 3.5.3", "sphinx_rtd_theme >= 0.5.1",
+    "packaging >= 20.9",
     "importlib_resources >= 5.1.2; python_version <= '3.8'",
 ]
 
