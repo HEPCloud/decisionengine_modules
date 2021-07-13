@@ -19,7 +19,7 @@ config_billing_info = {'projectId': 'hepcloud-fnal',
                        'accountNumber': 1111,
                        'credentialsProfileName': 'BillingBlah',
                        'applyDiscount': True,  # DLT discount does not apply to credits
-                       'botoConfig': ".boto",
+                       'botoConfig': ".boto3",
                        'localFileDir': "."}
 
 class TestGCEBillingInfo:
