@@ -1,6 +1,7 @@
 #!/bin/bash -xe
 CMD=${1:- -m pytest}
 LOGFILE=${2:- pytest.log}
+DE_BRANCH=${3:-master}
 
 id
 getent passwd $(whoami)
@@ -9,7 +10,7 @@ echo ''
 
 # checkout DE Framework
 rm -rf decisionengine
-git clone https://github.com/HEPCloud/decisionengine.git
+git clone -b ${DE_BRANCH} https://github.com/HEPCloud/decisionengine.git
 
 # checkout GlideinWMS for python3
 rm -rf glideinwms
