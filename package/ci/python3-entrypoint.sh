@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 CMD=${1:- -m pytest}
 LOGFILE=${2:- pytest.log}
-DE_BRANCH=${3:-master}
+DE_BRANCH=${3:-1.6}
 
 id
 getent passwd $(whoami)
