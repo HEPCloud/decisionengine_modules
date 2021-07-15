@@ -1,6 +1,16 @@
 #!/bin/bash -xe
 CMD=${1:- -m pytest}
 LOGFILE=${2:- pytest.log}
+# set defaul DE_BRANCH to master or eventually set it as entrypoint script argument
+DE_BRANCH=${3:-master}
+
+# check DE modules branch
+# the entrypoint script is supposed to run inside DE modules folder
+# GITHUB_PR_NUMBER is set in Jenkins for PR
+# CI on GitHub for PR uses a HEAD detached branch
+# if we have a different case, we are testing an actual branch
+[[ -z ${GITHUB_PR_NUMBER} && $(git rev-parse --abbrev-ref HEAD) != "HEAD" ]] && DE_BRANCH=$(git rev-parse --abbrev-ref HEAD) || :
+echo "DE_BRANCH: ${DE_BRANCH}"
 
 id
 getent passwd $(whoami)
@@ -9,7 +19,7 @@ echo ''
 
 # checkout DE Framework
 rm -rf decisionengine
-git clone https://github.com/HEPCloud/decisionengine.git
+git clone -b ${DE_BRANCH} https://github.com/HEPCloud/decisionengine.git
 
 # checkout GlideinWMS for python3
 rm -rf glideinwms
