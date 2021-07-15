@@ -39,14 +39,14 @@ devel_req = [
     "pytest >= 6.2.2", "pytest-cov >= 2.11.1", "pytest-flake8 >= 1.0.7",
     "tabulate >= 0.8.8", "toml >= 0.10.2", "pyyaml >= 5.4.1",
     "sphinx >= 3.5.3", "sphinx_rtd_theme >= 0.5.1",
-    "packaging >= 20.9",
+    "packaging >= 20.9", "wheel >= 0.36.2",
     "importlib_resources >= 5.1.2; python_version <= '3.8'",
 ]
 
 # workaround bug in editable install when PEP517 is detected
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-rpm_require = ["decisionengine", "glideinwms-vofrontend-standalone"]
+rpm_require = ["decisionengine", "glideinwms-vofrontend-standalone", "python3-wheel"]
 
 # This metadata can be read out with:
 #    import importlib.metadata
@@ -56,7 +56,7 @@ rpm_require = ["decisionengine", "glideinwms-vofrontend-standalone"]
 #
 # Much of it comes out of decisionengine_modules.about.py
 setup(
-    setup_requires=["setuptools", "wheel", "setuptools_scm[toml]"],
+    setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm[toml] >= 6.0.1"],
     name=about.__title__,
     use_scm_version={"version_scheme": "post-release"},
     long_description=long_description,
