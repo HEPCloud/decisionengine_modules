@@ -43,7 +43,7 @@ devel_req = [
 # workaround bug in editable install when PEP517 is detected
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-rpm_require = ["decisionengine", "glideinwms"]
+rpm_require = ["decisionengine", "glideinwms-vofrontend-standalone"]
 
 # This metadata can be read out with:
 #    import importlib.metadata
