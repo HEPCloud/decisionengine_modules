@@ -1,5 +1,5 @@
 import copy
-import logging
+import structlog
 import math
 import sys
 
@@ -13,10 +13,10 @@ from decisionengine_modules.glideinwms import classads
 from decisionengine_modules.glideinwms.security import Credential
 from decisionengine_modules.glideinwms.security import CredentialCache
 
-pandas.options.mode.chained_assignment = None  # default='warn'
+logger = structlog.getLogger()
 
-# TODO: Need a better way of setting global logger
-logger = logging.getLogger()
+
+pandas.options.mode.chained_assignment = None  # default='warn'
 
 
 class NoCredentialException(Exception):
@@ -44,7 +44,7 @@ class GlideFrontendElement:
     """
 
     def __init__(self, fe_group, acct_group, fe_cfg):
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self.fe_group = fe_group
         self.acct_group = acct_group
         self.fe_cfg = fe_cfg

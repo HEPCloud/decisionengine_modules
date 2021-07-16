@@ -1,4 +1,4 @@
-import logging
+import structlog
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -33,7 +33,7 @@ class GCEBillingInfo(Source.Source):
         # location for downloaded billing files
         self.localFileDir = config.get('localFileDir')
 
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def acquire(self):
         """

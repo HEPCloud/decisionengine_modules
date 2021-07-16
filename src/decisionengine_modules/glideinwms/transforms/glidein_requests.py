@@ -3,7 +3,7 @@ import pandas
 import numpy
 import traceback
 
-import logging
+import structlog
 
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
@@ -53,7 +53,7 @@ class GlideinRequestManifests(Transform.Transform):
             'de_frontend_config',
             '/var/lib/gwms-frontend/vofrontend/de_frontend_config')
 
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def transform(self, datablock):
         """

@@ -4,7 +4,7 @@ Compare jobs on factory and Nersc
 
 import pandas as pd
 
-import logging
+import structlog
 from decisionengine.framework.modules import Transform
 
 @Transform.consumes(job_manifests=pd.DataFrame,
@@ -17,7 +17,7 @@ class CompareNerscFactoryJobs(Transform.Transform):
     """
 
     def __init__(self, param_dict):
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def transform(self, data_block):
         """

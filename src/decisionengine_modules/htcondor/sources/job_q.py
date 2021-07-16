@@ -1,4 +1,4 @@
-import logging
+import structlog
 import pandas
 import traceback
 
@@ -29,7 +29,7 @@ class JobQ(Source.Source):
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
         self.classad_attrs = config.get('classad_attrs')
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self.correction_map = config.get('correction_map')
 
     def acquire(self):

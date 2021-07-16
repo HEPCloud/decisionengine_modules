@@ -9,7 +9,7 @@ import sys
 
 from decisionengine.framework.modules import Transform
 from decisionengine_modules.util import figure_of_merit as fom
-import logging
+import structlog
 
 
 @Transform.consumes(Nersc_Instance_Performance=pd.DataFrame,
@@ -19,7 +19,7 @@ import logging
 class NerscFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def transform(self, data_block):
         """

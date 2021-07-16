@@ -1,6 +1,6 @@
 from functools import partial
 from functools import wraps
-import logging
+import structlog
 import time
 
 def retry_on_error(nretries=1, retry_interval=2, backoff=True):
@@ -21,7 +21,7 @@ def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True):
     Otherwise, use the default values or pass new values to the decorator.
     '''
     time2sleep = retry_interval
-    logger = logging.getLogger()
+    logger = structlog.getLogger()
     for i in range(nretries + 1):
         try:
             return f()

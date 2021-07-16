@@ -1,6 +1,6 @@
 import pandas
 
-import logging
+import structlog
 from decisionengine.framework.modules import Publisher
 from decisionengine_modules.htcondor.publishers import publisher
 
@@ -18,7 +18,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
         super().__init__(config)
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self._fact_entrytype_map = {
             'allow_grid_requests': 'Factory_Entries_Grid',
             'allow_aws_requests': 'Factory_Entries_AWS',

@@ -1,7 +1,7 @@
 import abc
 import traceback
 import pandas
-import logging
+import structlog
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
@@ -27,7 +27,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         avaiable in its config file.
         """
         super(Source.Source, self).__init__(config)
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)

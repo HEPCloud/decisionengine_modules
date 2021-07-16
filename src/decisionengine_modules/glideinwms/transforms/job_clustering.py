@@ -1,6 +1,6 @@
 import pandas
 
-import logging
+import structlog
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 
@@ -32,7 +32,7 @@ class JobClustering(Transform.Transform):
                                                   columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
                                                            'Totals', 'Frontend_Group'])
 
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def transform(self, datablock):
 

@@ -1,5 +1,5 @@
 import datetime
-import logging
+import structlog
 import time
 import pandas as pd
 
@@ -33,7 +33,7 @@ from billing_calculator_hep.AWSBillAnalysis import AWSBillCalculator
 class BillingInfo(Source.Source):
     def __init__(self, config):
         acconts_config_file = config['billing_configuration']
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self.billing_files_location = config['dst_dir_for_s3_files']
         self.verbose_flag = int(config['verbose_flag'])
         # Load kown accounts configuration

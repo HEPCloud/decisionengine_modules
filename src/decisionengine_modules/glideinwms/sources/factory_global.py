@@ -1,5 +1,5 @@
 from functools import partial
-import logging
+import structlog
 
 import pandas
 
@@ -39,7 +39,7 @@ class FactoryGlobalManifests(Source.Source):
         self.retry_interval = config.get('retry_interval', 0)
 
         self.subsystem_name = 'any'
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def acquire(self):
         """

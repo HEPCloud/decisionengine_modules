@@ -3,7 +3,7 @@ Generic publisher for graphana
 
 """
 import abc
-import logging
+import structlog
 import pandas
 
 from decisionengine.framework.modules import Publisher
@@ -28,6 +28,7 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         self.graphite_context_header = config.get('graphite_context', DEFAULT_GRAPHITE_CONTEXT)
         self.publish_to_graphite = config.get('publish_to_graphite')
         self.output_file = config.get('output_file')
+        self.logger = structlog.getLogger()
 
     @classmethod
     def consumes_dataframe(cls, product_name):
@@ -55,7 +56,7 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         try:
             data = data_block[product]
         except KeyError:
-            logging.getLogger().error(f"Failed to extract {product} from data block.")
+            self.logger.error(f"Failed to extract {product} from data block.")
             return
         if self.graphite_host and self.publish_to_graphite:
             end_point = graphite.Graphite(host=self.graphite_host,
@@ -65,4 +66,4 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
                                 debug_print=False,
                                 send_data=True)
         if not self.output_file:
-            logging.getLogger().debug(data.to_csv(self.output_file, index=False))
+            self.logger.debug(data.to_csv(self.output_file, index=False))

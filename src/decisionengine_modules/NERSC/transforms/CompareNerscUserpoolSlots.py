@@ -2,7 +2,7 @@
 Compare slots on Nersc and startd
 """
 import pandas
-import logging
+import structlog
 
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
@@ -23,6 +23,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
 
     def __init__(self, param_dict):
         self.entry_nersc_map = param_dict['entry_nersc_map']
+        self.logger = structlog.getLogger()
 
     def transform(self, data_block):
         """
@@ -54,8 +55,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
                 key = row['hostname'] + row['queue'] + row['user']
                 entry_name = self.entry_nersc_map[key]
                 if entry_name not in cores_dict:
-                    logging.info("error: entry %s does NOT exist!" %
-                                 (entry_name))
+                    self.logger.info(f"error: entry {entry_name} does NOT exist!")
                 else:
                     result_key = 'nersc' + '.' + row['hostname'] + '.'\
                                  + row['queue'] + '.' + row['user'] + '.count'
@@ -68,8 +68,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
                     total_slots_nersc += (cores_dict[entry_name] *
                                           int(row['nodes']))
 
-        logging.info("total number of slots on Nersc = %s" %
-                     str(total_slots_nersc))
+        self.logger.info(f"total number of slots on Nersc = {total_slots_nersc}")
 
         # pull slot info from User pool ########
 
@@ -77,8 +76,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         for index, row in userpool_slots_df.iterrows():
             total_slots_userpool += int(row['TotalCpus'])
 
-        logging.info("total number of slots on userpool = %s" %
-                     str(total_slots_userpool))
+        self.logger.info(f"total number of slots on userpool = {total_slots_userpool}")
 
         # compute the relative difference between the two metrics ###
         rel_diff = 0.0
@@ -87,7 +85,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
             more = max(total_slots_nersc, total_slots_userpool)
             rel_diff = diff / more
 
-        logging.info("diff = %f, rel diff = %f" % (diff, rel_diff))
+        self.logger.info("diff = %f, rel diff = %f" % (diff, rel_diff))
 
         # construct the result namespace ############################
         results['nersc.count'] = total_slots_nersc

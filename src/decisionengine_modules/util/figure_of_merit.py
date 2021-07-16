@@ -3,7 +3,7 @@ Calculate figure of merit
 """
 
 import sys
-import logging
+import structlog
 
 _INFINITY = sys.float_info.max
 
@@ -13,7 +13,7 @@ def figure_of_merit(performance,
                     allowed,
                     idle=None,
                     max_idle=None):
-    logger = logging.getLogger()
+    logger = structlog.getLogger()
     try:
         if running >= allowed or allowed == 0:
             return _INFINITY

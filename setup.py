@@ -28,6 +28,7 @@ runtime_require = [
     "htcondor >= 8.9.11",
     "urllib3 >= 1.25.6",
     "bill-calculator-hep >= 0.1.2",
+    "structlog >= 21.1.0",
     "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
     "pandas == 1.1.5; python_version <= '3.6'",

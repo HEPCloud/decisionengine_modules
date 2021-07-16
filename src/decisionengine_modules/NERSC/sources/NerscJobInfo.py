@@ -1,6 +1,6 @@
 """ Get job info from Nersc
 """
-import logging
+import structlog
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -40,7 +40,7 @@ class NerscJobInfo(Source.Source):
             config.get('passwd_file'),
             num_retries=self.max_retries,
             retry_backoff_factor=self.retry_backoff_factor)
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def acquire(self):
         """

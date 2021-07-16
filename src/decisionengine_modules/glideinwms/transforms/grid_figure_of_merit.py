@@ -1,6 +1,6 @@
 import pandas
 
-import logging
+import structlog
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 from decisionengine_modules.util.figure_of_merit import figure_of_merit
@@ -16,7 +16,7 @@ class GridFigureOfMerit(Transform.Transform):
 
     def __init__(self, config):
         super().__init__(config)
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self.price_performance = config.get('price_performance', 1)
 
     def transform(self, datablock):

@@ -5,7 +5,7 @@ import boto3
 import pandas as pd
 
 from decisionengine.framework.modules import Source, SourceProxy
-import logging
+import structlog
 
 
 class OccupancyData:
@@ -123,7 +123,7 @@ class OccupancyForRegion:
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def acquire(self):
         """
