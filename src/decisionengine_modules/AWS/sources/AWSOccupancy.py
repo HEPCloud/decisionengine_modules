@@ -7,7 +7,7 @@ import pandas as pd
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 
-import logging
+import structlog
 import decisionengine_modules.load_config as load_config
 
 # default values
@@ -142,7 +142,7 @@ and the entries in the lists (e.g. "RegionName1") are the name of a region (eg. 
 class AWSOccupancy(Source.Source):
     def __init__(self, configdict):
         self.config_file = configdict['occupancy_configuration']
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
 
     def acquire(self):
         """

@@ -1,7 +1,7 @@
 import abc
 import classad
 import htcondor
-import logging
+import structlog
 import os
 import pandas
 from functools import partial
@@ -24,7 +24,7 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
         self.x509_user_proxy = config.get('x509_user_proxy')
         self.nretries = config.get('nretries')
         self.retry_interval = config.get('retry_interval')
-        self.logger = logging.getLogger()
+        self.logger = structlog.getLogger()
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
         self.classad_type = 'generic'

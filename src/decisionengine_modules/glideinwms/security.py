@@ -5,9 +5,9 @@ import calendar
 from glideinwms.lib import x509Support
 from glideinwms.lib import condorExe
 
-import logging
+import structlog
 
-logger = logging.getLogger()
+logger = structlog.getLogger()
 
 
 class Credential:

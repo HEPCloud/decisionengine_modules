@@ -1,7 +1,7 @@
-import logging
+import structlog
 import pandas
 
-logger = logging.getLogger()
+logger = structlog.getLogger()
 
 _RESOURCE_FROM_COLUMN_MAP = {
     'Grid_Figure_Of_Merit': 'Grid_Figure_Of_Merit',

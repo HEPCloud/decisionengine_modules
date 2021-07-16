@@ -1,7 +1,7 @@
 from decisionengine_modules.GCE.sources import GCEBillingInfo
 from billing_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
-import logging
+import structlog
 import pandas
 
 # TODO
@@ -34,7 +34,7 @@ class TestGCEBillingInfo:
                          'balanceAtDate': 100.0, 'applyDiscount': True}
         globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': '.'}
 
-        calculator = GCEBillCalculator(None, globalConf, constantsDict, logging.getLogger())
+        calculator = GCEBillCalculator(None, globalConf, constantsDict, structlog.getLogger())
 
         file_list = calculator._downloadBillFiles()
         assert file_list == []

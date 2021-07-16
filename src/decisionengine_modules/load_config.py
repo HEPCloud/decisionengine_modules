@@ -1,9 +1,11 @@
 import time
-import logging
+import structlog
 
 """
 Load python object
 """
+
+logger = structlog.getLogger()
 
 
 def load(python_file, retries=0, timeout=0):
@@ -29,10 +31,10 @@ def load(python_file, retries=0, timeout=0):
                 exec(code)
             break
         except IOError:
-            logging.getLogger.warning(f"config load failed in de_modules, {retries-i} retries")
+            logger.warning(f"config load failed in de_modules, {retries-i} retries")
             time.sleep(timeout)
     else:
-        logging.getLogger().exception(f"cannot load {python_file}")
+        logger.exception(f"cannot load {python_file}")
         raise RuntimeError()
 
     return config
