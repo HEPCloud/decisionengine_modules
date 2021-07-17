@@ -8,13 +8,16 @@ This release features:
 - Migrated to setuptools package development library. This build system is the standard vanilla python build system provided with the python distribution. Build configurations have been updated and rpm packaging remains the primary distribution method.
 - The billing_calculator is now hosted in HEPCloud's GitHub organization
 
+.. note::
+    The RPM package was renamed from decisionengine-standard-library to decisionengine_modules. rpm/yum updates from the old RPM will work correctly.
+
 
 Issues fixed in this release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`333  <https://github.com/HEPCloud/decisionengine/issues/333>`_ : DE modules entrypoint script always pick DE default branch, this becomes an issue when testing DE modules branches enhancement
-`325  <https://github.com/HEPCloud/decisionengine/issues/325>`_ : Follow up for 323 unit test inside correction map logic
-`323  <https://github.com/HEPCloud/decisionengine/issues/323>`_ : Need to be able to add the conversion map to the factory_entries source onmachine_patch operations
+`333  <https://github.com/HEPCloud/decisionengine_modules/issues/333>`_ : DE modules entrypoint script always pick DE default branch, this becomes an issue when testing DE modules branches enhancement
+`325  <https://github.com/HEPCloud/decisionengine_modules/issues/325>`_ : Follow up for 323 unit test inside correction map logic
+`323  <https://github.com/HEPCloud/decisionengine_modules/issues/323>`_ : Need to be able to add the conversion map to the factory_entries source onmachine_patch operations
 
 
 Full list of commits since version 1.6.0
