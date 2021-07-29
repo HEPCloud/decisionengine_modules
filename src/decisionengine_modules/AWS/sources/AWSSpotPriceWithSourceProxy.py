@@ -2,12 +2,16 @@
 Get AWS spot price information
 """
 
+import structlog
 import datetime
 import time
 import pandas as pd
 import boto3
 
 from decisionengine.framework.modules import Source, SourceProxy
+
+logger = structlog.getLogger()
+logger = logger.bind(module=__name__.split(".")[-1])
 
 # default values
 REGION = 'us-west-2'
@@ -126,8 +130,8 @@ class AWSSpotPriceForRegion:
                 AvailabilityZone=self.availability_zone,
                 MaxResults=self.max_results,
                 NextToken='')
-        except Exception as e:
-            print("Exception", e)
+        except Exception:
+            logger.exception("Exception in AWSSpotPriceWithSourceProxy call to get_price")
             return None
         price_history = rc.get('SpotPriceHistory')
         if len(price_history) == 0:

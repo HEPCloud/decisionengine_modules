@@ -687,7 +687,7 @@ class GlideFrontendElement:
         try:
             group_config = self.fe_cfg['group'][self.fe_group]
         except KeyError:
-            self.logger.error(
+            self.logger.exception(
                 'Frontend Group %s not configured in frontend.xml' % self.fe_group)
             raise
 
@@ -1605,7 +1605,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 fom = fom_info.get('FOM').tolist()[0]
             except IndexError:
                 fom = '-'
-                self.logger.error(
+                self.logger.exception(
                     'FOM info not found for following entry possibly because of '
                     'inaccurate/missing info in the instance performance file')
                 self.logger.error(entry_info)
