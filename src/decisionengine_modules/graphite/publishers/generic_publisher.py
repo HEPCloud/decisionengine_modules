@@ -56,7 +56,7 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         try:
             data = data_block[product]
         except KeyError:
-            self.logger.error(f"Failed to extract {product} from data block.")
+            self.logger.exception(f"Failed to extract {product} from data block.")
             return
         if self.graphite_host and self.publish_to_graphite:
             end_point = graphite.Graphite(host=self.graphite_host,

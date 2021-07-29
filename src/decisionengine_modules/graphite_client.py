@@ -50,8 +50,8 @@ class Graphite:
         try:
             s.connect((self.graphite_host, self.graphite_pickle_port))
             s.sendall(message)
-        except socket.error as detail:
-            self.logger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}: {detail}")
+        except socket.error:
+            self.logger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}")
         finally:
             s.close()
 

@@ -1,8 +1,6 @@
 import os.path
 import pandas
 import numpy
-import traceback
-
 import structlog
 
 from decisionengine.framework.modules import Transform
@@ -140,8 +138,7 @@ class GlideinRequestManifests(Transform.Transform):
                         job_filter=job_query, fom_entries=fom_entries)
                 manifests = self.merge_requests(manifests, group_manifests)
         except Exception:
-            self.logger.error(
-                'Error generating glidein requests: %s' % traceback.format_exc())
+            self.logger.exception('Error generating glidein requests')
             raise
 
         return manifests
@@ -170,8 +167,8 @@ class GlideinRequestManifests(Transform.Transform):
             m_keys = set(manifests.keys())
             g_keys = set(group_manifests.keys())
             if m_keys != g_keys:
-                raise RuntimeError(
-                    'Mismatch in manifest keys: %s, %s' % (m_keys, g_keys))
+                self.logger.exception(f"Mismatch in manifest keys: {m_keys}, {g_keys}")
+                raise RuntimeError()
             for key in m_keys:
                 merged_manifests[key] = manifests[key].append(
                     group_manifests[key], ignore_index=True)
@@ -181,14 +178,17 @@ class GlideinRequestManifests(Transform.Transform):
 
     def read_fe_config(self):
         if not os.path.isfile(self.de_frontend_configfile):
-            raise RuntimeError(
+            self.logger.exception(
                 'Error reading Frontend config for DE %s. '
                 'Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' %
                 self.de_frontend_configfile)
+            raise RuntimeError()
+
         fe_cfg = eval(open(self.de_frontend_configfile, 'r').read())
+
         if not isinstance(fe_cfg, dict):
-            raise ValueError('Frontend config for DE in %s is invalid' %
-                             self.de_frontend_configfile)
+            self.logger.exception(f"Frontend config for DE in {self.de_frontend_configfile} is invalid")
+            raise ValueError()
         return fe_cfg
 
 

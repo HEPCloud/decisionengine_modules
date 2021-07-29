@@ -53,8 +53,8 @@ class GCEBillingInfo(Source.Source):
             self.logger.info('Calculated corrected bill summary for google')
             self.logger.info(CorrectedBillSummaryDict)
 
-        except Exception as detail:
-            self.logger.error(detail)
+        except Exception:
+            self.logger.exception("Exception in GCEBillingInfo call to acquire")
 
         return {'GCE_Billing_Info': pd.DataFrame([CorrectedBillSummaryDict])}
 

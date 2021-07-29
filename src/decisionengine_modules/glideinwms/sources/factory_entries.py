@@ -91,14 +91,10 @@ class FactoryEntries(Source.Source):
 
                     dataframe = pandas.concat([dataframe, df],
                                               ignore_index=True, sort=True)
-            except htcondor_query.QueryError as e:
-                self.logger.error('Failed to fetch glidefactory classads '
-                                  'from collector host(s) "{}": {}'.format(
-                                      collector_host, e))
+            except htcondor_query.QueryError:
+                self.logger.exception(f"Failed to fetch glidefactory classads from collector host(s) {collector_host}")
             except Exception:
-                self.logger.exception('Unexpected error fetching glidefactory '
-                                      'classads from collector host(s) '
-                                      '"{}"'.format(collector_host))
+                self.logger.exception(f"Unexpected error fetching glidefactory classads from collector host(s) {collector_host}")
 
         if dataframe.empty:
             # There were no entry classads in the factory collector or

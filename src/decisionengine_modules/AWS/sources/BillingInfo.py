@@ -129,7 +129,7 @@ class BillingInfo(Source.Source):
                     self.logger.debug('')
 
             except Exception as detail:
-                self.logger.error("In acquire: %s" % detail)
+                self.logger.exception("Exception in AWS BillingInfo call to acquire")
                 raise Exception(detail)
 
         return {'AWS_Billing_Info': pd.DataFrame(data),
