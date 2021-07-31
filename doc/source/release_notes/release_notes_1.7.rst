@@ -23,6 +23,12 @@ Issues fixed in this release
 Full list of commits since version 1.6.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`f8c4c73 <https://github.com/HEPCloud/decisionengine_modules/commit/f8c4c7326a8400ad28bcdab5ef0fcfb3675335eb>`_:   standardizing logging
+
+`160e3b8 <https://github.com/HEPCloud/decisionengine_modules/commit/160e3b8a3a2476cdd5b5c9e323085ac77b648d17>`_:   Added a note to the release notes about the RPM name change
+
+`456003b <https://github.com/HEPCloud/decisionengine_modules/commit/456003b0d6d5dc7fdde3d006e954bc6496c3f1a0>`_:   Release notes ready for v1.7.0
+
 `f8eef94 <https://github.com/HEPCloud/decisionengine_modules/commit/f8eef945932b3097ab066d29ad8cab3391c30370>`_:   changes for structured logging
 
 `8a8c3dc <https://github.com/HEPCloud/decisionengine_modules/commit/8a8c3dc469042df4d13f2719ae94a5958870226f>`_:   Set more firm version requirements for setup.py
