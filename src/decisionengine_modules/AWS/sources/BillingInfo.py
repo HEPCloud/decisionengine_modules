@@ -6,7 +6,7 @@ import pandas as pd
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.AWS.sources import DEAccountContants
-from billing_calculator_hep.AWSBillAnalysis import AWSBillCalculator
+from bill_calculator_hep.AWSBillAnalysis import AWSBillCalculator
 
 
 @Source.supports_config(Parameter('billing_configuration',

@@ -3,7 +3,7 @@ import pandas as pd
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
-from billing_calculator_hep.GCEBillAnalysis import GCEBillCalculator
+from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
 
 @Source.supports_config(Parameter('projectId', type=str),

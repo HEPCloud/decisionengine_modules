@@ -1,5 +1,5 @@
 from decisionengine_modules.GCE.sources import GCEBillingInfo
-from billing_calculator_hep.GCEBillAnalysis import GCEBillCalculator
+from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
 import structlog
 import pandas
