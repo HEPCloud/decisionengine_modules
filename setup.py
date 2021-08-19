@@ -29,7 +29,7 @@ runtime_require = [
     "structlog >= 21.1.0",
     "requests >= 2.14.2",
     "urllib3 >= 1.26.2",
-    "bill-calculator-hep >= 0.1.2",
+    "bill-calculator-hep >= 0.1.4",
     "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
     "pandas == 1.1.5; python_version <= '3.6'",
