@@ -1,7 +1,6 @@
 from decisionengine_modules.GCE.sources import GCEBillingInfo
 from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
-import structlog
 import pandas
 
 # TODO
@@ -20,7 +19,8 @@ config_billing_info = {'projectId': 'hepcloud-fnal',
                        'credentialsProfileName': 'BillingBlah',
                        'applyDiscount': True,  # DLT discount does not apply to credits
                        'botoConfig': ".boto3",
-                       'localFileDir': "."}
+                       'localFileDir': ".",
+                       'channel_name': 'test'}
 
 class TestGCEBillingInfo:
 

@@ -12,6 +12,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "cs.fixture")
 
 CONFIG = {
+    'channel_name': 'test',
     'condor_config': 'condor_config',
     'collector_host': 'fermicloud122.fnal.gov',
 }

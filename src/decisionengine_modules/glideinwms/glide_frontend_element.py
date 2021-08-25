@@ -1,5 +1,4 @@
 import copy
-import structlog
 import math
 import sys
 
@@ -13,9 +12,6 @@ from decisionengine_modules.glideinwms import classads
 from decisionengine_modules.glideinwms.security import Credential
 from decisionengine_modules.glideinwms.security import CredentialCache
 
-logger = structlog.getLogger()
-
-
 pandas.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -23,15 +19,15 @@ class NoCredentialException(Exception):
     pass
 
 
-def get_gfe_obj(fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom'):
+def get_gfe_obj(logger, fe_group, acct_group, fe_cfg, gfe_type='glideinwms_fom'):
     """
     Return glide frontend object of right type based on request
     """
     gfe_obj = None
     if gfe_type == 'glideinwms_fom':
-        gfe_obj = GlideFrontendElementFOM(fe_group, acct_group, fe_cfg)
+        gfe_obj = GlideFrontendElementFOM(logger, fe_group, acct_group, fe_cfg)
     elif gfe_type == 'glideinwms':
-        gfe_obj = GlideFrontendElement(fe_group, acct_group, fe_cfg)
+        gfe_obj = GlideFrontendElement(logger, fe_group, acct_group, fe_cfg)
     else:
         raise RuntimeError(
             'GlideFrontendElement of type %s not supported' % gfe_type)
@@ -43,11 +39,12 @@ class GlideFrontendElement:
     Class that implements the functionality of a GlideinWMS Frontend Element
     """
 
-    def __init__(self, fe_group, acct_group, fe_cfg):
-        self.logger = structlog.getLogger()
+    def __init__(self, logger, fe_group, acct_group, fe_cfg):
         self.fe_group = fe_group
         self.acct_group = acct_group
         self.fe_cfg = fe_cfg
+        self.logger = logger
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def generate_glidein_requests(self, jobs_df, slots_df,
                                   entries, factory_globals,
@@ -146,7 +143,8 @@ class GlideFrontendElement:
 
         # Add entry info to each running slot's classad
         append_running_on(job_types['Running']['dataframe'],
-                          slot_types['Running']['dataframe'])
+                          slot_types['Running']['dataframe'],
+                          self.logger)
 
         ########################################################################
         # STEP 5: Match the jobs to the entries
@@ -306,11 +304,11 @@ class GlideFrontendElement:
 
             if entry_in_downtime:
                 total_down_stats_arr = log_and_sum_factory_line(
-                    glideid_str, entry_in_downtime,
+                    self.logger, glideid_str, entry_in_downtime,
                     this_stats_arr, total_down_stats_arr)
             else:
                 total_up_stats_arr = log_and_sum_factory_line(
-                    glideid_str, entry_in_downtime,
+                    self.logger, glideid_str, entry_in_downtime,
                     this_stats_arr, total_up_stats_arr)
 
             # Get the parameters from the frontend config
@@ -745,7 +743,7 @@ class GlideFrontendElement:
         # cred_plugin => self.x509_proxy_plugin in gwms frontend
         cred_plugin_name = 'ProxyAll'
         cred_plugin_class = glideinFrontendPlugins.proxy_plugins[cred_plugin_name]
-        cred_list = create_credential_list(group_config['proxies'],
+        cred_list = create_credential_list(self.logger, group_config['proxies'],
                                            group_config)
         self.logger.info(
             'Number of credentials found from the configuration %s' % len(cred_list))
@@ -1270,10 +1268,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
     to make glidein requests based on Figure of Merit
     """
 
-    def __init__(self, fe_group, acct_group, fe_cfg):
+    def __init__(self, logger, fe_group, acct_group, fe_cfg):
         super().__init__(fe_group, acct_group, fe_cfg)
         # Sum of all the glidein requests from different job filters
         self.total_glidein_requests = {}
+        self.logger = logger
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def generate_glidein_requests(self, jobs_df, slots_df,
                                   entries, factory_globals,
@@ -1443,7 +1443,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
         # Add entry info to each running slot's classad
         append_running_on(job_types['Running']['dataframe'],
-                          slot_types['Running']['dataframe'])
+                          slot_types['Running']['dataframe'],
+                          self.logger)
 
         ########################################################################
         # STEP 5: Match the jobs to the entries
@@ -1613,14 +1614,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
             if entry_in_downtime:
                 total_down_stats_arr = log_and_sum_factory_line(
-                    glideid_str, entry_in_downtime,
-                    this_stats_arr, total_down_stats_arr,
-                    fom=fom)
+                    self.logger, glideid_str, entry_in_downtime,
+                    this_stats_arr, total_down_stats_arr, fom=fom)
             else:
                 total_up_stats_arr = log_and_sum_factory_line(
-                    glideid_str, entry_in_downtime,
-                    this_stats_arr, total_up_stats_arr,
-                    fom=fom)
+                    self.logger, glideid_str, entry_in_downtime,
+                    this_stats_arr, total_up_stats_arr, fom=fom)
 
             # Get the parameters from the frontend config
             glidein_params = copy.deepcopy(self.params_descript.const_data)
@@ -1856,7 +1855,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
         total = job_types[job_type]['abs']
         # TODO: MMDB should be debug
-        # logger.info('\n'.join(dbg_info))
+        # self.logger.info('\n'.join(dbg_info))
 
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
 
@@ -2056,7 +2055,7 @@ def get_vo_entries(vo, all_entries):
     return entries
 
 
-def create_credential_list(credentials, group_descript):
+def create_credential_list(logger, credentials, group_descript):
     """
     Create a list of Credential objects from the credentials
     configured in the frontend
@@ -2064,12 +2063,12 @@ def create_credential_list(credentials, group_descript):
     credential_list = []
     num = 0
     for cred in credentials:
-        credential_list.append(Credential(num, cred, group_descript))
+        credential_list.append(Credential(logger, num, cred, group_descript))
         num += 1
     return credential_list
 
 
-def append_running_on(jobs, slots):
+def append_running_on(jobs, slots, logger):
     """
     For every running job add the RunningOn info to the jobs dataframe
     """
@@ -2115,7 +2114,7 @@ def append_running_on(jobs, slots):
     jobs['RunningOn'] = ro_list
 
 
-def log_and_sum_factory_line(factory, is_down, factory_stat_arr,
+def log_and_sum_factory_line(logger, factory, is_down, factory_stat_arr,
                              old_factory_stat_arr, fom='-'):
     """
     Will log the factory_stat_arr (tuple composed of 17 numbers)
@@ -2141,10 +2140,10 @@ def log_and_sum_factory_line(factory, is_down, factory_stat_arr,
 
     if isinstance(fom, (float, int)):
         logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(
-            form_arr)) + ('%s %14.4f %s' % (down_str, fom, factory)))
+                    form_arr)) + ('%s %14.4f %s' % (down_str, fom, factory)))
     else:
         logger.info(('%s(%s %s %s %s) %s(%s %s) | %s %s %s %s | %s %s %s | %s %s | ' % tuple(
-            form_arr)) + ('%s %14s %s' % (down_str, fom, factory)))
+                    form_arr)) + ('%s %14s %s' % (down_str, fom, factory)))
 
     new_arr = []
     for i in range(len(factory_stat_arr)):

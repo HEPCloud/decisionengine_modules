@@ -1,7 +1,4 @@
-import structlog
 import pandas
-
-logger = structlog.getLogger()
 
 _RESOURCE_FROM_COLUMN_MAP = {
     'Grid_Figure_Of_Merit': 'Grid_Figure_Of_Merit',
@@ -10,9 +7,10 @@ _RESOURCE_FROM_COLUMN_MAP = {
     'Nersc_Figure_Of_Merit': 'FigureOfMerit'
 }
 
-def order_resources(resources):
+def order_resources(logger, resources):
     ordered_resources = []
     rss_foms = pandas.DataFrame()
+    logger = logger.bind(module=__name__.split(".")[-1])
 
     for rss, column_name in _RESOURCE_FROM_COLUMN_MAP.items():
         fom_df = resources.get(rss)
@@ -34,8 +32,8 @@ def order_resources(resources):
     return ordered_resources
 
 
-def fom_eligible_resources(resources, constraint=None, limit=None):
-    ordered_resources = order_resources(resources)
+def fom_eligible_resources(logger, resources, constraint=None, limit=None):
+    ordered_resources = order_resources(logger, resources)
     if constraint is None:
         return ordered_resources.head(limit)
     return ordered_resources.query(constraint).head(limit)

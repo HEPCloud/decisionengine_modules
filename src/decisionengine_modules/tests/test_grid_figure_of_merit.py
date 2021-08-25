@@ -32,5 +32,5 @@ class TestGridFigureOfMerit():
             'EntryName': ['g1', 'g2', 'g3', 'g4', 'g5'],
             'Grid_Figure_Of_Merit': [sys.float_info.max, sys.float_info.max, sys.float_info.max, 1.050000e-02, 4.020000e-01]
         })
-        fom = GridFigureOfMerit({})
+        fom = GridFigureOfMerit({"channel_name": "test"})
         assert(test_df.equals(fom.transform(datablock).get('Grid_Figure_Of_Merit')))

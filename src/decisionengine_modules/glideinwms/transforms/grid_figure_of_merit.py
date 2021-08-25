@@ -1,6 +1,5 @@
 import pandas
 
-import structlog
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 from decisionengine_modules.util.figure_of_merit import figure_of_merit
@@ -16,14 +15,14 @@ class GridFigureOfMerit(Transform.Transform):
 
     def __init__(self, config):
         super().__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
         self.price_performance = config.get('price_performance', 1)
 
     def transform(self, datablock):
         """
         Grid sites FOM are straight up assumed as 0 for now
         """
-
+        self.getlogger().debug("in GridFigureOfMerit::transform")
         entries = self.Factory_Entries_Grid(datablock)
         if entries is None:
             entries = pandas.DataFrame({ATTR_ENTRYNAME: []})
@@ -38,6 +37,7 @@ class GridFigureOfMerit(Transform.Transform):
                     ATTR_ENTRYNAME: entry[ATTR_ENTRYNAME],
                     ATTR_FOM: figure_of_merit(self.price_performance,
                                               running, max_allowed,
+                                              self.getlogger(),
                                               idle, max_idle)
                 }
                 foms.append(f)

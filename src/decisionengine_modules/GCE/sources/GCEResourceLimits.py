@@ -19,6 +19,7 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
         self.entry_limit_attrs = config.get('entry_limit_attrs')
         if len(self.data_keys) != 1:
             raise RuntimeError("Only one element may be specified in the 'Dataproducts' parameter.")
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -27,6 +28,7 @@ class GCEResourceLimits(SourceProxy.SourceProxy):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.get_logger().debug("in GCEResourceLimits::acquire()")
         factory_data = super().acquire()
         assert len(factory_data) == 1
         df_factory_data = factory_data.popitem()[1]

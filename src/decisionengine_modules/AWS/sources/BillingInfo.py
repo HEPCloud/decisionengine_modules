@@ -1,5 +1,4 @@
 import datetime
-import structlog
 import time
 import pandas as pd
 
@@ -32,8 +31,9 @@ from bill_calculator_hep.AWSBillAnalysis import AWSBillCalculator
                  AWS_Billing_Rate=pd.DataFrame)
 class BillingInfo(Source.Source):
     def __init__(self, config):
+        super().__init__(config)
         acconts_config_file = config['billing_configuration']
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
         self.billing_files_location = config['dst_dir_for_s3_files']
         self.verbose_flag = int(config['verbose_flag'])
         # Load kown accounts configuration
@@ -51,6 +51,7 @@ class BillingInfo(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.get_logger().debug("in BillingInfo::acquire()")
         # get data for all accounts
         data = []
         datarate = []
@@ -60,12 +61,12 @@ class BillingInfo(Source.Source):
                              'bucketBillingName': i.bucketBillingName, 'lastKnownBillDate': i.lastKnownBillDate,
                              'balanceAtDate': i.balanceAtDate, 'applyDiscount': i.applyDiscount}
             try:
-                calculator = AWSBillCalculator(i.accountName, globalConf, constantsDict, self.logger)
+                calculator = AWSBillCalculator(i.accountName, globalConf, constantsDict, self.get_logger())
                 lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
-                self.logger.debug('lastStartDateBilledConsideredDatetime: %s' % (
+                self.get_logger().debug('lastStartDateBilledConsideredDatetime: %s' % (
                     lastStartDateBilledConsideredDatetime))
-                self.logger.debug('CorrectedBillSummaryDict: %s' %
-                                  (CorrectedBillSummaryDict))
+                self.get_logger().debug('CorrectedBillSummaryDict: %s' %
+                                        (CorrectedBillSummaryDict))
                 # data is a list, CorrectedBillSummaryDict is a dict, so we have to append it as a list of dict.
                 # data += calculator.CorrectedMonthlyBillSummaryList
                 data += [CorrectedBillSummaryDict]
@@ -100,36 +101,36 @@ class BillingInfo(Source.Source):
                                 'costRatePerHourInLastDay': costRatePerHourInLastDay}
                 datarate += [dataratedict]
                 if self.verbose_flag:
-                    self.logger.debug('---')
-                    self.logger.debug('Alarm Computation for %s Account Finished at %s' % (
+                    self.get_logger().debug('---')
+                    self.get_logger().debug('Alarm Computation for %s Account Finished at %s' % (
                         calculator.accountName, time.strftime("%c")))
-                    self.logger.debug('')
-                    self.logger.debug(
+                    self.get_logger().debug('')
+                    self.get_logger().debug(
                         'Last Start Date Billed Considered: {}'.format(lastStartDateBilledConsideredDatetime.strftime(
                             '%m/%d/%y %H:%M')))
-                    self.logger.debug(
+                    self.get_logger().debug(
                         'Now {}'.format(dateNow.strftime('%m/%d/%y %H:%M')))
-                    self.logger.debug(
+                    self.get_logger().debug(
                         'delay between now and Last Start Date Billed Considered in hours {}'.format(dataDelay))
-                    self.logger.debug(
+                    self.get_logger().debug(
                         'Six hours before that: {}'.format(sixHoursBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')))
-                    self.logger.debug(
+                    self.get_logger().debug(
                         'One day before that: {}'.format(oneDayBeforeLastDateBilledDatetime.strftime('%m/%d/%y %H:%M')))
-                    self.logger.debug('Adjusted Total Now from Date of Last Known Balance: ${}'.format(
-                                      CorrectedBillSummaryDict['Total']))
-                    self.logger.debug('')
-                    self.logger.debug(
+                    self.get_logger().debug('Adjusted Total Now from Date of Last Known Balance: ${}'.format(
+                                            CorrectedBillSummaryDict['Total']))
+                    self.get_logger().debug('')
+                    self.get_logger().debug(
                         'Cost In the Last Six Hours: ${}'.format(costInLastSixHours))
-                    self.logger.debug('Cost Rate Per Hour In the Last Six Hours: ${} / h'.format(costRatePerHourInLastSixHours))
-                    self.logger.debug('')
-                    self.logger.debug('Cost In the Last Day: ${}'.format(costInLastDay))
-                    self.logger.debug(
+                    self.get_logger().debug('Cost Rate Per Hour In the Last Six Hours: ${} / h'.format(costRatePerHourInLastSixHours))
+                    self.get_logger().debug('')
+                    self.get_logger().debug('Cost In the Last Day: ${}'.format(costInLastDay))
+                    self.get_logger().debug(
                         'Cost Rate Per Hour In the Last Day: ${} / h'.format(costRatePerHourInLastDay))
-                    self.logger.debug('---')
-                    self.logger.debug('')
+                    self.get_logger().debug('---')
+                    self.get_logger().debug('')
 
             except Exception as detail:
-                self.logger.exception("Exception in AWS BillingInfo call to acquire")
+                self.get_logger().exception("Exception in AWS BillingInfo call to acquire")
                 raise Exception(detail)
 
         return {'AWS_Billing_Info': pd.DataFrame(data),

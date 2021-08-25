@@ -15,7 +15,8 @@ EXPECTED_DF = pd.read_csv(CSV_FILE)
 
 CONFIG = {
     "project": "hepcloud-fnal",
-    "credential": os.path.join(DATA_DIR, "monitoring.json")
+    "credential": os.path.join(DATA_DIR, "monitoring.json"),
+    "channel_name": "test"
 }
 
 _PRODUCES = {"GCE_Occupancy": pd.DataFrame}

@@ -1,6 +1,5 @@
 """ Get job info from Nersc
 """
-import structlog
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -40,7 +39,7 @@ class NerscJobInfo(Source.Source):
             config.get('passwd_file'),
             num_retries=self.max_retries,
             retry_backoff_factor=self.retry_backoff_factor)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -49,6 +48,7 @@ class NerscJobInfo(Source.Source):
         Acquire NERSC job info and return as pandas frame
         :return: `dict`
         """
+        self.get_logger().debug("in NerscJobInfo::acquire()")
         raw_results = []
         # By default, query edison and cori
         self.constraints['machines'] = self.constraints.get('machines',
@@ -57,12 +57,12 @@ class NerscJobInfo(Source.Source):
         up_machines = [x for x in self.newt.get_status()
                        if x['status'] == 'up']
         if not up_machines:
-            self.logger.info("All machines at NERSC are down")
+            self.get_logger().info("All machines at NERSC are down")
         # filter machines that are up
         machines = [x for x in self.constraints.get('machines') if x in [
             y["system"] for y in up_machines]]
         if not machines:
-            self.logger.info("All requested machines at NERSC are down")
+            self.get_logger().info("All requested machines at NERSC are down")
         # filter results based on constraints specified in newt_keys dictionary
         newt_keys = self.constraints.get("newt_keys", {})
         for m in machines:

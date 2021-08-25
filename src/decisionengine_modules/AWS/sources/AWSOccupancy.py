@@ -7,7 +7,6 @@ import pandas as pd
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 
-import structlog
 import decisionengine_modules.load_config as load_config
 
 # default values
@@ -141,8 +140,9 @@ and the entries in the lists (e.g. "RegionName1") are the name of a region (eg. 
 @Source.produces(AWS_Occupancy=pd.DataFrame)
 class AWSOccupancy(Source.Source):
     def __init__(self, configdict):
+        super().__init__(configdict)
         self.config_file = configdict['occupancy_configuration']
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -152,11 +152,12 @@ class AWSOccupancy(Source.Source):
         :arg spot_price_history: list of spotprice data (:class:`SpotPriceData`)
         """
 
+        self.get_logger().debug("in AWSOccupancy::acquire()")
         # Load known accounts configuration
         # account configuration is dynamic
-        account_dict = load_config.load(self.config_file, 5, 20)
+        account_dict = load_config.load(self.config_file, self.get_logger(), 5, 20)
         occupancy_data = []
-        self.logger.debug('account_dict %s' % (self.account_dict,))
+        self.get_logger().debug('account_dict %s' % (self.account_dict,))
         for account in account_dict:
             for region in account_dict[account]:
                 occcupancy = OccupancyForRegion(region, profile_name=account)

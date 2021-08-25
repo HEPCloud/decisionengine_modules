@@ -1,5 +1,4 @@
 from functools import partial
-import structlog
 
 import pandas
 
@@ -30,6 +29,7 @@ class FactoryGlobalManifests(Source.Source):
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
+        super().__init__(config)
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
 
@@ -39,7 +39,7 @@ class FactoryGlobalManifests(Source.Source):
         self.retry_interval = config.get('retry_interval', 0)
 
         self.subsystem_name = 'any'
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -49,6 +49,8 @@ class FactoryGlobalManifests(Source.Source):
         """
 
         dataframe = None
+
+        self.get_logger().debug("in FactoryGlobalManifest::acquire")
 
         for factory in self.factories:
             collector_host = factory.get('collector_host')
@@ -65,6 +67,7 @@ class FactoryGlobalManifests(Source.Source):
                 retry_wrapper(
                     partial(condor_status.load,
                             *(constraint, classad_attrs, self.condor_config)),
+                    self.get_logger(),
                     nretries=self.nretries,
                     retry_interval=self.retry_interval)
 
@@ -79,14 +82,12 @@ class FactoryGlobalManifests(Source.Source):
 
                     dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
             except htcondor_query.QueryError:
-                self.logger.exception('Failed to get glidefactoryglobal classads '
-                                      'from collector host(s) "{}"'.format(
-                                          collector_host))
+                self.get_logger().exception('Failed to get glidefactoryglobal classads '
+                                            'from collector host(s) "{}"'.format(collector_host))
             except Exception:
-                self.logger.exception('Unexpected error fetching '
-                                      'glidefactoryglobal classads from '
-                                      'collector host(s) '"{}"''.format(
-                                          collector_host))
+                self.get_logger().exception('Unexpected error fetching '
+                                            'glidefactoryglobal classads from '
+                                            'collector host(s) '"{}"''.format(collector_host))
 
         return {'factoryglobal_manifests': dataframe}
 

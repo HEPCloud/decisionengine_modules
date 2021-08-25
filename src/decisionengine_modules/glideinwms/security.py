@@ -5,17 +5,15 @@ import calendar
 from glideinwms.lib import x509Support
 from glideinwms.lib import condorExe
 
-import structlog
-
-logger = structlog.getLogger()
-
 
 class Credential:
 
-    def __init__(self, proxy_id, proxy_fname, group_descript):
+    def __init__(self, logger, proxy_id, proxy_fname, group_descript):
         self.req_idle = 0
         self.req_max_run = 0
         self.advertize = False
+        self.logger = logger
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
         proxy_security_classes = group_descript['ProxySecurityClasses']
         proxy_trust_domains = group_descript['ProxyTrustDomains']
@@ -100,12 +98,12 @@ class Credential:
         """
 
         if self.creation_script:
-            logger.debug("Creating credential using %s" %
+            self.logger.debug("Creating credential using %s" %
                          (self.creation_script))
             try:
                 condorExe.iexe_cmd(self.creation_script)
             except Exception:
-                logger.exception(
+                self.logger.exception(
                     "Creating credential using %s failed" % (self.creation_script))
                 self.advertize = False
 
@@ -118,7 +116,7 @@ class Credential:
         """
 
         if self.filename and (not os.path.exists(self.filename)):
-            logger.debug("Credential %s does not exist." % (self.filename))
+            self.logger.debug("Credential %s does not exist." % (self.filename))
             self.create()
 
     def get_string(self, cred_file=None):
@@ -142,7 +140,7 @@ class Credential:
         except Exception:
             # This credential should not be advertised
             self.advertize = False
-            logger.exception("Failed to read credential %s: " % cred_file)
+            self.logger.exception("Failed to read credential %s: " % cred_file)
             raise
         return cred_data
 

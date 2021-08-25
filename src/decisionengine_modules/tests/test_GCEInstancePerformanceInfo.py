@@ -10,6 +10,7 @@ CSV_FILE = os.path.join(DATA_DIR, "instance_performance_google.csv")
 
 CONFIG = {
     "csv_file": CSV_FILE,
+    "channel_name": "test"
 }
 
 EXPECTED_PANDAS_DF = pd.read_csv(CONFIG.get("csv_file"))

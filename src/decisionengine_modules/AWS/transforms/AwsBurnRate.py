@@ -13,9 +13,11 @@ from decisionengine.framework.modules import Transform
 class AwsBurnRate(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def transform(self, data_block):
 
+        self.get_logger().debug("in AwsBurnRate::transform()")
         spot_prices = self.provisioner_resource_spot_prices(data_block).fillna(0)
         occupancy = self.AWS_Occupancy(data_block).fillna(0)
 

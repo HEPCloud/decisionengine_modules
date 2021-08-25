@@ -2,7 +2,6 @@ import time
 import pickle
 import struct
 import socket
-import structlog
 
 
 def sanitize_key(key):
@@ -18,10 +17,13 @@ def sanitize_key(key):
 
 
 class Graphite:
-    def __init__(self, host="fifemondata.fnal.gov", pickle_port=2004):
+    def __init__(self, logger, host="fifemondata.fnal.gov", pickle_port=2004):
         self.graphite_host = host
         self.graphite_pickle_port = pickle_port
-        self.logger = structlog.getLogger()
+        self.logger = logger
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
+
+        self.logger.debug("Testing logging from Graphite init")
 
     def send_dict(self, namespace, data, debug_print=True, send_data=True):
         """send data contained in dictionary as {k: v} to graphite dataset
@@ -51,7 +53,8 @@ class Graphite:
             s.connect((self.graphite_host, self.graphite_pickle_port))
             s.sendall(message)
         except socket.error:
-            self.logger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}")
+            self.logger.exception(
+                f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}")
         finally:
             s.close()
 

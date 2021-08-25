@@ -12,8 +12,10 @@ from decisionengine.framework.modules import Transform
 class GceBurnRate(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def transform(self, data_block):
+        self.get_logger().debug("in GceBurnRate::transform()")
         performance = self.GCE_Instance_Performance(data_block).fillna(0)
         occupancy = self.GCE_Occupancy(data_block).fillna(0)
 

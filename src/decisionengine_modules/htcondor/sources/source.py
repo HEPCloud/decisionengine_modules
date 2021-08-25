@@ -1,7 +1,6 @@
 import abc
 import traceback
 import pandas
-import structlog
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
@@ -27,7 +26,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         avaiable in its config file.
         """
         super(Source.Source, self).__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
@@ -59,6 +58,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.get_logger().debug("in htcondor ResourceManifests::load()")
         dataframe = pandas.DataFrame()
         try:
             condor_status = htcondor_query.CondorStatus(
@@ -83,10 +83,10 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
                 else:
                     dataframe['CollectorHosts'] = [collector_host] * len(dataframe)
         except htcondor_query.QueryError:
-            self.logger.warning('Query error fetching classads from collector host(s) "%s"' % self.collector_host)
-            self.logger.error('Query error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
+            self.get_logger().warning('Query error fetching classads from collector host(s) "%s"' % self.collector_host)
+            self.get_logger().error('Query error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
         except Exception:
-            self.logger.warning('Unexpected error fetching classads from collector host(s) "%s"' % self.collector_host)
-            self.logger.error('Unexpected error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
+            self.get_logger().warning('Unexpected error fetching classads from collector host(s) "%s"' % self.collector_host)
+            self.get_logger().error('Unexpected error fetching classads from collector host(s) "%s". Traceback: %s' % (self.collector_host, traceback.format_exc()))
 
         return dataframe

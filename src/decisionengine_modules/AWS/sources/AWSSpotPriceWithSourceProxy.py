@@ -2,16 +2,12 @@
 Get AWS spot price information
 """
 
-import structlog
 import datetime
 import time
 import pandas as pd
 import boto3
 
 from decisionengine.framework.modules import Source, SourceProxy
-
-logger = structlog.getLogger()
-logger = logger.bind(module=__name__.split(".")[-1])
 
 # default values
 REGION = 'us-west-2'
@@ -56,7 +52,7 @@ class AWSSpotPriceForRegion:
     Spot price data and methods
     """
 
-    def __init__(self, region=REGION, profile_name=None):
+    def __init__(self, logger, region=REGION, profile_name=None):
         """
 
         :type region: :obj:`str`
@@ -81,6 +77,8 @@ class AWSSpotPriceForRegion:
         self.max_results = MAX_RESULTS
         self.product_descriptions = PRODUCT_DESCRIPTIONS
         self.availability_zone = AVAILABILITY_ZONE
+        self.logger = logger
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def init_query(self,
                    spot_price_history_start_time=None,
@@ -131,7 +129,7 @@ class AWSSpotPriceForRegion:
                 MaxResults=self.max_results,
                 NextToken='')
         except Exception:
-            logger.exception("Exception in AWSSpotPriceWithSourceProxy call to get_price")
+            self.logger.exception("Exception in AWSSpotPriceWithSourceProxy call to get_price")
             return None
         price_history = rc.get('SpotPriceHistory')
         if len(price_history) == 0:
@@ -188,7 +186,7 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
         for account in account_dict:
             for region, instances in account_dict[account].items():
                 spot_price_info = AWSSpotPriceForRegion(
-                    region, profile_name=account)
+                    self.get_logger(), region, profile_name=account)
                 spot_price_info.init_query(instance_types=instances)
                 spot_price_history = spot_price_info.get_price()
                 if spot_price_history:

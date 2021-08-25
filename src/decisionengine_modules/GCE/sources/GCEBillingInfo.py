@@ -1,4 +1,3 @@
-import structlog
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -32,8 +31,7 @@ class GCEBillingInfo(Source.Source):
         self.botoConfig = config.get('botoConfig')  # BOTO_CONFIG env
         # location for downloaded billing files
         self.localFileDir = config.get('localFileDir')
-
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -41,6 +39,7 @@ class GCEBillingInfo(Source.Source):
 
         :rtype: :obj:`~pd.DataFrame`
         """
+        self.get_logger().debug("in GCEBillingInfo::acquire()")
         constantsDict = {'projectId': self.projectId, 'credentialsProfileName': self.credentialsProfileName, 'accountNumber': self.accountNumber,
                          'bucketBillingName': 'billing-' + str(self.projectId), 'lastKnownBillDate': self.lastKnownBillDate,
                          'balanceAtDate': self.balanceAtDate, 'applyDiscount': self.applyDiscount}
@@ -50,11 +49,11 @@ class GCEBillingInfo(Source.Source):
 
             lastStartDateBilledConsideredDatetime, CorrectedBillSummaryDict = calculator.CalculateBill()
 
-            self.logger.info('Calculated corrected bill summary for google')
-            self.logger.info(CorrectedBillSummaryDict)
+            self.get_logger().info('Calculated corrected bill summary for google')
+            self.get_logger().info(CorrectedBillSummaryDict)
 
         except Exception:
-            self.logger.exception("Exception in GCEBillingInfo call to acquire")
+            self.get_logger().exception("Exception in GCEBillingInfo call to acquire")
 
         return {'GCE_Billing_Info': pd.DataFrame([CorrectedBillSummaryDict])}
 

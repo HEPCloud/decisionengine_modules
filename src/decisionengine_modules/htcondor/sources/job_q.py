@@ -1,4 +1,3 @@
-import structlog
 import pandas
 import traceback
 
@@ -29,7 +28,7 @@ class JobQ(Source.Source):
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
         self.classad_attrs = config.get('classad_attrs')
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
         self.correction_map = config.get('correction_map')
 
     def acquire(self):
@@ -37,6 +36,8 @@ class JobQ(Source.Source):
         Acquire jobs from the HTCondor Schedd
         :rtype: :obj:`~pd.DataFrame`
         """
+        self.get_logger().debug("in htcondor JobQ::acquire")
+
         dataframe = pandas.DataFrame()
         (collector_host, secondary_collectors) = htcondor_query.split_collector_host(
             self.collector_host)
@@ -62,12 +63,12 @@ class JobQ(Source.Source):
                         [collector_host] * len(condor_q.stored_data))
                     dataframe = dataframe.append(df, ignore_index=True)
             except htcondor_query.QueryError:
-                self.logger.warning('Query error fetching job classads from schedd "%s" in collector host(s) "%s".' %
-                                    (schedd, collector_host))
+                self.get_logger().warning('Query error fetching job classads from schedd "%s" in collector host(s) "%s".' %
+                                          (schedd, collector_host))
             except Exception:
                 msg = 'Unexpected error fetching job classads from schedd "{}" in collector host(s) "{}".'
-                self.logger.warning(msg.format(schedd, collector_host))
-                self.logger.error(msg.format(
+                self.get_logger().warning(msg.format(schedd, collector_host))
+                self.get_logger().error(msg.format(
                     schedd, collector_host) + " Traceback: {}".format(traceback.format_exc()))
         return {'job_manifests': dataframe}
 

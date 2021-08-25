@@ -1,14 +1,11 @@
 import time
-import structlog
 
 """
 Load python object
 """
 
-logger = structlog.getLogger()
 
-
-def load(python_file, retries=0, timeout=0):
+def load(python_file, logger, retries=0, timeout=0):
     """
     Load constants from file.
 
@@ -18,7 +15,7 @@ def load(python_file, retries=0, timeout=0):
     :rtype: :obj:`object`
 
     """
-
+    logger = logger.bind(module=__name__.split(".")[-1])
     code = None
     config = None
     retries = max(1, retries)
@@ -31,7 +28,8 @@ def load(python_file, retries=0, timeout=0):
                 exec(code)
             break
         except IOError:
-            logger.warning(f"config load failed in de_modules, {retries-i} retries")
+            logger.warning(
+                f"config load failed in de_modules, {retries-i} retries")
             time.sleep(timeout)
     else:
         logger.exception(f"cannot load {python_file}")

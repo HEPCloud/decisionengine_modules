@@ -2,7 +2,6 @@
 Get AWS spot price information
 """
 
-import structlog
 import datetime
 import time
 import pandas as pd
@@ -12,8 +11,6 @@ from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 import decisionengine_modules.load_config as load_config
 
-logger = structlog.getLogger()
-logger = logger.bind(module=__name__.split(".")[-1])
 
 # default values
 REGION = 'us-west-2'
@@ -58,7 +55,7 @@ class AWSSpotPriceForRegion:
     Spot price data and methods
     """
 
-    def __init__(self, region=REGION, profile_name=None):
+    def __init__(self, logger, region=REGION, profile_name=None):
         """
 
         :type region: :obj:`str`
@@ -83,6 +80,8 @@ class AWSSpotPriceForRegion:
         self.max_results = MAX_RESULTS
         self.product_descriptions = PRODUCT_DESCRIPTIONS
         self.availability_zone = AVAILABILITY_ZONE
+        self.logger = logger
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def init_query(self,
                    spot_price_history_start_time=None,
@@ -133,7 +132,7 @@ class AWSSpotPriceForRegion:
                 MaxResults=self.max_results,
                 NextToken='')
         except Exception:
-            logger.exception("Exception in AWSSpotPrice call to get_price")
+            self.logger.exception("Exception in AWSSpotPrice call to get_price")
             return None
         price_history = rc.get('SpotPriceHistory')
         if len(price_history) == 0:
@@ -185,7 +184,9 @@ all instances is acquired.'''))
 @Source.produces(provisioner_resource_spot_prices=pd.DataFrame)
 class AWSSpotPrice(Source.Source):
     def __init__(self, config_dict):
+        super().__init__(config_dict)
         self.config_file = config_dict['spot_price_configuration']
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -194,14 +195,15 @@ class AWSSpotPrice(Source.Source):
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
+        self.get_logger().debug("in AWSSpotPrice::acquire()")
         # Load kown accounts configuration
         # account configuration is dynamic
-        account_dict = load_config.load(self.config_file, 5, 20)
+        account_dict = load_config.load(self.config_file, self.get_logger(), 5, 20)
         sp_data = []
         for account in account_dict:
             for region, instances in account_dict[account].items():
                 spot_price_info = AWSSpotPriceForRegion(
-                    region, profile_name=account)
+                    self.get_logger(), region, profile_name=account)
                 spot_price_info.init_query(instance_types=instances)
                 spot_price_history = spot_price_info.get_price()
                 if spot_price_history:

@@ -1,7 +1,6 @@
 import os.path
 import pandas
 import numpy
-import structlog
 
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
@@ -51,7 +50,7 @@ class GlideinRequestManifests(Transform.Transform):
             'de_frontend_config',
             '/var/lib/gwms-frontend/vofrontend/de_frontend_config')
 
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def transform(self, datablock):
         """
@@ -66,6 +65,7 @@ class GlideinRequestManifests(Transform.Transform):
         # Dict to be returned
         manifests = {}
 
+        self.get_logger().debug("in GlideinRequestManifest::transform")
         try:
             # Get the frontend config dict
             fe_cfg = self.read_fe_config()
@@ -74,7 +74,7 @@ class GlideinRequestManifests(Transform.Transform):
             entries = pandas.DataFrame(pandas.concat(
                 [datablock.get(et) for et in _SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True))
             if entries.empty:
-                self.logger.info('There are no entries to request resources from')
+                self.get_logger().info('There are no entries to request resources from')
                 return dict.fromkeys(
                     ['glideclientglobal_manifests', 'glideclient_manifests'], pandas.DataFrame())
 
@@ -89,11 +89,11 @@ class GlideinRequestManifests(Transform.Transform):
                 'AWS_Figure_Of_Merit': self.AWS_Figure_Of_Merit(datablock),
                 'Nersc_Figure_Of_Merit': self.Nersc_Figure_Of_Merit(datablock)
             }
-            fom_entries = fom_eligible_resources(foms,
+            fom_entries = fom_eligible_resources(self.get_logger(), foms,
                                                  constraint=self.fom_resource_constraint,
                                                  limit=self.fom_resource_limit)
-            self.logger.debug('Figure of Merits')
-            self.logger.debug(fom_entries)
+            self.get_logger().debug('Figure of Merits')
+            self.get_logger().debug(fom_entries)
 
             # Get the jobs dataframe
             jobs_df = self.job_manifests(datablock)
@@ -102,32 +102,31 @@ class GlideinRequestManifests(Transform.Transform):
             # Get HTCondor slots dataframe
             slots_df = self.startd_manifests(datablock)
 
-            # self.logger.info(job_clusters_df)
             for index, row in job_clusters_df.iterrows():
                 # Each job bucket represents a frontend group equivalent
                 # For every job bucket figure out how many glideins to request
                 # at which entry (i.e entries matching entry query expressions)
 
-                self.logger.info(
+                self.get_logger().info(
                     '--------------------------------------------')
                 fe_group = row.get('Frontend_Group')
 
-                self.logger.info(
+                self.get_logger().info(
                     'Processing glidein requests for the FE Group: %s' % fe_group)
                 job_query = row.get('Job_Bucket_Criteria_Expr')
-                self.logger.info('Frontend Group %s job query: %s' %
-                                 (fe_group, job_query))
+                self.get_logger().info('Frontend Group %s job query: %s' %
+                                       (fe_group, job_query))
                 match_exp = ' or '.join(row.get('Site_Bucket_Criteria_Expr'))
-                self.logger.info(
+                self.get_logger().info(
                     'Frontend Group %s site matching expression : %s' % (fe_group, match_exp))
-                self.logger.info(
+                self.get_logger().info(
                     '--------------------------------------------')
 
                 matched_entries = entries.query(match_exp)
 
                 # Get the Frontend element object. Currently FOM.
                 gfe = glide_frontend_element.get_gfe_obj(
-                    fe_group, self.acct_group, fe_cfg)
+                    self.get_logger(), fe_group, self.acct_group, fe_cfg)
 
                 # Generate glideclient and glideclientglobal manifests
                 # for this bucket/frontend group
@@ -138,7 +137,7 @@ class GlideinRequestManifests(Transform.Transform):
                         job_filter=job_query, fom_entries=fom_entries)
                 manifests = self.merge_requests(manifests, group_manifests)
         except Exception:
-            self.logger.exception('Error generating glidein requests')
+            self.get_logger().exception('Error generating glidein requests')
             raise
 
         return manifests
@@ -167,7 +166,7 @@ class GlideinRequestManifests(Transform.Transform):
             m_keys = set(manifests.keys())
             g_keys = set(group_manifests.keys())
             if m_keys != g_keys:
-                self.logger.exception(f"Mismatch in manifest keys: {m_keys}, {g_keys}")
+                self.get_logger().exception(f"Mismatch in manifest keys: {m_keys}, {g_keys}")
                 raise RuntimeError()
             for key in m_keys:
                 merged_manifests[key] = manifests[key].append(
@@ -178,7 +177,7 @@ class GlideinRequestManifests(Transform.Transform):
 
     def read_fe_config(self):
         if not os.path.isfile(self.de_frontend_configfile):
-            self.logger.exception(
+            self.get_logger().exception(
                 'Error reading Frontend config for DE %s. '
                 'Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration.' %
                 self.de_frontend_configfile)
@@ -187,7 +186,7 @@ class GlideinRequestManifests(Transform.Transform):
         fe_cfg = eval(open(self.de_frontend_configfile, 'r').read())
 
         if not isinstance(fe_cfg, dict):
-            self.logger.exception(f"Frontend config for DE in {self.de_frontend_configfile} is invalid")
+            self.get_logger().exception(f"Frontend config for DE in {self.de_frontend_configfile} is invalid")
             raise ValueError()
         return fe_cfg
 

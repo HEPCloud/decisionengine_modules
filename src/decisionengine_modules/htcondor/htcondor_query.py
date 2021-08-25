@@ -1,11 +1,8 @@
 #!/usr/bin/pyhon
 import abc
 import htcondor
-import structlog
 import os
 import sys
-
-logger = structlog.getLogger()
 
 
 class QueryError(RuntimeError):

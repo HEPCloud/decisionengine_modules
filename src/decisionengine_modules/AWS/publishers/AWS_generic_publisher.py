@@ -16,6 +16,7 @@ DEFAULT_GRAPHITE_CONTEXT = ""
 class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
+        super().__init__(config)
         self.graphite_host = config.get(
             'graphite_host', DEFAULT_GRAPHITE_HOST)
         self.graphite_port = config.get(
@@ -24,6 +25,7 @@ class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
             'graphite_context', DEFAULT_GRAPHITE_CONTEXT)
         self.publish_to_graphite = config.get('publish_to_graphite')
         self.output_file = config.get('output_file')
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     @classmethod
     def consumes_dataframe(cls, product_name):
@@ -45,11 +47,13 @@ class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         :arg data_block: data block
 
         """
+        self.get_logger().debug("in AWSGenericPublisher::publish()")
         if not self._consumes:
             return
         data = data_block[list(self._consumes.keys())[0]]
         if self.graphite_host and self.publish_to_graphite:
-            end_point = graphite.Graphite(host=self.graphite_host,
+            end_point = graphite.Graphite(logger=self.get_logger(),
+                                          host=self.graphite_host,
                                           pickle_port=self.graphite_port)
             end_point.send_dict(self.graphite_context(data)[0],
                                 self.graphite_context(data)[1],

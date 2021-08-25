@@ -1,6 +1,5 @@
 import pandas
 
-import structlog
 from decisionengine.framework.modules import Publisher
 from decisionengine_modules.htcondor.publishers import publisher
 
@@ -18,7 +17,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
         super().__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
         self._fact_entrytype_map = {
             'allow_grid_requests': 'Factory_Entries_Grid',
             'allow_aws_requests': 'Factory_Entries_AWS',
@@ -49,8 +48,8 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                     allow_type_req_dfs[allow_type] = allow_type_req_dfs[allow_type].append(row)
                     break
 
-        self.logger.info('Facts available in publisher %s: %s' % (self.__class__.__name__,
-                                                                  facts_df.to_dict(orient='records')))
+        self.get_logger().info('Facts available in publisher %s: %s' % (self.__class__.__name__,
+                                                                        facts_df.to_dict(orient='records')))
         for index, row in facts_df.iterrows():
             fact_name = row['fact_name']
             fact_value = ('%s' % row['fact_value']).lower() == 'true'
@@ -58,7 +57,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                 # Convert request idle to 0
                 # TODO: Check what to do with max running
                 #       For now keep it same so existing glideins can finish
-                self.logger.info('Setting ReqIdleGlideins=0 for fact: %s' % fact_name)
+                self.get_logger().info('Setting ReqIdleGlideins=0 for fact: %s' % fact_name)
                 allow_type_req_dfs[fact_name]['ReqIdleGlideins'] = [0] * len(allow_type_req_dfs[fact_name])
 
         publish_requests_df = pandas.DataFrame(pandas.concat(allow_type_req_dfs.values(), ignore_index=True, sort=True))

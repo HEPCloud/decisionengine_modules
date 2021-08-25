@@ -12,11 +12,13 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "factory_client.cs.fixture")
 
 CONFIG = {
+    'channel_name': 'test',
     'condor_config': 'condor_config',
     'collector_host': 'cmssrv280.fnal.gov',
 }
 
 CONFIG_BAD = {
+    'channel_name': 'test',
     'condor_config': 'condor_config',
     'collector_host': 'dummy_collector.fnal.gov',
 }

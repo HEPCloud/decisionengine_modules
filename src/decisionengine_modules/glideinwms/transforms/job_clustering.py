@@ -1,6 +1,5 @@
 import pandas
 
-import structlog
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 
@@ -32,29 +31,29 @@ class JobClustering(Transform.Transform):
                                                   columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
                                                            'Totals', 'Frontend_Group'])
 
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def transform(self, datablock):
 
-        self.logger.info("*** Starting job clustering ***")
+        self.get_logger().debug("in JobClustering::transform()")
         # TODO not sure if metadata is propagated or if this is the right attrs to id a datablock
 
         # Get job queue datablock
         try:
             df_full_q = datablock.get('job_manifests')
         except KeyError:
-            self.logger.exception("Unable to retrieve job manifests data block")
+            self.get_logger().exception("Unable to retrieve job manifests data block")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
         except ValueError:
-            self.logger.exception("Unable to retrieve job manifests data block")
+            self.get_logger().exception("Unable to retrieve job manifests data block")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
         except pandas.core.computation.ops.UndefinedVariableError:
-            self.logger.exception("Unable to retrieve job manifests data block")
+            self.get_logger().exception("Unable to retrieve job manifests data block")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
 
         # Return empty block if no job data
         if df_full_q.empty:
-            self.logger.debug("Empty job manifests data block found")
+            self.get_logger().debug("Empty job manifests data block found")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
 
         totals = []
@@ -68,7 +67,7 @@ class JobClustering(Transform.Transform):
             df_job_clusters = pandas.DataFrame(totals,
                                                columns=['Job_Bucket_Criteria_Expr',
                                                         'Site_Bucket_Criteria_Expr', 'Totals'])
-            self.logger.debug("Job category totals: %s" % df_job_clusters)
+            self.get_logger().debug("Job category totals: %s" % df_job_clusters)
         """
         # VERSION WITH FRONTEND, DELETE AND USE ABOVE WHEN FRONTEND IS GONE
         try:
@@ -80,22 +79,20 @@ class JobClustering(Transform.Transform):
             df_job_clusters = pandas.DataFrame(totals,
                                                columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
                                                         'Totals', 'Frontend_Group'])
-            self.logger.debug("Job category totals: %s" % df_job_clusters)
+            self.get_logger().debug("Job category totals: %s" % df_job_clusters)
 
         except KeyError:
-            self.logger.exception(
+            self.get_logger().exception(
                 "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
         except ValueError:
-            self.logger.exception(
+            self.get_logger().exception(
                 "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
         except pandas.core.computation.ops.UndefinedVariableError:
-            self.logger.exception(
+            self.get_logger().exception(
                 "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names")
             return {'job_clusters': self.EMPTY_JOB_CLUSTER}
-
-        self.logger.info("*** Ending job clustering ***")
 
         return {'job_clusters': df_job_clusters}
 

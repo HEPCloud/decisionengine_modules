@@ -1,5 +1,4 @@
 from functools import partial
-import structlog
 import pandas
 
 from decisionengine.framework.modules import Source
@@ -27,6 +26,7 @@ from decisionengine_modules.htcondor import htcondor_query
 class FactoryEntries(Source.Source):
 
     def __init__(self, config):
+        super().__init__(config)
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
         self._entry_gridtype_map = {
@@ -42,7 +42,7 @@ class FactoryEntries(Source.Source):
         self.retry_interval = config.get('retry_interval', 0)
 
         self.subsystem_name = 'any'
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -51,6 +51,7 @@ class FactoryEntries(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.get_logger().debug("in FactoryEntries::acquire()")
         dataframe = pandas.DataFrame()
 
         for factory in self.factories:
@@ -69,6 +70,7 @@ class FactoryEntries(Source.Source):
                 retry_wrapper(
                     partial(condor_status.load,
                             *(constraint, classad_attrs, self.condor_config)),
+                    self.get_logger(),
                     nretries=self.nretries,
                     retry_interval=self.retry_interval)
 
@@ -92,9 +94,9 @@ class FactoryEntries(Source.Source):
                     dataframe = pandas.concat([dataframe, df],
                                               ignore_index=True, sort=True)
             except htcondor_query.QueryError:
-                self.logger.exception(f"Failed to fetch glidefactory classads from collector host(s) {collector_host}")
+                self.get_logger().exception(f"Failed to fetch glidefactory classads from collector host(s) {collector_host}")
             except Exception:
-                self.logger.exception(f"Unexpected error fetching glidefactory classads from collector host(s) {collector_host}")
+                self.get_logger().exception(f"Unexpected error fetching glidefactory classads from collector host(s) {collector_host}")
 
         if dataframe.empty:
             # There were no entry classads in the factory collector or

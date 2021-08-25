@@ -17,11 +17,13 @@ class AWSFactoryEntryDataPublisher(Publisher.Publisher):
         super().__init__(config)
         self.aws_instance_limits_file = config.get('aws_instance_limits')
         self.spot_occupancy_config_file = config.get('spot_occupancy_config')
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
         if None in (self.aws_instance_limits_file, self.spot_occupancy_config_file):
             raise RuntimeError('parameters for module config is missing spot_occupancy_config or aws_instance_limits')
 
     def publish(self, datablock):
+        self.get_logger().debug("in AWSFactoryEntryDataPublisher::publish()")
         limits_df = self.aws_instance_limits(datablock)
         so_config = self.spot_occupancy_config(datablock).to_dict()
 

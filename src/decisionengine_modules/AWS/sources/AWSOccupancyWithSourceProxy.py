@@ -5,7 +5,6 @@ import boto3
 import pandas as pd
 
 from decisionengine.framework.modules import Source, SourceProxy
-import structlog
 
 
 class OccupancyData:
@@ -123,7 +122,7 @@ class OccupancyForRegion:
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
         """
@@ -133,6 +132,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         :arg spot_price_history: list of spotprice data (:class:`SpotPriceData`)
         """
 
+        self.get_logger().debug("in AWSOccupancy::acquire()")
         # Load kown accounts configuration
         account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
@@ -142,7 +142,7 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         for k in account_conf:
             # FIXME: We overwrite the 'account_dict' member for each iteration of this loop?
             account_dict = account_conf[k].to_dict()
-        self.logger.debug('account_dict %s' % (account_dict,))
+        self.get_logger().debug('account_dict %s' % (account_dict,))
         occupancy_data = []
         for account in account_dict:
             for region in account_dict[account]:

@@ -9,7 +9,6 @@ import sys
 
 from decisionengine.framework.modules import Transform
 from decisionengine_modules.util import figure_of_merit as fom
-import structlog
 
 
 @Transform.consumes(Nersc_Instance_Performance=pd.DataFrame,
@@ -19,7 +18,7 @@ import structlog
 class NerscFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def transform(self, data_block):
         """
@@ -42,7 +41,7 @@ class NerscFigureOfMerit(Transform.Transform):
         price/performance is the ratio of the 3rd and 4th column
 
         """
-
+        self.get_logger().debug("in NerscFigureOfMerit::transform()")
         performance = self.Nersc_Instance_Performance(data_block)
         performance["PricePerformance"] = np.where(performance["PerfTtbarTotal"] > 0,
                                                    (performance["OnDemandPrice"] /
@@ -65,6 +64,7 @@ class NerscFigureOfMerit(Transform.Transform):
                                          "FigureOfMerit": fom.figure_of_merit(perf_row["PricePerformance"],
                                                                               running,
                                                                               max_allowed,
+                                                                              self.get_logger(),
                                                                               idle,
                                                                               max_idle)
                                          })

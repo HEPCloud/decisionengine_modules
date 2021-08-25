@@ -12,8 +12,7 @@ OCCUPANCY = pd.read_csv(CSV_FILE)
 _PRODUCES = ["GCE_Burn_Rate"]
 _PRODUCES_DICT = dict.fromkeys(_PRODUCES, pd.DataFrame)
 
-CONFIG = {
-}
+CONFIG = {"channel_name": 'test'}
 
 
 performance = pd.DataFrame([

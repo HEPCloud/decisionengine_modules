@@ -19,9 +19,11 @@ from decisionengine_modules.util.figure_of_merit import figure_of_merit
 class GceFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def transform(self, data_block):
 
+        self.get_logger().debug("in GceFigureOfMerit::transform()")
         performance = self.GCE_Instance_Performance(data_block)
         performance["PricePerformance"] = np.where(performance["PerfTtbarTotal"] > 0,
                                                    (performance["OnDemandPrice"] /
@@ -58,6 +60,7 @@ class GceFigureOfMerit(Transform.Transform):
             fom = figure_of_merit(row["PricePerformance"],
                                   occupancy,
                                   max_allowed,
+                                  self.get_logger(),
                                   idle,
                                   max_idle)
 

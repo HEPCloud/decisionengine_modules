@@ -16,9 +16,12 @@ _TO = 20
 @Source.produces(Job_Limits=pd.DataFrame)
 class AWSJobLimits(Source.Source):
     def __init__(self, config):
+        super().__init__(config)
         self.data_file = config['data_file']
+        self.logger = self.logger.bind(module=__name__.split(".")[-1])
 
     def acquire(self):
+        self.get_logger().debug("in AWSJobLimits::acquire()")
         rc = None
         for i in range(_RETRIES):
             if os.path.exists(self.data_file):
