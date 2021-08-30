@@ -37,11 +37,13 @@ class GceOccupancy(Source.Source):
             cache_discovery=use_cache)
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def _get_client(self):
         return self.client
 
     def acquire(self):
+        self.logger.debug("in GCEOccupancy acquire")
         return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout, backoff=False)
 
     def _acquire(self):

@@ -9,9 +9,10 @@ import pandas as pd
 import boto3
 
 from decisionengine.framework.modules import Source, SourceProxy
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
-logger = structlog.getLogger()
-logger = logger.bind(module=__name__.split(".")[-1])
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 # default values
 REGION = 'us-west-2'
@@ -168,6 +169,7 @@ class AWSSpotPriceForRegion:
 class AWSSpotPrice(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def acquire(self):
         """
@@ -177,6 +179,7 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
         """
 
         # Load known accounts configuration
+        self.logger.debug("in AWSSpotPrice-SP acquire")
         account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
             raise RuntimeError(
@@ -202,7 +205,7 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
 
 
 Source.describe(AWSSpotPrice,
-                sample_config={"channel_name": "channel_aws_config_data",
+                sample_config={"source_channel": "channel_aws_config_data",
                                "Dataproducts": ["spot_occupancy_config"],
                                "retries": 3,
                                "retry_timeout": 20})

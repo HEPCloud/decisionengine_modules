@@ -6,6 +6,7 @@ from decisionengine_modules.glideinwms.publishers import decisionenginemonitor
 
 
 config = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'collector_host': 'fermicloud122.fnal.gov',
 }

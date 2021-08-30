@@ -2,7 +2,8 @@ import pandas
 
 from decisionengine_modules.glideinwms.publishers import job_clustering_publisher
 
-config_pub = {"publish_to_graphite": True,
+config_pub = {"channel_name": "test",
+              "publish_to_graphite": True,
               "graphite_host": "lsdataitb.fnal.gov",
               "graphite_port": 2004,
               "graphite_context": "hepcloud.de.glideinwms",

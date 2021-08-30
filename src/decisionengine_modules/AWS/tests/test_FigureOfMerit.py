@@ -21,7 +21,7 @@ produces = dict.fromkeys(['AWS_Price_Performance', 'AWS_Figure_Of_Merit'], pd.Da
 
 
 def create_datablock():
-    data_block = {}
+    data_block = {'channel_name': "test"}
     data_block['provisioner_resource_spot_prices'] = pd.read_csv(os.path.join(
         DATA_DIR, 'AWSSpotPriceWithSourceProxy_expected_acquire.csv'), float_precision='high')
     data_block['Performance_Data'] = pd.read_csv(os.path.join(DATA_DIR, 'instance_performance_sample.csv')).drop_duplicates(

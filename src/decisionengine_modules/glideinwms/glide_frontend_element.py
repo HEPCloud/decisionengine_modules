@@ -12,9 +12,7 @@ from glideinwms.lib import pubCrypto
 from decisionengine_modules.glideinwms import classads
 from decisionengine_modules.glideinwms.security import Credential
 from decisionengine_modules.glideinwms.security import CredentialCache
-
-logger = structlog.getLogger()
-
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
 pandas.options.mode.chained_assignment = None  # default='warn'
 
@@ -44,7 +42,8 @@ class GlideFrontendElement:
     """
 
     def __init__(self, fe_group, acct_group, fe_cfg):
-        self.logger = structlog.getLogger()
+        self.logger = structlog.getLogger(CHANNELLOGGERNAME)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], channel="")
         self.fe_group = fe_group
         self.acct_group = acct_group
         self.fe_cfg = fe_cfg

@@ -4,6 +4,7 @@ Calculate figure of merit
 
 import sys
 import structlog
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
 _INFINITY = sys.float_info.max
 
@@ -13,7 +14,8 @@ def figure_of_merit(performance,
                     allowed,
                     idle=None,
                     max_idle=None):
-    logger = structlog.getLogger()
+    logger = structlog.getLogger(CHANNELLOGGERNAME)
+    logger = logger.bind(module=__name__.split(".")[-1], channel="")
     try:
         if running >= allowed or allowed == 0:
             return _INFINITY

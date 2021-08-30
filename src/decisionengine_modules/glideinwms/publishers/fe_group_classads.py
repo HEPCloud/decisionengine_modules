@@ -1,6 +1,5 @@
 import pandas
 
-import structlog
 from decisionengine.framework.modules import Publisher
 from decisionengine_modules.htcondor.publishers import publisher
 
@@ -18,7 +17,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
 
     def __init__(self, config):
         super().__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self._fact_entrytype_map = {
             'allow_grid_requests': 'Factory_Entries_Grid',
             'allow_aws_requests': 'Factory_Entries_AWS',
@@ -28,6 +27,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
         self.classad_type = 'glideclient'
 
     def publish(self, datablock):
+        self.logger.debug("in GlideinWMSManifests publish")
         requests_df = datablock.get('glideclient_manifests')
         facts_df = datablock.get('de_logicengine_facts')
 

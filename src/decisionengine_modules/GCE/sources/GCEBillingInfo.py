@@ -1,4 +1,3 @@
-import structlog
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -32,8 +31,7 @@ class GCEBillingInfo(Source.Source):
         self.botoConfig = config.get('botoConfig')  # BOTO_CONFIG env
         # location for downloaded billing files
         self.localFileDir = config.get('localFileDir')
-
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def acquire(self):
         """
@@ -41,6 +39,7 @@ class GCEBillingInfo(Source.Source):
 
         :rtype: :obj:`~pd.DataFrame`
         """
+        self.logger.debug("in GCEBillingInfo acquire")
         constantsDict = {'projectId': self.projectId, 'credentialsProfileName': self.credentialsProfileName, 'accountNumber': self.accountNumber,
                          'bucketBillingName': 'billing-' + str(self.projectId), 'lastKnownBillDate': self.lastKnownBillDate,
                          'balanceAtDate': self.balanceAtDate, 'applyDiscount': self.applyDiscount}

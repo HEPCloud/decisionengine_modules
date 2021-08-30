@@ -1,5 +1,4 @@
 from functools import partial
-import structlog
 
 import pandas
 
@@ -30,6 +29,7 @@ class FactoryGlobalManifests(Source.Source):
         if not isinstance(config, dict):
             raise RuntimeError('parameters for module config should be a dict')
 
+        super().__init__(config)
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
 
@@ -39,7 +39,7 @@ class FactoryGlobalManifests(Source.Source):
         self.retry_interval = config.get('retry_interval', 0)
 
         self.subsystem_name = 'any'
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def acquire(self):
         """
@@ -48,6 +48,7 @@ class FactoryGlobalManifests(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.logger.debug("in FactoryGlobalManifests acquire")
         dataframe = None
 
         for factory in self.factories:

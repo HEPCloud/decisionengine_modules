@@ -1,7 +1,6 @@
 import os.path
 import pandas
 import numpy
-import structlog
 
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
@@ -50,8 +49,8 @@ class GlideinRequestManifests(Transform.Transform):
         self.de_frontend_configfile = config.get(
             'de_frontend_config',
             '/var/lib/gwms-frontend/vofrontend/de_frontend_config')
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
-        self.logger = structlog.getLogger()
 
     def transform(self, datablock):
         """
@@ -64,6 +63,7 @@ class GlideinRequestManifests(Transform.Transform):
         """
 
         # Dict to be returned
+        self.logger.debug("in GlideinRequestManifests transform")
         manifests = {}
 
         try:

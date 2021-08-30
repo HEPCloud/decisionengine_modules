@@ -13,7 +13,7 @@ EXPECTED_REPLY = pd.read_csv(os.path.join(DATA_DIR,
 
 
 def create_datablock():
-    data_block = {}
+    data_block = {'channel_name': "test"}
     data_block['AWS_Price_Performance'] = pd.read_csv(
         os.path.join(DATA_DIR, 'expected_price_performance.csv'))
     return data_block
@@ -26,7 +26,8 @@ class TestAWSPPPublisher(unittest.TestCase):
                                                                      'graphite_host': 'fifemondata.fnal.gov',
                                                                      'graphite_port': 2104,
                                                                      'graphite_context': 'hepcloud.aws',
-                                                                     'output_file': OUTPUT_FILE})
+                                                                     'output_file': OUTPUT_FILE,
+                                                                     'channel_name': "test"})
 
     def tearDown(self):
         try:

@@ -9,6 +9,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CSV_FILE = os.path.join(DATA_DIR, "instance_performance_nersc.csv")
 
 CONFIG = {
+    "channel_name": "test",
     "csv_file": CSV_FILE,
 }
 

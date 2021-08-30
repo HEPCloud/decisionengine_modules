@@ -13,6 +13,7 @@ TEST_FIXTURE_FILE = os.path.join(DATA_DIR, "newt_jobs.cs.test.fixture")
 PASSWD_FILE = os.path.join(DATA_DIR, "passwd")
 
 CONFIG = {
+    "channel_name": "test",
     "passwd_file": PASSWD_FILE,
     "constraints": {
         "machines": ["edison", "cori"],

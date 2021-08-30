@@ -15,6 +15,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "factory_entries.cs.fixture")
 
 CONFIG_FACTORY_ENTRIES = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'factories': [
         {
@@ -24,6 +25,7 @@ CONFIG_FACTORY_ENTRIES = {
 }
 
 CONFIG_FACTORY_ENTRIES_BAD = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'factories': [
         {
@@ -33,6 +35,7 @@ CONFIG_FACTORY_ENTRIES_BAD = {
 }
 
 CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'nretries': 2,
     'retry_interval': 2,
@@ -44,6 +47,7 @@ CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT = {
 }
 
 CONFIG_FACTORY_ENTRIES_CORMAP = {
+    "channel_name": "test",
     "condor_config": "/etc/condor/condor_config",
     "factories": [
         {

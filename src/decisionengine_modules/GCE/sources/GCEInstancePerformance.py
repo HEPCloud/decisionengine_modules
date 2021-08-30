@@ -14,11 +14,13 @@ class GCEInstancePerformance(Source.Source):
 
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.csv_file = config.get('csv_file')
         if not self.csv_file:
             raise RuntimeError("No csv file found in configuration")
 
     def acquire(self):
+        self.logger.debug("in GCEInstancePerformance acquire")
         return {'GCE_Instance_Performance': pd.read_csv(self.csv_file)}
 
 

@@ -6,8 +6,7 @@ from decisionengine_modules.AWS.transforms import AwsBurnRate
 
 produces = {"AWS_Burn_Rate": pd.DataFrame}
 
-config = {
-}
+config = {"channel_name": "test"}
 
 occupancy = pd.DataFrame([
     {

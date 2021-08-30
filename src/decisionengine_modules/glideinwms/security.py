@@ -6,8 +6,10 @@ from glideinwms.lib import x509Support
 from glideinwms.lib import condorExe
 
 import structlog
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
-logger = structlog.getLogger()
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 
 class Credential:

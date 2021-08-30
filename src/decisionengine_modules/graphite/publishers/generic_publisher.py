@@ -3,7 +3,6 @@ Generic publisher for graphana
 
 """
 import abc
-import structlog
 import pandas
 
 from decisionengine.framework.modules import Publisher
@@ -23,12 +22,13 @@ DEFAULT_GRAPHITE_CONTEXT = ""
 class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
+        super().__init__(config)
         self.graphite_host = config.get('graphite_host', DEFAULT_GRAPHITE_HOST)
         self.graphite_port = config.get('graphite_port', DEFAULT_GRAPHITE_PORT)
         self.graphite_context_header = config.get('graphite_context', DEFAULT_GRAPHITE_CONTEXT)
         self.publish_to_graphite = config.get('publish_to_graphite')
         self.output_file = config.get('output_file')
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     @classmethod
     def consumes_dataframe(cls, product_name):
@@ -50,6 +50,7 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         :arg data_block: data block
 
         """
+        self.logger.debug("in Graphite GenericPublisher publish")
         if not self._consumes:
             return
         product = list(self._consumes.keys())[0]

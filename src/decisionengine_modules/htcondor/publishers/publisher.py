@@ -1,7 +1,6 @@
 import abc
 import classad
 import htcondor
-import structlog
 import os
 import pandas
 from functools import partial
@@ -20,11 +19,12 @@ DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
+        super().__init__(config)
         self.condor_config = config.get('condor_config')
         self.x509_user_proxy = config.get('x509_user_proxy')
         self.nretries = config.get('nretries')
         self.retry_interval = config.get('retry_interval')
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
         self.classad_type = 'generic'
@@ -119,6 +119,7 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
 
         :type datablock: :obj:`DataBlock`
         """
+        self.logger.debug("in HTCondorManifests publish")
         for key in self._consumes:
             dataframe = datablock.get(key)
             self.publish_to_htcondor(key, dataframe)

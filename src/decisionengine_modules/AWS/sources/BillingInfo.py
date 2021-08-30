@@ -1,5 +1,4 @@
 import datetime
-import structlog
 import time
 import pandas as pd
 
@@ -32,8 +31,9 @@ from bill_calculator_hep.AWSBillAnalysis import AWSBillCalculator
                  AWS_Billing_Rate=pd.DataFrame)
 class BillingInfo(Source.Source):
     def __init__(self, config):
+        super().__init__(config)
         acconts_config_file = config['billing_configuration']
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.billing_files_location = config['dst_dir_for_s3_files']
         self.verbose_flag = int(config['verbose_flag'])
         # Load kown accounts configuration
@@ -52,6 +52,7 @@ class BillingInfo(Source.Source):
         """
 
         # get data for all accounts
+        self.logger.debug("in BillingInfo acquire")
         data = []
         datarate = []
         globalConf = {'graphite_host': 'dummy', 'graphite_context_billing': 'dummy', 'outputPath': self.billing_files_location, 'accountDirs': 1}

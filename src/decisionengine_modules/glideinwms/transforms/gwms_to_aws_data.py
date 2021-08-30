@@ -14,9 +14,14 @@ _ATTR_TRANSLATION_MAP = {
                     spot_occupancy_config=pd.DataFrame)
 class AWSFactoryEntryData(Transform.Transform):
 
+    def __init__(self, config):
+        super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
+
     def transform(self, datablock):
 
         # Get the dataframe containing AWS entries
+        self.logger.debug("in AWSFactoryEntryData transform")
         aws_entries = self.Factory_Entries_AWS(datablock)
 
         limits_df = pd.DataFrame()

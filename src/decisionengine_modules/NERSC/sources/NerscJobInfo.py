@@ -1,6 +1,5 @@
 """ Get job info from Nersc
 """
-import structlog
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -33,6 +32,7 @@ class NerscJobInfo(Source.Source):
 
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.constraints = config.get('constraints')
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)
@@ -40,7 +40,6 @@ class NerscJobInfo(Source.Source):
             config.get('passwd_file'),
             num_retries=self.max_retries,
             retry_backoff_factor=self.retry_backoff_factor)
-        self.logger = structlog.getLogger()
 
     def acquire(self):
         """
@@ -49,6 +48,7 @@ class NerscJobInfo(Source.Source):
         Acquire NERSC job info and return as pandas frame
         :return: `dict`
         """
+        self.logger.debug("in NerscJobInfo acquire")
         raw_results = []
         # By default, query edison and cori
         self.constraints['machines'] = self.constraints.get('machines',

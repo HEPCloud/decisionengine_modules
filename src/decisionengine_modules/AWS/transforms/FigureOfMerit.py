@@ -40,6 +40,7 @@ def figure_of_merit(RunningVms, MaxLimit, PricePerf):
 class FigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def transform(self, data_block):
         """
@@ -50,7 +51,7 @@ class FigureOfMerit(Transform.Transform):
 
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
-
+        self.logger.debug("in FigureOfMerit transform")
         spot_price_data = self.provisioner_resource_spot_prices(data_block)
         perf_data = self.Performance_Data(data_block)
         occup_data = self.AWS_Occupancy(data_block)

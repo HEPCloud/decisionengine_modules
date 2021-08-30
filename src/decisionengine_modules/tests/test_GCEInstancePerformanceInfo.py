@@ -8,9 +8,7 @@ from decisionengine.framework.modules.Module import verify_products
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CSV_FILE = os.path.join(DATA_DIR, "instance_performance_google.csv")
 
-CONFIG = {
-    "csv_file": CSV_FILE,
-}
+CONFIG = {"channel_name": "test", "csv_file": CSV_FILE}
 
 EXPECTED_PANDAS_DF = pd.read_csv(CONFIG.get("csv_file"))
 

@@ -2,7 +2,6 @@
 Compare slots on Nersc and startd
 """
 import pandas
-import structlog
 
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
@@ -22,8 +21,9 @@ class CompareNerscUserpoolSlots(Transform.Transform):
     """
 
     def __init__(self, param_dict):
+        super().__init__(config)
         self.entry_nersc_map = param_dict['entry_nersc_map']
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def transform(self, data_block):
         """
@@ -31,6 +31,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         compare the two metrics. Also calculate the relative difference between them.
         """
 
+        self.logger.debug("in CompareNerscUserpoolSlots transform")
         nersc_df = data_block['Nersc_Job_Info']
         userpool_slots_df = data_block['startd_manifests']
         factory_entry_df = data_block['Factory_Entries_LCF']

@@ -3,7 +3,8 @@ import pandas
 
 from decisionengine_modules.GCE.publishers import GCEPricePerformance_publisher
 
-config_pp_pub = {"publish_to_graphite": True,
+config_pp_pub = {"channel_name": "test",
+                 "publish_to_graphite": True,
                  "graphite_host": "lsdataitb.fnal.gov",
                  "graphite_port": 2004,
                  "graphite_context": "hepcloud.de.gce",
