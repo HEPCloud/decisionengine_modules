@@ -1,12 +1,13 @@
 import time
 import structlog
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
 """
 Load python object
 """
 
-logger = structlog.getLogger()
-
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 def load(python_file, retries=0, timeout=0):
     """

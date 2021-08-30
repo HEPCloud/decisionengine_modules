@@ -5,6 +5,7 @@ import pandas
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
 config_test_match_exprs = {
+    "channel_name": "test",
     "match_expressions": [
         {
             "job_bucket_criteria_expr": "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)",

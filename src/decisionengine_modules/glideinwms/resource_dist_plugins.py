@@ -1,7 +1,10 @@
 import structlog
 import pandas
 
-logger = structlog.getLogger()
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
+
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 _RESOURCE_FROM_COLUMN_MAP = {
     'Grid_Figure_Of_Merit': 'Grid_Figure_Of_Merit',

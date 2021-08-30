@@ -6,6 +6,7 @@ from decisionengine_modules.glideinwms.publishers import fe_group_classads
 
 
 config = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'collector_host': 'fermicloud122.fnal.gov',
 }

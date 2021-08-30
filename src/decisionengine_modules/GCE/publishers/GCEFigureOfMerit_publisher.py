@@ -12,8 +12,10 @@ import decisionengine_modules.graphite_client as graphite
 class GCEFigureOfMeritPublisher(publisher):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def graphite_context(self, dataframe):
+        self.logger.debug("in GCEFigureOfMeritPublisher graphite_context")
         d = {}
         for i, row in dataframe.iterrows():
             key = ('%s.fig_of_merit' %

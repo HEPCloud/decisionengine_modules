@@ -13,6 +13,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "factory_global.cs.fixture")
 
 CONFIG = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'factories': [
         {
@@ -22,6 +23,7 @@ CONFIG = {
 }
 
 CONFIG_BAD = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'factories': [
         {
@@ -31,6 +33,7 @@ CONFIG_BAD = {
 }
 
 CONFIG_BAD_WITH_TIMEOUT = {
+    'channel_name': "test",
     'condor_config': 'condor_config',
     'nretries': 2,
     'retry_interval': 2,

@@ -19,7 +19,7 @@ OUTPUT_FILE = "AWS_figure_of_merit_pub.csv"
 
 
 def create_datablock():
-    data_block = {}
+    data_block = {'channel_name': "test"}
     try:
         # pandas 1.2 uses a new method for floats, use the "legacy" one for now
         # https://pandas.pydata.org/pandas-docs/stable/whatsnew/v1.2.0.html#change-in-default-floating-precision-for-read-csv-and-read-table
@@ -39,7 +39,8 @@ class TestAWSFOMPublisher(unittest.TestCase):
                                                           'graphite_host': 'fifemondata.fnal.gov',
                                                           'graphite_port': 2104,
                                                           'graphite_context': 'hepcloud.aws',
-                                                          'output_file': OUTPUT_FILE})
+                                                          'output_file': OUTPUT_FILE,
+                                                          'channel_name': "test"})
 
     def tearDown(self):
         try:

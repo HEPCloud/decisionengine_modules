@@ -1,5 +1,4 @@
 from functools import partial
-import structlog
 import pandas
 
 from decisionengine.framework.modules import Source
@@ -27,6 +26,7 @@ from decisionengine_modules.htcondor import htcondor_query
 class FactoryEntries(Source.Source):
 
     def __init__(self, config):
+        super().__init__(config)
         self.condor_config = config.get('condor_config')
         self.factories = config.get('factories', [])
         self._entry_gridtype_map = {
@@ -42,7 +42,7 @@ class FactoryEntries(Source.Source):
         self.retry_interval = config.get('retry_interval', 0)
 
         self.subsystem_name = 'any'
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def acquire(self):
         """
@@ -51,6 +51,7 @@ class FactoryEntries(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.logger.debug("in FactoryEntries acquire")
         dataframe = pandas.DataFrame()
 
         for factory in self.factories:

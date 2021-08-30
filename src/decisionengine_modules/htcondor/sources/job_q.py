@@ -1,11 +1,9 @@
-import structlog
 import pandas
 import traceback
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.htcondor import htcondor_query
-
 
 @Source.supports_config(Parameter('collector_host', type=str),
                         Parameter('schedds', default=[None]),
@@ -23,13 +21,12 @@ class JobQ(Source.Source):
         and values that the operators want to be default values for the classad_attrs.
         """
         super().__init__(config)
-
         self.collector_host = config.get('collector_host')
         self.schedds = config.get('schedds', [None])
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
         self.classad_attrs = config.get('classad_attrs')
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1])
         self.correction_map = config.get('correction_map')
 
     def acquire(self):
@@ -37,6 +34,7 @@ class JobQ(Source.Source):
         Acquire jobs from the HTCondor Schedd
         :rtype: :obj:`~pd.DataFrame`
         """
+        self.logger.debug("in JobQ acquire")
         dataframe = pandas.DataFrame()
         (collector_host, secondary_collectors) = htcondor_query.split_collector_host(
             self.collector_host)

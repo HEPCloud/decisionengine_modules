@@ -2,7 +2,6 @@
 Get allocation info from Nersc
 """
 import pandas as pd
-import structlog
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
@@ -47,7 +46,7 @@ class NerscAllocationInfo(Source.Source):
             config.get('passwd_file'),
             num_retries=self.max_retries,
             retry_backoff_factor=self.retry_backoff_factor)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def send_query(self):
         """
@@ -83,6 +82,7 @@ class NerscAllocationInfo(Source.Source):
         Acquire NERSC allocation info and return as pandas frame
         :rtype: :obj:`~pd.DataFrame`
         """
+        self.logger.debug("in NerscAllocationInfo acquire")
         return {'Nersc_Allocation_Info': pd.DataFrame(self.send_query())}
 
 

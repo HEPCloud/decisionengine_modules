@@ -16,6 +16,8 @@ DEFAULT_GRAPHITE_CONTEXT = ""
 class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
+        super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.graphite_host = config.get(
             'graphite_host', DEFAULT_GRAPHITE_HOST)
         self.graphite_port = config.get(
@@ -45,6 +47,7 @@ class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         :arg data_block: data block
 
         """
+        self.logger.debug("in AWSGenericPublisher publish")
         if not self._consumes:
             return
         data = data_block[list(self._consumes.keys())[0]]

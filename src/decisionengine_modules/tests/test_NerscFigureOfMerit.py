@@ -6,8 +6,7 @@ from decisionengine.framework.modules.Module import verify_products
 _produces = ['Nersc_Price_Performance', 'Nersc_Figure_Of_Merit']
 produces = dict.fromkeys(_produces, pd.DataFrame)
 
-config = {
-}
+config = {"channel_name": "test"}
 
 nersc_instance_performance_df = pd.DataFrame([
     {"EntryName": "CMSHTPC_T3_US_NERSC_Cori",

@@ -14,6 +14,7 @@ CSV_FILE = os.path.join(DATA_DIR, "GceOccupancy.output.fixture.csv")
 EXPECTED_DF = pd.read_csv(CSV_FILE)
 
 CONFIG = {
+    "channel_name": "test",
     "project": "hepcloud-fnal",
     "credential": os.path.join(DATA_DIR, "monitoring.json")
 }

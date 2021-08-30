@@ -1,7 +1,6 @@
 import abc
 import traceback
 import pandas
-import structlog
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
@@ -27,7 +26,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         avaiable in its config file.
         """
         super(Source.Source, self).__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.collector_host = config.get('collector_host')
         self.condor_config = config.get('condor_config')
         self.constraint = config.get('constraint', True)
@@ -59,6 +58,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         :rtype: :obj:`~pd.DataFrame`
         """
 
+        self.logger.debug("in ResourceManifests load")
         dataframe = pandas.DataFrame()
         try:
             condor_status = htcondor_query.CondorStatus(

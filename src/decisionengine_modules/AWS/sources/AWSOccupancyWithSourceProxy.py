@@ -5,7 +5,6 @@ import boto3
 import pandas as pd
 
 from decisionengine.framework.modules import Source, SourceProxy
-import structlog
 
 
 class OccupancyData:
@@ -123,7 +122,7 @@ class OccupancyForRegion:
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def acquire(self):
         """
@@ -159,7 +158,8 @@ class AWSOccupancy(SourceProxy.SourceProxy):
 
 
 Source.describe(AWSOccupancy,
-                sample_config={"channel_name": "channel_aws_config_data",
+                sample_config={"channel_name": "test",
+                               "source_channel": "channel_aws_config_data",
                                "Dataproducts": ["spot_occupancy_config"],
                                "retries": 3,
                                "retry_timeout": 20})

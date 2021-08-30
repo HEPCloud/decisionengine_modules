@@ -19,6 +19,7 @@ class FinancialParameters(Source.Source):
     def __init__(self, config):
         super().__init__(config)
         self.financial_parameters_dict = config.get('financial_parameters')
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     # The DataBlock given to the source is t=0
     def acquire(self):
@@ -26,6 +27,7 @@ class FinancialParameters(Source.Source):
         Read the financial parameters from the config file and
         return as a dataframe
         """
+        self.logger.debug("in FinancialParameters acquire")
         return {'financial_params': pandas.DataFrame(self.financial_parameters_dict)}
 
 

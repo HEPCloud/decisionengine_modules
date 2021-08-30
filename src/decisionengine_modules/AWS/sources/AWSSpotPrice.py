@@ -11,9 +11,10 @@ import boto3
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 import decisionengine_modules.load_config as load_config
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
-logger = structlog.getLogger()
-logger = logger.bind(module=__name__.split(".")[-1])
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 # default values
 REGION = 'us-west-2'
@@ -185,7 +186,9 @@ all instances is acquired.'''))
 @Source.produces(provisioner_resource_spot_prices=pd.DataFrame)
 class AWSSpotPrice(Source.Source):
     def __init__(self, config_dict):
+        super().__init__(config)
         self.config_file = config_dict['spot_price_configuration']
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def acquire(self):
         """
@@ -196,6 +199,7 @@ class AWSSpotPrice(Source.Source):
 
         # Load kown accounts configuration
         # account configuration is dynamic
+        self.logger.debug("in AWSSpotPrice acquire")
         account_dict = load_config.load(self.config_file, 5, 20)
         sp_data = []
         for account in account_dict:

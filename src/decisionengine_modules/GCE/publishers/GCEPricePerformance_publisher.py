@@ -11,8 +11,10 @@ import decisionengine_modules.graphite_client as graphite
 class GCEPricePerformancePublisher(publisher):
     def __init__(self, config):
         super().__init__(config)
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def graphite_context(self, dataframe):
+        self.logger.debug("in GCEPricePerformancePublisher graphite_context")
         d = {}
         for i, row in dataframe.iterrows():
             key = ('%s.price_perf' % (graphite.sanitize_key(row['EntryName'])))

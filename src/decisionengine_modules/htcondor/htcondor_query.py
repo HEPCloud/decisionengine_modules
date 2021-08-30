@@ -5,7 +5,10 @@ import structlog
 import os
 import sys
 
-logger = structlog.getLogger()
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
+
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 
 class QueryError(RuntimeError):
@@ -154,7 +157,7 @@ class CondorStatus(CondorQuery):
         """
         Fetch resource classads and return a list of evaluated classads
         """
-
+        logger.debug("in CondorStatus fetch")
         results = []
         constraint = bindings_friendly_constraint(constraint)
         attrs = bindings_friendly_attrs(format_list)

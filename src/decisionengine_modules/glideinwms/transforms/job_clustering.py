@@ -1,6 +1,5 @@
 import pandas
 
-import structlog
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 
@@ -8,6 +7,16 @@ from decisionengine.framework.modules.Transform import Parameter
 # - what debugging logs are needed?
 # - what and how is metadata for a dataframe?
 # - do we need to validate case or type for attr content?  again onboarding?
+
+class TestData:
+
+    def __init__(self, data):
+
+        self.data = data
+
+    def print_data(self):
+        logger.info("TestData is 5")
+
 
 @Transform.supports_config(Parameter('match_expressions',
                                      default={"VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)":
@@ -32,7 +41,7 @@ class JobClustering(Transform.Transform):
                                                   columns=['Job_Bucket_Criteria_Expr', 'Site_Bucket_Criteria_Expr',
                                                            'Totals', 'Frontend_Group'])
 
-        self.logger = structlog.getLogger()
+        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def transform(self, datablock):
 

@@ -3,6 +3,8 @@ from functools import wraps
 import structlog
 import time
 
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
+
 def retry_on_error(nretries=1, retry_interval=2, backoff=True):
     def decorator(f):
         @wraps(f)
@@ -21,7 +23,8 @@ def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True):
     Otherwise, use the default values or pass new values to the decorator.
     '''
     time2sleep = retry_interval
-    logger = structlog.getLogger()
+    logger = structlog.getLogger(CHANNELLOGGERNAME)
+    logger = logger.bind(module=__name__.split(".")[-1], channel="")
     for i in range(nretries + 1):
         try:
             return f()

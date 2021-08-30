@@ -11,8 +11,7 @@ CSV_FILE = os.path.join(DATA_DIR, "GceOccupancy.output.fixture.csv")
 
 _PRODUCES = ["GCE_Price_Performance", "GCE_Figure_Of_Merit"]
 _PRODUCES_DICT = dict.fromkeys(_PRODUCES, pd.DataFrame)
-CONFIG = {
-}
+CONFIG = {"channel_name": "test"}
 
 GCE_OCCUPANCY_DF = pd.read_csv(CSV_FILE)
 
