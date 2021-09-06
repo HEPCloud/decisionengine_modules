@@ -15,6 +15,8 @@ This release features:
 Issues fixed in this release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`354 <https://github.com/HEPCloud/decisionengine_modules/issues/354>`_ : Interior log messages from decision engine modules subroutines are missing;
+`348 <https://github.com/HEPCloud/decisionengine_modules/issues/348>`_ : Name convention on bill_calculator_hep vs. billing_calculator_hep
 `333  <https://github.com/HEPCloud/decisionengine_modules/issues/333>`_ : DE modules entrypoint script always pick DE default branch, this becomes an issue when testing DE modules branches enhancement
 `325  <https://github.com/HEPCloud/decisionengine_modules/issues/325>`_ : Follow up for 323 unit test inside correction map logic
 `323  <https://github.com/HEPCloud/decisionengine_modules/issues/323>`_ : Need to be able to add the conversion map to the factory_entries source onmachine_patch operations
@@ -22,6 +24,18 @@ Issues fixed in this release
 
 Full list of commits since version 1.6.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`076371a <https://github.com/HEPCloud/decisionengine_modules/commit/076371a8aecca02909fc810852c72650623ddea7>`_:   changes needed for structured logging
+
+`77a79ad <https://github.com/HEPCloud/decisionengine_modules/commit/77a79adb0c6b6a81441f77cb0d1b62fe1a614a75>`_:   Use latest version of bill calc
+
+`385266c <https://github.com/HEPCloud/decisionengine_modules/commit/385266c417c18eba3c8aedecc6f6a4e6aca6b92f>`_:   Fix requiements to match our usage
+
+`56e2d9e <https://github.com/HEPCloud/decisionengine_modules/commit/56e2d9e288295a5d6d0987b9250acc644a54b809>`_:   Add config for lgtm
+
+`31d9d77 <https://github.com/HEPCloud/decisionengine_modules/commit/31d9d77db46b1c8b2318157cf868acaf3b96492e>`_:   Rename bill_calculator_hep imports
+
+`2cd29c4 <https://github.com/HEPCloud/decisionengine_modules/commit/2cd29c454a570580030e46818b3db1e88b6a5972>`_:   Updated release notes for 1.7.0 RC2 (1.6.99.post6)
 
 `f8c4c73 <https://github.com/HEPCloud/decisionengine_modules/commit/f8c4c7326a8400ad28bcdab5ef0fcfb3675335eb>`_:   standardizing logging
 
