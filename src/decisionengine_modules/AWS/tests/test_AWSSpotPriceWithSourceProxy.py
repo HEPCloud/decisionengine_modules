@@ -3,6 +3,7 @@ import os
 import boto3
 import numpy
 import pandas as pd
+import structlog
 
 from unittest import mock
 
@@ -28,6 +29,10 @@ expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
 produces = {'provisioner_resource_spot_prices': pd.DataFrame}
 
 
+def source_init_mock(s, p):
+    s.logger = structlog.getLogger("test")
+
+
 def fix_spot_price(df):
     out_df = df.copy(deep=True)
     for r, row in df.iterrows():
@@ -43,12 +48,12 @@ class SessionMock:
 
 class TestAWSSpotPriceWithSourceProxy:
     def test_produces(self):
-        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", source_init_mock):
             aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
             assert aws_s_p._produces == produces
 
     def test_acquire(self):
-        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", source_init_mock):
             aws_s_p = AWSSpotPrice.AWSSpotPrice(config)
             with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
                 acquire.return_value = account
