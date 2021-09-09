@@ -16,6 +16,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "gce_limits_factory_entries.test")
 
 CONFIG = {
+    "channel_name": "test",
     "source_channel": "factory_data_channel",
     "Dataproducts": ["Factory_Entries_GCE"],
     "retries": 3,

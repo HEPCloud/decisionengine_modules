@@ -2,7 +2,7 @@ import os
 
 import boto3
 import pandas as pd
-
+import structlog
 from unittest import mock
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
@@ -27,6 +27,9 @@ expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
 produces = {'AWS_Occupancy': pd.DataFrame}
 
 
+def source_init_mock(s, p):
+    s.logger = structlog.getLogger("test")
+
 class SessionMock:
     def resource(self, service=None, region_name=None):
         return None
@@ -34,12 +37,12 @@ class SessionMock:
 
 class TestAWSOccupancyWithSourceProxy:
     def test_produces(self):
-        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", source_init_mock):
             aws_occ = Occupancy.AWSOccupancy(config)
             assert aws_occ._produces == produces
 
     def test_acquire(self):
-        with mock.patch.object(SourceProxy.SourceProxy, "__init__", lambda x, y: None):
+        with mock.patch.object(SourceProxy.SourceProxy, "__init__", source_init_mock):
             aws_occ = Occupancy.AWSOccupancy(config)
             with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
                 acquire.return_value = account
