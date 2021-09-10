@@ -185,6 +185,10 @@
 <p class="admonition-title">Note</p>
 <p>The RPM package was renamed from decisionengine-standard-library to decisionengine_modules. rpm/yum updates from the old RPM will work correctly.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The “channel_name” key in the Source Proxy config dictionaries needs to be changed to “source_channel”. “channel_name” is now being used to describe the name of the channel itself, not the name of the channel the Source Proxy is gettting information from.</p>
+</div>
 <div class="section" id="issues-fixed-in-this-release">
 <h2>Issues fixed in this release<a class="headerlink" href="#issues-fixed-in-this-release" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/354">354</a> : Interior log messages from decision engine modules subroutines are missing;
@@ -195,6 +199,10 @@
 </div>
 <div class="section" id="full-list-of-commits-since-version-1-6-0">
 <h2>Full list of commits since version 1.6.0<a class="headerlink" href="#full-list-of-commits-since-version-1-6-0" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/34d2d7474da1ccddb8df5c2df156676722abadb6">34d2d74</a>:   Added module logger for functions in glide_frontend_element.py outside the class</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/41e1060791df9c0234c59248bc1a6161e896dc05">41e1060</a>:   fixes to tests</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ab0c739688011efd742173c7ce470289f696a8a2">ab0c739</a>:   Update release_notes_1.7.rst</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cc947913c879f626e3d1086eb2ea1e1c3e26ef9f">cc94791</a>:   Updated release notes for 1.7.0 RC3 (1.6.99.post7)</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/076371a8aecca02909fc810852c72650623ddea7">076371a</a>:   changes needed for structured logging</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/77a79adb0c6b6a81441f77cb0d1b62fe1a614a75">77a79ad</a>:   Use latest version of bill calc</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/385266c417c18eba3c8aedecc6f6a4e6aca6b92f">385266c</a>:   Fix requiements to match our usage</p>
