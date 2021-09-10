@@ -17,6 +17,11 @@ from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAM
 pandas.options.mode.chained_assignment = None  # default='warn'
 
 
+# The logger will pick the changes when initialized in the process
+logger = structlog.getLogger(CHANNELLOGGERNAME)
+logger = logger.bind(class_module=__name__.split(".")[-1], channel="")
+
+
 class NoCredentialException(Exception):
     pass
 
@@ -42,8 +47,7 @@ class GlideFrontendElement:
     """
 
     def __init__(self, fe_group, acct_group, fe_cfg):
-        self.logger = structlog.getLogger(CHANNELLOGGERNAME)
-        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], channel="")
+        self.logger = logger
         self.fe_group = fe_group
         self.acct_group = acct_group
         self.fe_cfg = fe_cfg
@@ -1855,7 +1859,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
         total = job_types[job_type]['abs']
         # TODO: MMDB should be debug
-        # logger.info('\n'.join(dbg_info))
+        # self.logger.info('\n'.join(dbg_info))
 
         return (direct_match, prop_match, hereonly_match, prop_match_cpu, total)
 
