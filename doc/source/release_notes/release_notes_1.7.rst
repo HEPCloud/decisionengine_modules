@@ -27,6 +27,14 @@ Issues fixed in this release
 Full list of commits since version 1.6.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`34d2d74 <https://github.com/HEPCloud/decisionengine_modules/commit/34d2d7474da1ccddb8df5c2df156676722abadb6>`_:   Added module logger for functions in glide_frontend_element.py outside the class
+
+`41e1060 <https://github.com/HEPCloud/decisionengine_modules/commit/41e1060791df9c0234c59248bc1a6161e896dc05>`_:   fixes to tests
+
+`ab0c739 <https://github.com/HEPCloud/decisionengine_modules/commit/ab0c739688011efd742173c7ce470289f696a8a2>`_:   Update release_notes_1.7.rst
+
+`cc94791 <https://github.com/HEPCloud/decisionengine_modules/commit/cc947913c879f626e3d1086eb2ea1e1c3e26ef9f>`_:   Updated release notes for 1.7.0 RC3 (1.6.99.post7)
+
 `076371a <https://github.com/HEPCloud/decisionengine_modules/commit/076371a8aecca02909fc810852c72650623ddea7>`_:   changes needed for structured logging
 
 `77a79ad <https://github.com/HEPCloud/decisionengine_modules/commit/77a79adb0c6b6a81441f77cb0d1b62fe1a614a75>`_:   Use latest version of bill calc
