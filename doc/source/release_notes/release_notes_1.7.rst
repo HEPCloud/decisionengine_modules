@@ -27,6 +27,8 @@ Issues fixed in this release
 Full list of commits since version 1.6.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`7451799 <https://github.com/HEPCloud/decisionengine_modules/commit/7451799a6855f1dd5229ad19e976774f5a98b706>`_:   Updated release notes for 1.7.0 RC4 (1.6.99.post8)
+
 `34d2d74 <https://github.com/HEPCloud/decisionengine_modules/commit/34d2d7474da1ccddb8df5c2df156676722abadb6>`_:   Added module logger for functions in glide_frontend_element.py outside the class
 
 `41e1060 <https://github.com/HEPCloud/decisionengine_modules/commit/41e1060791df9c0234c59248bc1a6161e896dc05>`_:   fixes to tests
