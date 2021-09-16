@@ -8,8 +8,9 @@ In this release:
 * Improved unit tests
 * Added Jenkins CI pipeline
 
+
 Patches:
--------
+~~~~~~~~
 
 `30d928b <https://github.com/HEPCloud/decisionengine_modules/commit/30d928b67a442206ad7fe7114b44ff6a2b9ff404>`_
 :   clone version 1.2.0 of decisionengine

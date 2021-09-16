@@ -14,18 +14,21 @@ This release features:
 .. note::
     The "channel_name" key in the Source Proxy config dictionaries needs to be changed to "source_channel". "channel_name" is now being used to describe the name of the channel itself, not the name of the channel the Source Proxy is gettting information from.
 
+
 Issues fixed in this release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`354 <https://github.com/HEPCloud/decisionengine_modules/issues/354>`_ : Interior log messages from decision engine modules subroutines are missing;
-`348 <https://github.com/HEPCloud/decisionengine_modules/issues/348>`_ : Name convention on bill_calculator_hep vs. billing_calculator_hep
-`333  <https://github.com/HEPCloud/decisionengine_modules/issues/333>`_ : DE modules entrypoint script always pick DE default branch, this becomes an issue when testing DE modules branches enhancement
-`325  <https://github.com/HEPCloud/decisionengine_modules/issues/325>`_ : Follow up for 323 unit test inside correction map logic
-`323  <https://github.com/HEPCloud/decisionengine_modules/issues/323>`_ : Need to be able to add the conversion map to the factory_entries source onmachine_patch operations
+- `354 <https://github.com/HEPCloud/decisionengine_modules/issues/354>`_ : Interior log messages from decision engine modules subroutines are missing;
+- `348 <https://github.com/HEPCloud/decisionengine_modules/issues/348>`_ : Name convention on bill_calculator_hep vs. billing_calculator_hep
+- `333  <https://github.com/HEPCloud/decisionengine_modules/issues/333>`_ : DE modules entrypoint script always pick DE default branch, this becomes an issue when testing DE modules branches enhancement
+- `325  <https://github.com/HEPCloud/decisionengine_modules/issues/325>`_ : Follow up for 323 unit test inside correction map logic
+- `323  <https://github.com/HEPCloud/decisionengine_modules/issues/323>`_ : Need to be able to add the conversion map to the factory_entries source onmachine_patch operations
 
 
 Full list of commits since version 1.6.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`4d2c9fe <https://github.com/HEPCloud/decisionengine_modules/commit/4d2c9febb28fba4395efebe1e63ab65ce1a19f25>`_:   Updated documentation for 1.7.0 release
 
 `7451799 <https://github.com/HEPCloud/decisionengine_modules/commit/7451799a6855f1dd5229ad19e976774f5a98b706>`_:   Updated release notes for 1.7.0 RC4 (1.6.99.post8)
 

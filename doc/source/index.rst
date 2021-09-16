@@ -18,11 +18,12 @@ Release Notes
    release_notes/release_notes_1.4
    release_notes/release_notes_1.3
    release_notes/release_notes_1.2
+   release_notes/release_notes_1.1
 
 Developer Documentation
 =======================
 
-The developer documentation is in the `GitHub Wiki<https://github.com/HEPCloud/decisionengine_modules/wiki/Development-Workflow>`_
+The developer documentation is in the `GitHub Wiki <https://github.com/HEPCloud/decisionengine_modules/wiki/Development-Workflow>`_
 
 
 Jenkins CI pipeline
@@ -36,6 +37,7 @@ Jenkins CI pipeline
 
 Source code
 ===========
+
 .. toctree::
    :maxdepth: 1
 
