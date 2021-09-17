@@ -58,9 +58,8 @@ rpm_require = ["decisionengine", "glideinwms-vofrontend-standalone", "python3-wh
 #
 # Much of it comes out of decisionengine_modules.about.py
 setup(
-    setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm[toml] >= 6.0.1"],
+    setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm >= 6.3.1"],
     name=about.__title__,
-    use_scm_version={"version_scheme": "post-release"},
     long_description=long_description,
     long_description_content_type="text/markdown",
     url=about.__url__,
