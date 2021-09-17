@@ -16,3 +16,19 @@ flake8-ignore = "E501 E303 E302 E261 E265 W503 W504"
 flake8-show-source = "True"
 flake8-statistics = "True"
 
+[tool.black]
+line-length = 120
+target-version = ['py36']
+
+[tool.isort]
+src_paths = ["doc", "src"]
+py_version = 36
+profile = "black"
+line_length = 120
+combine_star = "True"
+float_to_top = "True"
+order_by_type = "True"
+dedup_headings = "True"
+known_first_party = ["decisionengine", "decisionengine_modules"]
+lines_between_types = 1
+force_alphabetical_sort_within_sections = "True"

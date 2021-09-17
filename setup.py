@@ -41,7 +41,7 @@ devel_req = [
     "pytest >= 6.2.2", "pytest-cov >= 2.11.1", "pytest-flake8 >= 1.0.7",
     "tabulate >= 0.8.8", "toml >= 0.10.2", "pyyaml >= 5.4.1",
     "sphinx >= 3.5.3", "sphinx_rtd_theme >= 0.5.1",
-    "packaging >= 20.9", "wheel >= 0.36.2",
+    "packaging >= 20.9", "wheel >= 0.36.2", "pylint >= 2.7.4",
     "importlib_resources >= 5.1.2; python_version <= '3.8'",
 ]
 
