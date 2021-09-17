@@ -1,9 +1,10 @@
 #!/usr/bin/pyhon
 import abc
-import htcondor
-import structlog
 import os
 import sys
+
+import htcondor
+import structlog
 
 from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
@@ -32,7 +33,7 @@ class Query(metaclass=abc.ABCMeta):
         return self.__str__()
 
     def __str__(self):
-        return '%s' % vars(self)
+        return f"{vars(self)}"
 
     @abc.abstractmethod
     def fetch(self, constraint=None, format_list=None, condor_config=None):
@@ -89,8 +90,7 @@ class CondorQ(CondorQuery):
 
     def __init__(self, schedd_name=None, pool_name=None):
         self.schedd_name = schedd_name
-        CondorQuery.__init__(self, 'schedd', ['ClusterId', 'ProcId'],
-                             pool_name=pool_name)
+        CondorQuery.__init__(self, "schedd", ["ClusterId", "ProcId"], pool_name=pool_name)
 
     def fetch(self, constraint=None, format_list=None, condor_config=None):
         """
@@ -102,9 +102,9 @@ class CondorQ(CondorQuery):
         attrs = bindings_friendly_attrs(format_list)
 
         try:
-            old_condor_config_env = os.environ.get('CONDOR_CONFIG')
+            old_condor_config_env = os.environ.get("CONDOR_CONFIG")
             if condor_config and os.path.exists(condor_config):
-                os.environ['CONDOR_CONFIG'] = condor_config
+                os.environ["CONDOR_CONFIG"] = condor_config
             htcondor.reload_config()
             if self.pool_name:
                 collector = htcondor.Collector(str(self.pool_name))
@@ -114,25 +114,22 @@ class CondorQ(CondorQuery):
             if self.schedd_name is None:
                 schedd = htcondor.Schedd()
             else:
-                schedd = htcondor.Schedd(
-                    collector.locate(htcondor.DaemonTypes.Schedd,
-                                     self.schedd_name))
+                schedd = htcondor.Schedd(collector.locate(htcondor.DaemonTypes.Schedd, self.schedd_name))
             classads = schedd.query(constraint, attrs)
-            #results_dict = list2dict(results, self.group_attr)
+            # results_dict = list2dict(results, self.group_attr)
             results = eval_classad_expr(classads, format_list=format_list)
         except Exception as ex:
-            s = 'default'
+            s = "default"
             if self.schedd_name is not None:
                 s = self.schedd_name
-            p = 'default'
+            p = "default"
             if self.pool_name is not None:
                 p = self.pool_name
-            err_str = 'Error querying schedd %s in pool %s using python bindings: %s' % (
-                s, p, ex)
+            err_str = f"Error querying schedd {s} in pool {p} using python bindings: {ex}"
             raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
-                os.environ['CONDOR_CONFIG'] = old_condor_config_env
+                os.environ["CONDOR_CONFIG"] = old_condor_config_env
 
         return results
 
@@ -144,14 +141,13 @@ class CondorStatus(CondorQuery):
 
     def __init__(self, subsystem_name=None, pool_name=None, group_attr=None):
         if subsystem_name is None:
-            subsystem_str = ''
+            subsystem_str = ""
         else:
-            subsystem_str = '%s' % subsystem_name
+            subsystem_str = f"{subsystem_name}"
         if group_attr is None:
-            group_attr = ['Name']
+            group_attr = ["Name"]
 
-        CondorQuery.__init__(self, subsystem_str, group_attr,
-                             pool_name=pool_name)
+        CondorQuery.__init__(self, subsystem_str, group_attr, pool_name=pool_name)
 
     def fetch(self, constraint=None, format_list=None, condor_config=None):
         """
@@ -164,9 +160,9 @@ class CondorStatus(CondorQuery):
         adtype = resource_str_to_py_adtype(self.resource_str)
 
         try:
-            old_condor_config_env = os.environ.get('CONDOR_CONFIG')
+            old_condor_config_env = os.environ.get("CONDOR_CONFIG")
             if condor_config and os.path.exists(condor_config):
-                os.environ['CONDOR_CONFIG'] = condor_config
+                os.environ["CONDOR_CONFIG"] = condor_config
             htcondor.reload_config()
             if self.pool_name:
                 collector = htcondor.Collector(str(self.pool_name))
@@ -176,15 +172,14 @@ class CondorStatus(CondorQuery):
             classads = collector.query(adtype, constraint, attrs)
             results = eval_classad_expr(classads, format_list=format_list)
         except Exception as ex:
-            p = 'default'
+            p = "default"
             if self.pool_name is not None:
                 p = self.pool_name
-            err_str = 'Error querying pool %s using python bindings: %s' % (
-                p, ex)
+            err_str = f"Error querying pool {p} using python bindings: {ex}"
             raise QueryError(err_str).with_traceback(sys.exc_info()[2])
         finally:
             if old_condor_config_env:
-                os.environ['CONDOR_CONFIG'] = old_condor_config_env
+                os.environ["CONDOR_CONFIG"] = old_condor_config_env
 
         return results
 
@@ -211,17 +206,17 @@ def resource_str_to_py_adtype(resource_str):
     """
 
     adtypes = {
-        'any': htcondor.AdTypes.Any,
-        'collector': htcondor.AdTypes.Collector,
-        'generic': htcondor.AdTypes.Generic,
-        'grid': htcondor.AdTypes.Grid,
-        'had': htcondor.AdTypes.HAD,
-        'license': htcondor.AdTypes.License,
-        'master': htcondor.AdTypes.Master,
-        'negotiator': htcondor.AdTypes.Negotiator,
-        'schedd': htcondor.AdTypes.Schedd,
-        'startd': htcondor.AdTypes.Startd,
-        'submitter': htcondor.AdTypes.Submitter
+        "any": htcondor.AdTypes.Any,
+        "collector": htcondor.AdTypes.Collector,
+        "generic": htcondor.AdTypes.Generic,
+        "grid": htcondor.AdTypes.Grid,
+        "had": htcondor.AdTypes.HAD,
+        "license": htcondor.AdTypes.License,
+        "master": htcondor.AdTypes.Master,
+        "negotiator": htcondor.AdTypes.Negotiator,
+        "schedd": htcondor.AdTypes.Schedd,
+        "startd": htcondor.AdTypes.Startd,
+        "submitter": htcondor.AdTypes.Submitter,
     }
     # Default to startd ads, even if resource_str is empty
     return adtypes.get(resource_str, htcondor.AdTypes.Startd)
@@ -279,17 +274,17 @@ def list2dict(list_data, attr_name):
             dict_name = list_el[attr_name]
         dict_el = {}
         for a in list_el:
-            if not (a in attr_list):
+            if a not in attr_list:
                 try:
-                    if (list_el[a].__class__.__name__ == 'ExprTree'):
+                    if list_el[a].__class__.__name__ == "ExprTree":
                         # Try to evaluate the condor expr and use its value
                         # If cannot be evaluated, keep the expr as is
                         a_value = list_el[a].eval()
-                        if '%s' % a_value != 'Undefined':
+                        if f"{a_value}" != "Undefined":
                             # Cannot use classad.Value.Undefined for
                             # for comparison as it gets cast to int
                             dict_el[a] = a_value
-                    elif str(list_el[a]) != 'Undefined':
+                    elif str(list_el[a]) != "Undefined":
                         # No need for Undefined check to see if
                         # attribute exists in the fetched classad
                         dict_el[a] = list_el[a]
@@ -317,7 +312,7 @@ def eval_classad_expr(classads, format_list=None):
         else:
             dict_el = {}
         for attr in classad:
-            if attr in ('Requirements', 'START'):
+            if attr in ("Requirements", "START"):
                 # Requirements and START cannot be evaluated until the
                 # jobs and slots match. This causes issues so better to
                 # bypass.
@@ -325,13 +320,13 @@ def eval_classad_expr(classads, format_list=None):
                 #       then we need to identify how to resolve this issue.
                 continue
             try:
-                if (classad[attr].__class__.__name__ == 'ExprTree'):
+                if classad[attr].__class__.__name__ == "ExprTree":
                     a_value = classad[attr].eval()
-                    if '%s' % a_value != 'Undefined':
+                    if f"{a_value}" != "Undefined":
                         # Cannot use classad.Value.Undefined
                         # for comparison as it gets cast to int
                         dict_el[attr] = a_value
-                elif str(classad[attr]) != 'Undefined':
+                elif str(classad[attr]) != "Undefined":
                     # No need for Undefined check to see if
                     # attribute exists in the fetched classad
                     dict_el[attr] = classad[attr]
@@ -372,11 +367,10 @@ def split_collector_host(collector_host):
     """
 
     if isinstance(collector_host, str):
-        hosts = collector_host.replace(',', ' ').split()
+        hosts = collector_host.replace(",", " ").split()
         primary = hosts[0]
         secondary = hosts[1:]
         secondary.sort()
-        return (primary, ','.join(secondary))
+        return (primary, ",".join(secondary))
     else:
-        RuntimeError(
-            'collector_host should be a comman or space separated string but found %s' % collector_host)
+        RuntimeError(f"collector_host should be a comman or space separated string but found {collector_host}")

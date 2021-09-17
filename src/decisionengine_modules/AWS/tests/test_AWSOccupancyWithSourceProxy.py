@@ -1,34 +1,36 @@
 import os
 
+from unittest import mock
+
 import boto3
 import pandas as pd
 import structlog
-from unittest import mock
 
 import decisionengine.framework.modules.SourceProxy as SourceProxy
 import decisionengine_modules.AWS.sources.AWSOccupancyWithSourceProxy as Occupancy
+
 from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
-config = {"channel_name": "test",
-          "source_channel": "channel_aws_config_data",
-          "Dataproducts": ["spot_occupancy_config"],
-          "retries": 3,
-          "retry_timeout": 20,
-          }
+config = {
+    "channel_name": "test",
+    "source_channel": "channel_aws_config_data",
+    "Dataproducts": ["spot_occupancy_config"],
+    "retries": 3,
+    "retry_timeout": 20,
+}
 
-account = {'spot_occupancy_config': pd.read_csv(
-    os.path.join(DATA_DIR, 'account_config.csv'))}
+account = {"spot_occupancy_config": pd.read_csv(os.path.join(DATA_DIR, "account_config.csv"))}
 
-expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR,
-                                              'AWSOcupancyWithSourceProxy_expected_acquire.csv'))
+expected_pandas_df = pd.read_csv(os.path.join(DATA_DIR, "AWSOcupancyWithSourceProxy_expected_acquire.csv"))
 
-produces = {'AWS_Occupancy': pd.DataFrame}
+produces = {"AWS_Occupancy": pd.DataFrame}
 
 
 def source_init_mock(s, p):
     s.logger = structlog.getLogger("test")
+
 
 class SessionMock:
     def resource(self, service=None, region_name=None):
@@ -44,20 +46,17 @@ class TestAWSOccupancyWithSourceProxy:
     def test_acquire(self):
         with mock.patch.object(SourceProxy.SourceProxy, "__init__", source_init_mock):
             aws_occ = Occupancy.AWSOccupancy(config)
-            with mock.patch.object(SourceProxy.SourceProxy, 'acquire') as acquire:
+            with mock.patch.object(SourceProxy.SourceProxy, "acquire") as acquire:
                 acquire.return_value = account
-                with mock.patch.object(boto3.session, 'Session') as s:
+                with mock.patch.object(boto3.session, "Session") as s:
                     s.return_value = SessionMock()
-                    with mock.patch.object(Occupancy.OccupancyForRegion, 'get_ec2_instances') as get_instances:
-                        cap = utils.input_from_file(os.path.join(DATA_DIR,
-                                                                 'occupancy.fixture'))
+                    with mock.patch.object(Occupancy.OccupancyForRegion, "get_ec2_instances") as get_instances:
+                        cap = utils.input_from_file(os.path.join(DATA_DIR, "occupancy.fixture"))
                         get_instances.return_value = cap
                         res = aws_occ.acquire()
                         assert produces.keys() == res.keys()
-                        df1 = expected_pandas_df.sort_values(
-                            ['AvailabilityZone', 'InstanceType'])
-                        new_df = res.get('AWS_Occupancy').sort_values(
-                            ['AvailabilityZone', 'InstanceType'])
+                        df1 = expected_pandas_df.sort_values(["AvailabilityZone", "InstanceType"])
+                        new_df = res.get("AWS_Occupancy").sort_values(["AvailabilityZone", "InstanceType"])
                         new_df = new_df.reindex(df1.columns, axis=1)
                         new_df = new_df.set_index(df1.index)
                         pd.testing.assert_frame_equal(df1, new_df)

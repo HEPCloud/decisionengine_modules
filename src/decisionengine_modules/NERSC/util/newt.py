@@ -2,24 +2,23 @@
 Newt API interface
 """
 
-from copy import deepcopy
 import os
 import time
+
+from copy import deepcopy
+
 import requests
+
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-"""
-Newt base URL. When not specified in constructor this
-URL will be used.
-"""
+# Newt base URL. When not specified in constructor this
+# URL will be used.
 _NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
 
 
 class Newt:
-
-    def __init__(self, password_file, newt_base_url=None, num_retries=0,
-                 retry_backoff_factor=0):
+    def __init__(self, password_file, newt_base_url=None, num_retries=0, retry_backoff_factor=0):
         """
         Constructor that takes path to password file and
         optional Newt base URL
@@ -29,8 +28,7 @@ class Newt:
         if not password_file:
             raise RuntimeError("No password file specified")
         if not os.path.exists(password_file):
-            raise RuntimeError("password file '{}' does not exist".
-                               format(password_file))
+            raise RuntimeError(f"password file '{password_file}' does not exist")
         self.password_file = password_file
         self.newt_base_url = newt_base_url if newt_base_url else _NEWT_BASE_URL
         if not self.newt_base_url.endswith("/"):
@@ -49,7 +47,8 @@ class Newt:
         retry = Retry(
             status=self.num_retries,
             status_forcelist=[500, 502, 503, 504, 507],
-            backoff_factor=self.retry_backoff_factor)
+            backoff_factor=self.retry_backoff_factor,
+        )
         retry_adapter = HTTPAdapter(max_retries=retry)
         self.session.mount(self.newt_base_url, retry_adapter)
 
@@ -62,17 +61,14 @@ class Newt:
             login_url = self.newt_base_url + "login/"
             postfields = None
             with open(self.password_file) as f:
-                postfields = "&".join([line[:-1].strip()
-                                       for line in f.readlines()])
+                postfields = "&".join([line[:-1].strip() for line in f.readlines()])
 
             r = self.session.post(login_url, data=postfields)
             r.raise_for_status()
             response_dict = r.json()
             if not response_dict.get("auth"):
-                raise RuntimeError(
-                    "Failed to establish session to {}".format(login_url))
-            self.expiration_time = response_dict.get(
-                'session_lifetime') + time.time()
+                raise RuntimeError(f"Failed to establish session to {login_url}")
+            self.expiration_time = response_dict.get("session_lifetime") + time.time()
 
     def get_usage(self, username):
         """
@@ -81,9 +77,9 @@ class Newt:
         :return: json containing allocation and usage information for a given user
         """
         self._login()
-        iris_url = "{}/{}".format(self.newt_base_url, 'account/iris')
+        iris_url = f"{self.newt_base_url}/account/iris"
         query = (
-            "accounts(username: \\\"{}\\\") {{ "
+            'accounts(username: \\"{}\\") {{ '
             "   projectId, "
             "   repoName, "
             "   repoType, "
@@ -103,20 +99,18 @@ class Newt:
         ).format(username)
         # Remove whitespace to make more readable
         query = query.replace(" ", "").replace(",", ", ")
-        r = self.session.post(
-            url=iris_url,
-            data={"query": query})
+        r = self.session.post(url=iris_url, data={"query": query})
         r.raise_for_status()
         raw_json = r.json()
 
         # Flatten json so it returns data that follows the old NEWT structure
-        final = {'items': []}
-        for account in raw_json['data']['newt']['accounts']:
-            _item = {k: v for k, v in account.items() if k != 'users'}
-            for user in account['users']:
+        final = {"items": []}
+        for account in raw_json["data"]["newt"]["accounts"]:
+            _item = {k: v for k, v in account.items() if k != "users"}
+            for user in account["users"]:
                 _item2 = deepcopy(_item)
                 _item2.update(user)
-                final['items'].append(_item2)
+                final["items"].append(_item2)
         return final
 
     def get_status(self, system=None):

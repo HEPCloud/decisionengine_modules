@@ -1,13 +1,16 @@
-import time
-import structlog
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
 """
 Load python object
 """
 
+import time
+
+import structlog
+
+from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
+
 logger = structlog.getLogger(CHANNELLOGGERNAME)
 logger = logger.bind(module=__name__.split(".")[-1], channel="")
+
 
 def load(python_file, retries=0, timeout=0):
     """
@@ -26,12 +29,12 @@ def load(python_file, retries=0, timeout=0):
     timeout = max(1, timeout)
     for i in range(retries):
         try:
-            with open(python_file, "r") as f:
+            with open(python_file) as f:
                 code = "config=" + "".join(f.readlines())
             if code:
                 exec(code)
             break
-        except IOError:
+        except OSError:
             logger.warning(f"config load failed in de_modules, {retries-i} retries")
             time.sleep(timeout)
     else:
@@ -41,6 +44,6 @@ def load(python_file, retries=0, timeout=0):
     return config
 
 
-if __name__ == '__main__':
-    config = load('spot_price_config_sample.py')
+if __name__ == "__main__":
+    config = load("spot_price_config_sample.py")
     print(config)

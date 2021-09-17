@@ -1,5 +1,5 @@
-name: 'RPM build'
-description: 'Run rpm build in preconfigured SL7 docker image'
+name: "RPM build"
+description: "Run rpm build in preconfigured SL7 docker image"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"

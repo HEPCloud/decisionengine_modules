@@ -1,8 +1,10 @@
-import time
 import pickle
-import struct
 import socket
+import struct
+import time
+
 import structlog
+
 from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
 
@@ -52,13 +54,13 @@ class Graphite:
         try:
             s.connect((self.graphite_host, self.graphite_pickle_port))
             s.sendall(message)
-        except socket.error:
+        except OSError:
             self.logger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}")
         finally:
             s.close()
 
 
 if __name__ == "__main__":
-    data = {'count1': 5, 'count2': 0.5}
+    data = {"count1": 5, "count2": 0.5}
     g = Graphite()
-    g.send_dict('test', data, send_data=False)
+    g.send_dict("test", data, send_data=False)

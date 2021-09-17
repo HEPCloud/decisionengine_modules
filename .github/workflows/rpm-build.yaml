@@ -16,8 +16,8 @@ jobs:
       - name: Run the build in a container (SL7/HEPCloud-CI)
         uses: ./.github/actions/python-command-in-sl7-container
         with:
-          python-command: 'setup.py bdist_rpm'
-          logfile: 'rpmbuild.log'
+          python-command: "setup.py bdist_rpm"
+          logfile: "rpmbuild.log"
 
       - name: Archive rpm
         uses: actions/upload-artifact@v2

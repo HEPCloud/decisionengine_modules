@@ -8,7 +8,6 @@ SAMPLE_FILE = os.path.join(DATA_DIR, "AccountConstants_sample.py")
 
 
 class TestAccountContantsk(unittest.TestCase):
-
     def setUp(self):
         pass
 
@@ -17,7 +16,7 @@ class TestAccountContantsk(unittest.TestCase):
 
     def test_load(self):
         account_dict = DEAccountContants.load_constants(SAMPLE_FILE)
-        self.assertIsNotNone(account_dict)
+        assert account_dict is not None
 
 
 if __name__ == "__main__":

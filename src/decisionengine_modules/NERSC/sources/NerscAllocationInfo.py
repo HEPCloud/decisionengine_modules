@@ -11,9 +11,11 @@ _MAX_RETRIES = 10
 _RETRY_BACKOFF_FACTOR = 1
 
 
-@Source.supports_config(Parameter('constraints',
-                                  type=dict,
-                                  comment="""Supports the layout:
+@Source.supports_config(
+    Parameter(
+        "constraints",
+        type=dict,
+        comment="""Supports the layout:
 
   {
      'usernames': ['user1', 'user2'],
@@ -21,10 +23,12 @@ _RETRY_BACKOFF_FACTOR = 1
         'rname': ['m2612', 'm2696'],
         'repo_type': ["STR", ],
   }
-"""),
-                        Parameter('max_retries', default=_MAX_RETRIES),
-                        Parameter('retry_backoff_factor', default=_RETRY_BACKOFF_FACTOR),
-                        Parameter('passwd_file', type=str, comment="Path to password file"))
+""",
+    ),
+    Parameter("max_retries", default=_MAX_RETRIES),
+    Parameter("retry_backoff_factor", default=_RETRY_BACKOFF_FACTOR),
+    Parameter("passwd_file", type=str, comment="Path to password file"),
+)
 @Source.produces(Nersc_Allocation_Info=pd.DataFrame)
 class NerscAllocationInfo(Source.Source):
 
@@ -35,18 +39,18 @@ class NerscAllocationInfo(Source.Source):
     def __init__(self, config):
         super().__init__(config)
 
-        self.constraints = config.get('constraints')
+        self.constraints = config.get("constraints")
         if not isinstance(self.constraints, dict):
-            raise RuntimeError('constraints should be a dict')
+            raise RuntimeError("constraints should be a dict")
 
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
-        self.retry_backoff_factor = config.get("retry_backoff_factor",
-                                               _RETRY_BACKOFF_FACTOR)
+        self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)
         self.newt = newt.Newt(
-            config.get('passwd_file'),
-            num_retries=self.max_retries,
-            retry_backoff_factor=self.retry_backoff_factor)
-        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
+            config.get("passwd_file"), num_retries=self.max_retries, retry_backoff_factor=self.retry_backoff_factor
+        )
+        self.logger = self.logger.bind(
+            class_module=__name__.split(".")[-1],
+        )
 
     def send_query(self):
         """
@@ -57,7 +61,7 @@ class NerscAllocationInfo(Source.Source):
             values = self.newt.get_usage(username)
             if values:
                 try:
-                    results.extend(values['items'])
+                    results.extend(values["items"])
                 except KeyError:
                     # Empty return from get_usage, so just move on
                     pass
@@ -67,10 +71,10 @@ class NerscAllocationInfo(Source.Source):
             k = key
             # The below remapping is needed for backward compatibility with
             # existing config files
-            if key == 'rname':
-                k = 'repoName'
-            if key == 'repo_type':
-                k = 'repoType'
+            if key == "rname":
+                k = "repoName"
+            if key == "repo_type":
+                k = "repoType"
             if values:
                 results = [x for x in results if x[k] in values]
         return results
@@ -83,7 +87,7 @@ class NerscAllocationInfo(Source.Source):
         :rtype: :obj:`~pd.DataFrame`
         """
         self.logger.debug("in NerscAllocationInfo acquire")
-        return {'Nersc_Allocation_Info': pd.DataFrame(self.send_query())}
+        return {"Nersc_Allocation_Info": pd.DataFrame(self.send_query())}
 
 
 Source.describe(NerscAllocationInfo)

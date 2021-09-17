@@ -27,10 +27,13 @@ class OccupancyData:
         if not other:
             return False
 
-        return (self.data['AvailabilityZone'], self.data['InstanceType']) == (other.data['AvailabilityZone'], other.data['InstanceType'])
+        return (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
+            other.data["AvailabilityZone"],
+            other.data["InstanceType"],
+        )
 
     def __ne__(self, other):
-        return not self == other
+        return self != other
 
 
 class OccupancyForRegion:
@@ -38,7 +41,7 @@ class OccupancyForRegion:
     AWS capacity data and metods
     """
 
-    def __init__(self, region='us-west-2', profile_name=None, instance_types=[]):
+    def __init__(self, region="us-west-2", profile_name=None, instance_types=None):
         """
 
         :type region: :obj:`str`
@@ -50,12 +53,14 @@ class OccupancyForRegion:
         """
 
         if profile_name:
-            session = boto3.session.Session(profile_name=profile_name,
-                                            region_name=region)
-            self.ec2_resource = session.resource('ec2', region_name=region)
+            session = boto3.session.Session(profile_name=profile_name, region_name=region)
+            self.ec2_resource = session.resource("ec2", region_name=region)
         else:
-            self.ec2_resource = boto3.resource('ec2', region)
-        self.instance_types = instance_types
+            self.ec2_resource = boto3.resource("ec2", region)
+        if instance_types:
+            self.instance_types = instance_types
+        else:
+            self.instance_types = []
         self.account_name = profile_name
 
     def get_ec2_instances(self):
@@ -69,13 +74,14 @@ class OccupancyForRegion:
         d = {}
         for instance in instances:
             running_vms = 0
-            if instance.state['Name'] == 'running':
+            if instance.state["Name"] == "running":
                 running_vms = 1
-            d[instance.id] = {'AccountName': self.account_name,
-                              'InstanceType': instance.instance_type,
-                              'AvailabilityZone': instance.placement['AvailabilityZone'],
-                              'RunningVms': running_vms,
-                              }
+            d[instance.id] = {
+                "AccountName": self.account_name,
+                "InstanceType": instance.instance_type,
+                "AvailabilityZone": instance.placement["AvailabilityZone"],
+                "RunningVms": running_vms,
+            }
 
         return d
 
@@ -88,15 +94,14 @@ class OccupancyForRegion:
         :rtype: :obj:`list`: list of spot price data (:class:`aws_data.AWSDataElement`)
         """
         ll = []
-        for instance, data in instances.items():
-            if not self.instance_types or (self.instance_types and
-                                           data['InstanceType'] in self.instance_types):
+        for data in instances.values():
+            if not self.instance_types or (self.instance_types and data["InstanceType"] in self.instance_types):
                 occ_data = OccupancyData(data)
                 if occ_data not in ll:
                     ll.append(occ_data)
                 else:
                     i = ll.index(occ_data)
-                    ll[i].data['RunningVms'] += occ_data.data['RunningVms']
+                    ll[i].data["RunningVms"] += occ_data.data["RunningVms"]
 
         return ll
 
@@ -122,7 +127,9 @@ class OccupancyForRegion:
 class AWSOccupancy(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
+        self.logger = self.logger.bind(
+            class_module=__name__.split(".")[-1],
+        )
 
     def acquire(self):
         """
@@ -135,13 +142,12 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         # Load kown accounts configuration
         account_conf = super().acquire()
         if len(account_conf.keys()) != 1:
-            raise RuntimeError(
-                'Wrong configuration %s. Only one key is expected' % (account_conf,))
+            raise RuntimeError(f"Wrong configuration {account_conf}. Only one key is expected")
         account_dict = {}
         for k in account_conf:
             # FIXME: We overwrite the 'account_dict' member for each iteration of this loop?
             account_dict = account_conf[k].to_dict()
-        self.logger.debug('account_dict %s' % (account_dict,))
+        self.logger.debug(f"account_dict {account_dict}")
         occupancy_data = []
         for account in account_dict:
             for region in account_dict[account]:
@@ -154,12 +160,16 @@ class AWSOccupancy(SourceProxy.SourceProxy):
 
         oc_list = [i.data for i in occupancy_data]
         # to fix the test failure
-        return {'AWS_Occupancy': pd.DataFrame(oc_list)}
+        return {"AWS_Occupancy": pd.DataFrame(oc_list)}
 
 
-Source.describe(AWSOccupancy,
-                sample_config={"channel_name": "test",
-                               "source_channel": "channel_aws_config_data",
-                               "Dataproducts": ["spot_occupancy_config"],
-                               "retries": 3,
-                               "retry_timeout": 20})
+Source.describe(
+    AWSOccupancy,
+    sample_config={
+        "channel_name": "test",
+        "source_channel": "channel_aws_config_data",
+        "Dataproducts": ["spot_occupancy_config"],
+        "retries": 3,
+        "retry_timeout": 20,
+    },
+)

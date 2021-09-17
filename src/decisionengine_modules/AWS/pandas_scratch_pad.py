@@ -6,28 +6,23 @@ job_manifests = [
     {"JobId": "3.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
     {"JobId": "3.1", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
     {"JobId": "3.2", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
-    {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12}
+    {"JobId": "6.0", "RequestCpus": 2, "RequestMemory": 4, "RequestTime": 12},
 ]
 
 resource_list = [
-    {"ResourceName": "AWS1", "ResourceCpus": 2,
-        "ResourceMemory": 8, "EC2Type": "m4.large"},
-    {"ResourceName": "AWS2", "ResourceCpus": 4,
-        "ResourceMemory": 16, "EC2Type": "m4.xlarge"},
-    {"ResourceName": "AWS3", "ResourceCpus": 2,
-        "ResourceMemory": 7.5, "EC2Type": "m3.large"},
-    {"ResourceName": "AWS4", "ResourceCpus": 4,
-        "ResourceMemory": 15, "EC2Type": "m3.xlarge"},
-    {"ResourceName": "AWS5", "ResourceCpus": 4,
-        "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"}
+    {"ResourceName": "AWS1", "ResourceCpus": 2, "ResourceMemory": 8, "EC2Type": "m4.large"},
+    {"ResourceName": "AWS2", "ResourceCpus": 4, "ResourceMemory": 16, "EC2Type": "m4.xlarge"},
+    {"ResourceName": "AWS3", "ResourceCpus": 2, "ResourceMemory": 7.5, "EC2Type": "m3.large"},
+    {"ResourceName": "AWS4", "ResourceCpus": 4, "ResourceMemory": 15, "EC2Type": "m3.xlarge"},
+    {"ResourceName": "AWS5", "ResourceCpus": 4, "ResourceMemory": 7.5, "EC2Type": "c4.xlarge"},
 ]
 
 resource_spot_price = [
-    {"ResourceName": "AWS1", "SpotPrice": .1},
-    {"ResourceName": "AWS2", "SpotPrice": .15},
-    {"ResourceName": "AWS3", "SpotPrice": .2},
-    {"ResourceName": "AWS4", "SpotPrice": .12},
-    {"ResourceName": "AWS5", "SpotPrice": .14}
+    {"ResourceName": "AWS1", "SpotPrice": 0.1},
+    {"ResourceName": "AWS2", "SpotPrice": 0.15},
+    {"ResourceName": "AWS3", "SpotPrice": 0.2},
+    {"ResourceName": "AWS4", "SpotPrice": 0.12},
+    {"ResourceName": "AWS5", "SpotPrice": 0.14},
 ]
 
 
@@ -56,24 +51,21 @@ if __name__ == "__main__":
     #   select *
     #   from jobs_pd, resources_pd
     #   where jobs_pd.RequestCpus <= resources_pd.ResourceCpus
-    #merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
-    merged_pd = pd.merge_asof(
-        jobs_pd, resource_spot_pd, left_on='RequestCpus', right_on='ResourceCpus')
+    # merged_pd = pd.merge(jobs_pd, resource_spot_pd, how='outer', left_on='RequestCpus', right_on='ResourceCpus')
+    merged_pd = pd.merge_asof(jobs_pd, resource_spot_pd, left_on="RequestCpus", right_on="ResourceCpus")
     print(merged_pd)
 
     # create a new column that gives a boolean determining wether or not the row matches memory requirments
-    merged_pd = merged_pd.assign(
-        Match=merged_pd.RequestMemory <= merged_pd.ResourceMemory)
-    merged_pd = merged_pd.assign(
-        estimatedCost=merged_pd.RequestTime * merged_pd.SpotPrice)
+    merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <= merged_pd.ResourceMemory)
+    merged_pd = merged_pd.assign(estimatedCost=merged_pd.RequestTime * merged_pd.SpotPrice)
 
     # filter for matched entries in the data frame
     matched_pd = merged_pd[(merged_pd.Match is True)]
     number_of_jobs = len(matched_pd.index)
 
-    group = matched_pd.groupby(['SpotPrice', 'ResourceName'])
-    res_group = group['ResourceName']
-'''
+    group = matched_pd.groupby(["SpotPrice", "ResourceName"])
+    res_group = group["ResourceName"]
+    txt = """
     req = {}
     limit = 5
     for i in res_group:
@@ -95,4 +87,4 @@ if __name__ == "__main__":
 
     for k in req.keys():
         print req[k]
-'''
+"""

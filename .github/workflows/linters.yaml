@@ -3,8 +3,8 @@ name: Linters
 on:
   push:
     branches:
-      - '**'          # matches every branch
-      - '!gh-pages'   # excludes gh-pages branch
+      - "**" # matches every branch
+      - "!gh-pages" # excludes gh-pages branch
   pull_request:
     branches:
       - master
@@ -34,8 +34,8 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-          architecture: 'x64'
+          python-version: "3.9"
+          architecture: "x64"
 
       - name: Cache pip
         uses: actions/cache@v2
@@ -114,8 +114,8 @@ jobs:
 
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-          architecture: 'x64'
+          python-version: "3.9"
+          architecture: "x64"
 
       - name: Cache pip
         uses: actions/cache@v2

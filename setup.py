@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # Eventually this should move to pyproject.toml
 #  but setuptools must first gain support for parsing that
@@ -8,13 +7,14 @@ import importlib
 import pathlib
 import site
 import sys
+
 from setuptools import find_packages, setup
 
 here = pathlib.Path(__file__).parent.resolve()
 
 # Add this module to the import path to help centralize metadata
 sys.path.append(str(here) + "/src")
-about = importlib.import_module('decisionengine_modules.about')
+about = importlib.import_module("decisionengine_modules.about")
 
 # Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
@@ -33,15 +33,22 @@ runtime_require = [
     "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
     "pandas == 1.1.5; python_version <= '3.6'",
-    "pandas >= 1.1.5; python_version >= '3.7'"
+    "pandas >= 1.1.5; python_version >= '3.7'",
 ]
 
 # pull in development requirements
 devel_req = [
-    "pytest >= 6.2.2", "pytest-cov >= 2.11.1", "pytest-flake8 >= 1.0.7",
-    "tabulate >= 0.8.8", "toml >= 0.10.2", "pyyaml >= 5.4.1",
-    "sphinx >= 3.5.3", "sphinx_rtd_theme >= 0.5.1",
-    "packaging >= 20.9", "wheel >= 0.36.2", "pylint >= 2.7.4",
+    "pytest >= 6.2.2",
+    "pytest-cov >= 2.11.1",
+    "pytest-flake8 >= 1.0.7",
+    "tabulate >= 0.8.8",
+    "toml >= 0.10.2",
+    "pyyaml >= 5.4.1",
+    "sphinx >= 3.5.3",
+    "sphinx_rtd_theme >= 0.5.1",
+    "packaging >= 20.9",
+    "wheel >= 0.36.2",
+    "pylint >= 2.7.4",
     "importlib_resources >= 5.1.2; python_version <= '3.8'",
 ]
 
@@ -67,9 +74,7 @@ setup(
     author=about.__author__,
     license=about.__license__,
     package_dir={"": "src"},
-    packages=find_packages(where="src",
-                           exclude=("tests", "*.tests", "*.tests.*", "build.*",
-                                    "doc.*")),
+    packages=find_packages(where="src", exclude=("tests", "*.tests", "*.tests.*", "build.*", "doc.*")),
     install_requires=runtime_require,
     extras_require={
         "develop": devel_req,

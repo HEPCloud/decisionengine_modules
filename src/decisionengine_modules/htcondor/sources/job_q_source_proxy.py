@@ -1,6 +1,4 @@
-from decisionengine.framework.modules import SourceProxy
-from decisionengine.framework.modules import Source
-
+from decisionengine.framework.modules import Source, SourceProxy
 
 JobQSourceProxy = SourceProxy.SourceProxy
 Source.describe(JobQSourceProxy)

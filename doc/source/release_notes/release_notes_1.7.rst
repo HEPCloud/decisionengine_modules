@@ -119,4 +119,3 @@ Full list of commits since version 1.6.0
 `5449e00 <https://github.com/HEPCloud/decisionengine_modules/commit/5449e0034fdcb75d84920de22070c08769a095c7>`_:   fix typo
 
 `7c0752f <https://github.com/HEPCloud/decisionengine_modules/commit/7c0752fabe8f095343c0177ca7e2fb694fb09571>`_:   bump trrunk version
-
