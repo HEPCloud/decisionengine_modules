@@ -1,10 +1,12 @@
-'''
+"""
     Utils to simplify testing
-'''
+"""
+import datetime  # noqa: F401
+
+import pandas as pd  # noqa: F401
+
 # These imports needed for the `eval` blocks
-from classad import classad  # noqa
-import datetime              # noqa
-import pandas as pd          # noqa
+from classad import classad  # noqa: F401
 
 
 def input_from_file(fname):
@@ -35,7 +37,7 @@ def compare_dfs(df1, df2):
     rc = True
     for i in range(df1.shape[0]):
         for j in range(df1.shape[1]):
-            if (df1.iloc[i, j] != df2.iloc[i, j]):
+            if df1.iloc[i, j] != df2.iloc[i, j]:
                 rc = False
                 break
     return rc

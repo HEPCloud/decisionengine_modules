@@ -4,41 +4,35 @@ AccountConstants instead of separate class for each billing class.
 This way is more covenient to use in programms.
 """
 
-EXPECTED_NAMES = ['accountName',
-                  'accountNumber',
-                  'credentialsProfileName',
-                  'bucketBillingName',
-                  'lastKnownBillDate',
-                  'balanceAtDate',
-                  'costRatePerHourInLastSixHoursAlarmThreshold',
-                  'costRatePerHourInLastDayAlarmThreshold',
-                  'applyDiscount',
-                  'emailReceipientForAlarms',
-                  'projectId',
-                  ]
+EXPECTED_NAMES = [
+    "accountName",
+    "accountNumber",
+    "credentialsProfileName",
+    "bucketBillingName",
+    "lastKnownBillDate",
+    "balanceAtDate",
+    "costRatePerHourInLastSixHoursAlarmThreshold",
+    "costRatePerHourInLastDayAlarmThreshold",
+    "applyDiscount",
+    "emailReceipientForAlarms",
+    "projectId",
+]
 
 
 class AccountConstants:
-    def __init__(self, constants={}):
+    def __init__(self, constants=None):
 
         # Initialize variables
         for k in EXPECTED_NAMES:
             setattr(self, k, None)
         # Set variables
-        for k, val in constants.items():
-            if k in EXPECTED_NAMES:
-                setattr(self, k, val)
+        if constants:
+            for k, val in constants.items():
+                if k in EXPECTED_NAMES:
+                    setattr(self, k, val)
 
     def __repr__(self):
-        return "%s %s %s %s %s %s %s %s %s" % (self.accountName,
-                                               self.accountNumber,
-                                               self.credentialsProfileName,
-                                               self.lastKnownBillDate,
-                                               self.balanceAtDate,
-                                               self.applyDiscount,
-                                               self.costRatePerHourInLastSixHoursAlarmThreshold,
-                                               self.costRatePerHourInLastDayAlarmThreshold,
-                                               self.emailReceipientForAlarms)
+        return f"{self.accountName} {self.accountNumber} {self.credentialsProfileName} {self.lastKnownBillDate} {self.balanceAtDate} {self.applyDiscount} {self.costRatePerHourInLastSixHoursAlarmThreshold} {self.costRatePerHourInLastDayAlarmThreshold} {self.emailReceipientForAlarms}"
 
     def info(self):
         for name in EXPECTED_NAMES:
@@ -58,6 +52,6 @@ def load_constants(constants_file):
     """
 
     config_dict = None
-    with open(constants_file, "r") as f:
+    with open(constants_file) as f:
         config_dict = eval(f.read())
     return config_dict

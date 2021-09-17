@@ -1,5 +1,37 @@
-[{u'Timestamp': datetime.datetime(2018, 10, 4, 11, 36, 38), u'AvailabilityZone': 'us-east-1d', u'InstanceType': 'm3.xlarge', u'ProductDescription': 'Linux/UNIX', u'SpotPrice': '0.0617'}, 
-{u'Timestamp': datetime.datetime(2018, 10, 3, 21, 27, 14), u'AvailabilityZone': 'us-east-1c', u'InstanceType': 'm3.xlarge', u'ProductDescription': 'Linux/UNIX', u'SpotPrice': '0.0617'}, 
-{u'Timestamp': datetime.datetime(2018, 10, 3, 21, 27, 14), u'AvailabilityZone': 'us-east-1e', u'InstanceType': 'm3.xlarge', u'ProductDescription': 'Linux/UNIX', u'SpotPrice': '0.0617'}, 
-{u'Timestamp': datetime.datetime(2018, 10, 3, 21, 27, 14), u'AvailabilityZone': 'us-east-1b', u'InstanceType': 'm3.xlarge', u'ProductDescription': 'Linux/UNIX', u'SpotPrice': '0.0617'}, 
-{u'Timestamp': datetime.datetime(2018, 9, 19, 23, 8, 24), u'AvailabilityZone': 'us-east-1a', u'InstanceType': 'm3.xlarge', u'ProductDescription': 'Linux/UNIX', u'SpotPrice': '0.2660'}]
+[
+    {
+        "Timestamp": datetime.datetime(2018, 10, 4, 11, 36, 38),
+        "AvailabilityZone": "us-east-1d",
+        "InstanceType": "m3.xlarge",
+        "ProductDescription": "Linux/UNIX",
+        "SpotPrice": "0.0617",
+    },
+    {
+        "Timestamp": datetime.datetime(2018, 10, 3, 21, 27, 14),
+        "AvailabilityZone": "us-east-1c",
+        "InstanceType": "m3.xlarge",
+        "ProductDescription": "Linux/UNIX",
+        "SpotPrice": "0.0617",
+    },
+    {
+        "Timestamp": datetime.datetime(2018, 10, 3, 21, 27, 14),
+        "AvailabilityZone": "us-east-1e",
+        "InstanceType": "m3.xlarge",
+        "ProductDescription": "Linux/UNIX",
+        "SpotPrice": "0.0617",
+    },
+    {
+        "Timestamp": datetime.datetime(2018, 10, 3, 21, 27, 14),
+        "AvailabilityZone": "us-east-1b",
+        "InstanceType": "m3.xlarge",
+        "ProductDescription": "Linux/UNIX",
+        "SpotPrice": "0.0617",
+    },
+    {
+        "Timestamp": datetime.datetime(2018, 9, 19, 23, 8, 24),
+        "AvailabilityZone": "us-east-1a",
+        "InstanceType": "m3.xlarge",
+        "ProductDescription": "Linux/UNIX",
+        "SpotPrice": "0.2660",
+    },
+]

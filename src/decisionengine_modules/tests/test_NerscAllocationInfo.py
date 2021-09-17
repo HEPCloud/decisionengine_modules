@@ -1,16 +1,16 @@
 import os
-import pandas
 
 from unittest import mock
 
-from decisionengine_modules.util import testutils as utils
+import pandas
+
+from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.NERSC.sources import NerscAllocationInfo
 from decisionengine_modules.NERSC.util import newt
-from decisionengine.framework.modules.Module import verify_products
+from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-ALLOCATIONS_FIXTURE_FILE = os.path.join(
-    DATA_DIR, "newt_allocations.cs.fixture")
+ALLOCATIONS_FIXTURE_FILE = os.path.join(DATA_DIR, "newt_allocations.cs.fixture")
 PASSWD_FILE = os.path.join(DATA_DIR, "passwd")
 FAKE_USER = "user2"
 
@@ -21,31 +21,43 @@ CONFIG = {
         "usernames": ["timm", FAKE_USER],
         "newt_keys": {
             "rname": ["m2612", "m2696", "m2015"],
-            "repo_type": ["REPO", ],
-        }
-    }
+            "repo_type": [
+                "REPO",
+            ],
+        },
+    },
 }
 
 _PRODUCES = {"Nersc_Allocation_Info": pandas.DataFrame}
 EXPECTED_PANDAS_DFRAME = pandas.DataFrame(
-    [{u'uid': 72048, u'firstname': u'Steven', u'middlename': u'C',
-        u'projectId': 54807, u'currentAlloc': 374400000000.0,
-        u'userAlloc': 0.0, u'repoType': u'REPO', u'repoName': u'm2612',
-        u'lastname': u'Timm', u'userAllocPct': 2.0, u'usedAlloc': 560.0,
-        u'name': u'timm'}])
+    [
+        {
+            "uid": 72048,
+            "firstname": "Steven",
+            "middlename": "C",
+            "projectId": 54807,
+            "currentAlloc": 374400000000.0,
+            "userAlloc": 0.0,
+            "repoType": "REPO",
+            "repoName": "m2612",
+            "lastname": "Timm",
+            "userAllocPct": 2.0,
+            "usedAlloc": 560.0,
+            "name": "timm",
+        }
+    ]
+)
 
 
 class TestNerscAllocationInfo:
-
     def test_produces(self):
         nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
         assert nersc_allocations._produces == _PRODUCES
 
     def test_acquire(self):
-
         def side_effect_get_usage(username):
             if username == FAKE_USER:
-                return {'items': []}
+                return {"items": []}
             return utils.input_from_file(ALLOCATIONS_FIXTURE_FILE)
 
         nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
@@ -53,4 +65,4 @@ class TestNerscAllocationInfo:
             f.side_effect = side_effect_get_usage
             res = nersc_allocations.acquire()
             verify_products(nersc_allocations, res)
-            assert EXPECTED_PANDAS_DFRAME.equals(res['Nersc_Allocation_Info'])
+            assert EXPECTED_PANDAS_DFRAME.equals(res["Nersc_Allocation_Info"])

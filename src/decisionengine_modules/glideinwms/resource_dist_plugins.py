@@ -1,5 +1,5 @@
+import pandas as pd
 import structlog
-import pandas
 
 from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
@@ -7,33 +7,33 @@ logger = structlog.getLogger(CHANNELLOGGERNAME)
 logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 _RESOURCE_FROM_COLUMN_MAP = {
-    'Grid_Figure_Of_Merit': 'Grid_Figure_Of_Merit',
-    'GCE_Figure_Of_Merit': 'FigureOfMerit',
-    'AWS_Figure_Of_Merit': 'AWS_Figure_Of_Merit',
-    'Nersc_Figure_Of_Merit': 'FigureOfMerit'
+    "Grid_Figure_Of_Merit": "Grid_Figure_Of_Merit",
+    "GCE_Figure_Of_Merit": "FigureOfMerit",
+    "AWS_Figure_Of_Merit": "AWS_Figure_Of_Merit",
+    "Nersc_Figure_Of_Merit": "FigureOfMerit",
 }
+
 
 def order_resources(resources):
     ordered_resources = []
-    rss_foms = pandas.DataFrame()
+    rss_foms = pd.DataFrame()
 
     for rss, column_name in _RESOURCE_FROM_COLUMN_MAP.items():
         fom_df = resources.get(rss)
-        logger.info('Ordering resources based on %s' % rss)
+        logger.info(f"Ordering resources based on {rss}")
         if (fom_df is not None) and (fom_df.empty is False):
             # Create a new dataframe with just EntryName and FOM
-            df = fom_df[['EntryName', column_name]]
+            df = fom_df[["EntryName", column_name]]
             # Rename the entry type specific FOM columns to just 'fom'
-            df = df.rename(columns={column_name: 'FOM'})
+            df = df.rename(columns={column_name: "FOM"})
             # Append the results
             rss_foms = rss_foms.append(df)
         else:
-            logger.info('%s does not have any entries to order' % rss)
+            logger.info(f"{rss} does not have any entries to order")
     try:
-        ordered_resources = rss_foms.sort_values(
-            by=['FOM', 'EntryName'], ascending=True).reset_index(drop=True)
+        ordered_resources = rss_foms.sort_values(by=["FOM", "EntryName"], ascending=True).reset_index(drop=True)
     except KeyError:
-        logger.exception('Unable to find Figure of Merrit "FOM" in the dataframe columns %s' % list(resources.columns))
+        logger.exception(f'Unable to find Figure of Merrit "FOM" in the dataframe columns {list(resources.columns)}')
     return ordered_resources
 
 

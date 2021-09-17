@@ -15,36 +15,32 @@ _PRODUCES_DICT = dict.fromkeys(_PRODUCES, pd.DataFrame)
 CONFIG = {"channel_name": "test"}
 
 
-performance = pd.DataFrame([
-    {"EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
-     "InstanceType": "n1-standard-1",
-     "AvailabilityZone": "us-central1-a",
-     "OnDemandPrice": 0.0475,
-     "PreemptiblePrice": 0.01,
-     "PerfTtbarTotal": 0.0317}])
+performance = pd.DataFrame(
+    [
+        {
+            "EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
+            "InstanceType": "n1-standard-1",
+            "AvailabilityZone": "us-central1-a",
+            "OnDemandPrice": 0.0475,
+            "PreemptiblePrice": 0.01,
+            "PerfTtbarTotal": 0.0317,
+        }
+    ]
+)
 
 
-"""
-expected datablock
-"""
+# expected datablock
 data_block = {
-    "GCE_Instance_Performance": performance.reindex(columns=("EntryName",
-                                                             "InstanceType",
-                                                             "AvailabilityZone",
-                                                             "OnDemandPrice",
-                                                             "PreemptiblePrice",
-                                                             "PerfTtbarTotal")),
+    "GCE_Instance_Performance": performance.reindex(
+        columns=("EntryName", "InstanceType", "AvailabilityZone", "OnDemandPrice", "PreemptiblePrice", "PerfTtbarTotal")
+    ),
     "GCE_Occupancy": OCCUPANCY,
 }
 
-expected_transform_output = {
-    _PRODUCES[0]: pd.DataFrame([{
-        "BurnRate": 0.1}])
-}
+expected_transform_output = {_PRODUCES[0]: pd.DataFrame([{"BurnRate": 0.1}])}
 
 
 class TestGceBurnRate:
-
     def test_produces(self):
         gce_burn_rate = GceBurnRate.GceBurnRate(CONFIG)
         assert gce_burn_rate._produces == _PRODUCES_DICT
@@ -56,5 +52,4 @@ class TestGceBurnRate:
 
         expected_df = expected_transform_output[_PRODUCES[0]]
         res_df = res[_PRODUCES[0]]
-        assert np.isclose(expected_df["BurnRate"],
-                          res_df["BurnRate"])
+        assert np.isclose(expected_df["BurnRate"], res_df["BurnRate"])

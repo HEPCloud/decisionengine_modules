@@ -1,68 +1,73 @@
 import abc
+import os
+
+from functools import partial
+
 import classad
 import htcondor
-import os
 import pandas
-from functools import partial
+
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.modules.Publisher import Parameter
 from decisionengine_modules.util.retry_function import retry_wrapper
 
-DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
-DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
+DEFAULT_UPDATE_AD_COMMAND = "UPDATE_AD_GENERIC"
+DEFAULT_INVALIDATE_AD_COMMAND = "INVALIDATE_AD_GENERIC"
 
 
-@Publisher.supports_config(Parameter('condor_config', type=str),
-                           Parameter('x509_user_proxy', type=str),
-                           Parameter('nretries', type=int),
-                           Parameter('retry_interval', type=int, comment="Number of seconds to wait between retries."))
+@Publisher.supports_config(
+    Parameter("condor_config", type=str),
+    Parameter("x509_user_proxy", type=str),
+    Parameter("nretries", type=int),
+    Parameter("retry_interval", type=int, comment="Number of seconds to wait between retries."),
+)
 class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
-
     def __init__(self, config):
         super().__init__(config)
-        self.condor_config = config.get('condor_config')
-        self.x509_user_proxy = config.get('x509_user_proxy')
-        self.nretries = config.get('nretries')
-        self.retry_interval = config.get('retry_interval')
-        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
+        self.condor_config = config.get("condor_config")
+        self.x509_user_proxy = config.get("x509_user_proxy")
+        self.nretries = config.get("nretries")
+        self.retry_interval = config.get("retry_interval")
+        self.logger = self.logger.bind(
+            class_module=__name__.split(".")[-1],
+        )
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
-        self.classad_type = 'generic'
+        self.classad_type = "generic"
         self.invalidate_ads_constraint = {}
 
     def __repr__(self):
         return self.__str__()
 
     def __str__(self):
-        return '%s' % vars(self)
+        return f"{vars(self)}"
 
     def __del__(self):
         for collector_host in self.invalidate_ads_constraint:
             constraint = self.invalidate_ads_constraint[collector_host]
             if constraint:
-                ads = [{
-                    'MyType': 'Query',
-                    'TargetType': self.classad_type,
-                    'Requirements': constraint
-                }]
+                ads = [{"MyType": "Query", "TargetType": self.classad_type, "Requirements": constraint}]
                 try:
-                    self.logger.info('Invalidating %s classads from collector_host %s with constraint %s' % (
-                        self.classad_type, collector_host, constraint))
-                    self.condor_advertise(ads, collector_host=collector_host,
-                                          update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND)
+                    self.logger.info(
+                        f"Invalidating {self.classad_type} classads from collector_host {collector_host} with constraint {constraint}"
+                    )
+                    self.condor_advertise(
+                        ads, collector_host=collector_host, update_ad_command=DEFAULT_INVALIDATE_AD_COMMAND
+                    )
                 except Exception:
-                    self.logger.error('Error running invalidating %s classads from collector_host %s' % (
-                        self.classad_type, collector_host))
+                    self.logger.error(
+                        f"Error running invalidating {self.classad_type} classads from collector_host {collector_host}"
+                    )
 
     @classmethod
     def consumes_dataframes(cls, *product_names):
         def decorator(cls):
             cls._consumes = dict.fromkeys(product_names, pandas.DataFrame)
             return cls
+
         return decorator
 
-    def _condor_advertise(self, classads, collector_host=None,
-                          update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+    def _condor_advertise(self, classads, collector_host=None, update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
         """
         Advertise list of classads to the HTCondor Collector
 
@@ -72,44 +77,48 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
 
         ads = classads
 
-        old_condor_config_env = os.environ.get('CONDOR_CONFIG')
+        old_condor_config_env = os.environ.get("CONDOR_CONFIG")
         try:
             if self.condor_config and os.path.exists(self.condor_config):
-                os.environ['CONDOR_CONFIG'] = self.condor_config
+                os.environ["CONDOR_CONFIG"] = self.condor_config
             htcondor.reload_config()
             if self.x509_user_proxy and os.path.exists(self.x509_user_proxy):
-                os.environ['X509_USER_PROXY'] = self.x509_user_proxy
+                os.environ["X509_USER_PROXY"] = self.x509_user_proxy
 
             collector = None
             if collector_host:
                 collector = htcondor.Collector(collector_host)
             else:
-                collector_host = 'default'
+                collector_host = "default"
                 collector = htcondor.Collector()
-            self.logger.info('Advertising %s classads to collector_host %s' % (
-                self.classad_type, collector_host))
+            self.logger.info(f"Advertising {self.classad_type} classads to collector_host {collector_host}")
             collector.advertise(ads, update_ad_command, True)
         except Exception:
             # TODO: We need to be more specific about the errors/exception
             #       For now just raise to get more info logged
-            col = 'default'
+            col = "default"
             if collector_host:
                 col = collector_host
-            self.logger.error('Error running %s for %s classads to collector_host %s' % (
-                update_ad_command, self.classad_type, col))
-            #err_str = 'Error advertising with command %s to pool %s: %s' % (self.update_ad_command, col, ex)
-            #raise QueryError(err_str), None, sys.exc_info()[2]
+            self.logger.error(
+                f"Error running {update_ad_command} for {self.classad_type} classads to collector_host {col}"
+            )
+            # err_str = 'Error advertising with command %s to pool %s: %s' % (self.update_ad_command, col, ex)
+            # raise QueryError(err_str), None, sys.exc_info()[2]
             raise
         finally:
             if old_condor_config_env:
-                os.environ['CONDOR_CONFIG'] = old_condor_config_env
+                os.environ["CONDOR_CONFIG"] = old_condor_config_env
 
-    def condor_advertise(self, classads, collector_host=None,
-                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
-        return retry_wrapper(partial(self._condor_advertise, classads,
-                                     **{"collector_host": collector_host,
-                                        "update_ad_command": update_ad_command}),
-                             self.nretries, self.retry_interval)
+    def condor_advertise(self, classads, collector_host=None, update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+        return retry_wrapper(
+            partial(
+                self._condor_advertise,
+                classads,
+                **{"collector_host": collector_host, "update_ad_command": update_ad_command},
+            ),
+            self.nretries,
+            self.retry_interval,
+        )
 
     def publish(self, datablock):
         """
@@ -139,12 +148,11 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
                 # Iterate over sub dataframes with same CollectorHost value
                 for collector in pandas.unique(dataframe.CollectorHost.ravel()):
                     # Convert dataframe -> dict -> classads
-                    ads = dataframe_to_classads(
-                        dataframe[(dataframe['CollectorHost'] == collector)])
+                    ads = dataframe_to_classads(dataframe[(dataframe["CollectorHost"] == collector)])
                     # Advertise the classad to given collector
                     self.condor_advertise(ads, collector_host=collector)
             else:
-                self.logger.info('No %s classads found to advertise' % key)
+                self.logger.info(f"No {key} classads found to advertise")
         except Exception:
             self.logger.exception("Failed to publish")
 
@@ -156,7 +164,7 @@ def dataframe_to_classads(dataframe):
     :type dataframe: :obj:`DataFrame`
     """
     ads = []
-    records = dataframe.to_dict(orient='records')
+    records = dataframe.to_dict(orient="records")
     for record in records:
         # NOTE: Pandas will add NaN for some of the values. This causes
         #       extremely undesired/unexpected issues. Better to remove

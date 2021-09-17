@@ -11,21 +11,22 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import sphinx_rtd_theme  # noqa: F401
 import sys
 import time
 
-sys.path.insert(0, os.path.abspath('..'))
+import sphinx_rtd_theme  # noqa: F401
+
+sys.path.insert(0, os.path.abspath(".."))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'decisionengine modules'
-copyright = '{}, Fermi Research Alliance, LLC.'.format(time.localtime().tm_year)
-author = 'Fermi Research Alliance, LLC.'
+project = "decisionengine modules"
+copyright = f"{time.localtime().tm_year}, Fermi Research Alliance, LLC."
+author = "Fermi Research Alliance, LLC."
 
 # The full version, including alpha/beta/rc tags
-release = '1.7.0'
+release = "1.7.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,17 +35,17 @@ release = '1.7.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.githubpages',
-    'sphinx_rtd_theme'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.githubpages",
+    "sphinx_rtd_theme",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -57,9 +58,9 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]

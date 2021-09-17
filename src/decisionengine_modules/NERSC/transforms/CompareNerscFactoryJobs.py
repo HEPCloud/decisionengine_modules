@@ -6,8 +6,8 @@ import pandas as pd
 
 from decisionengine.framework.modules import Transform
 
-@Transform.consumes(job_manifests=pd.DataFrame,
-                    Nersc_Job_Info=pd.DataFrame)
+
+@Transform.consumes(job_manifests=pd.DataFrame, Nersc_Job_Info=pd.DataFrame)
 @Transform.produces(nersc_factory_jobs_comparison=dict)
 class CompareNerscFactoryJobs(Transform.Transform):
     """
@@ -17,7 +17,9 @@ class CompareNerscFactoryJobs(Transform.Transform):
 
     def __init__(self, param_dict):
         super().__init__(param_dict)
-        self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
+        self.logger = self.logger.bind(
+            class_module=__name__.split(".")[-1],
+        )
 
     def transform(self, data_block):
         """
@@ -26,19 +28,18 @@ class CompareNerscFactoryJobs(Transform.Transform):
         running on Nersc, and # jobs in factory without an ID.
         """
         self.logger.debug("in CompareNerscFactoryJobs transform")
-        nersc_df = data_block['Nersc_Job_Info']
-        factory_df = data_block['job_manifests']
+        nersc_df = data_block["Nersc_Job_Info"]
+        factory_df = data_block["job_manifests"]
 
         # constrain factory jobs to only the batch slurm jobs
-        factory_df = factory_df[factory_df.GridResource.str.startswith(
-            'batch slurm')]
+        factory_df = factory_df[factory_df.GridResource.str.startswith("batch slurm")]
 
         results = {
-            'both.count': 0,
-            'nersc_only.count': 0,
-            'factory_only.count': 0,
-            'factory_no_ID.count': 0,
-            'nersc.running.count': 0,
+            "both.count": 0,
+            "nersc_only.count": 0,
+            "factory_only.count": 0,
+            "factory_no_ID.count": 0,
+            "nersc.running.count": 0,
         }
 
         if factory_df.empty:
@@ -47,10 +48,9 @@ class CompareNerscFactoryJobs(Transform.Transform):
                 pass
             else:
                 # both, factory_only, factory_no_ID stay '0'
-                results['nersc_only.count'] = len(nersc_df)
-                for index, row in nersc_df.iterrows():
-                    result_key = 'nersc' + '.' + row['hostname'] + '.' + row['queue'] + \
-                                 '.' + row['user'] + '.count'
+                results["nersc_only.count"] = len(nersc_df)
+                for _index, row in nersc_df.iterrows():
+                    result_key = "nersc" + "." + row["hostname"] + "." + row["queue"] + "." + row["user"] + ".count"
                     if result_key in results:
                         results[result_key] += 1
                     else:
@@ -68,24 +68,23 @@ class CompareNerscFactoryJobs(Transform.Transform):
                 #   the row has GridJobID, but no real ID on Nersc
                 #   the row has GridJObID, and a real ID on Nersc
 
-                if 'GridJobID' not in row.axes[0].tolist():
+                if "GridJobID" not in row.axes[0].tolist():
                     num_no_id += 1
                 elif pd.isnull(row.GridJobID):
                     num_no_id += 1
                 else:
-                    line = row['GridJobID'].split(' ')
+                    line = row["GridJobID"].split(" ")
                     if len(line) == 3:
                         num_no_id += 1
-                        factory_df.loc[index, 'GridJobID'] = None
+                        factory_df.loc[index, "GridJobID"] = None
                     elif len(line) == 4:
                         num_with_id += 1
-                        factory_df.loc[index,
-                                       'GridJobID'] = line[-1].split('/')[-1]
-                        factory_id_list.append(line[-1].split('/')[-1])
+                        factory_df.loc[index, "GridJobID"] = line[-1].split("/")[-1]
+                        factory_id_list.append(line[-1].split("/")[-1])
 
-            #assert(num_no_id+num_with_id == len(factory_df))
+            # assert(num_no_id+num_with_id == len(factory_df))
 
-            results['factory_no_ID.count'] = num_no_id
+            results["factory_no_ID.count"] = num_no_id
 
             if nersc_df.empty:
                 if num_with_id == 0:
@@ -93,20 +92,19 @@ class CompareNerscFactoryJobs(Transform.Transform):
                     pass
                 else:
                     # both and nersc_only stay '0'
-                    results['factory_only.count'] = num_with_id
+                    results["factory_only.count"] = num_with_id
             else:
                 # nersc side has jobs
                 # first send all nersc job details
-                for index, row in nersc_df.iterrows():
-                    result_key = 'nersc' + '.' + row['hostname'] + '.' + row['queue'] + '.'\
-                                 + row['user'] + '.count'
+                for _index, row in nersc_df.iterrows():
+                    result_key = "nersc" + "." + row["hostname"] + "." + row["queue"] + "." + row["user"] + ".count"
                     if result_key in results:
                         results[result_key] += 1
                     else:
                         results[result_key] = 1
                 if num_with_id == 0:
                     # both and factory_only stay '0'
-                    results['factory_only.count'] = len(nersc_df)
+                    results["factory_only.count"] = len(nersc_df)
                 else:
                     # compare the exact job IDs
                     nersc_id_list = nersc_df.jobid.tolist()
@@ -122,15 +120,15 @@ class CompareNerscFactoryJobs(Transform.Transform):
                     num_in_factory = len(factory_only_set)
                     num_in_nersc = len(nersc_only_set)
 
-                    results['both.count'] = num_in_both
-                    results['nersc_only.count'] = num_in_nersc
-                    results['factory_only.count'] = num_in_factory
+                    results["both.count"] = num_in_both
+                    results["nersc_only.count"] = num_in_nersc
+                    results["factory_only.count"] = num_in_factory
 
-        for index, row in nersc_df.iterrows():
-            if row['status'] == 'R':
-                results['nersc.running.count'] += 1
+        for _index, row in nersc_df.iterrows():
+            if row["status"] == "R":
+                results["nersc.running.count"] += 1
 
-        return {'nersc_factory_jobs_comparison': results}
+        return {"nersc_factory_jobs_comparison": results}
 
 
 Transform.describe(CompareNerscFactoryJobs)

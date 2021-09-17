@@ -3,17 +3,15 @@ Calculate figure of merit
 """
 
 import sys
+
 import structlog
+
 from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
 _INFINITY = sys.float_info.max
 
 
-def figure_of_merit(performance,
-                    running,
-                    allowed,
-                    idle=None,
-                    max_idle=None):
+def figure_of_merit(performance, running, allowed, idle=None, max_idle=None):
     logger = structlog.getLogger(CHANNELLOGGERNAME)
     logger = logger.bind(module=__name__.split(".")[-1], channel="")
     try:

@@ -93,5 +93,3 @@ Full list of commits since version 1.4.2
 
 `2f0069f <https://github.com/HEPCloud/decisionengine_modules/commit/2f0069f3855b2568f0c390ada5ad93d8fcdabfe7>`_
 :   Updated DE modules Jenkins documentation
-
-
