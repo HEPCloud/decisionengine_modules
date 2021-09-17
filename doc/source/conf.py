@@ -20,12 +20,12 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'decisionengine'
+project = 'decisionengine modules'
 copyright = '{}, Fermi Research Alliance, LLC.'.format(time.localtime().tm_year)
 author = 'Fermi Research Alliance, LLC.'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.1'
+release = '1.7.0'
 
 
 # -- General configuration ---------------------------------------------------
