@@ -1,5 +1,3 @@
-import logging
-
 import pandas as pd
 
 from decisionengine.framework.modules import Transform
@@ -9,15 +7,6 @@ from decisionengine.framework.modules.Transform import Parameter
 # - what debugging logs are needed?
 # - what and how is metadata for a dataframe?
 # - do we need to validate case or type for attr content?  again onboarding?
-
-
-class TestData:
-    def __init__(self, data):
-
-        self.data = data
-
-    def print_data(self):
-        logging.info("TestData is 5")
 
 
 @Transform.supports_config(
@@ -54,10 +43,6 @@ class JobClustering(Transform.Transform):
         ]
         self.EMPTY_JOB_CLUSTER = pd.DataFrame(
             totals, columns=["Job_Bucket_Criteria_Expr", "Site_Bucket_Criteria_Expr", "Totals", "Frontend_Group"]
-        )
-
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
         )
 
     def transform(self, datablock):

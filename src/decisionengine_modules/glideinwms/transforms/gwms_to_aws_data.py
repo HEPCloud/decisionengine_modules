@@ -15,9 +15,6 @@ _ATTR_TRANSLATION_MAP = {
 class AWSFactoryEntryData(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def transform(self, datablock):
 

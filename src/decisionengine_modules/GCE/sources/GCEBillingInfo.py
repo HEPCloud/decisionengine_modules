@@ -31,9 +31,6 @@ class GCEBillingInfo(Source.Source):
         self.botoConfig = config.get("botoConfig")  # BOTO_CONFIG env
         # location for downloaded billing files
         self.localFileDir = config.get("localFileDir")
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def acquire(self):
         """

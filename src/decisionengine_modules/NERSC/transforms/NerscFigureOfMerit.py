@@ -17,9 +17,6 @@ from decisionengine_modules.util import figure_of_merit as fom
 class NerscFigureOfMerit(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def transform(self, data_block):
         """

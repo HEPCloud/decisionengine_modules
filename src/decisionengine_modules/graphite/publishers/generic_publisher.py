@@ -31,9 +31,6 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         self.graphite_context_header = config.get("graphite_context", DEFAULT_GRAPHITE_CONTEXT)
         self.publish_to_graphite = config.get("publish_to_graphite")
         self.output_file = config.get("output_file")
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     @classmethod
     def consumes_dataframe(cls, product_name):

@@ -21,9 +21,6 @@ class CompareNerscUserpoolSlots(Transform.Transform):
     def __init__(self, param_dict):
         super().__init__(param_dict)
         self.entry_nersc_map = param_dict["entry_nersc_map"]
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def transform(self, data_block):
         """

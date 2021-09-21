@@ -43,9 +43,6 @@ class FactoryGlobalManifests(Source.Source):
         self.retry_interval = config.get("retry_interval", 0)
 
         self.subsystem_name = "any"
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def acquire(self):
         """

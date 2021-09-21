@@ -39,9 +39,6 @@ class GceOccupancy(Source.Source):
         )
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def _get_client(self):
         return self.client
