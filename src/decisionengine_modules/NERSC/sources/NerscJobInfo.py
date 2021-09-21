@@ -37,9 +37,6 @@ class NerscJobInfo(Source.Source):
 
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
         self.constraints = config.get("constraints")
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_backoff_factor = config.get("retry_backoff_factor", _RETRY_BACKOFF_FACTOR)

@@ -13,9 +13,6 @@ from decisionengine.framework.modules.Publisher import Parameter
 class AWSFactoryEntryDataPublisher(Publisher.Publisher):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
         self.aws_instance_limits_file = config.get("aws_instance_limits")
         self.spot_occupancy_config_file = config.get("spot_occupancy_config")
 

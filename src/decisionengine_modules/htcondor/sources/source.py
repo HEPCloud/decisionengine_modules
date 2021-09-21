@@ -28,9 +28,6 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         avaiable in its config file.
         """
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
         self.collector_host = config.get("collector_host")
         self.condor_config = config.get("condor_config")
         self.constraint = config.get("constraint", True)

@@ -38,12 +38,9 @@ class BillingInfo(Source.Source):
     def __init__(self, config):
         super().__init__(config)
         acconts_config_file = config["billing_configuration"]
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
         self.billing_files_location = config["dst_dir_for_s3_files"]
         self.verbose_flag = int(config["verbose_flag"])
-        # Load kown accounts configuration
+        # Load known accounts configuration
         account_dict = DEAccountContants.load_constants(acconts_config_file)
         self.accounts = []
         for val in account_dict.values():

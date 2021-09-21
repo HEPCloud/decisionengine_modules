@@ -18,9 +18,6 @@ DEFAULT_GRAPHITE_CONTEXT = ""
 class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
         self.graphite_host = config.get("graphite_host", DEFAULT_GRAPHITE_HOST)
         self.graphite_port = config.get("graphite_port", DEFAULT_GRAPHITE_PORT)
         self.graphite_context_header = config.get("graphite_context", DEFAULT_GRAPHITE_CONTEXT)

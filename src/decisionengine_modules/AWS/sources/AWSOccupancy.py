@@ -150,9 +150,6 @@ class AWSOccupancy(Source.Source):
     def __init__(self, configdict):
         super().__init__(configdict)
         self.config_file = configdict["occupancy_configuration"]
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def acquire(self):
         """

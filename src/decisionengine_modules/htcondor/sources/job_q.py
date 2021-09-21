@@ -29,7 +29,6 @@ class JobQ(Source.Source):
         self.condor_config = config.get("condor_config")
         self.constraint = config.get("constraint", True)
         self.classad_attrs = config.get("classad_attrs")
-        self.logger = self.logger.bind(class_module=__name__.split(".")[-1])
         self.correction_map = config.get("correction_map")
 
     def acquire(self):

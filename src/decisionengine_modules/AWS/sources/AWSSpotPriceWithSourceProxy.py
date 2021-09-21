@@ -7,13 +7,8 @@ import time
 
 import boto3
 import pandas as pd
-import structlog
 
 from decisionengine.framework.modules import Source, SourceProxy
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
-logger = structlog.getLogger(CHANNELLOGGERNAME)
-logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 # default values
 REGION = "us-west-2"
@@ -120,7 +115,7 @@ class AWSSpotPriceForRegion:
         self.product_descriptions = product_descriptions
         self.availability_zone = availability_zone
 
-    def get_price(self):
+    def get_price(self, logger):
         """
         Get AWS spot prices.
         """
@@ -174,9 +169,6 @@ class AWSSpotPriceForRegion:
 class AWSSpotPrice(SourceProxy.SourceProxy):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def acquire(self):
         """
@@ -198,7 +190,7 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
             for region, instances in account_dict[account].items():
                 spot_price_info = AWSSpotPriceForRegion(region, profile_name=account)
                 spot_price_info.init_query(instance_types=instances)
-                spot_price_history = spot_price_info.get_price()
+                spot_price_history = spot_price_info.get_price(self.logger)
                 if spot_price_history:
                     sp_data += spot_price_info.spot_price_summary(spot_price_history)
 

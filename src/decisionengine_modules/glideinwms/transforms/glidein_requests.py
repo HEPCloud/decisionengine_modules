@@ -54,9 +54,6 @@ class GlideinRequestManifests(Transform.Transform):
         self.de_frontend_configfile = config.get(
             "de_frontend_config", "/var/lib/gwms-frontend/vofrontend/de_frontend_config"
         )
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def transform(self, datablock):
         """
