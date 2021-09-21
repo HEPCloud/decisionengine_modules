@@ -4,7 +4,7 @@ Release 1.6.2
 Patch level (bug fix) release.
 
 Correction map for GlideinWMS Factory Entries added. (#323, PR#324)
-Fixed imports and a typo. 
+Fixed imports and a typo.
 
 
 
