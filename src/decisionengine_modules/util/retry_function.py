@@ -2,10 +2,6 @@ import time
 
 from functools import partial, wraps
 
-import structlog
-
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
 
 def retry_on_error(nretries=1, retry_interval=2, backoff=True):
     def decorator(f):
@@ -18,7 +14,7 @@ def retry_on_error(nretries=1, retry_interval=2, backoff=True):
     return decorator
 
 
-def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True):
+def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True, logger=None):
     """Retry on error with parameters of how many times (nretries)
     and interval in seconds (retry_interval).
     If the function to be decorated is an instance method
@@ -28,8 +24,6 @@ def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True):
     Otherwise, use the default values or pass new values to the decorator.
     """
     time2sleep = retry_interval
-    logger = structlog.getLogger(CHANNELLOGGERNAME)
-    logger = logger.bind(module=__name__.split(".")[-1], channel="")
     for i in range(nretries + 1):
         try:
             return f()
@@ -40,9 +34,13 @@ def retry_wrapper(f, nretries=1, retry_interval=2, backoff=True):
             elif hasattr(f, "func"):
                 fname = f.func.__name__
             if i == nretries:
-                logger.exception(f"Error Function {fname} giving up with {e} after {i} retries")
+                if logger is not None:
+                    logger.exception(f"Error Function {fname} giving up with {e} after {i} retries")
                 raise e
-            logger.warning(f"Function {fname} failed with {e} on try {i}/{nretries}. Sleeping {time2sleep:d} seconds")
+            if logger is not None:
+                logger.warning(
+                    f"Function {fname} failed with {e} on try {i}/{nretries}. Sleeping {time2sleep:d} seconds"
+                )
             time.sleep(time2sleep)
             if backoff:
                 time2sleep *= retry_interval

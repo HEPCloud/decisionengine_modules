@@ -2,21 +2,15 @@ import calendar
 import os
 import time
 
-import structlog
-
 from glideinwms.lib import condorExe, x509Support
-
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
-logger = structlog.getLogger(CHANNELLOGGERNAME)
-logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 
 class Credential:
-    def __init__(self, proxy_id, proxy_fname, group_descript):
+    def __init__(self, proxy_id, proxy_fname, group_descript, logger):
         self.req_idle = 0
         self.req_max_run = 0
         self.advertize = False
+        self.logger = logger
 
         proxy_security_classes = group_descript["ProxySecurityClasses"]
         proxy_trust_domains = group_descript["ProxyTrustDomains"]
@@ -100,11 +94,11 @@ class Credential:
         """
 
         if self.creation_script:
-            logger.debug(f"Creating credential using {self.creation_script}")
+            self.logger.debug(f"Creating credential using {self.creation_script}")
             try:
                 condorExe.iexe_cmd(self.creation_script)
             except Exception:
-                logger.exception(f"Creating credential using {self.creation_script} failed")
+                self.logger.exception(f"Creating credential using {self.creation_script} failed")
                 self.advertize = False
 
             # Recreating the credential can result in ID change
@@ -116,7 +110,7 @@ class Credential:
         """
 
         if self.filename and (not os.path.exists(self.filename)):
-            logger.debug(f"Credential {self.filename} does not exist.")
+            self.logger.debug(f"Credential {self.filename} does not exist.")
             self.create()
 
     def get_string(self, cred_file=None):
@@ -140,7 +134,7 @@ class Credential:
         except Exception:
             # This credential should not be advertised
             self.advertize = False
-            logger.exception(f"Failed to read credential {cred_file}: ")
+            self.logger.exception(f"Failed to read credential {cred_file}: ")
             raise
         return cred_data
 

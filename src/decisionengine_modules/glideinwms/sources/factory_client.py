@@ -10,9 +10,6 @@ class FactoryClientManifests(source.ResourceManifests):
         super().__init__(config)
         self.constraint = f'({self.constraint})&&(glideinmytype=="glidefactoryclient")'
         self.subsystem_name = "any"
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def acquire(self):
         self.logger.debug("in FactoryClientManifests acquire")

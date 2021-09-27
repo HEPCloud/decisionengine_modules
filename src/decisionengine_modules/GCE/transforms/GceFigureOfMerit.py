@@ -50,7 +50,7 @@ class GceFigureOfMerit(Transform.Transform):
                     max_idle = float(factory_df["GlideinConfigPerEntryMaxIdle"].values[0])
                     idle = float(factory_df["GlideinMonitorTotalStatusIdle"].values[0])
 
-            fom = figure_of_merit(row["PricePerformance"], occupancy, max_allowed, idle, max_idle)
+            fom = figure_of_merit(row["PricePerformance"], occupancy, max_allowed, idle, max_idle, self.logger)
 
             figures_of_merit.append({"EntryName": entry_name, "FigureOfMerit": fom})
 

@@ -64,7 +64,7 @@ class NerscFigureOfMerit(Transform.Transform):
                     {
                         "EntryName": entry_name,
                         "FigureOfMerit": fom.figure_of_merit(
-                            perf_row["PricePerformance"], running, max_allowed, idle, max_idle
+                            perf_row["PricePerformance"], running, max_allowed, idle, max_idle, self.logger
                         ),
                     }
                 )

@@ -115,6 +115,7 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
             ),
             self.nretries,
             self.retry_interval,
+            logger=self.logger,
         )
 
     def publish(self, datablock):

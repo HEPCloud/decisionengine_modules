@@ -4,16 +4,10 @@ Calculate figure of merit
 
 import sys
 
-import structlog
-
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
 _INFINITY = sys.float_info.max
 
 
-def figure_of_merit(performance, running, allowed, idle=None, max_idle=None):
-    logger = structlog.getLogger(CHANNELLOGGERNAME)
-    logger = logger.bind(module=__name__.split(".")[-1], channel="")
+def figure_of_merit(performance, running, allowed, idle=None, max_idle=None, logger=None):
     try:
         if running >= allowed or allowed == 0:
             return _INFINITY
@@ -22,7 +16,9 @@ def figure_of_merit(performance, running, allowed, idle=None, max_idle=None):
                 return _INFINITY
         return performance * float(running + 1) / allowed
     except TypeError:
-        logger.exception("TypeError in figure_of_merit")
+        if logger is not None:
+            logger.exception("TypeError in figure_of_merit")
     except Exception:
-        logger.exception("Unexpected error in figure_of_merit")
+        if logger is not None:
+            logger.exception("Unexpected error in figure_of_merit")
         raise

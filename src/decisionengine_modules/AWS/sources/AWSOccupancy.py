@@ -161,7 +161,7 @@ class AWSOccupancy(Source.Source):
 
         # Load known accounts configuration
         # account configuration is dynamic
-        account_dict = load_config.load(self.config_file, 5, 20)
+        account_dict = load_config.load(self.config_file, 5, 20, self.logger)
         occupancy_data = []
         self.logger.debug(f"account_dict {self.account_dict}")
         for account in account_dict:  # pylint: disable=not-an-iterable

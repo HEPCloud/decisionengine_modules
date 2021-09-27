@@ -61,13 +61,17 @@ class FactoryGlobalManifests(Source.Source):
 
             try:
                 condor_status = htcondor_query.CondorStatus(
-                    subsystem_name=self.subsystem_name, pool_name=collector_host, group_attr=["Name"]
+                    subsystem_name=self.subsystem_name,
+                    pool_name=collector_host,
+                    group_attr=["Name"],
+                    logger=self.logger,
                 )
 
                 retry_wrapper(
                     partial(condor_status.load, *(constraint, classad_attrs, self.condor_config)),
                     nretries=self.nretries,
                     retry_interval=self.retry_interval,
+                    logger=self.logger,
                 )
 
                 df = pandas.DataFrame(condor_status.stored_data)

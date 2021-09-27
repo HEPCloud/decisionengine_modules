@@ -93,7 +93,7 @@ class GlideinRequestManifests(Transform.Transform):
                 "Nersc_Figure_Of_Merit": self.Nersc_Figure_Of_Merit(datablock),
             }
             fom_entries = fom_eligible_resources(
-                foms, constraint=self.fom_resource_constraint, limit=self.fom_resource_limit
+                foms, constraint=self.fom_resource_constraint, limit=self.fom_resource_limit, logger=self.logger
             )
             self.logger.debug("Figure of Merits")
             self.logger.debug(fom_entries)
@@ -124,7 +124,7 @@ class GlideinRequestManifests(Transform.Transform):
                 matched_entries = entries.query(match_exp)
 
                 # Get the Frontend element object. Currently FOM.
-                gfe = glide_frontend_element.get_gfe_obj(fe_group, self.acct_group, fe_cfg)
+                gfe = glide_frontend_element.get_gfe_obj(fe_group, self.acct_group, fe_cfg, self.logger)
 
                 # Generate glideclient and glideclientglobal manifests
                 # for this bucket/frontend group

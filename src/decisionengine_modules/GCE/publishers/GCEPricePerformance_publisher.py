@@ -12,9 +12,6 @@ from decisionengine_modules.graphite.publishers.generic_publisher import Generic
 class GCEPricePerformancePublisher(publisher):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def graphite_context(self, dataframe):
         self.logger.debug("in GCEPricePerformancePublisher graphite_context")

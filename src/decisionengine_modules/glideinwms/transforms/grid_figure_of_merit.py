@@ -34,7 +34,9 @@ class GridFigureOfMerit(Transform.Transform):
                 idle = float(entry["GlideinMonitorTotalStatusIdle"])
                 f = {
                     ATTR_ENTRYNAME: entry[ATTR_ENTRYNAME],
-                    ATTR_FOM: figure_of_merit(self.price_performance, running, max_allowed, idle, max_idle),
+                    ATTR_FOM: figure_of_merit(
+                        self.price_performance, running, max_allowed, idle, max_idle, self.logger
+                    ),
                 }
                 foms.append(f)
 

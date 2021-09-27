@@ -21,9 +21,6 @@ _CONSUMES_DICT = dict.fromkeys(_CONSUMES, pandas.DataFrame)
 class GlideinWMSManifests(publisher.HTCondorManifests):
     def __init__(self, config):
         super().__init__(config)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
         self._fact_entrytype_map = {
             "allow_grid_requests": "Factory_Entries_Grid",
             "allow_aws_requests": "Factory_Entries_AWS",

@@ -63,7 +63,7 @@ class GenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
             self.logger.exception(f"Failed to extract {product} from data block.")
             return
         if self.graphite_host and self.publish_to_graphite:
-            end_point = graphite.Graphite(host=self.graphite_host, pickle_port=self.graphite_port)
+            end_point = graphite.Graphite(host=self.graphite_host, pickle_port=self.graphite_port, logger=self.logger)
             end_point.send_dict(
                 self.graphite_context(data)[0], self.graphite_context(data)[1], debug_print=False, send_data=True
             )
