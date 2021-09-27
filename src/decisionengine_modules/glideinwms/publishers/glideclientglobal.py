@@ -7,9 +7,6 @@ class GlideClientGlobalManifests(publisher.HTCondorManifests):
     def __init__(self, config):
         super().__init__(config)
         self.classad_type = "glideclientglobal"
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def create_invalidate_constraint(self, dataframe):
         self.logger.debug("in GlideClientGlobalManifests create_invalidate_constraint")

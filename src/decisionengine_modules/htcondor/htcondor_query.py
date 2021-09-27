@@ -4,12 +4,6 @@ import os
 import sys
 
 import htcondor
-import structlog
-
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
-logger = structlog.getLogger(CHANNELLOGGERNAME)
-logger = logger.bind(module=__name__.split(".")[-1], channel="")
 
 
 class QueryError(RuntimeError):
@@ -139,7 +133,7 @@ class CondorStatus(CondorQuery):
     Class to implement condor_status
     """
 
-    def __init__(self, subsystem_name=None, pool_name=None, group_attr=None):
+    def __init__(self, subsystem_name=None, pool_name=None, group_attr=None, logger=None):
         if subsystem_name is None:
             subsystem_str = ""
         else:
@@ -148,12 +142,14 @@ class CondorStatus(CondorQuery):
             group_attr = ["Name"]
 
         CondorQuery.__init__(self, subsystem_str, group_attr, pool_name=pool_name)
+        self.logger = logger
 
     def fetch(self, constraint=None, format_list=None, condor_config=None):
         """
         Fetch resource classads and return a list of evaluated classads
         """
-        logger.debug("in CondorStatus fetch")
+        if self.logger is not None:
+            self.logger.debug("in CondorStatus fetch")
         results = []
         constraint = bindings_friendly_constraint(constraint)
         attrs = bindings_friendly_attrs(format_list)

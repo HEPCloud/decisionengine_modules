@@ -7,9 +7,6 @@ class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
     def __init__(self, config):
         super().__init__(config)
         self.classad_type = "glideclientmonitor"
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def create_invalidate_constraint(self, requests_df):
         self.logger.debug("in DecisionEngineMonitorManifests create_invalidate_constraint")

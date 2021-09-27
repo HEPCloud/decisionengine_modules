@@ -60,7 +60,10 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         dataframe = pandas.DataFrame()
         try:
             condor_status = htcondor_query.CondorStatus(
-                subsystem_name=self.subsystem_name, pool_name=self.collector_host, group_attr=self.group_attr
+                subsystem_name=self.subsystem_name,
+                pool_name=self.collector_host,
+                group_attr=self.group_attr,
+                logger=self.logger,
             )
 
             condor_status.load(self.constraint, self.classad_attrs, self.condor_config)

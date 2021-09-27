@@ -205,7 +205,7 @@ class AWSSpotPrice(Source.Source):
         # Load kown accounts configuration
         # account configuration is dynamic
         self.logger.debug("in AWSSpotPrice acquire")
-        account_dict = load_config.load(self.config_file, 5, 20)
+        account_dict = load_config.load(self.config_file, 5, 20, self.logger)
         sp_data = []
         for account in account_dict:  # pylint: disable=not-an-iterable
             for region, instances in account_dict[account].items():  # pylint: disable=unsubscriptable-object

@@ -45,7 +45,7 @@ class GceOccupancy(Source.Source):
 
     def acquire(self):
         self.logger.debug("in GCEOccupancy acquire")
-        return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout, backoff=False)
+        return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout, backoff=False, logger=self.logger)
 
     def _acquire(self):
         d = {}

@@ -4,15 +4,8 @@ Load python object
 
 import time
 
-import structlog
 
-from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
-
-logger = structlog.getLogger(CHANNELLOGGERNAME)
-logger = logger.bind(module=__name__.split(".")[-1], channel="")
-
-
-def load(python_file, retries=0, timeout=0):
+def load(python_file, retries=0, timeout=0, logger=None):
     """
     Load constants from file.
 
@@ -35,10 +28,12 @@ def load(python_file, retries=0, timeout=0):
                 exec(code)
             break
         except OSError:
-            logger.warning(f"config load failed in de_modules, {retries-i} retries")
+            if logger is not None:
+                logger.warning(f"config load failed in de_modules, {retries-i} retries")
             time.sleep(timeout)
     else:
-        logger.exception(f"cannot load {python_file}")
+        if logger is not None:
+            logger.exception(f"cannot load {python_file}")
         raise RuntimeError()
 
     return config

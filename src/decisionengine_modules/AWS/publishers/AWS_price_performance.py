@@ -12,9 +12,6 @@ from decisionengine_modules.AWS.publishers.AWS_generic_publisher import AWSGener
 class AWSPricePerformancePublisher(publisher):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.logger = self.logger.bind(
-            class_module=__name__.split(".")[-1],
-        )
 
     def graphite_context(self, dataframe):
         self.logger.debug("in AWSPricePerformancePublisher graphite_context")
