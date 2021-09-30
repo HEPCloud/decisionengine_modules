@@ -22,7 +22,7 @@ from decisionengine_modules.util.retry_function import retry_wrapper
   }
 """,
     ),
-    Parameter("nretries", default=0),
+    Parameter("max_retries", default=0),
     Parameter("retry_interval", default=0),
 )
 @Source.produces(
@@ -43,9 +43,9 @@ class FactoryEntries(Source.Source):
             "Factory_Entries_LCF": ("batch slurm",),
         }
 
-        # The combination of nretries=10 and retry_interval=2 adds up to just
+        # The combination of max_retries=10 and retry_interval=2 adds up to just
         # over 15 minutes
-        self.nretries = config.get("nretries", 0)
+        self.max_retries = config.get("max_retries", 0)
         self.retry_interval = config.get("retry_interval", 0)
 
         self.subsystem_name = "any"
@@ -76,7 +76,7 @@ class FactoryEntries(Source.Source):
 
                 retry_wrapper(
                     partial(condor_status.load, *(constraint, classad_attrs, self.condor_config)),
-                    nretries=self.nretries,
+                    max_retries=self.max_retries,
                     retry_interval=self.retry_interval,
                     logger=self.logger,
                 )

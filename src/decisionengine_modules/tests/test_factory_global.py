@@ -36,7 +36,7 @@ CONFIG_BAD = {
 CONFIG_BAD_WITH_TIMEOUT = {
     "channel_name": "test",
     "condor_config": "condor_config",
-    "nretries": 2,
+    "max_retries": 2,
     "retry_interval": 2,
     "factories": [
         {
@@ -71,6 +71,6 @@ class TestFactoryGlobalManifests:
         start = time.time()
         fg_df = fg.acquire()
         end = time.time()
-        # Set by tuning nretries and the retry_interval
+        # Set by tuning max_retries and the retry_interval
         assert end - start > 5
         assert (fg_df["factoryglobal_manifests"] is None) or (len(fg_df["factoryglobal_manifests"]) == 0)

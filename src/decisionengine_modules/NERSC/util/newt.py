@@ -18,7 +18,7 @@ _NEWT_BASE_URL = "https://newt.nersc.gov/newt/"
 
 
 class Newt:
-    def __init__(self, password_file, newt_base_url=None, num_retries=0, retry_backoff_factor=0):
+    def __init__(self, password_file, newt_base_url=None, max_retries=0, retry_backoff_factor=0):
         """
         Constructor that takes path to password file and
         optional Newt base URL
@@ -34,7 +34,7 @@ class Newt:
         if not self.newt_base_url.endswith("/"):
             self.newt_base_url += "/"
         self.session = requests.Session()
-        self.num_retries = num_retries
+        self.max_retries = max_retries
         self.retry_backoff_factor = retry_backoff_factor
         self.expiration_time = time.time()
         self._add_retries_to_session()
@@ -45,7 +45,7 @@ class Newt:
         :return: void
         """
         retry = Retry(
-            status=self.num_retries,
+            status=self.max_retries,
             status_forcelist=[500, 502, 503, 504, 507],
             backoff_factor=self.retry_backoff_factor,
         )
