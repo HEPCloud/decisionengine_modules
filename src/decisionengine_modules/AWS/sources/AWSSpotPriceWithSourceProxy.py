@@ -212,7 +212,7 @@ Source.describe(
         "channel_name": "test",
         "source_channel": "channel_aws_config_data",
         "Dataproducts": ["spot_occupancy_config"],
-        "retries": 3,
-        "retry_timeout": 20,
+        "max_attempts": 3,
+        "retry_interval": 20,
     },
 )

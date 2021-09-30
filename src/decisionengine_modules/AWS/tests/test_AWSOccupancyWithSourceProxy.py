@@ -17,8 +17,8 @@ config = {
     "channel_name": "test",
     "source_channel": "channel_aws_config_data",
     "Dataproducts": ["spot_occupancy_config"],
-    "retries": 3,
-    "retry_timeout": 20,
+    "max_attempts": 3,
+    "retry_interval": 20,
 }
 
 account = {"spot_occupancy_config": pd.read_csv(os.path.join(DATA_DIR, "account_config.csv"))}
