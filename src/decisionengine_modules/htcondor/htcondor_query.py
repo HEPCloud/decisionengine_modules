@@ -358,11 +358,11 @@ def split_collector_host(collector_host):
     collector.
     """
 
-    if isinstance(collector_host, str):
-        hosts = collector_host.replace(",", " ").split()
-        primary = hosts[0]
-        secondary = hosts[1:]
-        secondary.sort()
-        return (primary, ",".join(secondary))
-    else:
-        RuntimeError(f"collector_host should be a comman or space separated string but found {collector_host}")
+    if not isinstance(collector_host, str):
+        raise RuntimeError(f"collector_host should be a comman or space separated string but found {collector_host}")
+
+    hosts = collector_host.replace(",", " ").split()
+    primary = hosts[0]
+    secondary = hosts[1:]
+    secondary.sort()
+    return (primary, ",".join(secondary))

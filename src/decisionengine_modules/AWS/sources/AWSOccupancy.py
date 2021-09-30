@@ -1,8 +1,6 @@
 """
 Get AWS capacity (running instances) information.
 """
-import contextlib
-
 import boto3
 import pandas as pd
 
@@ -28,23 +26,25 @@ class OccupancyData:
         """
         self.data = occupancy_data
 
-    def __cmp__(self, other=None):
+    def __eq__(self, other):
         """
         overrides comparison method
         """
-        with contextlib.suppress(Exception):
-            if (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
-                other.data["AvailabilityZone"],
-                other.data["InstanceType"],
-            ):
-                return 0
+        if not isinstance(other, OccupancyData):
+            return False
 
-        return -1
+        return (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
+            other.data["AvailabilityZone"],
+            other.data["InstanceType"],
+        )
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class OccupancyForRegion:
     """
-    AWS capacity data and metods
+    AWS capacity data and methods
     """
 
     def __init__(self, region="us-west-2", profile_name=None, instance_types=None):

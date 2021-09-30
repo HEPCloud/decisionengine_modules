@@ -25,8 +25,9 @@ class Graphite:
     def send_dict(self, namespace, data, debug_print=True, send_data=True):
         """send data contained in dictionary as {k: v} to graphite dataset
         $namespace.k with current timestamp"""
-        if data is None and self.logger is not None:
-            self.logger.warning("Warning: send_dict called with no data")
+        if data is None:
+            if self.logger is not None:
+                self.logger.warning("Warning: send_dict called with no data")
             return
         now = int(time.time())
         post_data = []
@@ -45,17 +46,15 @@ class Graphite:
             return
         # throw data at graphite
 
-        s = socket.socket()
-        try:
-            s.connect((self.graphite_host, self.graphite_pickle_port))
-            s.sendall(message)
-        except OSError:
-            if self.logger is not None:
-                self.logger.exception(
-                    f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}"
-                )
-        finally:
-            s.close()
+        with socket.socket() as s:
+            try:
+                s.connect((self.graphite_host, self.graphite_pickle_port))
+                s.sendall(message)
+            except OSError:
+                if self.logger is not None:
+                    self.logger.exception(
+                        f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}"
+                    )
 
 
 if __name__ == "__main__":
