@@ -5,20 +5,24 @@ class Dummy:
 
     def __init__(self, name="Dummy"):
         self.name = name
-        self.nretries = 2
+        self.max_retries = 2
         self.retry_interval = 2
 
     def _func_success(self, foo, input2=3):
-        return foo + input2 + self.nretries + self.retry_interval
+        return foo + input2 + self.max_retries + self.retry_interval
 
     def func_success(self, foo, input2=3):
-        return retry_function.retry_wrapper(partial(self._func_success, *(foo,), **{"input2": input2}), self.nretries, self.retry_interval)
+        return retry_function.retry_wrapper(
+            partial(self._func_success, *(foo,), **{"input2": input2}), self.max_retries, self.retry_interval
+        )
 
     def _func_failure(self, foo, input2=3):
-        raise ValueError({'sum': foo + input2 + self.nretries + self.retry_interval})
+        raise ValueError({"sum": foo + input2 + self.max_retries + self.retry_interval})
 
     def func_failure(self, foo, input2=3):
-        return retry_function.retry_wrapper(partial(self._func_failure, *(foo,), **{"input2": input2}), self.nretries, self.retry_interval)
+        return retry_function.retry_wrapper(
+            partial(self._func_failure, *(foo,), **{"input2": input2}), self.max_retries, self.retry_interval
+        )
 
 
 def test_all():

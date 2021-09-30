@@ -12,18 +12,20 @@ DEFAULT_UPDATE_AD_COMMAND = 'UPDATE_AD_GENERIC'
 DEFAULT_INVALIDATE_AD_COMMAND = 'INVALIDATE_AD_GENERIC'
 
 
-@Publisher.supports_config(Parameter('condor_config', type=str),
-                           Parameter('x509_user_proxy', type=str),
-                           Parameter('nretries', type=int),
-                           Parameter('retry_interval', type=int, comment="Number of seconds to wait between retries."))
+@Publisher.supports_config(
+    Parameter("condor_config", type=str),
+    Parameter("x509_user_proxy", type=str),
+    Parameter("max_retries", type=int),
+    Parameter("retry_interval", type=int, comment="Number of seconds to wait between retries."),
+)
 class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
 
     def __init__(self, config):
         super().__init__(config)
-        self.condor_config = config.get('condor_config')
-        self.x509_user_proxy = config.get('x509_user_proxy')
-        self.nretries = config.get('nretries')
-        self.retry_interval = config.get('retry_interval')
+        self.condor_config = config.get("condor_config")
+        self.x509_user_proxy = config.get("x509_user_proxy")
+        self.max_retries = config.get("max_retries")
+        self.retry_interval = config.get("retry_interval")
         self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
@@ -102,14 +104,19 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
             raise
         finally:
             if old_condor_config_env:
-                os.environ['CONDOR_CONFIG'] = old_condor_config_env
+                os.environ["CONDOR_CONFIG"] = old_condor_config_env
 
-    def condor_advertise(self, classads, collector_host=None,
-                         update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
-        return retry_wrapper(partial(self._condor_advertise, classads,
-                                     **{"collector_host": collector_host,
-                                        "update_ad_command": update_ad_command}),
-                             self.nretries, self.retry_interval)
+    def condor_advertise(self, classads, collector_host=None, update_ad_command=DEFAULT_UPDATE_AD_COMMAND):
+        return retry_wrapper(
+            partial(
+                self._condor_advertise,
+                classads,
+                **{"collector_host": collector_host, "update_ad_command": update_ad_command},
+            ),
+            self.max_retries,
+            self.retry_interval,
+            logger=self.logger,
+        )
 
     def publish(self, datablock):
         """

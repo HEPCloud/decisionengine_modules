@@ -43,9 +43,8 @@ class NerscAllocationInfo(Source.Source):
         self.retry_backoff_factor = config.get("retry_backoff_factor",
                                                _RETRY_BACKOFF_FACTOR)
         self.newt = newt.Newt(
-            config.get('passwd_file'),
-            num_retries=self.max_retries,
-            retry_backoff_factor=self.retry_backoff_factor)
+            config.get("passwd_file"), max_retries=self.max_retries, retry_backoff_factor=self.retry_backoff_factor
+        )
         self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     def send_query(self):

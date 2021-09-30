@@ -154,12 +154,16 @@ class AWSOccupancy(SourceProxy.SourceProxy):
 
         oc_list = [i.data for i in occupancy_data]
         # to fix the test failure
-        return {'AWS_Occupancy': pd.DataFrame(oc_list)}
+        return {"AWS_Occupancy": pd.DataFrame(oc_list)}
 
 
-Source.describe(AWSOccupancy,
-                sample_config={"channel_name": "test",
-                               "source_channel": "channel_aws_config_data",
-                               "Dataproducts": ["spot_occupancy_config"],
-                               "retries": 3,
-                               "retry_timeout": 20})
+Source.describe(
+    AWSOccupancy,
+    sample_config={
+        "channel_name": "test",
+        "source_channel": "channel_aws_config_data",
+        "Dataproducts": ["spot_occupancy_config"],
+        "max_attempts": 3,
+        "retry_interval": 20,
+    },
+)
