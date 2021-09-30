@@ -17,12 +17,14 @@ from decisionengine_modules.htcondor import htcondor_query
     'constraints': 'HTCondor classad query constraints'
   }
 """),
-                        Parameter('nretries', default=0),
-                        Parameter('retry_interval', default=0))
-@Source.produces(Factory_Entries_Grid=pandas.DataFrame,
-                 Factory_Entries_AWS=pandas.DataFrame,
-                 Factory_Entries_GCE=pandas.DataFrame,
-                 Factory_Entries_LCF=pandas.DataFrame)
+                        Parameter("max_retries", default=0),
+                        Parameter("retry_interval", default=0))
+@Source.produces(
+    Factory_Entries_Grid=pandas.DataFrame,
+    Factory_Entries_AWS=pandas.DataFrame,
+    Factory_Entries_GCE=pandas.DataFrame,
+    Factory_Entries_LCF=pandas.DataFrame,
+)
 class FactoryEntries(Source.Source):
 
     def __init__(self, config):
@@ -36,10 +38,10 @@ class FactoryEntries(Source.Source):
             'Factory_Entries_LCF': ('batch slurm',)
         }
 
-        # The combination of nretries=10 and retry_interval=2 adds up to just
+        # The combination of max_retries=10 and retry_interval=2 adds up to just
         # over 15 minutes
-        self.nretries = config.get('nretries', 0)
-        self.retry_interval = config.get('retry_interval', 0)
+        self.max_retries = config.get("max_retries", 0)
+        self.retry_interval = config.get("retry_interval", 0)
 
         self.subsystem_name = 'any'
         self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
@@ -68,10 +70,11 @@ class FactoryEntries(Source.Source):
                     group_attr=['GLIDEIN_GridType'])
 
                 retry_wrapper(
-                    partial(condor_status.load,
-                            *(constraint, classad_attrs, self.condor_config)),
-                    nretries=self.nretries,
-                    retry_interval=self.retry_interval)
+                    partial(condor_status.load, *(constraint, classad_attrs, self.condor_config)),
+                    max_retries=self.max_retries,
+                    retry_interval=self.retry_interval,
+                    logger=self.logger,
+                )
 
                 if correction_map is not None:
                     for eachDict in condor_status.stored_data:

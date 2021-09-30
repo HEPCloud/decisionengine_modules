@@ -35,11 +35,11 @@ CONFIG_FACTORY_ENTRIES_BAD = {
 }
 
 CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT = {
-    'channel_name': "test",
-    'condor_config': 'condor_config',
-    'nretries': 2,
-    'retry_interval': 2,
-    'factories': [
+    "channel_name": "test",
+    "condor_config": "condor_config",
+    "max_retries": 2,
+    "retry_interval": 2,
+    "factories": [
         {
             'collector_host': 'dummy_collector.fnal.gov',
         },
@@ -92,8 +92,8 @@ class TestFactoryEntries:
         start = time.time()
         result = entries.acquire()
         end = time.time()
-        # Set by tuning nretries and the retry_interval
-        assert(end - start > 5)
+        # Set by tuning max_retries and the retry_interval
+        assert end - start > 5
         for df in result.values():
             assert(df.dropna().empty is True)
 

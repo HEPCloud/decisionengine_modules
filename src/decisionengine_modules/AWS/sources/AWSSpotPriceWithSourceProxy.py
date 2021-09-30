@@ -199,14 +199,24 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
                         spot_price_history)
 
         sp_list = [i.data for i in sp_data]
-        column_names = ['AccountName', 'AvailabilityZone',
-                        'InstanceType', 'ProductDescription', 'SpotPrice', 'Timestamp']
-        return {'provisioner_resource_spot_prices': pd.DataFrame(sp_list, columns=column_names)}
+        column_names = [
+            "AccountName",
+            "AvailabilityZone",
+            "InstanceType",
+            "ProductDescription",
+            "SpotPrice",
+            "Timestamp",
+        ]
+        return {"provisioner_resource_spot_prices": pd.DataFrame(sp_list, columns=column_names)}
 
 
-Source.describe(AWSSpotPrice,
-                sample_config={"channel_name": "test",
-                               "source_channel": "channel_aws_config_data",
-                               "Dataproducts": ["spot_occupancy_config"],
-                               "retries": 3,
-                               "retry_timeout": 20})
+Source.describe(
+    AWSSpotPrice,
+    sample_config={
+        "channel_name": "test",
+        "source_channel": "channel_aws_config_data",
+        "Dataproducts": ["spot_occupancy_config"],
+        "max_attempts": 3,
+        "retry_interval": 20,
+    },
+)
