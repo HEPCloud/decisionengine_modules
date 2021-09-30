@@ -21,6 +21,8 @@ class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         self.graphite_host = config.get("graphite_host", DEFAULT_GRAPHITE_HOST)
         self.graphite_port = config.get("graphite_port", DEFAULT_GRAPHITE_PORT)
         self.graphite_context_header = config.get("graphite_context", DEFAULT_GRAPHITE_CONTEXT)
+        self.max_retries = config.get("max_retries", 2)
+        self.retry_interval = config.get("retry_interval", 60)
         self.publish_to_graphite = config.get("publish_to_graphite")
         self.output_file = config.get("output_file")
 
@@ -52,7 +54,12 @@ class AWSGenericPublisher(Publisher.Publisher, metaclass=abc.ABCMeta):
         if self.graphite_host and self.publish_to_graphite:
             end_point = graphite.Graphite(host=self.graphite_host, pickle_port=self.graphite_port, logger=self.logger)
             end_point.send_dict(
-                self.graphite_context(data)[0], self.graphite_context(data)[1], debug_print=False, send_data=True
+                self.graphite_context(data)[0],
+                self.graphite_context(data)[1],
+                debug_print=False,
+                send_data=True,
+                max_retries=self.max_retries,
+                retry_interval=self.retry_interval,
             )
         csv_data = data.to_csv(self.output_file, index=False)
         if not self.output_file:

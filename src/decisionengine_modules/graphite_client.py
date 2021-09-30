@@ -3,6 +3,10 @@ import socket
 import struct
 import time
 
+from functools import partial
+
+from decisionengine_modules.util.retry_function import retry_wrapper
+
 
 def sanitize_key(key):
     if key is None:
@@ -22,13 +26,14 @@ class Graphite:
         self.graphite_pickle_port = pickle_port
         self.logger = logger
 
-    def send_dict(self, namespace, data, debug_print=True, send_data=True):
+    def send_dict(self, namespace, data, debug_print=True, send_data=True, max_retries=2, retry_interval=60):
         """send data contained in dictionary as {k: v} to graphite dataset
         $namespace.k with current timestamp"""
         if data is None:
             if self.logger is not None:
                 self.logger.warning("Warning: send_dict called with no data")
             return
+
         now = int(time.time())
         post_data = []
         # turning data dict into [('$path.$key',($timestamp,$value)),...]]
@@ -46,15 +51,12 @@ class Graphite:
             return
         # throw data at graphite
 
+        retry_wrapper(partial(self._send_to_graphite, message), max_retries, retry_interval, logger=self.logger)
+
+    def _send_to_graphite(self, message):
         with socket.socket() as s:
-            try:
-                s.connect((self.graphite_host, self.graphite_pickle_port))
-                s.sendall(message)
-            except OSError:
-                if self.logger is not None:
-                    self.logger.exception(
-                        f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}"
-                    )
+            s.connect((self.graphite_host, self.graphite_pickle_port))
+            s.sendall(message)
 
 
 if __name__ == "__main__":
