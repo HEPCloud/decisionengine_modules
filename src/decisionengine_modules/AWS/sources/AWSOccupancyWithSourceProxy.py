@@ -20,11 +20,11 @@ class OccupancyData:
         """
         self.data = occupancy_data
 
-    def __eq__(self, other=None):
+    def __eq__(self, other):
         """
         replaces comparison method
         """
-        if not other:
+        if not isinstance(other, OccupancyData):
             return False
 
         return (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
@@ -33,7 +33,7 @@ class OccupancyData:
         )
 
     def __ne__(self, other):
-        return self != other
+        return not self.__eq__(other)
 
 
 class OccupancyForRegion:

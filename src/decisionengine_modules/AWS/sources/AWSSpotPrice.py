@@ -2,7 +2,6 @@
 Get AWS spot price information
 """
 
-import contextlib
 import datetime
 import time
 
@@ -39,18 +38,20 @@ class SpotPriceData:
         self.data = sp_data
         self.data["Timestamp"] = sp_data["Timestamp"].isoformat()
 
-    def __cmp__(self, other=None):
+    def __eq__(self, other):
         """
         overrides comparison method
         """
-        with contextlib.suppress(Exception):
-            if (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
-                other.data["AvailabilityZone"],
-                other.data["InstanceType"],
-            ):
-                return 0
+        if not isinstance(other, SpotPriceData):
+            return False
 
-        return -1
+        return (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
+            other.data["AvailabilityZone"],
+            other.data["InstanceType"],
+        )
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class AWSSpotPriceForRegion:

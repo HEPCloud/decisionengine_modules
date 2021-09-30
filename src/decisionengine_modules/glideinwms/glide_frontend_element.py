@@ -1856,7 +1856,6 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                             # We already matched everything to other FOM groups
                             # Populate the stats as downtime doesnt mattter
                             for key in matches:
-                                this_entry_df = fom_group_entries.query(f'(Name=="{key[1]}")')
                                 direct_match[key] = direct_match.get(key, 0)
                                 hereonly_match[key] = hereonly_match.get(key, 0)
                                 prop_match[key] = prop_match.get(key, 0)
