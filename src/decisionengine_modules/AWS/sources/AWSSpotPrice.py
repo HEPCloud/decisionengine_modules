@@ -2,6 +2,7 @@
 Get AWS spot price information
 """
 
+import contextlib
 import datetime
 import time
 
@@ -42,14 +43,12 @@ class SpotPriceData:
         """
         overrides comparison method
         """
-        try:
+        with contextlib.suppress(Exception):
             if (self.data["AvailabilityZone"], self.data["InstanceType"]) == (
                 other.data["AvailabilityZone"],
                 other.data["InstanceType"],
             ):
                 return 0
-        except Exception:
-            pass
 
         return -1
 

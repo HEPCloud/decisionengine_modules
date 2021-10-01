@@ -65,9 +65,7 @@ class CompareNerscFactoryJobs(Transform.Transform):
                 #   the row has GridJobID, but no real ID on Nersc
                 #   the row has GridJObID, and a real ID on Nersc
 
-                if "GridJobID" not in row.axes[0].tolist():
-                    num_no_id += 1
-                elif pd.isnull(row.GridJobID):
+                if ("GridJobID" not in row.axes[0].tolist()) or (pd.isnull(row.GridJobID)):
                     num_no_id += 1
                 else:
                     line = row["GridJobID"].split(" ")

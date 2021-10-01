@@ -1,3 +1,4 @@
+import contextlib
 import os
 import unittest
 
@@ -45,10 +46,8 @@ class TestAWSFOMPublisher(unittest.TestCase):
         )
 
     def tearDown(self):
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(OUTPUT_FILE)
-        except OSError:
-            pass
 
     def test_consumes(self):
         assert self.publisher._consumes == {"AWS_Figure_Of_Merit": pd.DataFrame}

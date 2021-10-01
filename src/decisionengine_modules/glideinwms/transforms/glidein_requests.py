@@ -182,7 +182,8 @@ class GlideinRequestManifests(Transform.Transform):
             )
             raise RuntimeError()
 
-        fe_cfg = eval(open(self.de_frontend_configfile).read())
+        with open(self.de_frontend_configfile) as _fd:
+            fe_cfg = eval(_fd.read())
 
         if not isinstance(fe_cfg, dict):
             self.logger.exception(f"Frontend config for DE in {self.de_frontend_configfile} is invalid")
