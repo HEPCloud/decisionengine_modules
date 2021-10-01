@@ -1958,10 +1958,8 @@ def create_credential_list(credentials, group_descript, logger):
     configured in the frontend
     """
     credential_list = []
-    num = 0
-    for cred in credentials:
+    for num, cred in enumerate(credentials):
         credential_list.append(Credential(num, cred, group_descript, logger))
-        num += 1
     return credential_list
 
 

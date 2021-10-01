@@ -1,3 +1,4 @@
+import contextlib
 import os
 
 import pytest
@@ -20,13 +21,11 @@ except ImportError:
 
 gwms_modules_python3 = False
 if gwms_modules_available and glideinWMSVersion is not None:
-    try:
+    with contextlib.suppress(Exception):
+        # Assuming no Python 3 glideinwms if something goes wrong
         with open(glideinWMSVersion.__file__) as fd:
             line = fd.readline()
             gwms_modules_python3 = "python3" in line
-    except Exception:
-        # Assuming no Python 3 glideinwms if something goes wrong
-        pass
 
 
 def test_glideinwms_import():
@@ -136,7 +135,8 @@ class TestGlideFrontendElement:
                 f"Error reading Frontend config for DE {fpath}. "
                 "Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration."
             )
-        fe_cfg = eval(open(fpath).read())
+        with open(fpath) as _fd:
+            fe_cfg = eval(_fd.read())
         if not isinstance(fe_cfg, dict):
             raise ValueError(f"Frontend config for DE in {fpath} is invalid")
         return fe_cfg

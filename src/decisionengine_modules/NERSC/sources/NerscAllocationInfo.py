@@ -1,6 +1,8 @@
 """
 Get allocation info from Nersc
 """
+import contextlib
+
 import pandas as pd
 
 from decisionengine.framework.modules import Source
@@ -57,11 +59,9 @@ class NerscAllocationInfo(Source.Source):
         for username in self.constraints.get("usernames", []):
             values = self.newt.get_usage(username)
             if values:
-                try:
-                    results.extend(values["items"])
-                except KeyError:
+                with contextlib.suppress(KeyError):
                     # Empty return from get_usage, so just move on
-                    pass
+                    results.extend(values["items"])
         # filter results based on constraints specified in newt_keys dictionary
         newt_keys = self.constraints.get("newt_keys", {})
         for key, values in newt_keys.items():

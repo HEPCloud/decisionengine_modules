@@ -1,5 +1,6 @@
 #!/usr/bin/pyhon
 import abc
+import contextlib
 import os
 import sys
 
@@ -271,7 +272,7 @@ def list2dict(list_data, attr_name):
         dict_el = {}
         for a in list_el:
             if a not in attr_list:
-                try:
+                with contextlib.suppress(Exception):
                     if list_el[a].__class__.__name__ == "ExprTree":
                         # Try to evaluate the condor expr and use its value
                         # If cannot be evaluated, keep the expr as is
@@ -284,9 +285,6 @@ def list2dict(list_data, attr_name):
                         # No need for Undefined check to see if
                         # attribute exists in the fetched classad
                         dict_el[a] = list_el[a]
-                except Exception:
-                    # Do not fail
-                    pass
 
         if dict_name not in dict_data:
             dict_data[dict_name] = []
@@ -315,7 +313,7 @@ def eval_classad_expr(classads, format_list=None):
                 # TODO: If we come accross other user configured attributes
                 #       then we need to identify how to resolve this issue.
                 continue
-            try:
+            with contextlib.suppress(Exception):
                 if classad[attr].__class__.__name__ == "ExprTree":
                     a_value = classad[attr].eval()
                     if f"{a_value}" != "Undefined":
@@ -326,8 +324,6 @@ def eval_classad_expr(classads, format_list=None):
                     # No need for Undefined check to see if
                     # attribute exists in the fetched classad
                     dict_el[attr] = classad[attr]
-            except Exception:
-                pass
 
         # Do not delete this block until we resolve the TODO above.
         # Useful for identifying the attribute that causes the problem.

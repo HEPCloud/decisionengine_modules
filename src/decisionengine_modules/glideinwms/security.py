@@ -128,9 +128,8 @@ class Credential:
             # If not file specified, assume the file used to generate Id
             cred_file = self.get_id_filename()
         try:
-            data_fd = open(cred_file)
-            cred_data = data_fd.read()
-            data_fd.close()
+            with open(cred_file) as data_fd:
+                cred_data = data_fd.read()
         except Exception:
             # This credential should not be advertised
             self.advertize = False
