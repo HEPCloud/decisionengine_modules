@@ -8,7 +8,7 @@ import time
 import boto3
 import pandas as pd
 
-from decisionengine.framework.modules import Source, SourceProxy
+from decisionengine.framework.modules import Transform
 
 # default values
 REGION = "us-west-2"
@@ -132,7 +132,7 @@ class AWSSpotPriceForRegion:
                 NextToken="",
             )
         except Exception:
-            logger.exception("Exception in AWSSpotPriceWithSourceProxy call to get_price")
+            logger.exception("Exception in AWSSpotPrice call to get_price")
             return None
         price_history = rc.get("SpotPriceHistory")
         if len(price_history) == 0:
@@ -165,26 +165,22 @@ class AWSSpotPriceForRegion:
         return ll
 
 
-@Source.produces(provisioner_resource_spot_prices=pd.DataFrame)
-class AWSSpotPrice(SourceProxy.SourceProxy):
+@Transform.consumes(spot_occupancy_config=pd.DataFrame)
+@Transform.produces(provisioner_resource_spot_prices=pd.DataFrame)
+class AWSSpotPrice(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
 
-    def acquire(self):
+    def transform(self, data_block):
         """
         Gets data from AWS
 
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
-        # Load known accounts configuration
-        self.logger.debug("in AWSSpotPrice-SP acquire")
-        account_conf = super().acquire()
-        if len(account_conf.keys()) != 1:
-            raise RuntimeError(f"Wrong configuration {account_conf}. Only one key is expected")
-        account_dict = {}
-        for k in account_conf:
-            account_dict = account_conf[k].to_dict()
+        self.logger.debug("in AWSSpotPrice transform")
+        account_dict = data_block.get("spot_occupancy_config").to_dict()
+        self.logger.debug(f"account_dict {account_dict}")
         sp_data = []
         for account in account_dict:
             for region, instances in account_dict[account].items():
@@ -206,13 +202,4 @@ class AWSSpotPrice(SourceProxy.SourceProxy):
         return {"provisioner_resource_spot_prices": pd.DataFrame(sp_list, columns=column_names)}
 
 
-Source.describe(
-    AWSSpotPrice,
-    sample_config={
-        "channel_name": "test",
-        "source_channel": "channel_aws_config_data",
-        "Dataproducts": ["spot_occupancy_config"],
-        "max_attempts": 3,
-        "retry_interval": 20,
-    },
-)
+Transform.describe(AWSSpotPrice)
