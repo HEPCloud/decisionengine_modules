@@ -4,7 +4,7 @@ Get AWS capacity (running instances) information.
 import boto3
 import pandas as pd
 
-from decisionengine.framework.modules import Source, SourceProxy
+from decisionengine.framework.modules import Transform
 
 
 class OccupancyData:
@@ -123,12 +123,13 @@ class OccupancyForRegion:
   '''
 
 
-@Source.produces(AWS_Occupancy=pd.DataFrame)
-class AWSOccupancy(SourceProxy.SourceProxy):
+@Transform.consumes(spot_occupancy_config=pd.DataFrame)
+@Transform.produces(AWS_Occupancy=pd.DataFrame)
+class AWSOccupancy(Transform.Transform):
     def __init__(self, config):
         super().__init__(config)
 
-    def acquire(self):
+    def transform(self, data_block):
         """
         Fills ``self.data`` with spot price data.
 
@@ -136,14 +137,8 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         :arg spot_price_history: list of spotprice data (:class:`SpotPriceData`)
         """
 
-        # Load kown accounts configuration
-        account_conf = super().acquire()
-        if len(account_conf.keys()) != 1:
-            raise RuntimeError(f"Wrong configuration {account_conf}. Only one key is expected")
-        account_dict = {}
-        for k in account_conf:
-            # FIXME: We overwrite the 'account_dict' member for each iteration of this loop?
-            account_dict = account_conf[k].to_dict()
+        self.logger.debug("in AWSOccupancy transform")
+        account_dict = data_block.get("spot_occupancy_config").to_dict()
         self.logger.debug(f"account_dict {account_dict}")
         occupancy_data = []
         for account in account_dict:
@@ -160,13 +155,4 @@ class AWSOccupancy(SourceProxy.SourceProxy):
         return {"AWS_Occupancy": pd.DataFrame(oc_list)}
 
 
-Source.describe(
-    AWSOccupancy,
-    sample_config={
-        "channel_name": "test",
-        "source_channel": "channel_aws_config_data",
-        "Dataproducts": ["spot_occupancy_config"],
-        "max_attempts": 3,
-        "retry_interval": 20,
-    },
-)
+Transform.describe(AWSOccupancy)
