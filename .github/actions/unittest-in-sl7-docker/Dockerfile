@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 FROM hepcloud/decision-engine-ci
 COPY entrypoint.sh /entrypoint.sh
 RUN groupadd -g 115 decision-engine-ci

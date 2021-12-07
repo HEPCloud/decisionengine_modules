@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-FileCopyrightText: 2019 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # Eventually this should move to pyproject.toml
 #  but setuptools must first gain support for parsing that
 
@@ -49,6 +54,7 @@ devel_req = [
     "packaging >= 20.9",
     "wheel >= 0.36.2",
     "pylint >= 2.7.4",
+    "reuse",
     "importlib_resources >= 5.1.2; python_version <= '3.8'",
 ]
 
