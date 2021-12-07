@@ -49,6 +49,10 @@ repos:
       - id: pyupgrade
         args:
           - "--py36-plus"
+  - repo: "https://github.com/fsfe/reuse-tool"
+    rev: latest
+    hooks:
+      - id: reuse
 #  sort-all requires python 3.8+, uncomment when we are compatible
 #  - repo: "https://github.com/aio-libs/sort-all"
 #    rev: v1.1.0

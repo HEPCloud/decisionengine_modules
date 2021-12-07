@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Calculates price / preformance and figure of merit and
 saves it into the output file acording to design document.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 """
 This data is taken from billing and arranged as dictionary of
 AccountConstants instead of separate class for each billing class.

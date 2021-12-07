@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import pandas
 
 from decisionengine_modules.glideinwms import resource_dist_plugins
