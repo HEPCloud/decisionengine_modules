@@ -8,16 +8,6 @@ from decisionengine.framework.modules.Transform import Parameter
 # - what and how is metadata for a dataframe?
 # - do we need to validate case or type for attr content?  again onboarding?
 
-class TestData:
-
-    def __init__(self, data):
-
-        self.data = data
-
-    def print_data(self):
-        logger.info("TestData is 5")
-
-
 @Transform.supports_config(Parameter('match_expressions',
                                      default={"VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)":
                                               ["GLIDEIN_Supported_VOs.str.contains('CMS') and GLIDEIN_CPUS == 1"]}))

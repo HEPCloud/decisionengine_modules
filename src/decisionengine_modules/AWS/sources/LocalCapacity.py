@@ -4,7 +4,7 @@ from decisionengine.framework.modules import Source
 class LocalCapacity(Source.Source):
 
     def __init__(self, params_dict):
-        super().__init__(config)
+        super().__init__(params_dict)
         self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
     # The DataBlock given to the source is t=0

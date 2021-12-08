@@ -12,7 +12,8 @@ import pandas
 # can't be set in the test. Depending on how this testing is done
 # you may be able to mock around this.
 
-config_billing_info = {'projectId': 'hepcloud-fnal',
+config_billing_info = {"channel_name": "Test",
+                       'projectId': 'hepcloud-fnal',
                        'lastKnownBillDate': '10/01/18 00:00',  # '%m/%d/%y %H:%M'
                        'balanceAtDate': 100.0,    # $
                        'accountName': 'None',
