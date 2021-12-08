@@ -186,7 +186,7 @@ all instances is acquired.'''))
 @Source.produces(provisioner_resource_spot_prices=pd.DataFrame)
 class AWSSpotPrice(Source.Source):
     def __init__(self, config_dict):
-        super().__init__(config)
+        super().__init__(config_dict)
         self.config_file = config_dict['spot_price_configuration']
         self.logger = self.logger.bind(class_module=__name__.split(".")[-1], )
 
