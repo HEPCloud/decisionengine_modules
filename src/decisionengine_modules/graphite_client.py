@@ -5,6 +5,10 @@ import socket
 import structlog
 from decisionengine.framework.modules.logging_configDict import CHANNELLOGGERNAME
 
+from functools import partial
+
+from decisionengine_modules.util.retry_function import retry_wrapper
+
 
 def sanitize_key(key):
     if key is None:
@@ -25,12 +29,13 @@ class Graphite:
         self.logger = structlog.getLogger(CHANNELLOGGERNAME)
         self.logger = self.logger.bind(module_class=__name__.split(".")[-1], channel="")
 
-    def send_dict(self, namespace, data, debug_print=True, send_data=True):
+    def send_dict(self, namespace, data, debug_print=True, send_data=True, max_retries=2, retry_interval=60):
         """send data contained in dictionary as {k: v} to graphite dataset
         $namespace.k with current timestamp"""
         if data is None:
             self.logger.warning("Warning: send_dict called with no data")
             return
+
         now = int(time.time())
         post_data = []
         # turning data dict into [('$path.$key',($timestamp,$value)),...]]
@@ -48,14 +53,12 @@ class Graphite:
             return
         # throw data at graphite
 
-        s = socket.socket()
-        try:
+        retry_wrapper(partial(self._send_to_graphite, message), max_retries, retry_interval)
+
+    def _send_to_graphite(self, message):
+        with socket.socket() as s:
             s.connect((self.graphite_host, self.graphite_pickle_port))
             s.sendall(message)
-        except socket.error:
-            self.logger.exception(f"Error sending data to graphite at {self.graphite_host}:{self.graphite_pickle_port}")
-        finally:
-            s.close()
 
 
 if __name__ == "__main__":
