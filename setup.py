@@ -61,7 +61,7 @@ devel_req = [
 # workaround bug in editable install when PEP517 is detected
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-rpm_require = ["decisionengine", "glideinwms-vofrontend-standalone", "python3-wheel"]
+rpm_require = ["decisionengine", "glideinwms-vofrontend-libs", "glideinwms-vofrontend-glidein", "python3-wheel"]
 
 # This metadata can be read out with:
 #    import importlib.metadata
