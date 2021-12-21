@@ -16,7 +16,7 @@ expected_reply = {
     "AWS_Price_Performance": pd.read_csv(os.path.join(DATA_DIR, "expected_price_performance.csv")),
 }
 consumes = dict.fromkeys(
-    ["provisioner_resource_spot_prices", "Performance_Data", "Job_Limits", "AWS_Occupancy"], pd.DataFrame
+    ["provisioner_resource_spot_prices", "Performance_Data", "aws_instance_limits", "AWS_Occupancy"], pd.DataFrame
 )
 
 produces = dict.fromkeys(["AWS_Price_Performance", "AWS_Figure_Of_Merit"], pd.DataFrame)
@@ -32,7 +32,7 @@ def create_datablock():
         .drop_duplicates(subset=["AvailabilityZone", "InstanceType"], keep="last")
         .reset_index(drop=True)
     )
-    data_block["Job_Limits"] = (
+    data_block["aws_instance_limits"] = (
         pd.read_csv(os.path.join(DATA_DIR, "job_limits.csv"))
         .drop_duplicates(subset=["AvailabilityZone", "InstanceType"], keep="last")
         .reset_index(drop=True)

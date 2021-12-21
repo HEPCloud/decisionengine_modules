@@ -38,7 +38,7 @@ def figure_of_merit(RunningVms, MaxLimit, PricePerf):
 @Transform.consumes(
     provisioner_resource_spot_prices=pd.DataFrame,
     Performance_Data=pd.DataFrame,
-    Job_Limits=pd.DataFrame,
+    aws_instance_limits=pd.DataFrame,
     AWS_Occupancy=pd.DataFrame,
 )
 @Transform.produces(AWS_Price_Performance=pd.DataFrame, AWS_Figure_Of_Merit=pd.DataFrame)
@@ -59,7 +59,7 @@ class FigureOfMerit(Transform.Transform):
         spot_price_data = self.provisioner_resource_spot_prices(data_block)
         perf_data = self.Performance_Data(data_block)
         occup_data = self.AWS_Occupancy(data_block)
-        job_limits_data = self.Job_Limits(data_block)
+        job_limits_data = self.aws_instance_limits(data_block)
 
         price_perf_rows = []
         fom_rows = []
