@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import copy
 
 from glideinwms.creation.lib.cvWParams import VOFrontendParams
