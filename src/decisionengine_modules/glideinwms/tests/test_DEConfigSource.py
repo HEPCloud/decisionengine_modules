@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 from decisionengine_modules.glideinwms.ConfigSource import ConfigError
 from decisionengine_modules.glideinwms.DEConfigSource import DEConfigSource
 from decisionengine_modules.glideinwms.tests.fixtures import de_client_config  # noqa: F401

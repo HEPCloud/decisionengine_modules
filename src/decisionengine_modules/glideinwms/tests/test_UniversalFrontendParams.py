@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 from decisionengine_modules.glideinwms.tests.fixtures import (  # noqa: F401
     gwms_module_config,
     gwms_module_invalid_config,
