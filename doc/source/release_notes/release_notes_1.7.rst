@@ -1,3 +1,25 @@
+Release 1.7.1
+-------------
+
+Patch level (bug fix) release.
+
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`369 <https://github.com/HEPCloud/decisionengine_modules/issues/369>`_ : Add retries to all publishers that contact Graphite (`e1c28e7 <https://github.com/HEPCloud/decisionengine_modules/commit/e1c28e70e7cf397c03feccfb47effff018006663>`_)
+
+
+Full list of commits since version 1.7.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`dd4fb50 <https://github.com/HEPCloud/decisionengine_modules/commit/dd4fb50356a542e5d8b4028edb0a7d8673c1d1de>`_:   Homogenize parameter-naming.
+
+`e1c28e7 <https://github.com/HEPCloud/decisionengine_modules/commit/e1c28e70e7cf397c03feccfb47effff018006663>`_:   commit da19f6fd3c81d5a8518dc6e6028fd5853df91279 Author: Kyle Knoepfel <knoepfel@fnal.gov> Date:   Thu Sep 30 21:45:50 2021 +0000
+
+`e56c4d2 <https://github.com/HEPCloud/decisionengine_modules/commit/e56c4d2e9e0495e8b37a5ee84792b7c54b7fab4a>`_:   Fixing issues reported by flake8 and by unit tests for 1.7 branch
+
+
 Release 1.7.0
 -------------
 
