@@ -1,7 +1,11 @@
 # .coveragerc to control coverage.py
+[paths]
+source = src
 
 [run]
-branch = True
+#concurrency = multiprocessing
+branch = true
+parallel = true
 source = decisionengine_modules
 omit = */tests/*
 
