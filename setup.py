@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 # SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
-# SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
-# SPDX-FileCopyrightText: 2019 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
 # Eventually this should move to pyproject.toml
