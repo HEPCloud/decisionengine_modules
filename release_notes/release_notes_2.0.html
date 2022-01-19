@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Release 2.0.0 &mdash; decisionengine modules 1.7.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> decisionengine modules
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html">Release 1.7.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html#release-1-7-0">Release 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.6.html">Release 1.6.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.6.html#release-1-6-0">Release 1.6.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.5.html">Release 1.5.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.4.html">Release 1.4.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.4.html#release-1-4-1">Release 1.4.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.4.html#release-1-4-0">Release 1.4.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.3.html">Release 1.3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.2.html">Release 1.2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.1.html">Release 1.1.0</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../jenkins.html">Decisionengine modules CI with Jenkins pipeline</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../code/index.html">Welcome to decisionengine_modules’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code/index.html#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">decisionengine modules</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Release 2.0.0</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/release_notes/release_notes_2.0.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="release-2-0-0">
+<h1>Release 2.0.0<a class="headerlink" href="#release-2-0-0" title="Permalink to this headline"></a></h1>
+<p>This release series follows 1.7. A lot started to happen in 1.7.0 and has happened since, so we felt it was proper
+to change the major version number.
+We are proud to introduce Decision Engine 2.0.0 to outside users: it provides a
+friendlier installation procedure and configuration samples to test it
+on all resources supported by the GlideinWMS Factory, like OSG, some HPC resources and
+commercial cloud providers.
+The decisionengine_modules is the standard library of modules distributed to support the main
+sources, transformations and publishers of the Decision Engine.
+See also the Release Notes of decisionengine, the Decision Engine framework.</p>
+<p>This release features:</p>
+<ul class="simple">
+<li><p>Adopt new Framework architecture for the sources</p></li>
+<li><p>Separation from the GlideinWMS Frontend. Decision Engine still shares some libraries with GlideinWMS but
+you don’t need any more to install and configure the Frontend.</p></li>
+<li><p>Structured logging. Improved python logging and adoption of structured logs format that will increase the semantinc content of the messages and ease the export of information for dashboards and Elastic Search.</p></li>
+<li><p>Monitoring via Prometheus.</p></li>
+<li><p>Added support of CentOS8 (RHEL7 is still out main platform)</p></li>
+<li><p>Configuration example using HTC resources via GlideinWMS Factory</p></li>
+<li><p>Decision Engine is distributed under the Apache 2.0 license</p></li>
+<li><p>We increased our CI tests including also code auto-formatting and license compliance.
+We introduced integration tests and we are proud of our over 95% unit test coverage.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>decisionengine_modules now requires GlideinWMS 3.9.4. The vofrontend installation and configuration is no more needed,
+decisionengine_modules now depends from the GlideinWMS vofrontend-lib.
+Check the new instructions for the changed configuration of the glideinwms module.</p>
+</div>
+<section id="issues-fixed-in-this-release">
+<h2>Issues fixed in this release<a class="headerlink" href="#issues-fixed-in-this-release" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/353">353</a> : yum update decisionengine-standard-library doesn’t detect and pull in decisionengine_modules</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/282">282</a> : Decision Engine classad encoding problems make multiple exceptions in the factory</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/349">349</a> : Minor issue setup tools decisionengine_modules</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/363">363</a> : Replace AWSOccupancy and AWSSpotPrice classes with SourceProxy + transforms</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/253">253</a> : Different modules are using different retry parameters in config</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/348">348</a> : Name convention on bill_calculator_hep vs. billing_calculator_hep</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/361">361</a> : glide_frontend_element.py throws logger exception in 1.7.0rc3</p></li>
+</ul>
+</section>
+<section id="full-list-of-commits-since-version-1-7-0">
+<h2>Full list of commits since version 1.7.0<a class="headerlink" href="#full-list-of-commits-since-version-1-7-0" title="Permalink to this headline"></a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/123dd2bea1367ffb3de76456b4a383eed273c75e">123dd2b</a>:   Drop extra lines</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/0177318fb72f9d66d0f3bd7d3fcda6f044be4608">0177318</a>:   Rename product so that translation is not necessary.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/94e334c6e9ceeebe92da9406a0a81675f21e05bd">94e334c</a>:   Explicitly pass .coveragerc to pytest.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/04456a903e45d8fff400b2d5b532ce19145e2cb3">04456a9</a>:   Updated documentation for 1.7.1 release</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/240d937ade1ba169fa7c83bf660de858aff87866">240d937</a>:   [pre-commit.ci] pre-commit autoupdate</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/f0545327a453dff7d7a5d5ba6bd4eb0d70e9f074">f054532</a>:   Use pre-commit.ci rather than local actions</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e2bc8d84a2e106415ac3078296d7d99ca5eba5ee">e2bc8d8</a>:   Update GlideinWMS dependencies</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/4dfefb175fde837e0328db8607fcc4081976b14a">4dfefb1</a>:   Add SPDX blurbs.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a0889aab61229c50937626c86835f13a5ca13ccc">a0889aa</a>:   Update pre-commit hook versions and accommodate python-debian issue.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7fd1c9c3615fc8fa73fc1f929311baff7c189f9f">7fd1c9c</a>:   Change gwmw module to read cfg from DE framework</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d57ac6ee7376191f482fd0bebe14f013b8e16e79">d57ac6e</a>:   Set Apache 2.0 license and added REUSE compliance</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71">cf43119</a>:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarly downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e2707e589142d40afdc5716fd4c4d6c9a38bc64e">e2707e5</a>:   Ignoring E203, whitespace after ‘:’, since black is adding the whitespace</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b0e3526e5d050094a63474798fd9dec993a64b67">b0e3526</a>:   Remove modules that inherit from SourceProxy. Inheritance from SourceProxy has been forbidden by PR#526. In this commit it has been removed the SourceProxy module GCEResourceLimits that is not used.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/208a660d356df9fd74aad1a646555d83455e5b10">208a660</a>:   Revert “Add jsonnetfmt hook”</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/efbf6b9761fbc10860b392b56c723274436dc54c">efbf6b9</a>:   Add jsonnetfmt hook</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/91403308916ffb979e6ef29986e4fb96fa540f58">9140330</a>:   Recasting AWSOccupancy, AWSSpotPrice and associated unit tests as Transforms AWSOccupancy and AWSSpotPrice source proxies will be handled at config level</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/81adb2968541b46dc90c1634f7ed0528124f3e5d">81adb29</a>:   Start testing against python 3.10</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a9c1f3cb67686de9e49a53c39f953b585aedcd57">a9c1f3c</a>:   Support retries for contacting Graphite.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/3bd68e428ce94f829dbc04b3eeaaed3f84784d66">3bd68e4</a>:   Fix some errors, most caught by lgtm.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/89e21f0727b64291db96c5e4d5f605e9e83950b1">89e21f0</a>:   Simplify some code paths</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/63f6315046e8daa8613e7853c4967d903d73ab54">63f6315</a>:   Homogenize parameter-naming.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/325ea37f8e07dc43010ffc91d43452d170a749ee">325ea37</a>:   Update pre-commit hooks via <cite>pre-commit autoupdate</cite></p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ee7d45cb784eb4f7e758c7bbda327c50b59e4cc4">ee7d45c</a>:   More logging improvements.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/901291c24326681caf67fba61b6b2cd20a8b75d5">901291c</a>:   Take advantage of simplified logging.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/f4752abc0abe16c71a3f005218edadad7a9f1939">f4752ab</a>:   Fixup pre-commit hooks</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ad66754eea2ac7bbe9a12372166d548056b8f516">ad66754</a>:   Add Linters task</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ca61ae3560f2d4f7f4347cfd3eee206a4a7891ea">ca61ae3</a>:   Update to latest setuptools_scm</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/3ad934bd49a6c982f44e68e17c63f43b2b42905a">3ad934b</a>:   Fixed project name</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ec2a94ec9e97722423d8ad93acd6304fcc300e21">ec2a94e</a>:   Added 1.1 release notes</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Fermi Research Alliance, LLC..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
