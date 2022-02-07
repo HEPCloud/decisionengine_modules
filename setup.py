@@ -41,7 +41,7 @@ runtime_require = [
 
 # pull in development requirements
 devel_req = [
-    "pytest >= 6.2.2",
+    "pytest >= 6.2.2, < 7.0",  # pytest 7 incompatible with pytest-postgres < 4 from DE
     "pytest-cov >= 2.11.1",
     "pytest-flake8 >= 1.0.7",
     "tabulate >= 0.8.8",
