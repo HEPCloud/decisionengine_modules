@@ -13,12 +13,13 @@ class GlideClientGlobalManifests(publisher.HTCondorManifests):
 
     def create_invalidate_constraint(self, dataframe):
         self.logger.debug("in GlideClientGlobalManifests create_invalidate_constraint")
-        for collector_host, group in dataframe.groupby(["CollectorHost"]):
-            client_names = list(set(group["ClientName"]))
-            client_names.sort()
-            if client_names:
-                constraint = f"""(glideinmytype == "{self.classad_type}") && (stringlistmember(ClientName, "{','.join(client_names)}"))"""
-                self.invalidate_ads_constraint[collector_host] = constraint
+        if not dataframe.empty:
+            for collector_host, group in dataframe.groupby(["CollectorHost"]):
+                client_names = list(set(group["ClientName"]))
+                client_names.sort()
+                if client_names:
+                    constraint = f"""(glideinmytype == "{self.classad_type}") && (stringlistmember(ClientName, "{','.join(client_names)}"))"""
+                    self.invalidate_ads_constraint[collector_host] = constraint
 
 
 Publisher.describe(GlideClientGlobalManifests)
