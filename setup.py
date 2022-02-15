@@ -38,7 +38,8 @@ runtime_require = [
 
 # pull in development requirements
 devel_req = [
-    "pytest >= 6.2.2", "pytest-cov >= 2.11.1", "pytest-flake8 >= 1.0.7",
+    "pytest >= 6.2.2, < 7.0",  # pytest 7 incompatible with pytest-postgres < 4
+    "pytest-cov >= 2.11.1", "pytest-flake8 >= 1.0.7",
     "tabulate >= 0.8.8", "toml >= 0.10.2", "pyyaml >= 5.4.1",
     "sphinx >= 3.5.3", "sphinx_rtd_theme >= 0.5.1",
     "packaging >= 20.9", "wheel >= 0.36.2",
