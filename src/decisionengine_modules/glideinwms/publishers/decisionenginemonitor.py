@@ -13,12 +13,13 @@ class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
 
     def create_invalidate_constraint(self, requests_df):
         self.logger.debug("in DecisionEngineMonitorManifests create_invalidate_constraint")
-        for collector_host, request_group in requests_df.groupby(["CollectorHost"]):
-            client_names = list(set(request_group["GlideClientName"]))
-            client_names.sort()
-            if client_names:
-                constraint = f"""(glideinmytype == "{self.classad_type}") && (stringlistmember(GlideClientName, "{','.join(client_names)}"))"""
-                self.invalidate_ads_constraint[collector_host] = constraint
+        if not requests_df.empty:
+            for collector_host, request_group in requests_df.groupby(["CollectorHost"]):
+                client_names = list(set(request_group["GlideClientName"]))
+                client_names.sort()
+                if client_names:
+                    constraint = f"""(glideinmytype == "{self.classad_type}") && (stringlistmember(GlideClientName, "{','.join(client_names)}"))"""
+                    self.invalidate_ads_constraint[collector_host] = constraint
 
 
 Publisher.describe(DecisionEngineMonitorManifests)
