@@ -42,7 +42,9 @@ class GceFigureOfMerit(Transform.Transform):
             entry_name = row["EntryName"]
 
             try:
-                occupancy_df = gce_occupancy[((gce_occupancy.AvailabilityZone == az) & (gce_occupancy.InstanceType == it))]
+                occupancy_df = gce_occupancy[
+                    ((gce_occupancy.AvailabilityZone == az) & (gce_occupancy.InstanceType == it))
+                ]
             except:
                 occupancy = 0
                 self.logger.debug(f"GceFigureOfMerit transform: Looks like no VMs runnig in GCE.")
