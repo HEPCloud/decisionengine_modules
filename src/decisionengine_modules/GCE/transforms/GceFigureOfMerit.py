@@ -43,9 +43,9 @@ class GceFigureOfMerit(Transform.Transform):
 
             try:
                 occupancy_df = gce_occupancy[((gce_occupancy.AvailabilityZone == az) & (gce_occupancy.InstanceType == it))]
-            except:
+            except AttributeError:
                 occupancy = 0
-                self.logger.debug(f"GceFigureOfMerit transform: Looks like no VMs runnig in GCE.")
+                self.logger.debug("GceFigureOfMerit transform: Looks like no VMs runnig in GCE.")
             else:
                 occupancy = float(occupancy_df["Occupancy"].values[0]) if not occupancy_df.empty else 0
 
