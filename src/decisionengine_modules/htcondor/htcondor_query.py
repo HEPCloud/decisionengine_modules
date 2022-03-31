@@ -100,8 +100,8 @@ class CondorQ(CondorQuery):
         constraint = bindings_friendly_constraint(constraint)
         attrs = bindings_friendly_attrs(format_list)
 
+        old_condor_config_env = os.environ.get("CONDOR_CONFIG")
         try:
-            old_condor_config_env = os.environ.get("CONDOR_CONFIG")
             if condor_config and os.path.exists(condor_config):
                 os.environ["CONDOR_CONFIG"] = condor_config
             htcondor.reload_config()
@@ -160,8 +160,8 @@ class CondorStatus(CondorQuery):
         attrs = bindings_friendly_attrs(format_list)
         adtype = resource_str_to_py_adtype(self.resource_str)
 
+        old_condor_config_env = os.environ.get("CONDOR_CONFIG")
         try:
-            old_condor_config_env = os.environ.get("CONDOR_CONFIG")
             if condor_config and os.path.exists(condor_config):
                 os.environ["CONDOR_CONFIG"] = condor_config
             htcondor.reload_config()
