@@ -40,10 +40,10 @@ class FactoryEntries(Source.Source):
         self.condor_config = config.get("condor_config")
         self.factories = config.get("factories", [])
         self._entry_gridtype_map = {
-            "Factory_Entries_Grid": ("gt2", "condor"),
-            "Factory_Entries_AWS": ("ec2",),
-            "Factory_Entries_GCE": ("gce",),
-            "Factory_Entries_LCF": ("batch slurm",),
+            "Grid": ["gt2", "condor"],
+            "AWS": ["ec2"],
+            "GCE": ["gce"],
+            "LCF": ["batch slurm"],
         }
 
         # The combination of max_retries=10 and retry_interval=2 adds up to just
@@ -92,12 +92,12 @@ class FactoryEntries(Source.Source):
 
                 df = pandas.DataFrame(condor_status.stored_data)
                 if not df.empty:
-                    (col_host, sec_cols) = htcondor_query.split_collector_host(collector_host)
-                    df["CollectorHost"] = [col_host] * len(df)
+                    col_host, sec_cols = htcondor_query.split_collector_host(collector_host)
+                    df["CollectorHost"] = col_host
                     if sec_cols != "":
-                        df["CollectorHosts"] = [f"{col_host},{sec_cols}"] * len(df)
+                        df["CollectorHosts"] = f"{col_host},{sec_cols}"
                     else:
-                        df["CollectorHosts"] = [col_host] * len(df)
+                        df["CollectorHosts"] = col_host
 
                     dataframe = pandas.concat([dataframe, df], ignore_index=True, sort=True)
             except htcondor_query.QueryError:
@@ -110,11 +110,11 @@ class FactoryEntries(Source.Source):
         if dataframe.empty:
             # There were no entry classads in the factory collector or
             # quering the collector failed
-            return dict.fromkeys(self._entry_gridtype_map, pandas.DataFrame())
+            return {f"Factory_Entries_{key}": pandas.DataFrame() for key in self._entry_gridtype_map.keys()}
 
         results = {}
         for key, value in self._entry_gridtype_map.items():
-            results[key] = dataframe.loc[(dataframe.GLIDEIN_GridType.isin(list(value)))]
+            results[f"Factory_Entries_{key}"] = dataframe.loc[dataframe.GLIDEIN_GridType.isin(value)]
         return results
 
 
