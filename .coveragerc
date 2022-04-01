@@ -3,14 +3,14 @@
 source = src
 
 [run]
-#concurrency = multiprocessing
-branch = true
 parallel = true
-source = decisionengine_modules
+branch = true
+source = src
 omit = */tests/*
 
-
 [report]
+skip_empty = True
+
 # Regexes for lines to exclude from consideration
 exclude_lines =
     # Have to re-enable the standard pragma
