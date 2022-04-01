@@ -143,17 +143,18 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
         pass
 
     def publish_to_htcondor(self, key, dataframe):
+        if dataframe.empty:
+            self.logger.info(f"No {key} classads found to advertise")
+            return
+
         try:
             # TODO: How can we do this pandas way rather than interative?
-            if not dataframe.empty:
-                # Iterate over sub dataframes with same CollectorHost value
-                for collector in pandas.unique(dataframe.CollectorHost.ravel()):
-                    # Convert dataframe -> dict -> classads
-                    ads = dataframe_to_classads(dataframe[(dataframe["CollectorHost"] == collector)])
-                    # Advertise the classad to given collector
-                    self.condor_advertise(ads, collector_host=collector)
-            else:
-                self.logger.info(f"No {key} classads found to advertise")
+            # Iterate over sub dataframes with same CollectorHost value
+            for collector in pandas.unique(dataframe.CollectorHost.ravel()):
+                # Convert dataframe -> dict -> classads
+                ads = dataframe_to_classads(dataframe[(dataframe["CollectorHost"] == collector)])
+                # Advertise the classad to given collector
+                self.condor_advertise(ads, collector_host=collector)
         except Exception:
             self.logger.exception("Failed to publish")
 
