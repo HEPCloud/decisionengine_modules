@@ -7,7 +7,7 @@ default_language_version:
   python: python3
 repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: v4.1.0
+    rev: v4.2.0
     hooks:
       - id: check-ast
       - id: check-docstring-first
@@ -31,11 +31,11 @@ repos:
     hooks:
       - id: isort
   - repo: "https://github.com/psf/black"
-    rev: 22.1.0
+    rev: 22.3.0
     hooks:
       - id: black
   - repo: "https://github.com/pre-commit/mirrors-prettier"
-    rev: v2.5.1
+    rev: v2.6.2
     hooks:
       - id: prettier
         exclude_types:
@@ -45,6 +45,7 @@ repos:
           - "prettier-plugin-toml@0.3.1"
   - repo: "https://github.com/asottile/pyupgrade"
     rev: v2.31.0
+    # v2.32.0 requires python >= 3.7
     hooks:
       - id: pyupgrade
         args:
