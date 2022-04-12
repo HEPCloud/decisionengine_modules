@@ -3,12 +3,17 @@
 
 import copy
 import math
+import os
+import shutil
+import socket
 import sys
+import tempfile
+import time
 
 import pandas
 
 from glideinwms.frontend import glideinFrontendConfig, glideinFrontendInterface, glideinFrontendPlugins
-from glideinwms.lib import pubCrypto
+from glideinwms.lib import pubCrypto, token_util
 
 from decisionengine_modules.glideinwms import classads
 from decisionengine_modules.glideinwms.security import Credential, CredentialCache
@@ -340,6 +345,8 @@ class GlideFrontendElement:
             # TODO: These two come from glidefactory classad rows how to get it?
             trust_domain = entry_info.get("GLIDEIN_TrustDomain", ["Grid"]).tolist()[0]
             auth_method = entry_info.get("GLIDEIN_SupportedAuthenticationMethod", ["grid_proxy"]).tolist()[0]
+            glidein_site = entry_info.get("GLIDEIN_Site", ["Unknown"]).tolist()[0]
+            entry_name = entry_info.get("EntryName", ["Unknown"]).tolist()[0]
 
             # Only advertize if there is a valid key for encryption
             if key_obj is not None:
@@ -359,6 +366,8 @@ class GlideFrontendElement:
                     remove_excess_str=None,
                     trust_domain=trust_domain,
                     auth_method=auth_method,
+                    glidein_site=glidein_site,
+                    entry_name=entry_name,
                 )
                 self.gc_classads.extend(gc_classad)
             else:
@@ -415,6 +424,8 @@ class GlideFrontendElement:
         remove_excess_str=None,
         trust_domain="Any",
         auth_method="Any",
+        entry_name="condor",
+        glidein_site="Unknown",
     ):
 
         if glidein_params is None:
@@ -538,6 +549,8 @@ class GlideFrontendElement:
                 glidein_params_to_encrypt["Password"] = self.file_id_cache.file_id(cred, cred.key_fname)
             if "grid_proxy" in cred.type:
                 glidein_params_to_encrypt["SubmitProxy"] = self.file_id_cache.file_id(cred, cred.filename)
+            if "scitoken" in cred.type:
+                glidein_params_to_encrypt["frontend_scitoken"] = cred.loaded_data[0][1]
             if "cert_pair" in cred.type:
                 glidein_params_to_encrypt["PublicCert"] = self.file_id_cache.file_id(cred, cred.filename)
                 glidein_params_to_encrypt["PrivateCert"] = self.file_id_cache.file_id(cred, cred.key_fname)
@@ -558,6 +571,14 @@ class GlideFrontendElement:
             # Add id for the pilot proxy
             if cred.pilot_fname:
                 glidein_params_to_encrypt["GlideinProxy"] = self.file_id_cache.file_id(cred, cred.pilot_fname)
+
+            # Add condor token
+            ctkn = self.refresh_entry_token(glidein_site)
+            if ctkn:
+                # mark token for encrypted advertisement
+                entry_token_name = "%s.idtoken" % entry_name
+                self.logger.debug("found condor token: %s" % entry_token_name)
+                glidein_params_to_encrypt[entry_token_name] = ctkn
 
             # Add classad attributes that need to be encrypted
             for attr in glidein_params_to_encrypt:
@@ -1219,6 +1240,72 @@ class GlideFrontendElement:
             key_objs.append(key_obj)
         return key_objs
 
+    def refresh_entry_token(self, glidein_site, work_dir="/var/lib/gwms-frontend"):
+        """
+        create or update a condor token for an entry point
+        params:  glidein_el: a glidein element data structure
+        returns:  jwt encoded condor token on success
+                  None on failure
+        """
+        tkn_file = ""
+        tkn_str = ""
+        tmpnm = ""
+
+        try:
+            tkn_dir = os.path.join(work_dir, "tokens.d")
+            pwd_dir = os.path.join(work_dir, "passwords.d")
+            req_dir = os.path.join(work_dir, "passwords.d/requests")
+            tkn_file = tkn_dir + "/" + glidein_site + ".idtoken"
+            pwd_file = pwd_dir + "/" + glidein_site
+            pwd_default = pwd_dir + "/" + "FRONTEND"
+            one_hr = 3600
+            tkn_age = sys.maxsize
+
+            if not os.path.exists(tkn_dir):
+                os.mkdir(tkn_dir, 0o700)
+            if not os.path.exists(pwd_dir):
+                os.mkdir(pwd_dir, 0o700)
+            if not os.path.exists(req_dir):
+                os.mkdir(req_dir, 0o700)
+
+            if not os.path.exists(pwd_file):
+                if os.path.exists(pwd_default):
+                    pwd_file = pwd_default
+
+            if os.path.exists(tkn_file):
+                tkn_age = time.time() - os.stat(tkn_file).st_mtime
+            if tkn_age > one_hr and os.path.exists(pwd_file):
+                # TODO: scope, duration, identity  should be configurable
+                (fd, tmpnm) = tempfile.mkstemp()
+                scope = "condor:/READ condor:/ADVERTISE_STARTD condor:/ADVERTISE_MASTER"
+                duration = 24 * one_hr
+                identity = f"{glidein_site}@{socket.gethostname()}"
+                self.logger.debug("creating  token %s" % tkn_file)
+                self.logger.debug("pwd_flie= %s" % pwd_file)
+                self.logger.debug("scope= %s" % scope)
+                self.logger.debug("duration= %s" % duration)
+                self.logger.debug("identity= %s" % identity)
+                tkn_str = token_util.create_and_sign_token(pwd_file, scope=scope, duration=duration, identity=identity)
+                self.logger.debug("tkn_str= %s" % tkn_str)
+                os.write(fd, tkn_str)
+                os.close(fd)
+                shutil.move(tmpnm, tkn_file)
+                os.chmod(tkn_file, 0o600)
+                self.logger.debug("created token %s" % tkn_file)
+            elif os.path.exists(tkn_file):
+                with open(tkn_file) as fbuf:
+                    for line in fbuf:
+                        tkn_str += line
+        except Exception as err:
+            self.logger.warning(f"failed to create {tkn_file}: {err}")
+            for i in sys.exc_info():
+                self.logger.warning("%s" % i)
+        finally:
+            if os.path.exists(tmpnm):
+                os.remove(tmpnm)
+
+        return tkn_str
+
 
 ###############################################################################
 # GlideFrontendElement class using Figure of Merit
@@ -1607,6 +1694,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             # TODO: These two come from glidefactory classad rows how to get it?
             trust_domain = entry_info.get("GLIDEIN_TrustDomain", ["Grid"]).tolist()[0]
             auth_method = entry_info.get("GLIDEIN_SupportedAuthenticationMethod", ["grid_proxy"]).tolist()[0]
+            glidein_site = entry_info.get("GLIDEIN_Site", ["Unknown"]).tolist()[0]
+            entry_name = entry_info.get("EntryName", ["Unknown"]).tolist()[0]
 
             # Only advertize if there is a valid key for encryption
             if key_obj is not None:
@@ -1626,6 +1715,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     remove_excess_str=None,
                     trust_domain=trust_domain,
                     auth_method=auth_method,
+                    glidein_site=glidein_site,
+                    entry_name=entry_name,
                 )
                 self.gc_classads.extend(gc_classad)
             else:
