@@ -49,6 +49,33 @@ Issues fixed in this release
 Full list of commits since version 1.7.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`53b2fe4 <https://github.com/HEPCloud/decisionengine_modules/commit/53b2fe47660af403b6708b23029b71b52c9b98dc>`_:   The rpm-build workflow has been updated to include the workflow_dispatch action me
+chanism. This allows to trigger this action through a GitHub API or directly through the action dashboard, This PR also customize the RPM artifact file name.
+
+`cd52b39 <https://github.com/HEPCloud/decisionengine_modules/commit/cd52b394b6fb3b837508934ef2fd6c7301d3037e>`_:   Catch exceptions when no VMs running in GCE
+
+`9044b64 <https://github.com/HEPCloud/decisionengine_modules/commit/9044b64d3dc813e9eabc36d04c125392f2efecb9>`_:   Add token authentication to the glideinwms module
+
+`97ca32a <https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a>`_:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires pytohn 3.7
+
+`95a7d7b <https://github.com/HEPCloud/decisionengine_modules/commit/95a7d7b8835776da4ed16a3a6268da96cabe74e6>`_:   Test the arguments used to call publish_to_htcondor.
+
+`27f0f4b <https://github.com/HEPCloud/decisionengine_modules/commit/27f0f4b2be069f2e9d5f2449e123e131f21b0c29>`_:   Adjust code-coverage configuration to display code in browser.
+
+`3addf20 <https://github.com/HEPCloud/decisionengine_modules/commit/3addf20c66d21c6d2868fd49b335dbbe82b36ad3>`_:   Make sure variables are defined before they're used.
+
+`75381df <https://github.com/HEPCloud/decisionengine_modules/commit/75381df5cd121774ce4685566ff9c6a7642daa73>`_:   Improve fe_group_classads test.
+
+`ed2a8b4 <https://github.com/HEPCloud/decisionengine_modules/commit/ed2a8b425817ffe10325929b993c4c264899494f>`_:   Check DecisionEngineMonitorManifests for empty DFs
+
+`e7a247b <https://github.com/HEPCloud/decisionengine_modules/commit/e7a247bde306e69b71ecb05c9ae528a01fc36373>`_:   Fix GlideClientGlobal create_invalidate_constraint
+
+`f0819b1 <https://github.com/HEPCloud/decisionengine_modules/commit/f0819b1e06f493a15a473f35f0802cb35313e753>`_:   pin pytest version
+
+`ad59fed <https://github.com/HEPCloud/decisionengine_modules/commit/ad59fede98fa4be07cae4cc17ac5741191a35afa>`_:   [pre-commit.ci] pre-commit autoupdate
+
+`0fc20e5 <https://github.com/HEPCloud/decisionengine_modules/commit/0fc20e56cc888db020bb78b9bb98dc6acd00771d>`_:   Added unlinked release notes for DEM 2.0.0
+
 `123dd2b <https://github.com/HEPCloud/decisionengine_modules/commit/123dd2bea1367ffb3de76456b4a383eed273c75e>`_:   Drop extra lines
 
 `0177318 <https://github.com/HEPCloud/decisionengine_modules/commit/0177318fb72f9d66d0f3bd7d3fcda6f044be4608>`_:   Rename product so that translation is not necessary.
