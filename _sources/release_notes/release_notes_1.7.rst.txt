@@ -1,6 +1,19 @@
 .. SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 .. SPDX-License-Identifier: Apache-2.0
 
+Release 1.7.2
+-------------
+
+This release features:
+
+- Add token authentication to the glideinwms module.
+
+Full list of commits since version 1.7.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`82119a2 <https://github.com/HEPCloud/decisionengine_modules/commit/82119a2396667e05465b335ba5c323d493774464>`_:   Add token authentication to the glideinwms module
+
+
 Release 1.7.1
 -------------
 
@@ -10,7 +23,7 @@ Patch level (bug fix) release.
 Issues fixed in this release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`369 <https://github.com/HEPCloud/decisionengine_modules/issues/369>`_ : Add retries to all publishers that contact Graphite (`e1c28e7 <https://github.com/HEPCloud/decisionengine_modules/commit/e1c28e70e7cf397c03feccfb47effff018006663>`_)
+- `369 <https://github.com/HEPCloud/decisionengine_modules/issues/369>`_ : Add retries to all publishers that contact Graphite (`e1c28e7 <https://github.com/HEPCloud/decisionengine_modules/commit/e1c28e70e7cf397c03feccfb47effff018006663>`_)
 
 
 Full list of commits since version 1.7.0
