@@ -5,8 +5,8 @@ Welcome to decisionengine_modules' documentation!
 ==========================================
 
 The decisionengine_modules package contains provider specific
-implementations of base classes provided by the decision engine
-framework.
+implementations of base classes provided by the
+`decision engine framework </decisionengine/>`_.
 
 
 Release Notes
