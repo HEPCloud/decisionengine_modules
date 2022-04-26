@@ -49,6 +49,12 @@ Issues fixed in this release
 Full list of commits since version 1.7.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`d605ab0 <https://github.com/HEPCloud/decisionengine_modules/commit/d605ab0aa3833cec5b31a97bacadda83a520f5a8>`_:   Added changelog file for developers curated list of changes
+
+`cc0b18a <https://github.com/HEPCloud/decisionengine_modules/commit/cc0b18a0eb10dd06ea9c18b2347109a902413951>`_:   Adding 1.7.2 release information
+
+`eb40d1e <https://github.com/HEPCloud/decisionengine_modules/commit/eb40d1ef5e24c409e80ee6c3404b7f540266ef92>`_:   Updated release notes, ready for 2.0.0 RC4
+
 `53b2fe4 <https://github.com/HEPCloud/decisionengine_modules/commit/53b2fe47660af403b6708b23029b71b52c9b98dc>`_:   The rpm-build workflow has been updated to include the workflow_dispatch action me
 chanism. This allows to trigger this action through a GitHub API or directly through the action dashboard, This PR also customize the RPM artifact file name.
 
