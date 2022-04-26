@@ -29,7 +29,7 @@ copyright = f"{time.localtime().tm_year}, Fermi Research Alliance, LLC."
 author = "Fermi Research Alliance, LLC."
 
 # The full version, including alpha/beta/rc tags
-release = "1.7.0"
+release = "2.0.0"
 
 
 # -- General configuration ---------------------------------------------------
