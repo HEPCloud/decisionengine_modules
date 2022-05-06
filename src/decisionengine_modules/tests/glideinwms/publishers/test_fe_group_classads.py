@@ -5,7 +5,6 @@ import copy
 
 from unittest import mock
 
-import numpy as np
 import pandas as pd
 
 from decisionengine_modules.glideinwms.publishers import fe_group_classads
@@ -14,12 +13,18 @@ _CONFIG = {
     "channel_name": "test",
     "condor_config": "condor_config",
     "collector_host": "fermicloud122.fnal.gov",
+    "queries": {
+        "Grid": "@requests.ClientName != 'e1' and @entries.Other % 2 != 0",
+        "AWS": "@requests.CollectorHost == 'col2.com'",
+        "GCE": "@requests.CollectorHost == 'col3.com'",
+    },
 }
 
 _REQUEST_DICT = {
     "CollectorHost": ["col1.com", "col1.com", "col1.com", "col2.com", "col2.com", "col3.com"],
     "ClientName": ["e1", "e2", "e3", "e1", "e2", "e3"],
     "ReqName": ["u", "v", "w", "x", "y", "z"],
+    "ReqIdleGlideins": 1,
 }
 
 _REQUEST_DF = pd.DataFrame(_REQUEST_DICT)
@@ -44,10 +49,10 @@ def test_publish():
         p = fe_group_classads.GlideinWMSManifests(_CONFIG)
         datablock = {
             "glideclient_manifests": _REQUEST_DF,
-            "Factory_Entries_Grid": pd.DataFrame({"Name": ["u", "v", "w"]}),
-            "Factory_Entries_AWS": pd.DataFrame({"Name": ["x"]}),
-            "Factory_Entries_GCE": pd.DataFrame({"Name": ["y", "z"]}),
-            "Factory_Entries_LCF": pd.DataFrame({"Name": []}),
+            "Factory_Entries_Grid": pd.DataFrame({"Name": ["u", "v", "w"], "Other": [1, 2, 3]}),
+            "Factory_Entries_AWS": pd.DataFrame({"Name": ["x"], "Other": 5}),
+            "Factory_Entries_GCE": pd.DataFrame({"Name": ["y", "z"], "Other": 7}),
+            "Factory_Entries_LCF": pd.DataFrame({"Name": [], "Other": 9}),
             "de_logicengine_facts": pd.DataFrame(
                 {
                     "fact_name": [
@@ -63,7 +68,7 @@ def test_publish():
         p.publish(datablock)
 
         expected_dict = copy.deepcopy(_REQUEST_DICT)
-        expected_dict["ReqIdleGlideins"] = [np.nan, np.nan, np.nan, 0.0, np.nan, np.nan]
+        expected_dict["ReqIdleGlideins"] = [0, 0, 1, 0, 0, 1]
         actual_classad_type, actual_df = publish_to_condor.call_args[0]
         expected_df = pd.DataFrame(expected_dict).reindex_like(actual_df)
         assert actual_classad_type == "glideclient"
