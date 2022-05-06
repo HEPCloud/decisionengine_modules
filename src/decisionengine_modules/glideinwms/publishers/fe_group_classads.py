@@ -9,10 +9,15 @@ from decisionengine_modules.htcondor.publishers import publisher
 # FIXME: Awkward entanglements between subclass and base class.
 
 
+def split_dataframe(df, at):
+    return df.iloc[:, 0:at], df.iloc[:, at:]
+
+
 class GlideinWMSManifests(publisher.HTCondorManifests):
     def __init__(self, config):
         super().__init__(config)
         self.allow_types = ["Grid", "AWS", "GCE", "LCF"]
+        self.queries = config.get("queries", {})
         self._consumes = {f"Factory_Entries_{key}": pandas.DataFrame for key in self.allow_types}
         self._consumes.update(glideclient_manifests=pandas.DataFrame)
         self.classad_type = "glideclient"
@@ -50,17 +55,23 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
 
         data_product_name = f"Factory_Entries_{allow_type}"
         fact_name = f"allow_{allow_type.lower()}_requests"
-        entries = datablock.get(data_product_name)
-        # Find the overlap between requests_df and the entries df, using a join-type method.
-        df = requests_df.merge(entries.Name, left_on="ReqName", right_on="Name").drop(columns=["Name"])
+        entries_df = datablock.get(data_product_name)
+
+        joint_df = requests_df.merge(entries_df, left_on="ReqName", right_on="Name")
+        requests, entries = split_dataframe(joint_df, at=len(requests_df.columns))
         not_allowed = facts_df.query(f"fact_name == '{fact_name}' and fact_value == True").empty
         if not_allowed:
             # Convert request idle to 0
             # TODO: Check what to do with max running
             #       For now keep it same so existing glideins can finish
             self.logger.info(f"Setting ReqIdleGlideins=0 for fact: {allow_type}")
-            df["ReqIdleGlideins"] = 0
-        return df
+            requests.ReqIdleGlideins = 0
+            return requests
+
+        query = self.queries.get(allow_type, "")
+        if query:
+            requests.ReqIdleGlideins.where(joint_df.eval(query), other=0, inplace=True)
+        return requests
 
 
 Publisher.describe(GlideinWMSManifests)
