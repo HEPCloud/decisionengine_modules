@@ -7,7 +7,6 @@ import time
 
 from unittest import mock
 
-import pandas
 import pandas as pd
 
 from decisionengine_modules.glideinwms.sources import factory_entries
@@ -64,10 +63,7 @@ CONFIG_FACTORY_ENTRIES_CORMAP = {
 
 def test_produces():
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-    produces = dict.fromkeys(
-        ["Factory_Entries_Grid", "Factory_Entries_AWS", "Factory_Entries_GCE", "Factory_Entries_LCF"],
-        pandas.DataFrame,
-    )
+    produces = {f"Factory_Entries_{entrytype}": pd.DataFrame for entrytype in ["Grid", "AWS", "GCE", "LCF"]}
     assert entries._produces == produces
 
 
@@ -87,7 +83,7 @@ def test_acquire_bad():
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD)
     result = entries.acquire()
     for df in result.values():
-        assert df.dropna().empty is True
+        assert df.dropna().empty
 
 
 def test_acquire_bad_with_timeout():
@@ -98,14 +94,12 @@ def test_acquire_bad_with_timeout():
     # Set by tuning max_retries and the retry_interval
     assert end - start > 5
     for df in result.values():
-        assert df.dropna().empty is True
+        assert df.dropna().empty
 
 
 def test_acquire_correctionmap():
-    d1 = {"GLIDEIN_Resource_Slots": ["DummySlots", "DummySlots"]}
-    d2 = {"GLIDEIN_CMSSite": ["DummySite", "DummySite"]}
-    df1 = pd.DataFrame(data=d1)
-    df2 = pd.DataFrame(data=d2)
+    df1 = pd.DataFrame(data={"GLIDEIN_Resource_Slots": ["DummySlots", "DummySlots"]})
+    df2 = pd.DataFrame(data={"GLIDEIN_CMSSite": ["DummySite", "DummySite"]})
 
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP)
     with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
