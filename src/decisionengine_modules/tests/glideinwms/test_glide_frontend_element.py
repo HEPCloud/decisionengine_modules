@@ -12,6 +12,8 @@ import structlog
 
 from glideinwms.lib import token_util
 
+from decisionengine_modules.glideinwms import glide_frontend_element
+
 # Test for the presence of modules used in glide_frontend_element
 # Not testing all imports of glide_frontend_element which are
 # from glideinwms.frontend import glideinFrontendConfig
@@ -21,32 +23,17 @@ from glideinwms.lib import token_util
 # Using a simple one, assuming that is glideinwms is in the PYTHONPATH,
 # all modules are
 
-gwms_modules_available = True
-try:
-    from glideinwms.lib import glideinWMSVersion
-except ImportError:
-    glideinWMSVersion = None
-    gwms_modules_available = False
+glideinWMSVersion = pytest.importorskip("glideinwms.lib.glideinWMSVersion")
 
 gwms_modules_python3 = False
-if gwms_modules_available and glideinWMSVersion is not None:
-    with contextlib.suppress(Exception):
-        # Assuming no Python 3 glideinwms if something goes wrong
-        with open(glideinWMSVersion.__file__) as fd:
-            line = fd.readline()
-            gwms_modules_python3 = "python3" in line
+with contextlib.suppress(Exception):
+    # Assuming no Python 3 glideinwms if something goes wrong
+    with open(glideinWMSVersion.__file__) as fd:
+        line = fd.readline()
+        gwms_modules_python3 = "python3" in line
 
-if gwms_modules_available and gwms_modules_python3:
-    from decisionengine_modules.glideinwms import glide_frontend_element
-
-
-def test_glideinwms_import():
-    assert gwms_modules_available, "glideinwms package is required"
-
-
-@pytest.mark.skipif(not gwms_modules_available, reason="Python version of glideinwms cannot be tested w/o glideinwms")
-def test_glideinwms_python3():
-    assert gwms_modules_python3, "a Python3 version of glideinwms is required"
+if not gwms_modules_python3:
+    pytest.skip("A Python3 version of glideinwms is required", allow_module_level=True)
 
 
 FRONTEND_CFG = {
@@ -131,10 +118,6 @@ FRONTEND_CFG = {
 }
 
 
-@pytest.mark.skipif(
-    not gwms_modules_available or not gwms_modules_python3,
-    reason="glide_frontend_element cannot be tested w/o Python 3 glideinwms",
-)
 def test_compute_glidein_max_running():
     fe_cfg = FRONTEND_CFG
     gfe = glide_frontend_element.get_gfe_obj("CMS", "CMS", fe_cfg, "glideinwms")
@@ -146,10 +129,6 @@ def test_compute_glidein_max_running():
     assert gfe.compute_glidein_max_running({"Idle": 0}, 100, 100) == 100
 
 
-@pytest.mark.skipif(
-    not gwms_modules_available or not gwms_modules_python3,
-    reason="glide_frontend_element cannot be tested w/o Python 3 glideinwms",
-)
 def test_refresh_entry_token():
     with tempfile.TemporaryDirectory() as work_dir:
         os.mkdir(os.path.join(work_dir, "passwords.d"))
