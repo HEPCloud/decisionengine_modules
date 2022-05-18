@@ -52,17 +52,17 @@ expected_transform_output = {
 }
 
 
-class TestNerscFigureOfMerit:
-    def test_produces(self):
-        nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
-        assert nersc_figure_of_merit._produces == produces
+def test_produces():
+    nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
+    assert nersc_figure_of_merit._produces == produces
 
-    def test_transform(self):
-        nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
-        res = nersc_figure_of_merit.transform(data_block)
-        verify_products(nersc_figure_of_merit, res)
-        for key, value in res.items():
-            try:
-                assert expected_transform_output[key].equals(value)
-            except Exception:
-                print(key, " fail\n", expected_transform_output[key], "\n", value)
+
+def test_transform():
+    nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
+    res = nersc_figure_of_merit.transform(data_block)
+    verify_products(nersc_figure_of_merit, res)
+    for key, value in res.items():
+        try:
+            assert expected_transform_output[key].equals(value)
+        except Exception:
+            print(key, " fail\n", expected_transform_output[key], "\n", value)

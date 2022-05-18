@@ -21,13 +21,13 @@ expected_pandas_df = (
 produces = {"Job_Limits": pd.DataFrame}
 
 
-class TestAWSJobLimits:
-    def test_produces(self):
-        aws_job_limits = AWSJobLimits.AWSJobLimits(config)
-        assert aws_job_limits._produces == produces
+def test_produces():
+    aws_job_limits = AWSJobLimits.AWSJobLimits(config)
+    assert aws_job_limits._produces == produces
 
-    def test_acquire(self):
-        aws_job_limits = AWSJobLimits.AWSJobLimits(config)
-        res = aws_job_limits.acquire()
-        verify_products(aws_job_limits, res)
-        assert expected_pandas_df.equals(res.get("Job_Limits"))
+
+def test_acquire():
+    aws_job_limits = AWSJobLimits.AWSJobLimits(config)
+    res = aws_job_limits.acquire()
+    verify_products(aws_job_limits, res)
+    assert expected_pandas_df.equals(res.get("Job_Limits"))

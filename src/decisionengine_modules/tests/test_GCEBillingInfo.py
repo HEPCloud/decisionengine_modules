@@ -30,24 +30,24 @@ config_billing_info = {
 }
 
 
-class TestGCEBillingInfo:
-    def test_produces(self):
-        bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info)
-        assert bi_pub._produces == {"GCE_Billing_Info": pandas.DataFrame}
+def test_produces():
+    bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info)
+    assert bi_pub._produces == {"GCE_Billing_Info": pandas.DataFrame}
 
-    def test_unable_to_download_filelist(self):
-        constantsDict = {
-            "projectId": "hepcloud-fnal",
-            "credentialsProfileName": "BillingBlah",
-            "accountNumber": 1111,
-            "bucketBillingName": "billing-hepcloud-fnal",
-            "lastKnownBillDate": "10/01/18 00:00",
-            "balanceAtDate": 100.0,
-            "applyDiscount": True,
-        }
-        globalConf = {"graphite_host": "dummy", "graphite_context_billing": "dummy", "outputPath": "."}
 
-        calculator = GCEBillCalculator(None, globalConf, constantsDict, structlog.getLogger())
+def test_unable_to_download_filelist():
+    constantsDict = {
+        "projectId": "hepcloud-fnal",
+        "credentialsProfileName": "BillingBlah",
+        "accountNumber": 1111,
+        "bucketBillingName": "billing-hepcloud-fnal",
+        "lastKnownBillDate": "10/01/18 00:00",
+        "balanceAtDate": 100.0,
+        "applyDiscount": True,
+    }
+    globalConf = {"graphite_host": "dummy", "graphite_context_billing": "dummy", "outputPath": "."}
 
-        file_list = calculator._downloadBillFiles()
-        assert file_list == []
+    calculator = GCEBillCalculator(None, globalConf, constantsDict, structlog.getLogger())
+
+    file_list = calculator._downloadBillFiles()
+    assert file_list == []

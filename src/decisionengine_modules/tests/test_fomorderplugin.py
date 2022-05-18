@@ -20,47 +20,49 @@ grid_df = pandas.DataFrame({"EntryName": grid_entries, "Grid_Figure_Of_Merit": g
 resources = {"Grid_Figure_Of_Merit": grid_df, "AWS_Figure_Of_Merit": aws_df, "Nersc_Figure_Of_Merit": nersc_df}
 
 
-class TestFOMOrderPlugin:
-    def test_order_resources(self):
-        test_df = pandas.DataFrame(
-            {
-                "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2", "a4", "n1", "a5", "n2", "a3", "n3", "n4"],
-                "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10],
-            }
-        )
+def test_order_resources():
+    test_df = pandas.DataFrame(
+        {
+            "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2", "a4", "n1", "a5", "n2", "a3", "n3", "n4"],
+            "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10],
+        }
+    )
 
-        ordered_resources = resource_dist_plugins.order_resources(resources)
-        assert test_df.equals(ordered_resources)
+    ordered_resources = resource_dist_plugins.order_resources(resources)
+    assert test_df.equals(ordered_resources)
 
-    def test_eligible_resources(self):
-        test_df = pandas.DataFrame(
-            {
-                "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2", "a4", "n1", "a5", "n2", "a3", "n3", "n4"],
-                "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10],
-            }
-        )
 
-        eligible_resources = resource_dist_plugins.fom_eligible_resources(resources)
-        assert test_df.equals(eligible_resources)
+def test_eligible_resources():
+    test_df = pandas.DataFrame(
+        {
+            "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2", "a4", "n1", "a5", "n2", "a3", "n3", "n4"],
+            "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10, 0.10, 0.10, 0.15, 0.30, 1.00, 1.00, 2.10],
+        }
+    )
 
-    def test_eligible_resources_with_constraints(self):
-        test_df = pandas.DataFrame(
-            {
-                "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2", "a4", "n1", "a5", "n2"],
-                "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10, 0.10, 0.10, 0.15, 0.30],
-            }
-        )
-        fom_df = resource_dist_plugins.fom_eligible_resources(resources, constraint="FOM < 1").reset_index(drop=True)
-        assert test_df.equals(fom_df)
+    eligible_resources = resource_dist_plugins.fom_eligible_resources(resources)
+    assert test_df.equals(eligible_resources)
 
-    def test_eligible_resources_with_constraints_limit(self):
-        test_df = pandas.DataFrame(
-            {
-                "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2"],
-                "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10],
-            }
-        )
-        fom_df = resource_dist_plugins.fom_eligible_resources(resources, constraint="FOM < 1", limit=8).reset_index(
-            drop=True
-        )
-        assert test_df.equals(fom_df)
+
+def test_eligible_resources_with_constraints():
+    test_df = pandas.DataFrame(
+        {
+            "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2", "a4", "n1", "a5", "n2"],
+            "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10, 0.10, 0.10, 0.15, 0.30],
+        }
+    )
+    fom_df = resource_dist_plugins.fom_eligible_resources(resources, constraint="FOM < 1").reset_index(drop=True)
+    assert test_df.equals(fom_df)
+
+
+def test_eligible_resources_with_constraints_limit():
+    test_df = pandas.DataFrame(
+        {
+            "EntryName": ["g1", "g2", "g3", "g4", "g5", "a1", "n5", "a2"],
+            "FOM": [0.00, 0.00, 0.00, 0.00, 0.00, 0.01, 0.05, 0.10],
+        }
+    )
+    fom_df = resource_dist_plugins.fom_eligible_resources(resources, constraint="FOM < 1", limit=8).reset_index(
+        drop=True
+    )
+    assert test_df.equals(fom_df)

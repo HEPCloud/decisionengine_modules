@@ -150,43 +150,46 @@ missing_q_output_dataframe = pandas.DataFrame(
 # frontend is no longer used in the decision engine
 
 
-class TestJobClustering:
+# Test can create expected totals table based on known and valid input
+# Test can handle missing job q data: missing column or missing attr, for all jobs or single job
+# Test uses defaults if no dataframe retrieved
+# Validate log messages
 
-    # Test can create expected totals table based on known and valid input
-    # Test can handle missing job q data: missing column or missing attr, for all jobs or single job
-    # Test uses defaults if no dataframe retrieved
-    # Validate log messages
 
-    def test_produces(self):
-        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        assert job_clusters._produces == {"job_clusters": pandas.DataFrame}
+def test_produces():
+    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+    assert job_clusters._produces == {"job_clusters": pandas.DataFrame}
 
-    def test_consumes(self):
-        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        assert job_clusters._consumes == {"job_manifests": pandas.DataFrame}
 
-    def test_transform_valid(self):
-        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        output = job_clusters.transform(valid_q_datablock)
-        pprint.pprint(output)
-        db = output.get("job_clusters")
-        assert db["Totals"].sum() == 7
-        assert db.shape[0] == 5
+def test_consumes():
+    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+    assert job_clusters._consumes == {"job_manifests": pandas.DataFrame}
 
-    def test_transform_empty_q(self):
-        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        output = job_clusters.transform(empty_q_datablock)
-        pprint.pprint(output)
-        db = output.get("job_clusters")
-        assert db["Totals"].sum() == 0
-        assert db.shape[0] == 5
-        assert db.iloc[0, 0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
 
-    def test_transform_missing_q(self):
-        job_clusters = job_clustering.JobClustering(config_test_match_exprs)
-        output = job_clusters.transform(missing_q_datablock)
-        pprint.pprint(output)
-        db = output.get("job_clusters")
-        assert db["Totals"].sum() == 0
-        assert db.shape[0] == 5
-        assert db.iloc[0, 0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
+def test_transform_valid():
+    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+    output = job_clusters.transform(valid_q_datablock)
+    pprint.pprint(output)
+    db = output.get("job_clusters")
+    assert db["Totals"].sum() == 7
+    assert db.shape[0] == 5
+
+
+def test_transform_empty_q():
+    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+    output = job_clusters.transform(empty_q_datablock)
+    pprint.pprint(output)
+    db = output.get("job_clusters")
+    assert db["Totals"].sum() == 0
+    assert db.shape[0] == 5
+    assert db.iloc[0, 0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
+
+
+def test_transform_missing_q():
+    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+    output = job_clusters.transform(missing_q_datablock)
+    pprint.pprint(output)
+    db = output.get("job_clusters")
+    assert db["Totals"].sum() == 0
+    assert db.shape[0] == 5
+    assert db.iloc[0, 0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"

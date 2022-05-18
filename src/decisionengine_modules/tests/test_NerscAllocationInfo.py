@@ -52,20 +52,20 @@ EXPECTED_PANDAS_DFRAME = pandas.DataFrame(
 )
 
 
-class TestNerscAllocationInfo:
-    def test_produces(self):
-        nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
-        assert nersc_allocations._produces == _PRODUCES
+def test_produces():
+    nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
+    assert nersc_allocations._produces == _PRODUCES
 
-    def test_acquire(self):
-        def side_effect_get_usage(username):
-            if username == FAKE_USER:
-                return {"items": []}
-            return utils.input_from_file(ALLOCATIONS_FIXTURE_FILE)
 
-        nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
-        with mock.patch.object(newt.Newt, "get_usage") as f:
-            f.side_effect = side_effect_get_usage
-            res = nersc_allocations.acquire()
-            verify_products(nersc_allocations, res)
-            assert EXPECTED_PANDAS_DFRAME.equals(res["Nersc_Allocation_Info"])
+def test_acquire():
+    def side_effect_get_usage(username):
+        if username == FAKE_USER:
+            return {"items": []}
+        return utils.input_from_file(ALLOCATIONS_FIXTURE_FILE)
+
+    nersc_allocations = NerscAllocationInfo.NerscAllocationInfo(CONFIG)
+    with mock.patch.object(newt.Newt, "get_usage") as f:
+        f.side_effect = side_effect_get_usage
+        res = nersc_allocations.acquire()
+        verify_products(nersc_allocations, res)
+        assert EXPECTED_PANDAS_DFRAME.equals(res["Nersc_Allocation_Info"])

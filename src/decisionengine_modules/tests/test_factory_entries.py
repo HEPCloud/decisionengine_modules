@@ -62,51 +62,55 @@ CONFIG_FACTORY_ENTRIES_CORMAP = {
 }
 
 
-class TestFactoryEntries:
-    def test_produces(self):
-        entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-        produces = dict.fromkeys(
-            ["Factory_Entries_Grid", "Factory_Entries_AWS", "Factory_Entries_GCE", "Factory_Entries_LCF"],
-            pandas.DataFrame,
-        )
-        assert entries._produces == produces
+def test_produces():
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+    produces = dict.fromkeys(
+        ["Factory_Entries_Grid", "Factory_Entries_AWS", "Factory_Entries_GCE", "Factory_Entries_LCF"],
+        pandas.DataFrame,
+    )
+    assert entries._produces == produces
 
-    def test_acquire(self):
-        entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-        with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            pprint.pprint(entries.acquire())
 
-    def test_acquire_live(self):
-        entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+def test_acquire():
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
         pprint.pprint(entries.acquire())
 
-    def test_acquire_bad(self):
-        entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD)
-        result = entries.acquire()
-        for df in result.values():
-            assert df.dropna().empty is True
 
-    def test_acquire_bad_with_timeout(self):
-        entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT)
-        start = time.time()
-        result = entries.acquire()
-        end = time.time()
-        # Set by tuning max_retries and the retry_interval
-        assert end - start > 5
-        for df in result.values():
-            assert df.dropna().empty is True
+def test_acquire_live():
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+    pprint.pprint(entries.acquire())
 
-    def test_acquire_correctionmap(self):
-        d1 = {"GLIDEIN_Resource_Slots": ["DummySlots", "DummySlots"]}
-        d2 = {"GLIDEIN_CMSSite": ["DummySite", "DummySite"]}
-        df1 = pd.DataFrame(data=d1)
-        df2 = pd.DataFrame(data=d2)
 
-        entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP)
-        with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            dummypd = entries.acquire()
-            dummypd2 = dummypd["Factory_Entries_Grid"]
-            assert df1.equals(dummypd2[["GLIDEIN_Resource_Slots"]])
-            assert df2.equals(dummypd2[["GLIDEIN_CMSSite"]])
+def test_acquire_bad():
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD)
+    result = entries.acquire()
+    for df in result.values():
+        assert df.dropna().empty is True
+
+
+def test_acquire_bad_with_timeout():
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT)
+    start = time.time()
+    result = entries.acquire()
+    end = time.time()
+    # Set by tuning max_retries and the retry_interval
+    assert end - start > 5
+    for df in result.values():
+        assert df.dropna().empty is True
+
+
+def test_acquire_correctionmap():
+    d1 = {"GLIDEIN_Resource_Slots": ["DummySlots", "DummySlots"]}
+    d2 = {"GLIDEIN_CMSSite": ["DummySite", "DummySite"]}
+    df1 = pd.DataFrame(data=d1)
+    df2 = pd.DataFrame(data=d2)
+
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
+        dummypd = entries.acquire()
+        dummypd2 = dummypd["Factory_Entries_Grid"]
+        assert df1.equals(dummypd2[["GLIDEIN_Resource_Slots"]])
+        assert df2.equals(dummypd2[["GLIDEIN_CMSSite"]])

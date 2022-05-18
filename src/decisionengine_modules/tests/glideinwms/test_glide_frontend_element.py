@@ -36,6 +36,9 @@ if gwms_modules_available and glideinWMSVersion is not None:
             line = fd.readline()
             gwms_modules_python3 = "python3" in line
 
+if gwms_modules_available and gwms_modules_python3:
+    from decisionengine_modules.glideinwms import glide_frontend_element
+
 
 def test_glideinwms_import():
     assert gwms_modules_available, "glideinwms package is required"
@@ -132,49 +135,35 @@ FRONTEND_CFG = {
     not gwms_modules_available or not gwms_modules_python3,
     reason="glide_frontend_element cannot be tested w/o Python 3 glideinwms",
 )
-class TestGlideFrontendElement:
-    if gwms_modules_available and gwms_modules_python3:
-        from decisionengine_modules.glideinwms import glide_frontend_element
+def test_compute_glidein_max_running():
+    fe_cfg = FRONTEND_CFG
+    gfe = glide_frontend_element.get_gfe_obj("CMS", "CMS", fe_cfg, "glideinwms")
+    gfe.entry_fraction_glidein_running = 1.15
+    assert gfe.compute_glidein_max_running({"Idle": 412}, 971, 0) == 1591
+    assert gfe.compute_glidein_max_running({"Idle": 100}, 100, 0) == 230
+    assert gfe.compute_glidein_max_running({"Idle": 100}, 0, 0) == 115
+    assert gfe.compute_glidein_max_running({"Idle": 0}, 0, 0) == 0
+    assert gfe.compute_glidein_max_running({"Idle": 0}, 100, 100) == 100
 
-    @staticmethod
-    def read_fe_config(fpath):
-        # to read the configuration in form a fixture file
-        if not os.path.isfile(fpath):
-            raise RuntimeError(
-                f"Error reading Frontend config for DE {fpath}. "
-                "Run configure_gwms_frontend.py to generate one and after every change to the frontend configuration."
+
+@pytest.mark.skipif(
+    not gwms_modules_available or not gwms_modules_python3,
+    reason="glide_frontend_element cannot be tested w/o Python 3 glideinwms",
+)
+def test_refresh_entry_token():
+    with tempfile.TemporaryDirectory() as work_dir:
+        os.mkdir(os.path.join(work_dir, "passwords.d"))
+        with open(os.path.join(work_dir, "passwords.d", "FRONTEND"), "wb") as fd:
+            fd.write(token_util.derive_master_key(b"TEST"))
+
+        create_and_sign_token = token_util.create_and_sign_token
+        with mock.patch.object(token_util, "create_and_sign_token") as create_token:
+            create_token.side_effect = lambda *args, **kwargs: create_and_sign_token(
+                *args, **kwargs, issuer="fermicloud000.fnal.gov:0000"
             )
-        with open(fpath) as _fd:
-            fe_cfg = eval(_fd.read())
-        if not isinstance(fe_cfg, dict):
-            raise ValueError(f"Frontend config for DE in {fpath} is invalid")
-        return fe_cfg
 
-    def test_compute_glidein_max_running(self):
-        # fe_cfg = self.read_fe_config("de_frontend_config")
-        fe_cfg = FRONTEND_CFG
-        gfe = self.glide_frontend_element.get_gfe_obj("CMS", "CMS", fe_cfg, "glideinwms")
-        gfe.entry_fraction_glidein_running = 1.15
-        assert gfe.compute_glidein_max_running({"Idle": 412}, 971, 0) == 1591
-        assert gfe.compute_glidein_max_running({"Idle": 100}, 100, 0) == 230
-        assert gfe.compute_glidein_max_running({"Idle": 100}, 0, 0) == 115
-        assert gfe.compute_glidein_max_running({"Idle": 0}, 0, 0) == 0
-        assert gfe.compute_glidein_max_running({"Idle": 0}, 100, 100) == 100
+            gfe = glide_frontend_element.get_gfe_obj("CMS", "CMS", FRONTEND_CFG, structlog.getLogger("test"))
+            token = gfe.refresh_entry_token("test_entry", work_dir)
 
-    def test_refresh_entry_token(self):
-        with tempfile.TemporaryDirectory() as work_dir:
-            os.mkdir(os.path.join(work_dir, "passwords.d"))
-            with open(os.path.join(work_dir, "passwords.d", "FRONTEND"), "wb") as fd:
-                fd.write(token_util.derive_master_key(b"TEST"))
-
-            create_and_sign_token = token_util.create_and_sign_token
-            with mock.patch.object(token_util, "create_and_sign_token") as create_token:
-                create_token.side_effect = lambda *args, **kwargs: create_and_sign_token(
-                    *args, **kwargs, issuer="fermicloud000.fnal.gov:0000"
-                )
-
-                gfe = self.glide_frontend_element.get_gfe_obj("CMS", "CMS", FRONTEND_CFG, structlog.getLogger("test"))
-                token = gfe.refresh_entry_token("test_entry", work_dir)
-
-                assert token
-                assert not token_util.token_str_expired(token)
+            assert token
+            assert not token_util.token_str_expired(token)

@@ -28,22 +28,24 @@ CONFIG_BAD = {
 }
 
 
-class TestFactoryClientManifests:
-    def test_produces(self):
-        fc = factory_client.FactoryClientManifests(CONFIG)
-        assert fc._produces == {"factoryclient_manifests": pandas.DataFrame}
+def test_produces():
+    fc = factory_client.FactoryClientManifests(CONFIG)
+    assert fc._produces == {"factoryclient_manifests": pandas.DataFrame}
 
-    def test_acquire(self):
-        fc = factory_client.FactoryClientManifests(CONFIG)
-        with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            pprint.pprint(fc.acquire())
 
-    def test_acquire_live(self):
-        fc = factory_client.FactoryClientManifests(CONFIG)
+def test_acquire():
+    fc = factory_client.FactoryClientManifests(CONFIG)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
         pprint.pprint(fc.acquire())
 
-    def test_acquire_bad(self):
-        fc = factory_client.FactoryClientManifests(CONFIG_BAD)
-        fc_df = fc.acquire()
-        assert len(fc_df["factoryclient_manifests"]) == 0
+
+def test_acquire_live():
+    fc = factory_client.FactoryClientManifests(CONFIG)
+    pprint.pprint(fc.acquire())
+
+
+def test_acquire_bad():
+    fc = factory_client.FactoryClientManifests(CONFIG_BAD)
+    fc_df = fc.acquire()
+    assert len(fc_df["factoryclient_manifests"]) == 0

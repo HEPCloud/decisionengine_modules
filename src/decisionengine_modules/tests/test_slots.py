@@ -22,13 +22,13 @@ CONFIG = {
 }
 
 
-class TestStartdManifests:
-    def test_produces(self):
-        s = slots.StartdManifests(CONFIG)
-        assert s._produces == {"startd_manifests": pandas.DataFrame}
+def test_produces():
+    s = slots.StartdManifests(CONFIG)
+    assert s._produces == {"startd_manifests": pandas.DataFrame}
 
-    def test_acquire(self):
-        s = slots.StartdManifests(CONFIG)
-        with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            pprint.pprint(s.acquire())
+
+def test_acquire():
+    s = slots.StartdManifests(CONFIG)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
+        pprint.pprint(s.acquire())

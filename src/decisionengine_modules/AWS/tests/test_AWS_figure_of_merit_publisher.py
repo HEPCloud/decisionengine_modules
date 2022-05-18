@@ -3,9 +3,9 @@
 
 import contextlib
 import os
-import unittest
 
 import pandas as pd
+import pytest
 
 import decisionengine_modules.AWS.publishers.AWS_figure_of_merit as AWSFOMPublisher
 
@@ -35,34 +35,35 @@ def create_datablock():
     return data_block
 
 
-class TestAWSFOMPublisher(unittest.TestCase):
-    def setUp(self):
-        self.publisher = AWSFOMPublisher.AWSFOMPublisher(
-            {
-                "publish_to_graphite": False,
-                "graphite_host": "fifemondata.fnal.gov",
-                "graphite_port": 2104,
-                "graphite_context": "hepcloud.aws",
-                "output_file": OUTPUT_FILE,
-                "channel_name": "test",
-            }
-        )
+@pytest.fixture(scope="module")
+def publisher_instance():
+    publisher = AWSFOMPublisher.AWSFOMPublisher(
+        {
+            "publish_to_graphite": False,
+            "graphite_host": "fifemondata.fnal.gov",
+            "graphite_port": 2104,
+            "graphite_context": "hepcloud.aws",
+            "output_file": OUTPUT_FILE,
+            "channel_name": "test",
+        }
+    )
+    yield publisher
+    with contextlib.suppress(OSError):
+        os.unlink(OUTPUT_FILE)
 
-    def tearDown(self):
-        with contextlib.suppress(OSError):
-            os.unlink(OUTPUT_FILE)
 
-    def test_consumes(self):
-        assert self.publisher._consumes == {"AWS_Figure_Of_Merit": pd.DataFrame}
+def test_consumes(publisher_instance):
+    assert publisher_instance._consumes == {"AWS_Figure_Of_Merit": pd.DataFrame}
 
-    def test_transform(self):
-        data_block = create_datablock()
-        self.publisher.publish(data_block)
-        try:
-            # pandas 1.2 uses a new method for floats, use the "legacy" one for now
-            # https://pandas.pydata.org/pandas-docs/stable/whatsnew/v1.2.0.html#change-in-default-floating-precision-for-read-csv-and-read-table
-            opd = pd.read_csv(OUTPUT_FILE, float_precision="legacy")
-        except TypeError:
-            opd = pd.read_csv(OUTPUT_FILE)
 
-        assert opd.to_csv() == EXPECTED_REPLY.to_csv()
+def test_transform(publisher_instance):
+    data_block = create_datablock()
+    publisher_instance.publish(data_block)
+    try:
+        # pandas 1.2 uses a new method for floats, use the "legacy" one for now
+        # https://pandas.pydata.org/pandas-docs/stable/whatsnew/v1.2.0.html#change-in-default-floating-precision-for-read-csv-and-read-table
+        opd = pd.read_csv(OUTPUT_FILE, float_precision="legacy")
+    except TypeError:
+        opd = pd.read_csv(OUTPUT_FILE)
+
+    assert opd.to_csv() == EXPECTED_REPLY.to_csv()
