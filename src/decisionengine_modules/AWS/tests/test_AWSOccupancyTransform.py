@@ -36,29 +36,30 @@ class SessionMock:
         return None
 
 
-class TestAWSOccupancyTransform:
-    def test_consumes(self):
-        with mock.patch.object(Transform.Transform, "__init__", transform_init_mock):
-            aws_occ = Occupancy.AWSOccupancy(config)
-            assert aws_occ._consumes == consumes
+def test_consumes():
+    with mock.patch.object(Transform.Transform, "__init__", transform_init_mock):
+        aws_occ = Occupancy.AWSOccupancy(config)
+        assert aws_occ._consumes == consumes
 
-    def test_produces(self):
-        with mock.patch.object(Transform.Transform, "__init__", transform_init_mock):
-            aws_occ = Occupancy.AWSOccupancy(config)
-            assert aws_occ._produces == produces
 
-    def test_transform(self):
-        with mock.patch.object(Transform.Transform, "__init__", transform_init_mock):
-            aws_occ = Occupancy.AWSOccupancy(config)
-            with mock.patch.object(boto3.session, "Session") as s:
-                s.return_value = SessionMock()
-                with mock.patch.object(Occupancy.OccupancyForRegion, "get_ec2_instances") as get_instances:
-                    cap = utils.input_from_file(os.path.join(DATA_DIR, "occupancy.fixture"))
-                    get_instances.return_value = cap
-                    res = aws_occ.transform(account)
-                    assert produces.keys() == res.keys()
-                    df1 = expected_pandas_df.sort_values(["AvailabilityZone", "InstanceType"])
-                    new_df = res.get("AWS_Occupancy").sort_values(["AvailabilityZone", "InstanceType"])
-                    new_df = new_df.reindex(df1.columns, axis=1)
-                    new_df = new_df.set_index(df1.index)
-                    pd.testing.assert_frame_equal(df1, new_df)
+def test_produces():
+    with mock.patch.object(Transform.Transform, "__init__", transform_init_mock):
+        aws_occ = Occupancy.AWSOccupancy(config)
+        assert aws_occ._produces == produces
+
+
+def test_transform():
+    with mock.patch.object(Transform.Transform, "__init__", transform_init_mock):
+        aws_occ = Occupancy.AWSOccupancy(config)
+        with mock.patch.object(boto3.session, "Session") as s:
+            s.return_value = SessionMock()
+            with mock.patch.object(Occupancy.OccupancyForRegion, "get_ec2_instances") as get_instances:
+                cap = utils.input_from_file(os.path.join(DATA_DIR, "occupancy.fixture"))
+                get_instances.return_value = cap
+                res = aws_occ.transform(account)
+                assert produces.keys() == res.keys()
+                df1 = expected_pandas_df.sort_values(["AvailabilityZone", "InstanceType"])
+                new_df = res.get("AWS_Occupancy").sort_values(["AvailabilityZone", "InstanceType"])
+                new_df = new_df.reindex(df1.columns, axis=1)
+                new_df = new_df.set_index(df1.index)
+                pd.testing.assert_frame_equal(df1, new_df)

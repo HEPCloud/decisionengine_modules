@@ -39,13 +39,13 @@ valid_output_dict = {
 }
 
 
-class TestGCEFigureOfMeritPublisher:
-    def test_consumes(self):
-        fom_pub = GCEFigureOfMerit_publisher.GCEFigureOfMeritPublisher(config_fom_pub)
-        assert fom_pub._consumes == {"GCE_Figure_Of_Merit": pandas.DataFrame}
+def test_consumes():
+    fom_pub = GCEFigureOfMerit_publisher.GCEFigureOfMeritPublisher(config_fom_pub)
+    assert fom_pub._consumes == {"GCE_Figure_Of_Merit": pandas.DataFrame}
 
-    def test_graphite_context(self):
-        fom_pub = GCEFigureOfMerit_publisher.GCEFigureOfMeritPublisher(config_fom_pub)
-        output = fom_pub.graphite_context(valid_datablock)
-        assert output[0] == "hepcloud.de.gce"
-        assert output[1].get("FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit") == 0
+
+def test_graphite_context():
+    fom_pub = GCEFigureOfMerit_publisher.GCEFigureOfMeritPublisher(config_fom_pub)
+    output = fom_pub.graphite_context(valid_datablock)
+    assert output[0] == "hepcloud.de.gce"
+    assert output[1].get("FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit") == 0

@@ -43,16 +43,16 @@ data_block = {
 expected_transform_output = {_PRODUCES[0]: pd.DataFrame([{"BurnRate": 0.1}])}
 
 
-class TestGceBurnRate:
-    def test_produces(self):
-        gce_burn_rate = GceBurnRate.GceBurnRate(CONFIG)
-        assert gce_burn_rate._produces == _PRODUCES_DICT
+def test_produces():
+    gce_burn_rate = GceBurnRate.GceBurnRate(CONFIG)
+    assert gce_burn_rate._produces == _PRODUCES_DICT
 
-    def test_transform(self):
-        gce_burn_rate = GceBurnRate.GceBurnRate(CONFIG)
-        res = gce_burn_rate.transform(data_block)
-        assert _PRODUCES.sort() == list(res.keys()).sort()
 
-        expected_df = expected_transform_output[_PRODUCES[0]]
-        res_df = res[_PRODUCES[0]]
-        assert np.isclose(expected_df["BurnRate"], res_df["BurnRate"])
+def test_transform():
+    gce_burn_rate = GceBurnRate.GceBurnRate(CONFIG)
+    res = gce_burn_rate.transform(data_block)
+    assert _PRODUCES.sort() == list(res.keys()).sort()
+
+    expected_df = expected_transform_output[_PRODUCES[0]]
+    res_df = res[_PRODUCES[0]]
+    assert np.isclose(expected_df["BurnRate"], res_df["BurnRate"])

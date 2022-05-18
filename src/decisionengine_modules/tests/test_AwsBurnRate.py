@@ -94,16 +94,16 @@ data_block = {
 expected_transform_output = {"AWS_Burn_Rate": pd.DataFrame([{"BurnRate": 0.7455}])}
 
 
-class TestAwsBurnRate:
-    def test_produces(self):
-        aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
-        assert aws_burn_rate._produces == produces
+def test_produces():
+    aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
+    assert aws_burn_rate._produces == produces
 
-    def test_transform(self):
-        aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
-        res = aws_burn_rate.transform(data_block)
-        verify_products(aws_burn_rate, res)
 
-        expected_df = expected_transform_output["AWS_Burn_Rate"]
-        res_df = res["AWS_Burn_Rate"]
-        assert np.isclose(expected_df["BurnRate"], res_df["BurnRate"])
+def test_transform():
+    aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
+    res = aws_burn_rate.transform(data_block)
+    verify_products(aws_burn_rate, res)
+
+    expected_df = expected_transform_output["AWS_Burn_Rate"]
+    res_df = res["AWS_Burn_Rate"]
+    assert np.isclose(expected_df["BurnRate"], res_df["BurnRate"])

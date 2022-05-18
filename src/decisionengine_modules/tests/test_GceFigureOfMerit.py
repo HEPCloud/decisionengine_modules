@@ -72,20 +72,20 @@ for _k, value in data_block.items():
     print(tabulate.tabulate(value, headers="keys", tablefmt="psql"))
 
 
-class TestGceFigureOfMerit:
-    def test_produces(self):
-        gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
-        assert gce_figure_of_merit._produces == _PRODUCES_DICT
+def test_produces():
+    gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
+    assert gce_figure_of_merit._produces == _PRODUCES_DICT
 
-    def test_transform(self):
-        gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
-        res = gce_figure_of_merit.transform(data_block)
-        assert _PRODUCES.sort() == list(res.keys()).sort()
 
-        expected_df = expected_transform_output[_PRODUCES[0]]
-        res_df = res[_PRODUCES[0]]
-        assert np.isclose(expected_df["FigureOfMerit"], res_df["FigureOfMerit"])
+def test_transform():
+    gce_figure_of_merit = GceFigureOfMerit.GceFigureOfMerit(CONFIG)
+    res = gce_figure_of_merit.transform(data_block)
+    assert _PRODUCES.sort() == list(res.keys()).sort()
 
-        expected_df = expected_transform_output[_PRODUCES[1]]
-        res_df = res[_PRODUCES[1]]
-        assert np.isclose(expected_df["PricePerformance"], res_df["PricePerformance"])
+    expected_df = expected_transform_output[_PRODUCES[0]]
+    res_df = res[_PRODUCES[0]]
+    assert np.isclose(expected_df["FigureOfMerit"], res_df["FigureOfMerit"])
+
+    expected_df = expected_transform_output[_PRODUCES[1]]
+    res_df = res[_PRODUCES[1]]
+    assert np.isclose(expected_df["PricePerformance"], res_df["PricePerformance"])

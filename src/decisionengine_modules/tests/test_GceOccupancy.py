@@ -40,21 +40,21 @@ class MockClient:
         return MockInstances()
 
 
-class TestGceOccupancy:
-    def test_produces(self):
-        with mock.patch.object(google.auth, "default") as default:
-            default.return_value = (None, None)
-            with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
-                client.return_value = MockClient()
-                occupancy = GceOccupancy.GceOccupancy(CONFIG)
-                assert occupancy._produces == _PRODUCES
+def test_produces():
+    with mock.patch.object(google.auth, "default") as default:
+        default.return_value = (None, None)
+        with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
+            client.return_value = MockClient()
+            occupancy = GceOccupancy.GceOccupancy(CONFIG)
+            assert occupancy._produces == _PRODUCES
 
-    def test_acquire(self):
-        with mock.patch.object(google.auth, "default") as default:
-            default.return_value = (None, None)
-            with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
-                client.return_value = MockClient()
-                occupancy = GceOccupancy.GceOccupancy(CONFIG)
-                res = occupancy.acquire()
-                verify_products(occupancy, res)
-                assert EXPECTED_DF.equals(res.get("GCE_Occupancy"))
+
+def test_acquire():
+    with mock.patch.object(google.auth, "default") as default:
+        default.return_value = (None, None)
+        with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
+            client.return_value = MockClient()
+            occupancy = GceOccupancy.GceOccupancy(CONFIG)
+            res = occupancy.acquire()
+            verify_products(occupancy, res)
+            assert EXPECTED_DF.equals(res.get("GCE_Occupancy"))

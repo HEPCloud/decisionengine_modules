@@ -48,25 +48,26 @@ def fix_column(df, column):
     return out_df
 
 
-class TestFigureOfMerit:
-    def test_consumes(self):
-        fom = FigureOfMerit.FigureOfMerit(create_datablock())
-        assert fom._consumes == consumes
+def test_consumes():
+    fom = FigureOfMerit.FigureOfMerit(create_datablock())
+    assert fom._consumes == consumes
 
-    def test_produces(self):
-        fom = FigureOfMerit.FigureOfMerit(create_datablock())
-        assert fom._produces == produces
 
-    def test_transform(self):
-        data_block = create_datablock()
-        fom = FigureOfMerit.FigureOfMerit(data_block)
-        res = fom.transform(data_block)
-        verify_products(fom, res)
-        for k in expected_reply.keys():
-            if k == "AWS_Price_Performance":
-                df = fix_column(res[k], "AWS_Price_Performance")
-                edf = fix_column(expected_reply[k], "AWS_Price_Performance")
-            else:
-                df = fix_column(res[k], "AWS_Figure_Of_Merit")
-                edf = fix_column(expected_reply[k], "AWS_Figure_Of_Merit")
-            pd.testing.assert_frame_equal(edf, df)
+def test_produces():
+    fom = FigureOfMerit.FigureOfMerit(create_datablock())
+    assert fom._produces == produces
+
+
+def test_transform():
+    data_block = create_datablock()
+    fom = FigureOfMerit.FigureOfMerit(data_block)
+    res = fom.transform(data_block)
+    verify_products(fom, res)
+    for k in expected_reply.keys():
+        if k == "AWS_Price_Performance":
+            df = fix_column(res[k], "AWS_Price_Performance")
+            edf = fix_column(expected_reply[k], "AWS_Price_Performance")
+        else:
+            df = fix_column(res[k], "AWS_Figure_Of_Merit")
+            edf = fix_column(expected_reply[k], "AWS_Figure_Of_Merit")
+        pd.testing.assert_frame_equal(edf, df)

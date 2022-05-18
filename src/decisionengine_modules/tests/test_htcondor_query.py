@@ -34,42 +34,37 @@ config_cs_bad = {
 }
 
 
-class TestCondorQ:
-    def test_condorq_queryerror(self):
-        condor_q = htcondor_query.CondorQ(
-            schedd_name=config_cq_bad.get("schedd_name"), pool_name=config_cq_bad.get("pool_name")
-        )
-        try:
-            condor_q.load(constraint="procid < 2")
-            assert False
-        except htcondor_query.QueryError:
-            assert True
-
-    def test_condorq(self):
-        condor_q = htcondor_query.CondorQ(
-            schedd_name=config_cq.get("schedd_name"), pool_name=config_cq.get("pool_name")
-        )
-
-        with mock.patch.object(htcondor_query.CondorQ, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            condor_q.load()
-            assert f.return_value == condor_q.stored_data
+def test_condorq_queryerror():
+    condor_q = htcondor_query.CondorQ(
+        schedd_name=config_cq_bad.get("schedd_name"), pool_name=config_cq_bad.get("pool_name")
+    )
+    try:
+        condor_q.load(constraint="procid < 2")
+        assert False
+    except htcondor_query.QueryError:
+        assert True
 
 
-class TestCondorStatus:
-    def test_condorstatus_queryerror(self):
-        condor_status = htcondor_query.CondorStatus(pool_name=config_cs_bad.get("pool_name"))
+def test_condorq():
+    condor_q = htcondor_query.CondorQ(schedd_name=config_cq.get("schedd_name"), pool_name=config_cq.get("pool_name"))
+    with mock.patch.object(htcondor_query.CondorQ, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
+        condor_q.load()
+        assert f.return_value == condor_q.stored_data
 
-        try:
-            condor_status.load()
-            assert False
-        except htcondor_query.QueryError:
-            assert True
 
-    def test_condorstatus(self):
-        condor_status = htcondor_query.CondorStatus(subsystem_name="any", pool_name=config_cs.get("pool_name"))
+def test_condorstatus_queryerror():
+    condor_status = htcondor_query.CondorStatus(pool_name=config_cs_bad.get("pool_name"))
+    try:
+        condor_status.load()
+        assert False
+    except htcondor_query.QueryError:
+        assert True
 
-        with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            condor_status.load()
-            assert f.return_value == condor_status.stored_data
+
+def test_condorstatus():
+    condor_status = htcondor_query.CondorStatus(subsystem_name="any", pool_name=config_cs.get("pool_name"))
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
+        condor_status.load()
+        assert f.return_value == condor_status.stored_data

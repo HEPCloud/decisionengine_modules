@@ -24,17 +24,18 @@ CONFIG_CQ = {
 }
 
 
-class TestJobQ:
-    def test_produces(self):
-        jq = job_q.JobQ(CONFIG_CQ)
-        assert jq._produces == {"job_manifests": pandas.DataFrame}
+def test_produces():
+    jq = job_q.JobQ(CONFIG_CQ)
+    assert jq._produces == {"job_manifests": pandas.DataFrame}
 
-    def test_condorq(self):
-        jq = job_q.JobQ(CONFIG_CQ)
-        with mock.patch.object(htcondor_query.CondorQ, "fetch") as f:
-            f.return_value = utils.input_from_file(FIXTURE_FILE)
-            pprint.pprint(jq.acquire())
 
-    def test_condorq_live(self):
-        jq = job_q.JobQ(CONFIG_CQ)
+def test_condorq():
+    jq = job_q.JobQ(CONFIG_CQ)
+    with mock.patch.object(htcondor_query.CondorQ, "fetch") as f:
+        f.return_value = utils.input_from_file(FIXTURE_FILE)
         pprint.pprint(jq.acquire())
+
+
+def test_condorq_live():
+    jq = job_q.JobQ(CONFIG_CQ)
+    pprint.pprint(jq.acquire())

@@ -27,22 +27,23 @@ expected_constraint = {
 }
 
 
-class TestDecisionEngineMonitorManifests:
-    def test_consumes(self):
-        p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
-        assert p._consumes == {"decisionenginemonitor_manifests": pandas.DataFrame}
+def test_consumes():
+    p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
+    assert p._consumes == {"decisionenginemonitor_manifests": pandas.DataFrame}
 
-    def test_publish(self):
-        decisionenginemonitor.DecisionEngineMonitorManifests(config)
-        with mock.patch.object(
-            decisionenginemonitor.DecisionEngineMonitorManifests, "publish_to_htcondor"
-        ) as publish_to_htcondor:
-            publish_to_htcondor.return_value = None
-            # TODO: Complete this test when we have detailed contents of the
-            #       dataframe and the logic engine facts
-            # assert(True == True)
 
-    def test_create_invalidate_constraint(self):
-        p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
-        p.create_invalidate_constraint(request_df)
-        assert p.invalidate_ads_constraint == expected_constraint
+def test_publish():
+    decisionenginemonitor.DecisionEngineMonitorManifests(config)
+    with mock.patch.object(
+        decisionenginemonitor.DecisionEngineMonitorManifests, "publish_to_htcondor"
+    ) as publish_to_htcondor:
+        publish_to_htcondor.return_value = None
+        # TODO: Complete this test when we have detailed contents of the
+        #       dataframe and the logic engine facts
+        # assert(True == True)
+
+
+def test_create_invalidate_constraint():
+    p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
+    p.create_invalidate_constraint(request_df)
+    assert p.invalidate_ads_constraint == expected_constraint
