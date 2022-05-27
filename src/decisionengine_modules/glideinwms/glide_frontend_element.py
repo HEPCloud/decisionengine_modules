@@ -328,6 +328,8 @@ class GlideFrontendElement:
                 glidein_params[k] = eval(kexpr)
             # Add GLIDECLIENT_ReqNode to monitor orphaned glideins
             glidein_params['GLIDECLIENT_ReqNode'] = factory_pool_node
+            # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
+            glidein_params['CONTINUE_IF_NO_PROXY'] = 'True'
 
             glidein_monitors = {k: count_jobs[k] for k in count_jobs}
             glidein_monitors['RunningHere'] = self.count_real_jobs[glideid]
@@ -458,9 +460,11 @@ class GlideFrontendElement:
             glidein_params_to_encrypt=glidein_params_to_encrypt,
             security_name=security_name, remove_excess_str=remove_excess_str)
 
+        # TODO: Filter by credential type once token/proxy hybrid configurations are no longer supported
+        # credential_type=auth_method
         credentials_with_request = self.credential_plugin.get_credentials(
-            params_obj=params_obj, credential_type=auth_method,
-            trust_domain=trust_domain)
+            params_obj=params_obj, trust_domain=trust_domain
+        )
 
         if not credentials_with_request:
             raise NoCredentialException
@@ -485,9 +489,13 @@ class GlideFrontendElement:
                 continue
 
             if not cred.supports_auth_method(auth_method):
-                self.logger.warning('Credential %s does not match auth method %s (for %s), skipping...' % (
-                    cred.type, auth_method, params_obj.request_name))
-                continue
+                # TODO: Remove this condition once token/proxy hybrid configurations are no longer supported
+                if auth_method == "grid_proxy" and "scitoken" in cred.type:
+                    self.logger.debug("Sending scitoken along with grid-proxy")
+                else:
+                    self.logger.warning('Credential %s does not match auth method %s (for %s), skipping...' % (
+                        cred.type, auth_method, params_obj.request_name))
+                    continue
 
             if cred.trust_domain != trust_domain:
                 self.logger.warning('Credential %s does not match %s (for %s) domain, skipping...' % (
@@ -1717,6 +1725,8 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                 glidein_params[k] = eval(kexpr)
             # Add GLIDECLIENT_ReqNode to monitor orphaned glideins
             glidein_params['GLIDECLIENT_ReqNode'] = factory_pool_node
+            # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
+            glidein_params['CONTINUE_IF_NO_PROXY'] = 'True'
 
             glidein_monitors = {k: count_jobs[k] for k in count_jobs}
             glidein_monitors['RunningHere'] = self.count_real_jobs[glideid]
