@@ -10,6 +10,13 @@ from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.util.retry_function import retry_wrapper
 
+ENTRY_TYPES = {
+    "Grid": ["gt2", "condor"],
+    "AWS": ["ec2"],
+    "GCE": ["gce"],
+    "LCF": ["batch slurm"],
+}
+
 
 @Source.supports_config(
     Parameter("condor_config", type=str, comment="path to condor configuration"),
@@ -39,12 +46,6 @@ class FactoryEntries(Source.Source):
         super().__init__(config)
         self.condor_config = config.get("condor_config")
         self.factories = config.get("factories", [])
-        self._entry_gridtype_map = {
-            "Grid": ["gt2", "condor"],
-            "AWS": ["ec2"],
-            "GCE": ["gce"],
-            "LCF": ["batch slurm"],
-        }
 
         # The combination of max_retries=10 and retry_interval=2 adds up to just
         # over 15 minutes
@@ -110,10 +111,10 @@ class FactoryEntries(Source.Source):
         if dataframe.empty:
             # There were no entry classads in the factory collector or
             # quering the collector failed
-            return {f"Factory_Entries_{key}": pandas.DataFrame() for key in self._entry_gridtype_map.keys()}
+            return {f"Factory_Entries_{key}": pandas.DataFrame() for key in ENTRY_TYPES.keys()}
 
         results = {}
-        for key, value in self._entry_gridtype_map.items():
+        for key, value in ENTRY_TYPES.items():
             results[f"Factory_Entries_{key}"] = dataframe.loc[dataframe.GLIDEIN_GridType.isin(value)]
         return results
 
