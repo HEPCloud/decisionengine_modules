@@ -4,6 +4,7 @@
 import pandas
 
 from decisionengine.framework.modules import Publisher
+from decisionengine_modules.glideinwms.sources.factory_entries import ENTRY_TYPES
 from decisionengine_modules.htcondor.publishers import publisher
 
 # FIXME: Awkward entanglements between subclass and base class.
@@ -16,9 +17,8 @@ def split_dataframe(df, at):
 class GlideinWMSManifests(publisher.HTCondorManifests):
     def __init__(self, config):
         super().__init__(config)
-        self.allow_types = ["Grid", "AWS", "GCE", "LCF"]
         self.queries = config.get("queries", {})
-        self._consumes = {f"Factory_Entries_{key}": pandas.DataFrame for key in self.allow_types}
+        self._consumes = {f"Factory_Entries_{key}": pandas.DataFrame for key in ENTRY_TYPES.keys()}
         self._consumes.update(glideclient_manifests=pandas.DataFrame)
         self.classad_type = "glideclient"
 
@@ -31,7 +31,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
         )
 
         publish_requests_df = pandas.DataFrame()
-        for allow_type in self.allow_types:
+        for allow_type in ENTRY_TYPES.keys():
             df = self.dataframe_for_entrytype(allow_type, datablock)
             publish_requests_df = pandas.concat([publish_requests_df, df], ignore_index=True, sort=True)
 
