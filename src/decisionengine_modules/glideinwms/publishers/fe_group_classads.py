@@ -56,8 +56,10 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
         data_product_name = f"Factory_Entries_{allow_type}"
         fact_name = f"allow_{allow_type.lower()}_requests"
         entries_df = datablock.get(data_product_name)
+        if requests_df.empty or entries_df.empty:
+            return pandas.DataFrame()
 
-        joint_df = requests_df.merge(entries_df, left_on="ReqName", right_on="Name")
+        joint_df = requests_df.merge(entries_df, left_on="ReqName", right_on="Name", suffixes=("", "_right"))
         requests, entries = split_dataframe(joint_df, at=len(requests_df.columns))
         not_allowed = facts_df.query(f"fact_name == '{fact_name}' and fact_value == True").empty
         if not_allowed:
