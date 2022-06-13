@@ -49,10 +49,10 @@ def test_publish():
         p = fe_group_classads.GlideinWMSManifests(_CONFIG)
         datablock = {
             "glideclient_manifests": _REQUEST_DF,
-            "Factory_Entries_Grid": pd.DataFrame({"Name": ["u", "v", "w"], "Other": [1, 2, 3]}),
+            "Factory_Entries_Grid": pd.DataFrame({"Name": ["u", "v", "w"], "Other": [1, 2, 3], "CollectorHost": 14.0}),
             "Factory_Entries_AWS": pd.DataFrame({"Name": ["x"], "Other": 5}),
             "Factory_Entries_GCE": pd.DataFrame({"Name": ["y", "z"], "Other": 7}),
-            "Factory_Entries_LCF": pd.DataFrame({"Name": [], "Other": 9}),
+            "Factory_Entries_LCF": pd.DataFrame(),
             "de_logicengine_facts": pd.DataFrame(
                 {
                     "fact_name": [
