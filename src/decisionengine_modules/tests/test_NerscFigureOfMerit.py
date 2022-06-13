@@ -2,14 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pandas as pd
+import pytest
 
 from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.NERSC.transforms import NerscFigureOfMerit
-
-_produces = ["Nersc_Price_Performance", "Nersc_Figure_Of_Merit"]
-produces = dict.fromkeys(_produces, pd.DataFrame)
-
-config = {"channel_name": "test"}
 
 nersc_instance_performance_df = pd.DataFrame(
     [
@@ -21,11 +17,7 @@ nersc_instance_performance_df = pd.DataFrame(
             "PerfTtbarTotal": 0.96,
         }
     ]
-)
-
-nersc_instance_performance_df.reindex(
-    columns=("EnryName", "InstanceType", "AvailabilityZone", "OnDemandPrice", "PerfTtbarTotal")
-)
+).reindex(columns=("EntryName", "InstanceType", "AvailabilityZone", "OnDemandPrice", "PerfTtbarTotal"))
 
 data_block = {
     "Nersc_Instance_Performance": nersc_instance_performance_df.reindex(
@@ -46,19 +38,22 @@ data_block = {
 
 nersc_price_performance_df = pd.DataFrame([{"EntryName": "CMSHTPC_T3_US_NERSC_Cori", "PricePerformance": 0.6}])
 
-expected_transform_output = {
-    _produces[0]: nersc_price_performance_df.reindex(columns=("EntryName", "PricePerformance")),
-    _produces[1]: pd.DataFrame([{"EntryName": "CMSHTPC_T3_US_NERSC_Cori", "FigureOfMerit": 0.3}]),
-}
+
+@pytest.fixture
+def nersc_figure_of_merit():
+    return NerscFigureOfMerit.NerscFigureOfMerit({"channel_name": "test"})
 
 
-def test_produces():
-    nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
-    assert nersc_figure_of_merit._produces == produces
+def test_produces(nersc_figure_of_merit):
+    produces = ["Nersc_Price_Performance", "Nersc_Figure_Of_Merit"]
+    assert nersc_figure_of_merit._produces == dict.fromkeys(produces, pd.DataFrame)
 
 
-def test_transform():
-    nersc_figure_of_merit = NerscFigureOfMerit.NerscFigureOfMerit(config)
+def test_transform(nersc_figure_of_merit):
+    expected_transform_output = {
+        "Nersc_Price_Performance": nersc_price_performance_df.reindex(columns=("EntryName", "PricePerformance")),
+        "Nersc_Figure_Of_Merit": pd.DataFrame([{"EntryName": "CMSHTPC_T3_US_NERSC_Cori", "FigureOfMerit": 0.3}]),
+    }
     res = nersc_figure_of_merit.transform(data_block)
     verify_products(nersc_figure_of_merit, res)
     for key, value in res.items():

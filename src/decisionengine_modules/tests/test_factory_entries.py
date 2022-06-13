@@ -63,14 +63,13 @@ CONFIG_FACTORY_ENTRIES_CORMAP = {
 
 def test_produces():
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-    produces = {f"Factory_Entries_{entrytype}": pd.DataFrame for entrytype in ["Grid", "AWS", "GCE", "LCF"]}
+    produces = {f"Factory_Entries_{entrytype}": pd.DataFrame for entrytype in factory_entries.ENTRY_TYPES.keys()}
     assert entries._produces == produces
 
 
 def test_acquire():
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-        f.return_value = utils.input_from_file(FIXTURE_FILE)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         pprint.pprint(entries.acquire())
 
 
@@ -102,8 +101,7 @@ def test_acquire_correctionmap():
     df2 = pd.DataFrame(data={"GLIDEIN_CMSSite": ["DummySite", "DummySite"]})
 
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP)
-    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-        f.return_value = utils.input_from_file(FIXTURE_FILE)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         dummypd = entries.acquire()
         dummypd2 = dummypd["Factory_Entries_Grid"]
         assert df1.equals(dummypd2[["GLIDEIN_Resource_Slots"]])

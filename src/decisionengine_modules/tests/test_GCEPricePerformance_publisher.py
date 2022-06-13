@@ -2,17 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pandas
+import pytest
 
 from decisionengine_modules.GCE.publishers import GCEPricePerformance_publisher
-
-config_pp_pub = {
-    "channel_name": "test",
-    "publish_to_graphite": True,
-    "graphite_host": "lsdataitb.fnal.gov",
-    "graphite_port": 2004,
-    "graphite_context": "hepcloud.de.gce",
-    "output_file": "/etc/decisionengine/modules.data/test_GCE_pr_perf.csv",
-}
 
 valid_datablock = pandas.DataFrame(
     {
@@ -49,13 +41,24 @@ valid_output_dict = {
 }
 
 
-def test_consumes():
-    pp_pub = GCEPricePerformance_publisher.GCEPricePerformancePublisher(config_pp_pub)
+@pytest.fixture
+def pp_pub():
+    config = {
+        "channel_name": "test",
+        "publish_to_graphite": True,
+        "graphite_host": "lsdataitb.fnal.gov",
+        "graphite_port": 2004,
+        "graphite_context": "hepcloud.de.gce",
+        "output_file": "/etc/decisionengine/modules.data/test_GCE_pr_perf.csv",
+    }
+    return GCEPricePerformance_publisher.GCEPricePerformancePublisher(config)
+
+
+def test_consumes(pp_pub):
     assert pp_pub._consumes == {"GCE_Price_Performance": pandas.DataFrame}
 
 
-def test_graphite_context():
-    pp_pub = GCEPricePerformance_publisher.GCEPricePerformancePublisher(config_pp_pub)
+def test_graphite_context(pp_pub):
     output = pp_pub.graphite_context(valid_datablock)
     assert output[0] == "hepcloud.de.gce"
     assert output[1].get("FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.price_perf") == 1.49842271293

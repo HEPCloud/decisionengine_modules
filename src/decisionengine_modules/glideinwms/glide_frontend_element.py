@@ -1999,7 +1999,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         Return a dataframe groupby object with FOM and entries dataframe with
         that FOM sorted by the FOM
         """
-        return self.matches_matches_with_fom(matches, entries).groupby(["FOM"])
+        return self.matches_with_fom(matches, entries).groupby(["FOM"])
 
 
 ###############################################################################

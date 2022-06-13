@@ -4,6 +4,7 @@
 import pprint
 
 import pandas
+import pytest
 
 from decisionengine_modules.glideinwms.transforms import job_clustering
 
@@ -156,18 +157,20 @@ missing_q_output_dataframe = pandas.DataFrame(
 # Validate log messages
 
 
-def test_produces():
-    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+@pytest.fixture
+def job_clusters():
+    return job_clustering.JobClustering(config_test_match_exprs)
+
+
+def test_produces(job_clusters):
     assert job_clusters._produces == {"job_clusters": pandas.DataFrame}
 
 
-def test_consumes():
-    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+def test_consumes(job_clusters):
     assert job_clusters._consumes == {"job_manifests": pandas.DataFrame}
 
 
-def test_transform_valid():
-    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+def test_transform_valid(job_clusters):
     output = job_clusters.transform(valid_q_datablock)
     pprint.pprint(output)
     db = output.get("job_clusters")
@@ -175,8 +178,7 @@ def test_transform_valid():
     assert db.shape[0] == 5
 
 
-def test_transform_empty_q():
-    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+def test_transform_empty_q(job_clusters):
     output = job_clusters.transform(empty_q_datablock)
     pprint.pprint(output)
     db = output.get("job_clusters")
@@ -185,8 +187,7 @@ def test_transform_empty_q():
     assert db.iloc[0, 0] == "VO_Name=='cms' and RequestCpus==1 and (MaxWallTimeMins>0 and MaxWallTimeMins<= 60*12)"
 
 
-def test_transform_missing_q():
-    job_clusters = job_clustering.JobClustering(config_test_match_exprs)
+def test_transform_missing_q(job_clusters):
     output = job_clusters.transform(missing_q_datablock)
     pprint.pprint(output)
     db = output.get("job_clusters")
