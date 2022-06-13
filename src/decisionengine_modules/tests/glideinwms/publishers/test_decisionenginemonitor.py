@@ -4,14 +4,9 @@
 from unittest import mock
 
 import pandas
+import pytest
 
 from decisionengine_modules.glideinwms.publishers import decisionenginemonitor
-
-config = {
-    "channel_name": "test",
-    "condor_config": "condor_config",
-    "collector_host": "fermicloud122.fnal.gov",
-}
 
 request_dict = {
     "CollectorHost": ["col1.com", "col1.com", "col1.com", "col2.com", "col2.com", "col3.com"],
@@ -27,23 +22,28 @@ expected_constraint = {
 }
 
 
-def test_consumes():
-    p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
-    assert p._consumes == {"decisionenginemonitor_manifests": pandas.DataFrame}
+@pytest.fixture
+def de_monitor():
+    config = {
+        "channel_name": "test",
+        "condor_config": "condor_config",
+        "collector_host": "fermicloud122.fnal.gov",
+    }
+    return decisionenginemonitor.DecisionEngineMonitorManifests(config)
 
 
-def test_publish():
-    decisionenginemonitor.DecisionEngineMonitorManifests(config)
-    with mock.patch.object(
-        decisionenginemonitor.DecisionEngineMonitorManifests, "publish_to_htcondor"
-    ) as publish_to_htcondor:
-        publish_to_htcondor.return_value = None
+def test_consumes(de_monitor):
+    assert de_monitor._consumes == {"decisionenginemonitor_manifests": pandas.DataFrame}
+
+
+def test_publish(de_monitor):
+    with mock.patch.object(de_monitor, "publish_to_htcondor", return_value=None):
+        pass
         # TODO: Complete this test when we have detailed contents of the
         #       dataframe and the logic engine facts
         # assert(True == True)
 
 
-def test_create_invalidate_constraint():
-    p = decisionenginemonitor.DecisionEngineMonitorManifests(config)
-    p.create_invalidate_constraint(request_df)
-    assert p.invalidate_ads_constraint == expected_constraint
+def test_create_invalidate_constraint(de_monitor):
+    de_monitor.create_invalidate_constraint(request_df)
+    assert de_monitor.invalidate_ads_constraint == expected_constraint

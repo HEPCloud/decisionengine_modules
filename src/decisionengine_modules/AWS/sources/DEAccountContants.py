@@ -24,7 +24,6 @@ EXPECTED_NAMES = [
 
 class AccountConstants:
     def __init__(self, constants=None):
-
         # Initialize variables
         for k in EXPECTED_NAMES:
             setattr(self, k, None)
@@ -35,7 +34,7 @@ class AccountConstants:
                     setattr(self, k, val)
 
     def __repr__(self):
-        return f"{self.accountName} {self.accountNumber} {self.credentialsProfileName} {self.lastKnownBillDate} {self.balanceAtDate} {self.applyDiscount} {self.costRatePerHourInLastSixHoursAlarmThreshold} {self.costRatePerHourInLastDayAlarmThreshold} {self.emailReceipientForAlarms}"
+        return " ".join(getattr(self, k) for k in EXPECTED_NAMES)
 
     def info(self):
         for name in EXPECTED_NAMES:
@@ -51,10 +50,6 @@ def load_constants(constants_file):
     :arg constants_file: configuration file as python dict
 
     :rtype: :obj:`AccountConstants`
-
     """
-
-    config_dict = None
     with open(constants_file) as f:
-        config_dict = eval(f.read())
-    return config_dict
+        return eval(f.read())

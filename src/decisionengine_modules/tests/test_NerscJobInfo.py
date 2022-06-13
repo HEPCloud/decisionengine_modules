@@ -5,7 +5,8 @@ import os
 
 from unittest import mock
 
-import pandas
+import pandas as pd
+import pytest
 
 from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.NERSC.sources import NerscJobInfo
@@ -16,44 +17,45 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 TEST_FIXTURE_FILE = os.path.join(DATA_DIR, "newt_jobs.cs.test.fixture")
 PASSWD_FILE = os.path.join(DATA_DIR, "passwd")
 
-CONFIG = {
-    "channel_name": "test",
-    "passwd_file": PASSWD_FILE,
-    "constraints": {
-        "machines": ["edison", "cori"],
-        "newt_keys": {
-            "user": ["hufnagel", "timm"],
-            "repo": ["m2612", "m2696"],
-        },
-    },
-}
-
-_PRODUCES = {"Nersc_Job_Info": pandas.DataFrame}
+_PRODUCES = {"Nersc_Job_Info": pd.DataFrame}
 
 # expected correctly filtered results
 
 with open(TEST_FIXTURE_FILE) as f:
     d = eval(f.read())
 
-EXPECTED_PANDAS_DFRAME = pandas.DataFrame(d)
+EXPECTED_PANDAS_DFRAME = pd.DataFrame(d)
 
 STATUS_FIXTURE_FILE = os.path.join(DATA_DIR, "newt_status.cs.fixture")
 JOBS_FIXTURE_FILE = os.path.join(DATA_DIR, "newt_jobs.cs.fixture")
 
 
-def test_produces():
-    nersc_job_info = NerscJobInfo.NerscJobInfo(CONFIG)
+@pytest.fixture
+def nersc_job_info():
+    config = {
+        "channel_name": "test",
+        "passwd_file": PASSWD_FILE,
+        "constraints": {
+            "machines": ["edison", "cori"],
+            "newt_keys": {
+                "user": ["hufnagel", "timm"],
+                "repo": ["m2612", "m2696"],
+            },
+        },
+    }
+    return NerscJobInfo.NerscJobInfo(config)
+
+
+def test_produces(nersc_job_info):
     assert nersc_job_info._produces == _PRODUCES
 
 
-def test_acquire():
-    nersc_job_info = NerscJobInfo.NerscJobInfo(CONFIG)
-    with mock.patch.object(newt.Newt, "get_status") as get_status:
-        get_status.return_value = utils.input_from_file(STATUS_FIXTURE_FILE)
-        with mock.patch.object(newt.Newt, "get_queue") as get_queue:
-            get_queue.return_value = utils.input_from_file(JOBS_FIXTURE_FILE)
-            res = nersc_job_info.acquire()
-            verify_products(nersc_job_info, res)
-            new_df = res["Nersc_Job_Info"]
-            new_df = new_df.reindex(EXPECTED_PANDAS_DFRAME.columns, axis=1)
-            pandas.testing.assert_frame_equal(EXPECTED_PANDAS_DFRAME, new_df)
+def test_acquire(nersc_job_info):
+    with mock.patch.object(
+        newt.Newt, "get_status", return_value=utils.input_from_file(STATUS_FIXTURE_FILE)
+    ), mock.patch.object(newt.Newt, "get_queue", return_value=utils.input_from_file(JOBS_FIXTURE_FILE)):
+        res = nersc_job_info.acquire()
+        verify_products(nersc_job_info, res)
+        new_df = res["Nersc_Job_Info"]
+        new_df = new_df.reindex(EXPECTED_PANDAS_DFRAME.columns, axis=1)
+        pd.testing.assert_frame_equal(EXPECTED_PANDAS_DFRAME, new_df)

@@ -6,6 +6,7 @@ import copy
 from unittest import mock
 
 import pandas as pd
+import pytest
 
 from decisionengine_modules.glideinwms.publishers import fe_group_classads
 
@@ -30,7 +31,12 @@ _REQUEST_DICT = {
 _REQUEST_DF = pd.DataFrame(_REQUEST_DICT)
 
 
-def test_consumes():
+@pytest.fixture
+def fe_group_classads_instance():
+    return fe_group_classads.GlideinWMSManifests(_CONFIG)
+
+
+def test_consumes(fe_group_classads_instance):
     consumes = [
         "glideclient_manifests",
         "Factory_Entries_Grid",
@@ -38,15 +44,13 @@ def test_consumes():
         "Factory_Entries_GCE",
         "Factory_Entries_LCF",
     ]
-    p = fe_group_classads.GlideinWMSManifests(_CONFIG)
-    assert p._consumes == dict.fromkeys(consumes, pd.DataFrame)
+    assert fe_group_classads_instance._consumes == dict.fromkeys(consumes, pd.DataFrame)
 
 
-def test_publish():
+def test_publish(fe_group_classads_instance):
     with mock.patch.object(
         fe_group_classads.GlideinWMSManifests, "publish_to_htcondor", return_value=None
     ) as publish_to_condor:
-        p = fe_group_classads.GlideinWMSManifests(_CONFIG)
         datablock = {
             "glideclient_manifests": _REQUEST_DF,
             "Factory_Entries_Grid": pd.DataFrame({"Name": ["u", "v", "w"], "Other": [1, 2, 3]}),
@@ -65,7 +69,7 @@ def test_publish():
                 }
             ),
         }
-        p.publish(datablock)
+        fe_group_classads_instance.publish(datablock)
 
         expected_dict = copy.deepcopy(_REQUEST_DICT)
         expected_dict["ReqIdleGlideins"] = [0, 0, 1, 0, 0, 1]
@@ -75,12 +79,11 @@ def test_publish():
         assert actual_df.compare(expected_df).empty
 
 
-def test_create_invalidate_constraint():
-    p = fe_group_classads.GlideinWMSManifests(_CONFIG)
-    p.create_invalidate_constraint(_REQUEST_DF)
+def test_create_invalidate_constraint(fe_group_classads_instance):
     expected_constraint = {
         "col1.com": '(glideinmytype == "glideclient") && (stringlistmember(ClientName, "e1,e2,e3"))',
         "col2.com": '(glideinmytype == "glideclient") && (stringlistmember(ClientName, "e1,e2"))',
         "col3.com": '(glideinmytype == "glideclient") && (stringlistmember(ClientName, "e3"))',
     }
-    assert p.invalidate_ads_constraint == expected_constraint
+    fe_group_classads_instance.create_invalidate_constraint(_REQUEST_DF)
+    assert fe_group_classads_instance.invalidate_ads_constraint == expected_constraint

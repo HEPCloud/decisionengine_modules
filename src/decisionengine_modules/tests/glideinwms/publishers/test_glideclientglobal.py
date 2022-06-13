@@ -4,14 +4,9 @@
 from unittest import mock
 
 import pandas
+import pytest
 
 from decisionengine_modules.glideinwms.publishers import glideclientglobal
-
-config = {
-    "channel_name": "test",
-    "condor_config": "condor_config",
-    "collector_host": "fermicloud122.fnal.gov",
-}
 
 request_dict = {
     "CollectorHost": ["col1.com", "col1.com", "col1.com", "col2.com", "col2.com", "col3.com"],
@@ -27,21 +22,28 @@ expected_constraint = {
 }
 
 
-def test_consumes():
-    p = glideclientglobal.GlideClientGlobalManifests(config)
-    assert p._consumes == {"glideclientglobal_manifests": pandas.DataFrame}
+@pytest.fixture
+def global_manifests():
+    config = {
+        "channel_name": "test",
+        "condor_config": "condor_config",
+        "collector_host": "fermicloud122.fnal.gov",
+    }
+    return glideclientglobal.GlideClientGlobalManifests(config)
 
 
-def test_publish():
-    glideclientglobal.GlideClientGlobalManifests(config)
-    with mock.patch.object(glideclientglobal.GlideClientGlobalManifests, "publish_to_htcondor") as publish_to_htcondor:
-        publish_to_htcondor.return_value = None
+def test_consumes(global_manifests):
+    assert global_manifests._consumes == {"glideclientglobal_manifests": pandas.DataFrame}
+
+
+def test_publish(global_manifests):
+    with mock.patch.object(global_manifests, "publish_to_htcondor", return_value=None):
+        pass
         # TODO: Complete this test when we have detailed contents of the
         #       dataframe and the logic engine facts
         # assert( True == True)
 
 
-def test_create_invalidate_constraint():
-    p = glideclientglobal.GlideClientGlobalManifests(config)
-    p.create_invalidate_constraint(request_df)
-    assert p.invalidate_ads_constraint == expected_constraint
+def test_create_invalidate_constraint(global_manifests):
+    global_manifests.create_invalidate_constraint(request_df)
+    assert global_manifests.invalidate_ads_constraint == expected_constraint

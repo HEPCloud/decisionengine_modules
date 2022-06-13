@@ -2,17 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pandas
+import pytest
 
 from decisionengine_modules.glideinwms.publishers import job_clustering_publisher
-
-config_pub = {
-    "channel_name": "test",
-    "publish_to_graphite": True,
-    "graphite_host": "lsdataitb.fnal.gov",
-    "graphite_port": 2004,
-    "graphite_context": "hepcloud.de.glideinwms",
-    "output_file": "/etc/decisionengine/modules.data/test_job_clusters.csv",
-}
 
 valid_datablock = pandas.DataFrame(
     {
@@ -49,14 +41,25 @@ valid_output_dict = {
 }
 
 
-def test_consumes():
-    pub = job_clustering_publisher.JobClusteringPublisher(config_pub)
-    assert pub._consumes == {"job_clusters": pandas.DataFrame}
+@pytest.fixture
+def job_clustering_pub():
+    config = {
+        "channel_name": "test",
+        "publish_to_graphite": True,
+        "graphite_host": "lsdataitb.fnal.gov",
+        "graphite_port": 2004,
+        "graphite_context": "hepcloud.de.glideinwms",
+        "output_file": "/etc/decisionengine/modules.data/test_job_clusters.csv",
+    }
+    return job_clustering_publisher.JobClusteringPublisher(config)
 
 
-def test_graphite_context():
-    pub = job_clustering_publisher.JobClusteringPublisher(config_pub)
-    output = pub.graphite_context(valid_datablock)
+def test_consumes(job_clustering_pub):
+    assert job_clustering_pub._consumes == {"job_clusters": pandas.DataFrame}
+
+
+def test_graphite_context(job_clustering_pub):
+    output = job_clustering_pub.graphite_context(valid_datablock)
     assert output[0] == "hepcloud.de.glideinwms"
     assert output[1].get("group_1.job_cluster") == 2
     assert output[1].get("group_2.job_cluster") == 1

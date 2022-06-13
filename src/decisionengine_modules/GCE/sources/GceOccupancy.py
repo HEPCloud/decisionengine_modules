@@ -43,16 +43,13 @@ class GceOccupancy(Source.Source):
         self.max_retries = config.get("max_retries", _MAX_RETRIES)
         self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 
-    def _get_client(self):
-        return self.client
-
     def acquire(self):
         self.logger.debug("in GCEOccupancy acquire")
         return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout, backoff=False, logger=self.logger)
 
     def _acquire(self):
         d = {}
-        request = self._get_client().instances().aggregatedList(project=self.project)
+        request = self.client.instances().aggregatedList(project=self.project)
         while request is not None:
             response = request.execute()
             for _name, instances_scoped_list in response["items"].items():
@@ -70,9 +67,7 @@ class GceOccupancy(Source.Source):
                             )
                             data["Occupancy"] += 1
 
-            request = (
-                self._get_client().instances().aggregatedList_next(previous_request=request, previous_response=response)
-            )
+            request = self.client.instances().aggregatedList_next(previous_request=request, previous_response=response)
         df = pd.DataFrame(d.values())
         return {"GCE_Occupancy": df}
 

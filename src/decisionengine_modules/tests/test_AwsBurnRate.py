@@ -3,29 +3,18 @@
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.AWS.transforms import AwsBurnRate
 
-produces = {"AWS_Burn_Rate": pd.DataFrame}
-
-config = {"channel_name": "test"}
-
 occupancy = pd.DataFrame(
-    [
-        {
-            "AccountName": "FERMILAB",
-            "AvailabilityZone": "us-east-1a",
-            "InstanceType": "c3.xlarge",
-            "RunningVms": 10,
-        },
-        {
-            "AccountName": "FERMILAB",
-            "AvailabilityZone": "us-east-1a",
-            "InstanceType": "t2.micro",
-            "RunningVms": 1,
-        },
-    ]
+    {
+        "AccountName": "FERMILAB",
+        "AvailabilityZone": "us-east-1a",
+        "InstanceType": ["c3.xlarge", "t2.micro"],
+        "RunningVms": [10, 1],
+    }
 )
 
 provisioner_resource_spot_prices = pd.DataFrame(
@@ -94,13 +83,17 @@ data_block = {
 expected_transform_output = {"AWS_Burn_Rate": pd.DataFrame([{"BurnRate": 0.7455}])}
 
 
-def test_produces():
-    aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
-    assert aws_burn_rate._produces == produces
+@pytest.fixture
+def aws_burn_rate():
+    config = {"channel_name": "test"}
+    return AwsBurnRate.AwsBurnRate(config)
 
 
-def test_transform():
-    aws_burn_rate = AwsBurnRate.AwsBurnRate(config)
+def test_produces(aws_burn_rate):
+    assert aws_burn_rate._produces == {"AWS_Burn_Rate": pd.DataFrame}
+
+
+def test_transform(aws_burn_rate):
     res = aws_burn_rate.transform(data_block)
     verify_products(aws_burn_rate, res)
 

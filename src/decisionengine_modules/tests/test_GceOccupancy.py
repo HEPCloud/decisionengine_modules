@@ -7,7 +7,9 @@ import os
 from unittest import mock
 
 import google.auth
+import googleapiclient.discovery
 import pandas as pd
+import pytest
 
 from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.GCE.sources import GceOccupancy
@@ -40,21 +42,19 @@ class MockClient:
         return MockInstances()
 
 
-def test_produces():
-    with mock.patch.object(google.auth, "default") as default:
-        default.return_value = (None, None)
-        with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
-            client.return_value = MockClient()
-            occupancy = GceOccupancy.GceOccupancy(CONFIG)
-            assert occupancy._produces == _PRODUCES
+@pytest.fixture
+def replace_google_auth():
+    with mock.patch.object(google.auth, "default", return_value=(None, None)):
+        yield
 
 
-def test_acquire():
-    with mock.patch.object(google.auth, "default") as default:
-        default.return_value = (None, None)
-        with mock.patch.object(GceOccupancy.GceOccupancy, "_get_client") as client:
-            client.return_value = MockClient()
-            occupancy = GceOccupancy.GceOccupancy(CONFIG)
-            res = occupancy.acquire()
-            verify_products(occupancy, res)
-            assert EXPECTED_DF.equals(res.get("GCE_Occupancy"))
+def test_produces(replace_google_auth):
+    assert GceOccupancy.GceOccupancy(CONFIG)._produces == _PRODUCES
+
+
+def test_acquire(replace_google_auth):
+    with mock.patch.object(googleapiclient.discovery, "build", return_value=MockClient()):
+        occupancy = GceOccupancy.GceOccupancy(CONFIG)
+        res = occupancy.acquire()
+        verify_products(occupancy, res)
+        assert EXPECTED_DF.equals(res.get("GCE_Occupancy"))

@@ -56,8 +56,7 @@ def test_produces():
 
 def test_acquire():
     fg = factory_global.FactoryGlobalManifests(CONFIG)
-    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-        f.return_value = utils.input_from_file(FIXTURE_FILE)
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         pprint.pprint(fg.acquire())
 
 

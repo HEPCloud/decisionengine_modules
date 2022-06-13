@@ -5,6 +5,8 @@ import os
 
 from unittest import mock
 
+import pytest
+
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.util import testutils as utils
 
@@ -38,11 +40,8 @@ def test_condorq_queryerror():
     condor_q = htcondor_query.CondorQ(
         schedd_name=config_cq_bad.get("schedd_name"), pool_name=config_cq_bad.get("pool_name")
     )
-    try:
+    with pytest.raises(htcondor_query.QueryError):
         condor_q.load(constraint="procid < 2")
-        assert False
-    except htcondor_query.QueryError:
-        assert True
 
 
 def test_condorq():
@@ -55,11 +54,8 @@ def test_condorq():
 
 def test_condorstatus_queryerror():
     condor_status = htcondor_query.CondorStatus(pool_name=config_cs_bad.get("pool_name"))
-    try:
+    with pytest.raises(htcondor_query.QueryError):
         condor_status.load()
-        assert False
-    except htcondor_query.QueryError:
-        assert True
 
 
 def test_condorstatus():

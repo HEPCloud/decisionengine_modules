@@ -7,6 +7,7 @@ import pprint
 from unittest import mock
 
 import pandas
+import pytest
 
 from decisionengine_modules.glideinwms.sources import factory_client
 from decisionengine_modules.htcondor import htcondor_query
@@ -28,21 +29,22 @@ CONFIG_BAD = {
 }
 
 
-def test_produces():
-    fc = factory_client.FactoryClientManifests(CONFIG)
-    assert fc._produces == {"factoryclient_manifests": pandas.DataFrame}
+@pytest.fixture
+def factory_client_instance():
+    return factory_client.FactoryClientManifests(CONFIG)
 
 
-def test_acquire():
-    fc = factory_client.FactoryClientManifests(CONFIG)
-    with mock.patch.object(htcondor_query.CondorStatus, "fetch") as f:
-        f.return_value = utils.input_from_file(FIXTURE_FILE)
-        pprint.pprint(fc.acquire())
+def test_produces(factory_client_instance):
+    assert factory_client_instance._produces == {"factoryclient_manifests": pandas.DataFrame}
 
 
-def test_acquire_live():
-    fc = factory_client.FactoryClientManifests(CONFIG)
-    pprint.pprint(fc.acquire())
+def test_acquire(factory_client_instance):
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
+        pprint.pprint(factory_client_instance.acquire())
+
+
+def test_acquire_live(factory_client_instance):
+    pprint.pprint(factory_client_instance.acquire())
 
 
 def test_acquire_bad():
