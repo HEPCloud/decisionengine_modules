@@ -25,7 +25,7 @@ jobs:
     name: Python ${{ matrix.python-version }} unit tests
     steps:
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
@@ -38,27 +38,27 @@ jobs:
           python3 -m pip cache dir
 
       - name: checkout DE Modules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: decisionengine_modules
           fetch-depth: 0
 
       - name: checkout DE Framework
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
           fetch-depth: 0
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           ref: branch_v3_9
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -75,7 +75,7 @@ jobs:
         run: |
           set -x
           python3 -m pip install --upgrade pip
-          python3 -m pip install --upgrade wheel
+          python3 -m pip install --upgrade wheel setuptools
           python3 -m pip install -r ${{ github.workspace }}/glideinwms/requirements.txt
 
       - name: Install dependencies for DE Framework
@@ -83,7 +83,7 @@ jobs:
           set -x
           cd ${{ github.workspace }}/decisionengine
           python3 -m pip install --upgrade pip
-          python3 -m pip install --upgrade wheel
+          python3 -m pip install --upgrade wheel setuptools
           python3 -m pip install --upgrade pytest
           python3 -m pip install --user Cython
           python3 setup.py bdist_wheel
@@ -121,7 +121,7 @@ jobs:
           pytest --cov-report term --cov-report xml --cov=decisionengine_modules --no-cov-on-fail
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           flags: python-${{ matrix.python-version }}
 
@@ -131,17 +131,17 @@ jobs:
     needs: pytest
     steps:
       - name: checkout code tree
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
