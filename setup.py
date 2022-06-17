@@ -44,6 +44,8 @@ devel_req = [
     "pytest >= 6.2.2, < 7.0",  # pytest 7 incompatible with pytest-postgres < 4 from DE
     "pytest-cov >= 2.11.1",
     "pytest-flake8 >= 1.0.7",
+    "pytest-xdist[psutil] >= 2.3.0",
+    "coverage == 6.1.2",  # https://github.com/nedbat/coveragepy/issues/1300
     "tabulate >= 0.8.8",
     "toml >= 0.10.2",
     "pyyaml >= 5.4.1",
