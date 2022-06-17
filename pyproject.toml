@@ -7,7 +7,7 @@ write_to = "src/decisionengine_modules/version.py"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-l -v --durations=0"
+addopts = "-l -v --durations=0 -n 4"
 log_level = "debug"
 testpaths = "src/decisionengine_modules"
 timeout = 120

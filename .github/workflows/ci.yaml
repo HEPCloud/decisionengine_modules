@@ -76,7 +76,7 @@ jobs:
           set -x
           python3 -m pip install --upgrade pip
           python3 -m pip install --upgrade wheel setuptools
-          python3 -m pip install -r ${{ github.workspace }}/glideinwms/requirements.txt
+          python3 -m pip install -r glideinwms/requirements.txt
 
       - name: Install dependencies for DE Framework
         run: |
@@ -92,7 +92,7 @@ jobs:
       - name: Install DE Modules dependencies (runtime)
         run: |
           set -x
-          cd ${{ github.workspace }}/decisionengine_modules
+          cd decisionengine_modules
           python3 -m pip install --upgrade pip
           python3 -m pip install -e . --user
           python3 -m pip list --user
@@ -100,7 +100,7 @@ jobs:
       - name: Install dependencies (unit tests)
         run: |
           set -x
-          cd ${{ github.workspace }}/decisionengine_modules
+          cd decisionengine_modules
           python3 -m pip install --upgrade pytest
           python3 -m pip install -e .[develop] --user
           python3 -m pip list --user
@@ -114,15 +114,15 @@ jobs:
       - name: Run Unit Tests on Python ${{ matrix.python-version }}
         env:
           PYTEST_TIMEOUT: 90
-          PYTHONPATH: ${{ github.workspace }}/../:${{ github.workspace }}
-          COVERAGE_PROCESS_START: ${{ github.workspace }}/.coveragerc
+          PYTHONPATH: ${{ github.workspace }}
         run: |
-          cd ${{ github.workspace }}/decisionengine_modules
-          pytest --cov-report term --cov-report xml --cov=decisionengine_modules --no-cov-on-fail
+          cd decisionengine_modules
+          pytest --cov-report term --cov-report xml --no-cov-on-fail --cov=./
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
+          working-directory: decisionengine_modules
           flags: python-${{ matrix.python-version }}
 
   build_doc:
