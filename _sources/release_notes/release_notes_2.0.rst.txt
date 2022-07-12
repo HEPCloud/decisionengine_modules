@@ -1,6 +1,59 @@
 .. SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 .. SPDX-License-Identifier: Apache-2.0
 
+Release 2.0.1
+-------------
+
+Patch level (bug fix) release.
+
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Full list of commits since version 2.0.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`6f2db85 <https://github.com/HEPCloud/decisionengine/commit/6f2db85ffc13470ff2a83b081cd85902ed7c781b>`_:   Fix coverage reporting.
+
+`a764562 <https://github.com/HEPCloud/decisionengine/commit/a76456276c7737a33fe51dba2645ee4f3c7518c9>`_:   Silence warnings that are beyond our control or are irrelevant.
+
+`cc481e9 <https://github.com/HEPCloud/decisionengine/commit/cc481e9affb01d16cba9d87031c2e54ec632f69e>`_:   Test that duplicate column names and empty dataframes are properly handled.
+
+`76e1085 <https://github.com/HEPCloud/decisionengine/commit/76e10851d0084cec5385006a1311bfb6d5af9b85>`_:   Fix NERSC FOM test.
+
+`f67df9d <https://github.com/HEPCloud/decisionengine/commit/f67df9d5070028e4f94602f7d8697ce43e1d7810>`_:   Cleanup tests.
+
+`51c6e75 <https://github.com/HEPCloud/decisionengine/commit/51c6e756e4387c33dede15159379eebab223fb1e>`_:   Work around pylint bug.
+
+`3eb1e92 <https://github.com/HEPCloud/decisionengine/commit/3eb1e92635d1d621e5656a0069294b81dc0f379f>`_:   Ensure setuptools is up-to-date in GitHub actions; also update actions.
+
+`bfe45e5 <https://github.com/HEPCloud/decisionengine/commit/bfe45e5005edfd19b9bbfe1331d9fc6a64656828>`_:   in dataframe_for_entrytype take care of empty datablocks
+
+`5223daf <https://github.com/HEPCloud/decisionengine/commit/5223daf2442ba6992b917d9f63e58bc1351d9049>`_:   Enable token proxy hybrid GWMS configuration
+
+`265dc8e <https://github.com/HEPCloud/decisionengine/commit/265dc8e3224581c43b48704e988e5c8576f566f9>`_:   Fix pre-commit node version to 17.9.0, the last to support SL7.
+
+`7f5922f <https://github.com/HEPCloud/decisionengine/commit/7f5922f22359d72f6a0d6742c67d22e0762f93e2>`_:   Single point of maintenance for entry types.
+
+`0125962 <https://github.com/HEPCloud/decisionengine/commit/0125962b4bb14a9a38254ae57f8f28d1f63ed1cc>`_:   Support additional queries according to the entrytype/logic-engine fact.
+
+`f685f24 <https://github.com/HEPCloud/decisionengine/commit/f685f240abea3616e9a923d71325692778abf061>`_:   Use Pandas concepts.
+
+`331a284 <https://github.com/HEPCloud/decisionengine/commit/331a28418ceb86959450eaac41e30301ad90e397>`_:   Testing cleanups.
+
+`05b605e <https://github.com/HEPCloud/decisionengine/commit/05b605eba937a619573971310a25b3bd10a55175>`_:   Remove unnecessary code.
+
+`0b9e6c7 <https://github.com/HEPCloud/decisionengine/commit/0b9e6c7ca9db99450ad8e8aae402b3d42dcfd088>`_:   Fix pyupgrade version for python 3.6 compatibility
+
+`9f8dddb <https://github.com/HEPCloud/decisionengine/commit/9f8dddb8779805cb97e1caaef47acf45d73c9c28>`_:   Further cleanups for testing glidein frontend element.
+
+`0292842 <https://github.com/HEPCloud/decisionengine/commit/029284239b1fad5fac06baface5e3aa3b67adeb5>`_:   Remove unnecessary testing classes.
+
+`fcd1a40 <https://github.com/HEPCloud/decisionengine/commit/fcd1a405b25bf7105f3f5e12625c69f189a08860>`_:   Added cross-package link in the documentation
+
+`a35c2e8 <https://github.com/HEPCloud/decisionengine/commit/a35c2e88dd1fd7627a3d84726654e0d9d6c9fc0f>`_:   Updated 2.0 release notes and indexes, ready for 2.0.0
+
 
 Release 2.0.0
 -------------
