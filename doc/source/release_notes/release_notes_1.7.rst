@@ -1,6 +1,19 @@
 .. SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 .. SPDX-License-Identifier: Apache-2.0
 
+Release 1.7.3
+-------------
+
+Enable token+proxy hybrid configuration, to send a proxy in a ddition to tokens to support OSG Gratia probes.
+
+Full list of commits since version 1.7.2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`da693a7 <https://github.com/HEPCloud/decisionengine_modules/commit/da693a7fc75558ae3af6521dabbd7075fd7b5960>`_:   Enable token proxy hybrid GWMS configuration
+
+`3c75da5 <https://github.com/HEPCloud/decisionengine_modules/commit/3c75da55328c5c25f88efd9713d369a7f4850635>`_:   Updated release notes, ready for 1.7.2
+
+
 Release 1.7.2
 -------------
 
