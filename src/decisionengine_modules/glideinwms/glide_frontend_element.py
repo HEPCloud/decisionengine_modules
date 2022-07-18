@@ -296,7 +296,7 @@ class GlideFrontendElement:
             # Add GLIDECLIENT_ReqNode to monitor orphaned glideins
             glidein_params["GLIDECLIENT_ReqNode"] = factory_pool_node
             # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
-            glidein_params["CONTINUE_IF_NO_PROXY"] = "True"
+            glidein_params["CONTINUE_IF_NO_PROXY"] = "False"
 
             glidein_monitors = {k: count_jobs[k] for k in count_jobs}
             glidein_monitors["RunningHere"] = self.count_real_jobs[glideid]
@@ -1653,7 +1653,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             # Add GLIDECLIENT_ReqNode to monitor orphaned glideins
             glidein_params["GLIDECLIENT_ReqNode"] = factory_pool_node
             # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
-            glidein_params["CONTINUE_IF_NO_PROXY"] = "True"
+            glidein_params["CONTINUE_IF_NO_PROXY"] = "False"
 
             glidein_monitors = {k: count_jobs[k] for k in count_jobs}
             glidein_monitors["RunningHere"] = self.count_real_jobs[glideid]
