@@ -6,8 +6,10 @@ import os.path
 import numpy
 import pandas
 
+
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
+from decisionengine.framework.util.metrics import Gauge
 from decisionengine_modules.glideinwms import glide_frontend_element
 from decisionengine_modules.glideinwms.resource_dist_plugins import fom_eligible_resources
 
@@ -24,6 +26,9 @@ _CONSUMES = [
 ]
 
 _SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
+
+# Metrics
+NUMBER_OF_JOBS = Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine")
 
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
@@ -103,6 +108,8 @@ class GlideinRequestManifests(Transform.Transform):
 
             # Get the jobs dataframe
             jobs_df = self.job_manifests(datablock)
+            NUMBER_OF_JOBS.set(jobs_df.shape[0])
+
             # Get the job clusters dataframe
             job_clusters_df = self.job_clusters(datablock)
             # Get HTCondor slots dataframe
