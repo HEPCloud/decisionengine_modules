@@ -6,6 +6,7 @@ import os.path
 import numpy
 import pandas
 
+
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 from decisionengine.framework.util.metrics import Gauge
@@ -33,6 +34,9 @@ METRICS = {
     "REQ_IDLE_GLIDEINS": Gauge("de_req_idle_glideins_total", "Requested minimum idle glideins", ["ce"]),
     "REQ_MAX_GLIDEINS": Gauge("de_req_max_glideins_total", "Requested max glideins", ["ce"]),
 }
+
+# Metrics
+NUMBER_OF_JOBS = Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine")
 
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
