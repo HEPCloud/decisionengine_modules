@@ -50,6 +50,12 @@ class GlideFrontendElement:
         self.fe_cfg = fe_cfg
         self.logger = logger
 
+        # Default parameters for glidein request
+        self.default_glidein_params = {
+            # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
+            "CONTINUE_IF_NO_PROXY": "False"
+        }
+
     def generate_glidein_requests(self, jobs_df, slots_df, entries, factory_globals, job_filter="ClusterId > 0"):
         ########################################################################
         # STEP 1: Get info from frontend configuration
@@ -293,10 +299,12 @@ class GlideFrontendElement:
             for k in self.params_descript.expr_data:
                 kexpr = self.params_descript.expr_objs[k]
                 glidein_params[k] = eval(kexpr)
+            # Update the parameters with the class defaults
+            for key, value in self.default_glidein_params.items():
+                if key not in glidein_params:
+                    glidein_params[key] = value
             # Add GLIDECLIENT_ReqNode to monitor orphaned glideins
             glidein_params["GLIDECLIENT_ReqNode"] = factory_pool_node
-            # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
-            glidein_params["CONTINUE_IF_NO_PROXY"] = "False"
 
             glidein_monitors = {k: count_jobs[k] for k in count_jobs}
             glidein_monitors["RunningHere"] = self.count_real_jobs[glideid]
@@ -1650,10 +1658,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             for k in self.params_descript.expr_data:
                 kexpr = self.params_descript.expr_objs[k]
                 glidein_params[k] = eval(kexpr)
+            # Update the parameters with the class defaults
+            for key, value in self.default_glidein_params.items():
+                if key not in glidein_params:
+                    glidein_params[key] = value
             # Add GLIDECLIENT_ReqNode to monitor orphaned glideins
             glidein_params["GLIDECLIENT_ReqNode"] = factory_pool_node
-            # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
-            glidein_params["CONTINUE_IF_NO_PROXY"] = "False"
 
             glidein_monitors = {k: count_jobs[k] for k in count_jobs}
             glidein_monitors["RunningHere"] = self.count_real_jobs[glideid]
