@@ -15,16 +15,15 @@ _CONSUMES = [
     "factoryglobal_manifests",
     "job_manifests",
     "job_clusters",
-    "Factory_Entries_LCF",
+    "Factory_Entries",
     "startd_manifests",
-    "Factory_Entries_AWS",
     "Grid_Figure_Of_Merit",
     "GCE_Figure_Of_Merit",
     "AWS_Figure_Of_Merit",
     "Nersc_Figure_Of_Merit",
 ]
 
-_SUPPORTED_ENTRY_TYPES = ["Factory_Entries_LCF", "Factory_Entries_AWS", "Factory_Entries_Grid", "Factory_Entries_GCE"]
+_SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
 
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
@@ -77,8 +76,9 @@ class GlideinRequestManifests(Transform.Transform):
             fe_cfg = self.read_fe_config()
             # Get factory global classad dataframe
             factory_globals = datablock.get("factoryglobal_manifests")
+            factory_entries = datablock.get("Factory_Entries")
             entries = pandas.DataFrame(
-                pandas.concat([datablock.get(et) for et in _SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True)
+                pandas.concat([factory_entries.xs(et) for et in _SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True)
             )
             if entries.empty:
                 self.logger.info("There are no entries to request resources from")

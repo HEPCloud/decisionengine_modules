@@ -63,8 +63,7 @@ CONFIG_FACTORY_ENTRIES_CORMAP = {
 
 def test_produces():
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
-    produces = {f"Factory_Entries_{entrytype}": pd.DataFrame for entrytype in factory_entries.ENTRY_TYPES.keys()}
-    assert entries._produces == produces
+    assert entries._produces == {"Factory_Entries": pd.DataFrame}
 
 
 def test_acquire():
@@ -102,7 +101,7 @@ def test_acquire_correctionmap():
 
     entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP)
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
-        dummypd = entries.acquire()
-        dummypd2 = dummypd["Factory_Entries_Grid"]
-        assert df1.equals(dummypd2[["GLIDEIN_Resource_Slots"]])
-        assert df2.equals(dummypd2[["GLIDEIN_CMSSite"]])
+        all_entries = entries.acquire()
+        dummypd = all_entries["Factory_Entries"].xs("Grid")
+        assert df1.equals(dummypd[["GLIDEIN_Resource_Slots"]])
+        assert df2.equals(dummypd[["GLIDEIN_CMSSite"]])

@@ -14,12 +14,11 @@ def split_dataframe(df, at):
     return df.iloc[:, 0:at], df.iloc[:, at:]
 
 
+@Publisher.consumes(Factory_Entries=pandas.DataFrame, glideclient_manifests=pandas.DataFrame)
 class GlideinWMSManifests(publisher.HTCondorManifests):
     def __init__(self, config):
         super().__init__(config)
         self.queries = config.get("queries", {})
-        self._consumes = {f"Factory_Entries_{key}": pandas.DataFrame for key in ENTRY_TYPES.keys()}
-        self._consumes.update(glideclient_manifests=pandas.DataFrame)
         self.classad_type = "glideclient"
 
     def publish(self, datablock):
@@ -50,13 +49,19 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
                 self.invalidate_ads_constraint[collector_host] = constraint
 
     def dataframe_for_entrytype(self, allow_type, datablock):
-        requests_df = datablock.get("glideclient_manifests")
         facts_df = datablock.get("de_logicengine_facts")
 
-        data_product_name = f"Factory_Entries_{allow_type}"
+        requests_df = datablock.get("glideclient_manifests")
+        if requests_df.empty:
+            return pandas.DataFrame()
+
         fact_name = f"allow_{allow_type.lower()}_requests"
-        entries_df = datablock.get(data_product_name)
-        if requests_df.empty or entries_df.empty:
+        entries_df = datablock.get("Factory_Entries")
+        if not entries_df.index.isin([allow_type], level=0).any():
+            return pandas.DataFrame()
+
+        entries_df = entries_df.xs(allow_type)
+        if entries_df.empty:
             return pandas.DataFrame()
 
         joint_df = requests_df.merge(entries_df, left_on="ReqName", right_on="Name", suffixes=("", "_right"))

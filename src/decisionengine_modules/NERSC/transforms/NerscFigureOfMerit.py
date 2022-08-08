@@ -15,7 +15,7 @@ from decisionengine.framework.modules import Transform
 from decisionengine_modules.util import figure_of_merit as fom
 
 
-@Transform.consumes(Nersc_Instance_Performance=pd.DataFrame, Factory_Entries_LCF=pd.DataFrame)
+@Transform.consumes(Nersc_Instance_Performance=pd.DataFrame, Factory_Entries=pd.DataFrame)
 @Transform.produces(Nersc_Price_Performance=pd.DataFrame, Nersc_Figure_Of_Merit=pd.DataFrame)
 class NerscFigureOfMerit(Transform.Transform):
     def __init__(self, config):
@@ -51,7 +51,7 @@ class NerscFigureOfMerit(Transform.Transform):
             sys.float_info.max,
         )
 
-        factory_entries_lcf = self.Factory_Entries_LCF(data_block)
+        factory_entries_lcf = self.Factory_Entries(data_block).xs("LCF")
 
         figures_of_merit = []
         for _i, row in factory_entries_lcf.iterrows():

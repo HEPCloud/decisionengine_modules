@@ -6,6 +6,7 @@ import pytest
 
 from decisionengine.framework.modules.Module import verify_products
 from decisionengine_modules.NERSC.transforms import NerscFigureOfMerit
+from decisionengine_modules.tests.dataframe_for_entrytype import dataframe_for_entrytype
 
 data_block = {
     "Nersc_Instance_Performance": pd.DataFrame(
@@ -19,8 +20,9 @@ data_block = {
             }
         ]
     ),
-    "Factory_Entries_LCF": pd.DataFrame(
-        [
+    "Factory_Entries": dataframe_for_entrytype(
+        key="LCF",
+        data=[
             {
                 "EntryName": "CMSHTPC_T3_US_NERSC_Cori",
                 "GlideinConfigPerEntryMaxGlideins": 200,
@@ -28,7 +30,7 @@ data_block = {
                 "GlideinConfigPerEntryMaxIdle": 10,
                 "GlideinMonitorTotalStatusIdle": 9,
             }
-        ]
+        ],
     ),
 }
 

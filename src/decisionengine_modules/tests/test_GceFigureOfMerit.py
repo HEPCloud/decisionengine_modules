@@ -8,6 +8,7 @@ import pandas as pd
 import tabulate
 
 from decisionengine_modules.GCE.transforms import GceFigureOfMerit
+from decisionengine_modules.tests.dataframe_for_entrytype import dataframe_for_entrytype
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 CSV_FILE = os.path.join(DATA_DIR, "GceOccupancy.output.fixture.csv")
@@ -39,8 +40,9 @@ data_block = {
     "GCE_Instance_Performance": gce_instance_performance_df.reindex(
         columns=("EntryName", "InstanceType", "AvailabilityZone", "OnDemandPrice", "PerfTtbarTotal")
     ),
-    "Factory_Entries_GCE": pd.DataFrame(
-        [
+    "Factory_Entries": dataframe_for_entrytype(
+        key="GCE",
+        data=[
             {
                 "EntryName": "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1",
                 "GlideinConfigPerEntryMaxIdle": 100,
@@ -48,7 +50,7 @@ data_block = {
                 "GlideinConfigPerEntryMaxGlideins": 200,
                 "GlideinMonitorTotalStatusRunning": 100,
             }
-        ]
+        ],
     ),
     "GCE_Occupancy": GCE_OCCUPANCY_DF,
 }

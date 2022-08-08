@@ -12,7 +12,7 @@ ATTR_FOM = "Grid_Figure_Of_Merit"
 
 
 @Transform.supports_config(Parameter("price_performance", default=1))
-@Transform.consumes(Factory_Entries_Grid=pandas.DataFrame)
+@Transform.consumes(Factory_Entries=pandas.DataFrame)
 @Transform.produces(Grid_Figure_Of_Merit=pandas.DataFrame)
 class GridFigureOfMerit(Transform.Transform):
     def __init__(self, config):
@@ -25,7 +25,7 @@ class GridFigureOfMerit(Transform.Transform):
         """
 
         self.logger.debug("in GridFigureOfMerit transform")
-        entries = self.Factory_Entries_Grid(datablock)
+        entries = self.Factory_Entries(datablock).xs("Grid")
         if entries is None:
             entries = pandas.DataFrame({ATTR_ENTRYNAME: []})
         foms = []

@@ -35,12 +35,7 @@ ENTRY_TYPES = {
     Parameter("max_retries", default=0),
     Parameter("retry_interval", default=0),
 )
-@Source.produces(
-    Factory_Entries_Grid=pandas.DataFrame,
-    Factory_Entries_AWS=pandas.DataFrame,
-    Factory_Entries_GCE=pandas.DataFrame,
-    Factory_Entries_LCF=pandas.DataFrame,
-)
+@Source.produces(Factory_Entries=pandas.DataFrame)
 class FactoryEntries(Source.Source):
     def __init__(self, config):
         super().__init__(config)
@@ -111,12 +106,10 @@ class FactoryEntries(Source.Source):
         if dataframe.empty:
             # There were no entry classads in the factory collector or
             # quering the collector failed
-            return {f"Factory_Entries_{key}": pandas.DataFrame() for key in ENTRY_TYPES.keys()}
+            return {"Factory_Entries": pandas.DataFrame()}
 
-        results = {}
-        for key, value in ENTRY_TYPES.items():
-            results[f"Factory_Entries_{key}"] = dataframe.loc[dataframe.GLIDEIN_GridType.isin(value)]
-        return results
+        dfs = [dataframe.loc[dataframe.GLIDEIN_GridType.isin(value)] for value in ENTRY_TYPES.values()]
+        return {"Factory_Entries": pandas.concat(dfs, keys=ENTRY_TYPES.keys())}
 
 
 Source.describe(FactoryEntries)

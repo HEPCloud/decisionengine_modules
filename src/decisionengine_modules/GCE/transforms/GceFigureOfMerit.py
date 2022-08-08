@@ -15,7 +15,7 @@ from decisionengine.framework.modules import Transform
 from decisionengine_modules.util.figure_of_merit import figure_of_merit
 
 
-@Transform.consumes(GCE_Instance_Performance=pd.DataFrame, Factory_Entries_GCE=pd.DataFrame, GCE_Occupancy=pd.DataFrame)
+@Transform.consumes(GCE_Instance_Performance=pd.DataFrame, Factory_Entries=pd.DataFrame, GCE_Occupancy=pd.DataFrame)
 @Transform.produces(GCE_Price_Performance=pd.DataFrame, GCE_Figure_Of_Merit=pd.DataFrame)
 class GceFigureOfMerit(Transform.Transform):
     def __init__(self, config):
@@ -31,7 +31,7 @@ class GceFigureOfMerit(Transform.Transform):
             sys.float_info.max,
         )
 
-        factory_entries = self.Factory_Entries_GCE(data_block).fillna(0)
+        factory_entries = self.Factory_Entries(data_block).xs("GCE").fillna(0)
         gce_occupancy = self.GCE_Occupancy(data_block).fillna(0)
 
         figures_of_merit = []
