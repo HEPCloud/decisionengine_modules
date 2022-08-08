@@ -32,6 +32,8 @@ _SUPPORTED_ENTRY_TYPES = ["Factory_Entries_LCF", "Factory_Entries_AWS", "Factory
 NUMBER_OF_JOBS = Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine")
 STATUS_OF_JOB = Gauge("jobs_df_jobStatus", "Status of job seen by the Decision Engine")
 NAME_OF_GROUP = Gauge("group_manifests_groupname", "Name of grouup manifest")
+REQ_IDLE_GLIDEINS = Gauge("req_idle_glideins_total","Requested minimum idle glideins",["ce"])
+REQ_MAX_GLIDEINS = Gauge("req_max_glideins_total","Requested max glideins",["ce"])
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
 
@@ -150,6 +152,19 @@ class GlideinRequestManifests(Transform.Transform):
                     job_filter=job_query,
                     fom_entries=fom_entries,
                 )
+
+                entry_ces = [ce_row.ReqGlidein for ce_row in group_manifests["glideclient_manifests"].itertuples()]
+                req_idle_glideins = [ce_row.ReqIdleGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()]
+                req_idle_glideins_per_ce = {ce:count for ce,count in zip(entry_ces,req_idle_glideins)}
+                for ce,count in req_idle_glideins_per_ce.items():
+                    REQ_IDLE_GLIDEINS.labels(ce).set(count)
+                    
+                req_max_glideins = [ce_row.ReqMaxGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()]
+                req_max_glideins_per_ce = {ce:count for ce,count in zip(entry_ces,req_max_glideins)}
+                for ce,count in req_max_glideins_per_ce.items():
+                    REQ_MAX_GLIDEINS.labels(ce).set(count)
+
+
                 manifests = self.merge_requests(manifests, group_manifests)
         except Exception:
             self.logger.exception("Error generating glidein requests")
