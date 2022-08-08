@@ -39,10 +39,7 @@ def fe_group_classads_instance():
 def test_consumes(fe_group_classads_instance):
     consumes = [
         "glideclient_manifests",
-        "Factory_Entries_Grid",
-        "Factory_Entries_AWS",
-        "Factory_Entries_GCE",
-        "Factory_Entries_LCF",
+        "Factory_Entries",
     ]
     assert fe_group_classads_instance._consumes == dict.fromkeys(consumes, pd.DataFrame)
 
@@ -53,10 +50,14 @@ def test_publish(fe_group_classads_instance):
     ) as publish_to_condor:
         datablock = {
             "glideclient_manifests": _REQUEST_DF,
-            "Factory_Entries_Grid": pd.DataFrame({"Name": ["u", "v", "w"], "Other": [1, 2, 3], "CollectorHost": 14.0}),
-            "Factory_Entries_AWS": pd.DataFrame({"Name": ["x"], "Other": 5}),
-            "Factory_Entries_GCE": pd.DataFrame({"Name": ["y", "z"], "Other": 7}),
-            "Factory_Entries_LCF": pd.DataFrame(),
+            "Factory_Entries": pd.concat(
+                {
+                    "Grid": pd.DataFrame({"Name": ["u", "v", "w"], "Other": [1, 2, 3], "CollectorHost": 14.0}),
+                    "AWS": pd.DataFrame({"Name": ["x"], "Other": 5}),
+                    "GCE": pd.DataFrame({"Name": ["y", "z"], "Other": 7}),
+                    "LCF": pd.DataFrame(),
+                }
+            ),
             "de_logicengine_facts": pd.DataFrame(
                 {
                     "fact_name": [

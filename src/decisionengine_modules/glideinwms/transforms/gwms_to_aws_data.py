@@ -13,7 +13,7 @@ _ATTR_TRANSLATION_MAP = {
 }
 
 
-@Transform.consumes(Factory_Entries_AWS=pd.DataFrame)
+@Transform.consumes(Factory_Entries=pd.DataFrame)
 @Transform.produces(aws_instance_limits=pd.DataFrame, spot_occupancy_config=pd.DataFrame)
 class AWSFactoryEntryData(Transform.Transform):
     def __init__(self, config):
@@ -23,7 +23,7 @@ class AWSFactoryEntryData(Transform.Transform):
 
         # Get the dataframe containing AWS entries
         self.logger.debug("in AWSFactoryEntryData transform")
-        aws_entries = self.Factory_Entries_AWS(datablock)
+        aws_entries = self.Factory_Entries(datablock).xs("AWS")
 
         limits_df = pd.DataFrame()
         so_config_dict = {}

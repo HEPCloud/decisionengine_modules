@@ -12,7 +12,7 @@ from decisionengine.framework.modules.Transform import Parameter
 
 @Transform.supports_config(Parameter("entry_nersc_map", type=dict, comment="Maps jobs on NERSC to entry name"))
 @Transform.consumes(
-    startd_manifests=pandas.DataFrame, Factory_Entries_LCF=pandas.DataFrame, Nersc_Job_Info=pandas.DataFrame
+    startd_manifests=pandas.DataFrame, Factory_Entries=pandas.DataFrame, Nersc_Job_Info=pandas.DataFrame
 )
 @Transform.produces(nersc_userpool_slots_comparison=dict)
 class CompareNerscUserpoolSlots(Transform.Transform):
@@ -34,7 +34,7 @@ class CompareNerscUserpoolSlots(Transform.Transform):
         self.logger.debug("in CompareNerscUserpoolSlots transform")
         nersc_df = data_block["Nersc_Job_Info"]
         userpool_slots_df = data_block["startd_manifests"]
-        factory_entry_df = data_block["Factory_Entries_LCF"]
+        factory_entry_df = data_block["Factory_Entries"].xs("LCF")
 
         # constrain userpool slots with only batch slurm
         userpool_slots_df = userpool_slots_df[userpool_slots_df["GLIDEIN_GridType"] == "batch slurm"]

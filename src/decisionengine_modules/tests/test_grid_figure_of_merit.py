@@ -6,6 +6,7 @@ import sys
 import pandas
 
 from decisionengine_modules.glideinwms.transforms.grid_figure_of_merit import GridFigureOfMerit
+from decisionengine_modules.tests.dataframe_for_entrytype import dataframe_for_entrytype
 
 grid_entries = ["g1", "g2", "g3", "g4", "g5"]
 running = [5, 10, 15, 20, 200]
@@ -21,9 +22,7 @@ entries = {
     "GlideinConfigPerEntryMaxIdle": max_idle,
 }
 
-grid_df = pandas.DataFrame(entries)
-
-datablock = {"Factory_Entries_Grid": grid_df}
+datablock = {"Factory_Entries": dataframe_for_entrytype(key="Grid", data=entries)}
 
 
 def test_eligible_resources_with_constraints():
