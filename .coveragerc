@@ -3,6 +3,7 @@
 source = src
 
 [run]
+concurrency = multiprocessing,thread
 parallel = true
 branch = true
 source = src

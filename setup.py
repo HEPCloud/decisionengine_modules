@@ -45,7 +45,7 @@ devel_req = [
     "pytest-cov >= 2.11.1",
     "pytest-flake8 >= 1.0.7",
     "pytest-xdist[psutil] >= 2.3.0",
-    "coverage == 6.1.2",  # https://github.com/nedbat/coveragepy/issues/1300
+    "coverage >= 6.1.2",
     "tabulate >= 0.8.8",
     "toml >= 0.10.2",
     "pyyaml >= 5.4.1",
