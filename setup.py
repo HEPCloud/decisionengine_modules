@@ -46,7 +46,7 @@ devel_req = [
     "pytest-flake8 >= 1.0.7",
     "pytest-xdist[psutil] >= 2.3.0",
     "flake8 >= 4.0.0, < 5.0.0",  # https://github.com/tholo/pytest-flake8/issues/87
-    "coverage == 6.1.2",  # https://github.com/nedbat/coveragepy/issues/1300
+    "coverage >= 6.1.2",
     "tabulate >= 0.8.8",
     "toml >= 0.10.2",
     "pyyaml >= 5.4.1",
