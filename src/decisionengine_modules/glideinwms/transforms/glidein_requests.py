@@ -6,7 +6,6 @@ import os.path
 import numpy
 import pandas
 
-
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
 from decisionengine.framework.util.metrics import Gauge
@@ -27,12 +26,14 @@ _CONSUMES = [
 
 _SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
 
-# Metrics
-NUMBER_OF_JOBS = Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine")
-STATUS_OF_JOB = Gauge("jobs_df_jobStatus", "Status of job seen by the Decision Engine")
-NAME_OF_GROUP = Gauge("group_manifests_groupname", "Name of grouup manifest")
-REQ_IDLE_GLIDEINS = Gauge("req_idle_glideins_total","Requested minimum idle glideins",["ce"])
-REQ_MAX_GLIDEINS = Gauge("req_max_glideins_total","Requested max glideins",["ce"])
+METRICS = {
+    "NUMBER_OF_JOBS": Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine"),
+    "STATUS_OF_JOB": Gauge("de_jobs_df_jobStatus", "Status of job seen by the Decision Engine"),
+    "NAME_OF_GROUP": Gauge("de_group_manifests_groupname", "Name of grouup manifest"),
+    "REQ_IDLE_GLIDEINS": Gauge("de_req_idle_glideins_total", "Requested minimum idle glideins", ["ce"]),
+    "REQ_MAX_GLIDEINS": Gauge("de_req_max_glideins_total", "Requested max glideins", ["ce"]),
+}
+
 # TODO: Extend to use following in future
 # 'Nersc_Job_Info', 'Nersc_Allocation_Info'
 
@@ -111,9 +112,9 @@ class GlideinRequestManifests(Transform.Transform):
 
             # Get the jobs dataframe
             jobs_df = self.job_manifests(datablock)
-            NUMBER_OF_JOBS.set(jobs_df.shape[0])
-            #NAME_OF_GROUP.group_manifests(GroupName)
-            #STATUS_OF_JOB.(jobs_df.JobStatus)
+            METRICS["NUMBER_OF_JOBS"].set(jobs_df.shape[0])
+            # NAME_OF_GROUP.group_manifests(GroupName)
+            # STATUS_OF_JOB.(jobs_df.JobStatus)
 
             # Get the job clusters dataframe
             job_clusters_df = self.job_clusters(datablock)
@@ -154,16 +155,19 @@ class GlideinRequestManifests(Transform.Transform):
                 )
 
                 entry_ces = [ce_row.ReqGlidein for ce_row in group_manifests["glideclient_manifests"].itertuples()]
-                req_idle_glideins = [ce_row.ReqIdleGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()]
-                req_idle_glideins_per_ce = {ce:count for ce,count in zip(entry_ces,req_idle_glideins)}
-                for ce,count in req_idle_glideins_per_ce.items():
+                req_idle_glideins = [
+                    ce_row.ReqIdleGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()
+                ]
+                req_idle_glideins_per_ce = {ce: count for ce, count in zip(entry_ces, req_idle_glideins)}
+                for ce, count in req_idle_glideins_per_ce.items():
                     REQ_IDLE_GLIDEINS.labels(ce).set(count)
-                    
-                req_max_glideins = [ce_row.ReqMaxGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()]
-                req_max_glideins_per_ce = {ce:count for ce,count in zip(entry_ces,req_max_glideins)}
-                for ce,count in req_max_glideins_per_ce.items():
-                    REQ_MAX_GLIDEINS.labels(ce).set(count)
 
+                req_max_glideins = [
+                    ce_row.ReqMaxGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()
+                ]
+                req_max_glideins_per_ce = {ce: count for ce, count in zip(entry_ces, req_max_glideins)}
+                for ce, count in req_max_glideins_per_ce.items():
+                    REQ_MAX_GLIDEINS.labels(ce).set(count)
 
                 manifests = self.merge_requests(manifests, group_manifests)
         except Exception:
