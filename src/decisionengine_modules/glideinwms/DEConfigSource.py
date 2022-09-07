@@ -21,7 +21,7 @@ class DEConfigSource(ConfigSource):
 
     def load_config(self):
         try:
-            de_config = de_client.main(["--port", self.port, "--host", self.host, "--show-de-config"])
+            de_config = de_client.main(["--port", self.port, "--host", self.host, "--show-de-config"], logger_name=None)
             de_config = json.loads(de_config, object_hook=OrderedDict)["glideinwms"]
             return de_config
         except Exception as e:
