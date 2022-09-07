@@ -80,6 +80,11 @@ def test_publish(fe_group_classads_instance):
         assert actual_df.compare(expected_df).empty
 
 
+def test_no_glideins(fe_group_classads_instance):
+    datablock = {"glideclient_manifests": pd.DataFrame()}
+    assert fe_group_classads_instance.dataframe_for_entrytype("some_entry_type", datablock).empty
+
+
 def test_create_invalidate_constraint(fe_group_classads_instance):
     expected_constraint = {
         "col1.com": '(glideinmytype == "glideclient") && (stringlistmember(ClientName, "e1,e2,e3"))',
