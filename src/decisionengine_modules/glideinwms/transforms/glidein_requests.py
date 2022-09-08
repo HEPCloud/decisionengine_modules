@@ -113,8 +113,8 @@ class GlideinRequestManifests(Transform.Transform):
             # Get the jobs dataframe
             jobs_df = self.job_manifests(datablock)
             METRICS["NUMBER_OF_JOBS"].set(jobs_df.shape[0])
-           # METRICS["NAME_OF_GROUP"].group_manifests(GroupName)
-           # METRICS["STATUS_OF_JOB"].(jobs_df.JobStatus)
+            # METRICS["NAME_OF_GROUP"].group_manifests(GroupName)
+            # METRICS["STATUS_OF_JOB"].(jobs_df.JobStatus)
 
             # Get the job clusters dataframe
             job_clusters_df = self.job_clusters(datablock)
