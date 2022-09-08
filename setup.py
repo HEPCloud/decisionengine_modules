@@ -62,7 +62,12 @@ devel_req = [
 # workaround bug in editable install when PEP517 is detected
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-rpm_require = ["decisionengine", "glideinwms-vofrontend-libs", "glideinwms-vofrontend-glidein", "python3-wheel"]
+rpm_require = ["decisionengine", "glideinwms-vofrontend-libs", "glideinwms-vofrontend-glidein"]
+
+__base_pip_requires = [
+    f"python3.{sys.version_info.minor}dist(wheel)",
+]
+rpm_require.extend(__base_pip_requires)
 
 # This metadata can be read out with:
 #    import importlib.metadata
@@ -87,10 +92,11 @@ setup(
     },
     options={
         "bdist_rpm": {
-            "build_requires": "python3",
+            "build_requires": __base_pip_requires,
             "provides": ["python3-" + about.__title__, "decisionengine-standard-library"],
             "install_script": "package/rpm/install_section",
             "requires": rpm_require,
+            "release": "1%{?dist}",
         },
     },
     zip_safe=True,

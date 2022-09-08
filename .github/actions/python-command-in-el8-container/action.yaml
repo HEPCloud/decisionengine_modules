@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 name: "Python Action"
-description: "Run python3 action in preconfigured SL7 container image"
+description: "Run python3 action in preconfigured EL8 container image"
 inputs:
   python-command:
     description: "What to run"
@@ -11,10 +11,10 @@ inputs:
   logfile:
     description: "Where to log output"
     required: true
-    default: "pytest_el7.log"
+    default: "pytest_el8.log"
 runs:
   using: "docker"
-  image: "../../../package/ci/EL7/Dockerfile"
+  image: "../../../package/ci/EL8/Dockerfile"
   args:
     - ${{ inputs.python-command }}
     - ${{ inputs.logfile }}

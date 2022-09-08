@@ -23,9 +23,9 @@ pipeline {
                             // Set custom Build Name
                             if (params.GITHUB_PR_NUMBER) {
                                 if (params.GITHUB_PR_STATE == 'CLOSED') {
-                                    currentBuild.displayName="${BUILD_NUMBER}#PR#${GITHUB_PR_NUMBER}#CLOSED"
+                                    currentBuild.displayName="${BUILD_NUMBER}#${EL_VERSION}#PR#${GITHUB_PR_NUMBER}#CLOSED"
                                 } else {
-                                    currentBuild.displayName="${BUILD_NUMBER}#PR#${GITHUB_PR_NUMBER}"
+                                    currentBuild.displayName="${BUILD_NUMBER}#${EL_VERSION}#PR#${GITHUB_PR_NUMBER}"
                                 }
                             } else {
                                 currentBuild.displayName="${BUILD_NUMBER}#${BRANCH}"
@@ -48,7 +48,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${flake8StageDockerImage}"
-                        sh "docker build --pull --tag ${flake8StageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/Dockerfile decisionengine_modules/package/ci/"
+                        sh "docker build --pull --tag ${flake8StageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el8:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL8/Dockerfile decisionengine_modules/package/ci/EL8/"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${flake8StageDockerImage} \"-m pytest -m flake8 --flake8\" \"flake8.log\" \"${BRANCH}\""
                     }
@@ -92,7 +92,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${unit_testsStageDockerImage}"
-                        sh "docker build --pull --tag ${unit_testsStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/Dockerfile decisionengine_modules/package/ci/"
+                        sh "docker build --pull --tag ${unit_testsStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el8:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL8/Dockerfile decisionengine_modules/package/ci/EL8/"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${unit_testsStageDockerImage} \"-m pytest --cov-report term --cov=decisionengine_modules --no-cov-on-fail\" \"pytest.log\" \"${BRANCH}\""
                     }
@@ -136,7 +136,7 @@ pipeline {
                             cd ..
                         '''
                         echo "prepare docker image ${rpmbuildStageDockerImage}"
-                        sh "docker build --pull --tag ${rpmbuildStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/Dockerfile decisionengine_modules/package/ci/"
+                        sh "docker build --pull --tag ${rpmbuildStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el8:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL8/Dockerfile decisionengine_modules/package/ci/EL8/"
                         echo "Run ${STAGE_NAME} tests"
                         sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${rpmbuildStageDockerImage} \"setup.py bdist_rpm\" \"rpmbuild.log\" \"${BRANCH}\""
                     }
