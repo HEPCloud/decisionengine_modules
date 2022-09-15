@@ -4,7 +4,6 @@
 import copy
 import math
 import os
-import shutil
 import socket
 import sys
 import tempfile
@@ -1265,7 +1264,6 @@ class GlideFrontendElement:
         """
         tkn_file = ""
         tkn_str = ""
-        tmpnm = ""
 
         try:
             tkn_dir = os.path.join(work_dir, "tokens.d")
@@ -1292,7 +1290,6 @@ class GlideFrontendElement:
                 tkn_age = time.time() - os.stat(tkn_file).st_mtime
             if tkn_age > one_hr and os.path.exists(pwd_file):
                 # TODO: scope, duration, identity  should be configurable
-                (fd, tmpnm) = tempfile.mkstemp()
                 scope = "condor:/READ condor:/ADVERTISE_STARTD condor:/ADVERTISE_MASTER"
                 duration = 24 * one_hr
                 identity = f"{glidein_site}@{socket.gethostname()}"
@@ -1303,10 +1300,11 @@ class GlideFrontendElement:
                 self.logger.debug("identity= %s" % identity)
                 tkn_str = token_util.create_and_sign_token(pwd_file, scope=scope, duration=duration, identity=identity)
                 self.logger.debug("tkn_str= %s" % tkn_str)
-                os.write(fd, tkn_str)
-                os.close(fd)
-                shutil.move(tmpnm, tkn_file)
-                os.chmod(tkn_file, 0o600)
+                with tempfile.NamedTemporaryFile(mode="wb", delete=False, dir=tkn_dir) as fd:
+                    os.chmod(fd.name, 0o600)
+                    fd.write(tkn_str)
+                    fd.flush()
+                    os.replace(fd.name, tkn_file)
                 self.logger.debug("created token %s" % tkn_file)
             elif os.path.exists(tkn_file):
                 with open(tkn_file) as fbuf:
@@ -1316,9 +1314,6 @@ class GlideFrontendElement:
             self.logger.warning(f"failed to create {tkn_file}: {err}")
             for i in sys.exc_info():
                 self.logger.warning("%s" % i)
-        finally:
-            if os.path.exists(tmpnm):
-                os.remove(tmpnm)
 
         return tkn_str
 
