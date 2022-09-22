@@ -24,7 +24,8 @@ _CONSUMES = [
     "Nersc_Figure_Of_Merit",
 ]
 
-_SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
+#_SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
+_SUPPORTED_ENTRY_TYPES = ["Grid"]
 
 METRICS = {
     "NUMBER_OF_JOBS": Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine"),
@@ -86,12 +87,9 @@ class GlideinRequestManifests(Transform.Transform):
             # Get factory global classad dataframe
             factory_globals = datablock.get("factoryglobal_manifests")
             factory_entries = datablock.get("Factory_Entries")
-            entries = pandas.DataFrame([])
-            all_factory_entries = [
-                factory_entries.xs(et) for et in _SUPPORTED_ENTRY_TYPES if et in factory_entries.index
-            ]
-            if all_factory_entries:
-                entries = pandas.DataFrame(pandas.concat(all_factory_entries, ignore_index=True, sort=True))
+            entries = pandas.DataFrame(
+                pandas.concat([factory_entries.xs(et) for et in _SUPPORTED_ENTRY_TYPES], ignore_index=True, sort=True)
+            )
             if entries.empty:
                 self.logger.info("There are no entries to request resources from")
                 return dict.fromkeys(["glideclientglobal_manifests", "glideclient_manifests"], pandas.DataFrame())

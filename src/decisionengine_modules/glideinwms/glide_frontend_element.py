@@ -52,7 +52,7 @@ class GlideFrontendElement:
         # Default parameters for glidein request
         self.default_glidein_params = {
             # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
-            "CONTINUE_IF_NO_PROXY": "False"
+            "CONTINUE_IF_NO_PROXY": "True"
         }
 
     def generate_glidein_requests(self, jobs_df, slots_df, entries, factory_globals, job_filter="ClusterId > 0"):

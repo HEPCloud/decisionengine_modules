@@ -25,9 +25,7 @@ class GridFigureOfMerit(Transform.Transform):
         """
 
         self.logger.debug("in GridFigureOfMerit transform")
-        entries = pandas.DataFrame([])
-        if "Grid" in self.Factory_Entries(datablock).index:
-            entries = self.Factory_Entries(datablock).xs("Grid")
+        entries = self.Factory_Entries(datablock).xs("Grid")
         if entries is None:
             entries = pandas.DataFrame({ATTR_ENTRYNAME: []})
         foms = []
