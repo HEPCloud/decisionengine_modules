@@ -24,7 +24,7 @@ _CONSUMES = [
     "Nersc_Figure_Of_Merit",
 ]
 
-#_SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
+# _SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
 _SUPPORTED_ENTRY_TYPES = ["Grid"]
 
 METRICS = {
