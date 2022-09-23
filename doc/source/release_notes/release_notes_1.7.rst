@@ -1,3 +1,28 @@
+Release 1.7.4
+-------------
+
+Fixed token+proxy hybrid configuration.
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`428 <https://github.com/HEPCloud/decisionengine_modules/issues/428>`_ : Decision engine 1.7.3 bug too many open file descriptors in glide_frontend_element.py
+`427 <https://github.com/HEPCloud/decisionengine_modules/pull/427>`_ : Set CONTINUE_IF_NO_PROXY to False to allow hybrid configuration
+
+Full list of commits since version 1.7.3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`80d9041 <https://github.com/HEPCloud/decisionengine_modules/commit/80d904125764a49d602a34094a1f93805d7896fc>`_:   Update refresh_entry_token to use context managers
+
+`62a51f3 <https://github.com/HEPCloud/decisionengine_modules/commit/62a51f3c317ebc3aa64ffef0238defff3fe60fcf>`_:   Merge pull request #434 from BrunoCoimbra/1.7
+
+`2833e82 <https://github.com/HEPCloud/decisionengine_modules/commit/2833e82794572e9ab57b79b5d88349a08befa247>`_:   Set default glidein params on GlideFrontendElement
+
+`ac427d9 <https://github.com/HEPCloud/decisionengine_modules/commit/ac427d9fe4e52fc879866e897ca352d8884975e9>`_:   Set CONTINUE_IF_NO_PROXY to False
+
+`245f316 <https://github.com/HEPCloud/decisionengine_modules/commit/245f31689661ad674fb8133708af4737c2bc279f>`_:   Updated release notes for 1.7.3
+
+
 Release 1.7.3
 -------------
 
