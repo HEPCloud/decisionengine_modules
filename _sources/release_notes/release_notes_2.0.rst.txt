@@ -1,6 +1,68 @@
 .. SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 .. SPDX-License-Identifier: Apache-2.0
 
+Release 2.0.2
+-------------
+
+This is mainly a bug fix release.
+
+Some features were added:
+- Monotoring of the glideinwms module via Prometheus
+- Initial version of a Rigetti source
+- More flexible LogicEngine: Fsctory Entries categories are now configurable
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- `428 <https://github.com/HEPCloud/decisionengine_modules/issues/428>`_ : Decision engine 1.7.3 bug too many open file descriptors in glide_frontend_element.py
+- `427 <https://github.com/HEPCloud/decisionengine_modules/pull/427>`_ : Set CONTINUE_IF_NO_PROXY to False to allow hybrid configuration
+
+Full list of commits since version 2.0.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`16e1751 <https://github.com/HEPCloud/decisionengine_modules/commit/16e17519253b85ee1cd89b9c48497f2cad14e3db>`_:   update GWMS transforms This update improves handling of factory-entries data product.
+
+`0296667 <https://github.com/HEPCloud/decisionengine_modules/commit/0296667255c17eef466f035f1d0eb8a0255981ac>`_:   Add initial Rigetti source
+
+`9d199a5 <https://github.com/HEPCloud/decisionengine_modules/commit/9d199a5d08adb7b5db656bbe80839679fa3ced35>`_:   Update refresh_entry_token to use context managers
+
+`d45b799 <https://github.com/HEPCloud/decisionengine_modules/commit/d45b79928ec1848870d4dcc8be7fdb07079ee3e5>`_:   [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+`7b37e83 <https://github.com/HEPCloud/decisionengine_modules/commit/7b37e83158df45a1eef01ef172e35e334606054f>`_:   Renamed Variables (REQ_IDLE_GLIDEINS & REQ_MAX_GLIDEINS) and stored them into a global dictionary.
+
+`d7d0849 <https://github.com/HEPCloud/decisionengine_modules/commit/d7d084929c95bc04d2f9f94306978e6ee325f829>`_:   Started moving metrics into global dict
+
+`b1e56f0 <https://github.com/HEPCloud/decisionengine_modules/commit/b1e56f0ac41d1980500253a203c2861060225f36>`_:   added req_idle_glidens & req_max_glidens metrics
+
+`cee9652 <https://github.com/HEPCloud/decisionengine_modules/commit/cee96523bfdd56c4f9ef1198937fc01c059c7d1f>`_:   Started to add NUMBER_OF_JOBS, NAME_OF_GROUPS, STATUS_OF_JOB METRICS
+
+`893137c <https://github.com/HEPCloud/decisionengine_modules/commit/893137cb7f6a3e60a17abb702f7fa23646872bd4>`_:   Added Number_of_jobs metric.
+
+`e530c10 <https://github.com/HEPCloud/decisionengine_modules/commit/e530c104360c30c013b639bbcd740e0fc00fedbf>`_:   Docker container and test setup for EL8
+
+`ea02fc8 <https://github.com/HEPCloud/decisionengine_modules/commit/ea02fc8eeab05104fe6ac5b0b7a235f219cef34b>`_:   Test case with no glideins.
+
+`4ae0bab <https://github.com/HEPCloud/decisionengine_modules/commit/4ae0bab9b99458c23300d08473a4148f09b93930>`_:   One monolithic factory-entries data product.
+
+`cc6b01a <https://github.com/HEPCloud/decisionengine_modules/commit/cc6b01af421f4cb1503569da4873cf48c0b3ffd9>`_:   Merge pull request #436 from vitodb/vito_fix_de_client_call
+
+`a6744f1 <https://github.com/HEPCloud/decisionengine_modules/commit/a6744f1d4a534fa4ef4114e0189d756aa84d600c>`_:   Fix de_client call This is required to allow de_client to get its output returned as text string rather then using a logger.
+
+`f2057d1 <https://github.com/HEPCloud/decisionengine_modules/commit/f2057d16d2289a47c4b10ac50bd80e1d0583bf2c>`_:   Merge pull request #433 from jcpunk/coverage
+
+`4f6dffd <https://github.com/HEPCloud/decisionengine_modules/commit/4f6dffdec19f23988d32e50809be5c6eda90fe38>`_:   Merge branch 'master' into coverage
+
+`0922c6d <https://github.com/HEPCloud/decisionengine_modules/commit/0922c6dbfc2cd9f19f322071ac2fec511be839ba>`_:   No longer need to pin coverage version
+
+`57a5599 <https://github.com/HEPCloud/decisionengine_modules/commit/57a5599cff8ce0d97ab6ae3a580fe6d3854ccf6a>`_:   Set upper limit version for flake8. This is needed to have pytest-flake8 and flake8 versions working together.
+
+`6bf9b48 <https://github.com/HEPCloud/decisionengine_modules/commit/6bf9b48e3a38a46da37bfb40222b782472cf4a9f>`_:   Set default glidein params on GlideFrontendElement
+
+`3ce646a <https://github.com/HEPCloud/decisionengine_modules/commit/3ce646a3c33087a7b6a47c67a895be2319cbbaad>`_:   Set CONTINUE_IF_NO_PROXY to False
+
+`2290fb4 <https://github.com/HEPCloud/decisionengine_modules/commit/2290fb407fecf5a6fe4d62c6abb502dbcd6670ee>`_:   Updated release notes for 2.0.1 and porting of 1.7.3
+
+
 Release 2.0.1
 -------------
 
@@ -8,11 +70,11 @@ Patch level (bug fix) release.
 
 
 Issues fixed in this release
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 Full list of commits since version 2.0.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `6f2db85 <https://github.com/HEPCloud/decisionengine/commit/6f2db85ffc13470ff2a83b081cd85902ed7c781b>`_:   Fix coverage reporting.
 

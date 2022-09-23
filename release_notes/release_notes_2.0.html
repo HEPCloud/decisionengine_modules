@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release 2.0.1 &mdash; decisionengine modules 2.0.0 documentation</title>
+  <title>Release 2.0.2 &mdash; decisionengine modules 2.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Release 1.7.3" href="release_notes_1.7.html" />
+    <link rel="next" title="Release 1.7.4" href="release_notes_1.7.html" />
     <link rel="prev" title="Welcome to decisionengine_modules’ documentation!" href="../index.html" /> 
 </head>
 
@@ -39,17 +39,23 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 2.0.1</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 2.0.2</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#issues-fixed-in-this-release">Issues fixed in this release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#full-list-of-commits-since-version-2-0-0">Full list of commits since version 2.0.0</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="#release-2-0-1">Release 2.0.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Issues fixed in this release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Full list of commits since version 2.0.0</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="#release-2-0-0">Release 2.0.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id3">Issues fixed in this release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Issues fixed in this release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#full-list-of-commits-since-version-1-7-0">Full list of commits since version 1.7.0</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html">Release 1.7.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html">Release 1.7.4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html#release-1-7-3">Release 1.7.3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html#release-1-7-2">Release 1.7.2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html#release-1-7-1">Release 1.7.1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="release_notes_1.7.html#release-1-7-0">Release 1.7.0</a></li>
@@ -85,7 +91,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Release 2.0.1</li>
+      <li>Release 2.0.2</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/release_notes/release_notes_2.0.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -95,14 +101,53 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="release-2-0-1">
-<h1>Release 2.0.1<a class="headerlink" href="#release-2-0-1" title="Permalink to this heading"></a></h1>
-<p>Patch level (bug fix) release.</p>
+  <section id="release-2-0-2">
+<h1>Release 2.0.2<a class="headerlink" href="#release-2-0-2" title="Permalink to this heading"></a></h1>
+<p>This is mainly a bug fix release.</p>
+<p>Some features were added:
+- Monotoring of the glideinwms module via Prometheus
+- Initial version of a Rigetti source
+- More flexible LogicEngine: Fsctory Entries categories are now configurable</p>
 <section id="issues-fixed-in-this-release">
 <h2>Issues fixed in this release<a class="headerlink" href="#issues-fixed-in-this-release" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/428">428</a> : Decision engine 1.7.3 bug too many open file descriptors in glide_frontend_element.py</p></li>
+<li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/427">427</a> : Set CONTINUE_IF_NO_PROXY to False to allow hybrid configuration</p></li>
+</ul>
 </section>
 <section id="full-list-of-commits-since-version-2-0-0">
 <h2>Full list of commits since version 2.0.0<a class="headerlink" href="#full-list-of-commits-since-version-2-0-0" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/16e17519253b85ee1cd89b9c48497f2cad14e3db">16e1751</a>:   update GWMS transforms This update improves handling of factory-entries data product.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/0296667255c17eef466f035f1d0eb8a0255981ac">0296667</a>:   Add initial Rigetti source</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/9d199a5d08adb7b5db656bbe80839679fa3ced35">9d199a5</a>:   Update refresh_entry_token to use context managers</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d45b79928ec1848870d4dcc8be7fdb07079ee3e5">d45b799</a>:   [pre-commit.ci] auto fixes from pre-commit.com hooks</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7b37e83158df45a1eef01ef172e35e334606054f">7b37e83</a>:   Renamed Variables (REQ_IDLE_GLIDEINS &amp; REQ_MAX_GLIDEINS) and stored them into a global dictionary.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d7d084929c95bc04d2f9f94306978e6ee325f829">d7d0849</a>:   Started moving metrics into global dict</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b1e56f0ac41d1980500253a203c2861060225f36">b1e56f0</a>:   added req_idle_glidens &amp; req_max_glidens metrics</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cee96523bfdd56c4f9ef1198937fc01c059c7d1f">cee9652</a>:   Started to add NUMBER_OF_JOBS, NAME_OF_GROUPS, STATUS_OF_JOB METRICS</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/893137cb7f6a3e60a17abb702f7fa23646872bd4">893137c</a>:   Added Number_of_jobs metric.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e530c104360c30c013b639bbcd740e0fc00fedbf">e530c10</a>:   Docker container and test setup for EL8</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ea02fc8eeab05104fe6ac5b0b7a235f219cef34b">ea02fc8</a>:   Test case with no glideins.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/4ae0bab9b99458c23300d08473a4148f09b93930">4ae0bab</a>:   One monolithic factory-entries data product.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cc6b01af421f4cb1503569da4873cf48c0b3ffd9">cc6b01a</a>:   Merge pull request #436 from vitodb/vito_fix_de_client_call</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a6744f1d4a534fa4ef4114e0189d756aa84d600c">a6744f1</a>:   Fix de_client call This is required to allow de_client to get its output returned as text string rather then using a logger.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/f2057d16d2289a47c4b10ac50bd80e1d0583bf2c">f2057d1</a>:   Merge pull request #433 from jcpunk/coverage</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/4f6dffdec19f23988d32e50809be5c6eda90fe38">4f6dffd</a>:   Merge branch ‘master’ into coverage</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/0922c6dbfc2cd9f19f322071ac2fec511be839ba">0922c6d</a>:   No longer need to pin coverage version</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/57a5599cff8ce0d97ab6ae3a580fe6d3854ccf6a">57a5599</a>:   Set upper limit version for flake8. This is needed to have pytest-flake8 and flake8 versions working together.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/6bf9b48e3a38a46da37bfb40222b782472cf4a9f">6bf9b48</a>:   Set default glidein params on GlideFrontendElement</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/3ce646a3c33087a7b6a47c67a895be2319cbbaad">3ce646a</a>:   Set CONTINUE_IF_NO_PROXY to False</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2290fb407fecf5a6fe4d62c6abb502dbcd6670ee">2290fb4</a>:   Updated release notes for 2.0.1 and porting of 1.7.3</p>
+</section>
+</section>
+<section id="release-2-0-1">
+<h1>Release 2.0.1<a class="headerlink" href="#release-2-0-1" title="Permalink to this heading"></a></h1>
+<p>Patch level (bug fix) release.</p>
+<section id="id4">
+<h2>Issues fixed in this release<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+</section>
+<section id="id5">
+<h2>Full list of commits since version 2.0.0<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/6f2db85ffc13470ff2a83b081cd85902ed7c781b">6f2db85</a>:   Fix coverage reporting.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/a76456276c7737a33fe51dba2645ee4f3c7518c9">a764562</a>:   Silence warnings that are beyond our control or are irrelevant.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/cc481e9affb01d16cba9d87031c2e54ec632f69e">cc481e9</a>:   Test that duplicate column names and empty dataframes are properly handled.</p>
@@ -155,8 +200,8 @@ We introduced integration tests and we are proud of our over 95% unit test cover
 decisionengine_modules now depends from the GlideinWMS vofrontend-lib.
 Check the new instructions for the changed configuration of the glideinwms module.</p>
 </div>
-<section id="id3">
-<h2>Issues fixed in this release<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<section id="id8">
+<h2>Issues fixed in this release<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/353">353</a> : yum update decisionengine-standard-library doesn’t detect and pull in decisionengine_modules</p></li>
 <li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/282">282</a> : Decision Engine classad encoding problems make multiple exceptions in the factory</p></li>
@@ -224,7 +269,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to decisionengine_modules’ documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="release_notes_1.7.html" class="btn btn-neutral float-right" title="Release 1.7.3" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="release_notes_1.7.html" class="btn btn-neutral float-right" title="Release 1.7.4" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
