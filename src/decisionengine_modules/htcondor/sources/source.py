@@ -21,7 +21,7 @@ from decisionengine_modules.htcondor import htcondor_query
     Parameter("correction_map", default={}),
 )
 class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
-    def __init__(self, config):
+    def __init__(self, config, logger):
         """
         In config files such as job_classification.jsonnet or Nersc.jsonnet,
         put a dictionary named correction_map with keys corresponding to classad_attrs
@@ -30,7 +30,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         because some classes that extend this class might not have correction_map
         avaiable in its config file.
         """
-        super().__init__(config)
+        super().__init__(config, logger)
         self.collector_host = config.get("collector_host")
         self.condor_config = config.get("condor_config")
         self.constraint = config.get("constraint", True)

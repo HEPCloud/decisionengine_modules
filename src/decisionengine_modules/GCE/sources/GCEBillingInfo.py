@@ -21,8 +21,8 @@ from decisionengine.framework.modules.Source import Parameter
 )
 @Source.produces(GCE_Billing_Info=pd.DataFrame)
 class GCEBillingInfo(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         # Load configuration "constants"
         self.projectId = config.get("projectId")
         self.credentialsProfileName = config.get("credentialsProfileName")  # NOT CURRENTLY USED

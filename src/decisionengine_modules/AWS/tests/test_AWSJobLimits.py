@@ -22,7 +22,7 @@ expected_pandas_df = (
 
 @pytest.fixture
 def aws_job_limits():
-    return AWSJobLimits.AWSJobLimits(config)
+    return AWSJobLimits.AWSJobLimits(config, logger=None)
 
 
 def test_produces(aws_job_limits):

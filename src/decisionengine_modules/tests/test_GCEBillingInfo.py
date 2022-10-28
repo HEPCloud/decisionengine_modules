@@ -31,7 +31,7 @@ config_billing_info = {
 
 
 def test_produces():
-    bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info)
+    bi_pub = GCEBillingInfo.GCEBillingInfo(config_billing_info, logger=None)
     assert bi_pub._produces == {"GCE_Billing_Info": pandas.DataFrame}
 
 

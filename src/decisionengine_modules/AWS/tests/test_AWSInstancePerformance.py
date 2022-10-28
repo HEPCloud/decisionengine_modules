@@ -22,7 +22,7 @@ expected_pandas_df = (
 
 @pytest.fixture
 def aws_instance_performance():
-    return AWSInstancePerformance.AWSInstancePerformance(config)
+    return AWSInstancePerformance.AWSInstancePerformance(config, logger=None)
 
 
 def test_produces(aws_instance_performance):

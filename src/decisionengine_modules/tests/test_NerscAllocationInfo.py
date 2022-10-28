@@ -54,7 +54,7 @@ def nersc_allocations():
             },
         },
     }
-    return NerscAllocationInfo.NerscAllocationInfo(config)
+    return NerscAllocationInfo.NerscAllocationInfo(config, logger=None)
 
 
 def test_produces(nersc_allocations):

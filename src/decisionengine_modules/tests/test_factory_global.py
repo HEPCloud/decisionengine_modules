@@ -48,31 +48,33 @@ CONFIG_BAD_WITH_TIMEOUT = {
     ],
 }
 
+LOGGER = None
+
 
 def test_produces():
-    fg = factory_global.FactoryGlobalManifests(CONFIG)
+    fg = factory_global.FactoryGlobalManifests(CONFIG, LOGGER)
     assert fg._produces == {"factoryglobal_manifests": pandas.DataFrame}
 
 
 def test_acquire():
-    fg = factory_global.FactoryGlobalManifests(CONFIG)
+    fg = factory_global.FactoryGlobalManifests(CONFIG, LOGGER)
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         pprint.pprint(fg.acquire())
 
 
 def test_acquire_live():
-    fg = factory_global.FactoryGlobalManifests(CONFIG)
+    fg = factory_global.FactoryGlobalManifests(CONFIG, LOGGER)
     pprint.pprint(fg.acquire())
 
 
 def test_acquire_bad():
-    fg = factory_global.FactoryGlobalManifests(CONFIG_BAD)
+    fg = factory_global.FactoryGlobalManifests(CONFIG_BAD, LOGGER)
     fg_df = fg.acquire()
     assert (fg_df["factoryglobal_manifests"] is None) or (len(fg_df["factoryglobal_manifests"]) == 0)
 
 
 def test_acquire_bad_with_timeout():
-    fg = factory_global.FactoryGlobalManifests(CONFIG_BAD_WITH_TIMEOUT)
+    fg = factory_global.FactoryGlobalManifests(CONFIG_BAD_WITH_TIMEOUT, LOGGER)
     start = time.time()
     fg_df = fg.acquire()
     end = time.time()

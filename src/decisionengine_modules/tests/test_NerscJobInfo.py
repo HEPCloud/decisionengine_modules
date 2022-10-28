@@ -43,7 +43,7 @@ def nersc_job_info():
             },
         },
     }
-    return NerscJobInfo.NerscJobInfo(config)
+    return NerscJobInfo.NerscJobInfo(config, logger=None)
 
 
 def test_produces(nersc_job_info):

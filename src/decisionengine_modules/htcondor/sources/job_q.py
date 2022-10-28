@@ -20,13 +20,13 @@ from decisionengine_modules.htcondor import htcondor_query
 )
 @Source.produces(job_manifests=pandas.DataFrame)
 class JobQ(Source.Source):
-    def __init__(self, config):
+    def __init__(self, config, logger):
         """
         In config files such as job_classification.jsonnet or Nersc.jsonnet,
         put a dictionary named correction_map with keys corresponding to classad_attrs
         and values that the operators want to be default values for the classad_attrs.
         """
-        super().__init__(config)
+        super().__init__(config, logger)
         self.collector_host = config.get("collector_host")
         self.schedds = config.get("schedds", [None])
         self.condor_config = config.get("condor_config")

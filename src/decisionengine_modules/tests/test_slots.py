@@ -24,7 +24,7 @@ def slots_instance():
         "condor_config": "condor_config",
         "collector_host": "fermicloud122.fnal.gov",
     }
-    return slots.StartdManifests(config)
+    return slots.StartdManifests(config, logger=None)
 
 
 def test_produces(slots_instance):

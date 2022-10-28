@@ -19,8 +19,8 @@ _TO = 20
 @Source.supports_config(Parameter("data_file", type=str, comment="CSV job limits data file"))
 @Source.produces(Job_Limits=pd.DataFrame)
 class AWSJobLimits(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         self.data_file = config["data_file"]
 
     def acquire(self):

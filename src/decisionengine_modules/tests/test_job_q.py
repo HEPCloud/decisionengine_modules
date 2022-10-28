@@ -25,7 +25,7 @@ def jobq_instance():
         "schedds": ["fermicloud122.fnal.gov"],
         "classad_attrs": ["ClusterId", "ProcId", "JobStatus"],
     }
-    return job_q.JobQ(config)
+    return job_q.JobQ(config, logger=None)
 
 
 def test_produces(jobq_instance):

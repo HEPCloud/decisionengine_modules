@@ -38,8 +38,8 @@ from decisionengine_modules.AWS.sources import DEAccountContants
 )
 @Source.produces(AWS_Billing_Info=pd.DataFrame, AWS_Billing_Rate=pd.DataFrame)
 class BillingInfo(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         acconts_config_file = config["billing_configuration"]
         self.billing_files_location = config["dst_dir_for_s3_files"]
         self.verbose_flag = int(config["verbose_flag"])

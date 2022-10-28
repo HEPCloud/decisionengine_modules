@@ -49,12 +49,12 @@ def replace_google_auth():
 
 
 def test_produces(replace_google_auth):
-    assert GceOccupancy.GceOccupancy(CONFIG)._produces == _PRODUCES
+    assert GceOccupancy.GceOccupancy(CONFIG, logger=None)._produces == _PRODUCES
 
 
 def test_acquire(replace_google_auth):
     with mock.patch.object(googleapiclient.discovery, "build", return_value=MockClient()):
-        occupancy = GceOccupancy.GceOccupancy(CONFIG)
+        occupancy = GceOccupancy.GceOccupancy(CONFIG, logger=None)
         res = occupancy.acquire()
         verify_products(occupancy, res)
         assert EXPECTED_DF.equals(res.get("GCE_Occupancy"))

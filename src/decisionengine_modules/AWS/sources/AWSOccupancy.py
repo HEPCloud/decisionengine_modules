@@ -149,8 +149,8 @@ and the entries in the lists (e.g. "RegionName1") are the name of a region (eg. 
 )
 @Source.produces(AWS_Occupancy=pd.DataFrame)
 class AWSOccupancy(Source.Source):
-    def __init__(self, configdict):
-        super().__init__(configdict)
+    def __init__(self, configdict, logger):
+        super().__init__(configdict, logger)
         self.config_file = configdict["occupancy_configuration"]
 
     def acquire(self):

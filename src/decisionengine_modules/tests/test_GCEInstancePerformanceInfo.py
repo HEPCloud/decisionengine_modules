@@ -17,14 +17,16 @@ EXPECTED_PANDAS_DF = pd.read_csv(CONFIG.get("csv_file"))
 
 _PRODUCES = {"GCE_Instance_Performance": pd.DataFrame}
 
+LOGGER = None
+
 
 def test_produces():
-    gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG)
+    gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG, LOGGER)
     assert gce_price_performance._produces == _PRODUCES
 
 
 def test_acquire():
-    gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG)
+    gce_price_performance = GCEInstancePerformance.GCEInstancePerformance(CONFIG, LOGGER)
     res = gce_price_performance.acquire()
     verify_products(gce_price_performance, res)
     assert EXPECTED_PANDAS_DF.equals(res.get("GCE_Instance_Performance"))

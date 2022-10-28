@@ -194,8 +194,8 @@ all instances is acquired.""",
 )
 @Source.produces(provisioner_resource_spot_prices=pd.DataFrame)
 class AWSSpotPrice(Source.Source):
-    def __init__(self, config_dict):
-        super().__init__(config_dict)
+    def __init__(self, config_dict, logger):
+        super().__init__(config_dict, logger)
         self.config_file = config_dict["spot_price_configuration"]
 
     def acquire(self):

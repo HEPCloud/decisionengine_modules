@@ -60,32 +60,34 @@ CONFIG_FACTORY_ENTRIES_CORMAP = {
     ],
 }
 
+LOGGER = None
+
 
 def test_produces():
-    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES, LOGGER)
     assert entries._produces == {"Factory_Entries": pd.DataFrame}
 
 
 def test_acquire():
-    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES, LOGGER)
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         pprint.pprint(entries.acquire())
 
 
 def test_acquire_live():
-    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES)
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES, LOGGER)
     pprint.pprint(entries.acquire())
 
 
 def test_acquire_bad():
-    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD)
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD, LOGGER)
     result = entries.acquire()
     for df in result.values():
         assert df.dropna().empty
 
 
 def test_acquire_bad_with_timeout():
-    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT)
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_BAD_WITH_TIMEOUT, LOGGER)
     start = time.time()
     result = entries.acquire()
     end = time.time()
@@ -99,7 +101,7 @@ def test_acquire_correctionmap():
     df1 = pd.DataFrame(data={"GLIDEIN_Resource_Slots": ["DummySlots", "DummySlots"]})
     df2 = pd.DataFrame(data={"GLIDEIN_CMSSite": ["DummySite", "DummySite"]})
 
-    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP)
+    entries = factory_entries.FactoryEntries(CONFIG_FACTORY_ENTRIES_CORMAP, LOGGER)
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         all_entries = entries.acquire()
         dummypd = all_entries["Factory_Entries"].xs("Grid")

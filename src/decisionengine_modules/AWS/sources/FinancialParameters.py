@@ -20,8 +20,8 @@ _SAMPLE_CONFIG = {
 )
 @Source.produces(financial_params=pandas.DataFrame)
 class FinancialParameters(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         self.financial_parameters_dict = config.get("financial_parameters")
 
     # The DataBlock given to the source is t=0

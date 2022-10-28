@@ -31,8 +31,8 @@ _RETRY_TIMEOUT = 10
 )
 @Source.produces(GCE_Occupancy=pd.DataFrame)
 class GceOccupancy(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = config["credential"]
         credentials, self.project = google.auth.default()
 

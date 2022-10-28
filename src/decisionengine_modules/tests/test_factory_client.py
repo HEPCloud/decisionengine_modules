@@ -28,10 +28,12 @@ CONFIG_BAD = {
     "collector_host": "dummy_collector.fnal.gov",
 }
 
+LOGGER = None
+
 
 @pytest.fixture
 def factory_client_instance():
-    return factory_client.FactoryClientManifests(CONFIG)
+    return factory_client.FactoryClientManifests(CONFIG, LOGGER)
 
 
 def test_produces(factory_client_instance):
@@ -48,6 +50,6 @@ def test_acquire_live(factory_client_instance):
 
 
 def test_acquire_bad():
-    fc = factory_client.FactoryClientManifests(CONFIG_BAD)
+    fc = factory_client.FactoryClientManifests(CONFIG_BAD, LOGGER)
     fc_df = fc.acquire()
     assert len(fc_df["factoryclient_manifests"]) == 0

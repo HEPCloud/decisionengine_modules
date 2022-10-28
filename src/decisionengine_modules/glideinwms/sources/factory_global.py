@@ -30,13 +30,13 @@ from decisionengine_modules.util.retry_function import retry_wrapper
 )
 @Source.produces(factoryglobal_manifests=pandas.DataFrame)
 class FactoryGlobalManifests(Source.Source):
-    def __init__(self, config):
+    def __init__(self, config, logger):
         if not config:
             config = {}
         if not isinstance(config, dict):
             raise RuntimeError("parameters for module config should be a dict")
 
-        super().__init__(config)
+        super().__init__(config, logger)
         self.condor_config = config.get("condor_config")
         self.factories = config.get("factories", [])
 

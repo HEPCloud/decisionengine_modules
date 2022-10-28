@@ -9,8 +9,8 @@ from decisionengine_modules.htcondor.sources import source
 
 @Source.produces(startd_manifests=pandas.DataFrame)
 class StartdManifests(source.ResourceManifests):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
 
     def acquire(self):
         self.logger.debug("in StartdManifests acquire")

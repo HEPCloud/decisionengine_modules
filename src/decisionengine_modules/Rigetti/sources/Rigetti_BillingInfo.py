@@ -70,11 +70,11 @@ class RigettiBillingInfo(Source.Source):
     Billing costs for the Rigetti systems
     """
 
-    def __init__(self, config):
+    def __init__(self, config, logger):
         """
         Read in our toml files and build a client we can use
         """
-        super().__init__(config)
+        super().__init__(config, logger)
 
         self.constraints = config.get("constraints")
         if not isinstance(self.constraints, dict):

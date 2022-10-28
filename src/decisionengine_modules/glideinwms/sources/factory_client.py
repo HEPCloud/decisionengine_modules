@@ -9,8 +9,8 @@ from decisionengine_modules.htcondor.sources import source
 
 @Source.produces(factoryclient_manifests=pd.DataFrame)
 class FactoryClientManifests(source.ResourceManifests):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         self.constraint = f'({self.constraint})&&(glideinmytype=="glidefactoryclient")'
         self.subsystem_name = "any"
 

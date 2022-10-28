@@ -14,8 +14,8 @@ from decisionengine.framework.modules.Source import Parameter
 @Source.supports_config(Parameter("csv_file", type=str, comment="path to CSV file"))
 @Source.produces(GCE_Instance_Performance=pd.DataFrame)
 class GCEInstancePerformance(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         self.csv_file = config.get("csv_file")
         if not self.csv_file:
             raise RuntimeError("No csv file found in configuration")

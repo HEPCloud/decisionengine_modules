@@ -37,8 +37,8 @@ ENTRY_TYPES = {
 )
 @Source.produces(Factory_Entries=pandas.DataFrame)
 class FactoryEntries(Source.Source):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
         self.condor_config = config.get("condor_config")
         self.factories = config.get("factories", [])
 

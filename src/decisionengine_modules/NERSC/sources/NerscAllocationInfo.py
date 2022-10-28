@@ -41,8 +41,8 @@ class NerscAllocationInfo(Source.Source):
     Information of allocations on NERSC machines
     """
 
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, logger):
+        super().__init__(config, logger)
 
         self.constraints = config.get("constraints")
         if not isinstance(self.constraints, dict):
