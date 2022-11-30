@@ -32,14 +32,19 @@ METRICS = {
     "NAME_OF_GROUP": Gauge("de_group_manifests_groupname", "Name of grouup manifest"),
     "REQ_IDLE_GLIDEINS": Gauge("de_req_idle_glideins_total", "Requested minimum idle glideins", ["ce"]),
     "REQ_MAX_GLIDEINS": Gauge("de_req_max_glideins_total", "Requested max glideins", ["ce"]),
-}
-
-METRICS = {
-    "NUMBER_OF_JOBS": Gauge("de_jobs_total", "Number of jobs seen by the Decision Engine"),
-    "STATUS_OF_JOB": Gauge("de_jobs_df_jobStatus", "Status of job seen by the Decision Engine"),
-    "NAME_OF_GROUP": Gauge("de_group_manifests_groupname", "Name of grouup manifest"),
-    "REQ_IDLE_GLIDEINS": Gauge("de_req_idle_glideins_total", "Requested minimum idle glideins", ["ce"]),
-    "REQ_MAX_GLIDEINS": Gauge("de_req_max_glideins_total", "Requested max glideins", ["ce"]),
+    "TOTAL_SLOTS": Gauge(
+        "de_total_slots", "Total slots available", ["glidein_entry_name", "glidein_master_name", "glidein_site"]
+    ),
+    "TOTAL_SLOT_CPUS": Gauge(
+        "de_total_slot_cpus", "Total cpu slots available", ["glidein_entry_name", "glidein_master_name", "glidein_site"]
+    ),
+    "TOTAL_CPUS": Gauge(
+        "de_total_cpu", "Total CPU available", ["glidein_entry_name", "glidein_master_name", "glidein_site"]
+    ),
+    # "MEMORY": Gauge("de_total_memory", "Allocated Memory"),
+    # "STATE": Gauge("de_state_slot","State of Slot" ),
+    # "ACTIVITY": Gauge("de_stard_manifest_activity", "activity of jobs"),
+    # "GLIDEIN_RESOURCE_SLOTS": Gauge("de_glidein_resource_slots", "Total glideins resource slots available"),
 }
 
 # TODO: Extend to use following in future
@@ -124,18 +129,39 @@ class GlideinRequestManifests(Transform.Transform):
             # Get the jobs dataframe
             jobs_df = self.job_manifests(datablock)
             METRICS["NUMBER_OF_JOBS"].set(jobs_df.shape[0])
-<<<<<<< HEAD
             # METRICS["NAME_OF_GROUP"].group_manifests(GroupName)
             # METRICS["STATUS_OF_JOB"].(jobs_df.JobStatus)
-=======
-            # NAME_OF_GROUP.group_manifests(GroupName)
-            # STATUS_OF_JOB.(jobs_df.JobStatus)
->>>>>>> Started moving metrics into global dict
 
             # Get the job clusters dataframe
             job_clusters_df = self.job_clusters(datablock)
             # Get HTCondor slots dataframe
             slots_df = self.startd_manifests(datablock)
+
+            # StartD Manifest Metrics
+            slots_df_rows = slots_df.itertuples()
+            for row in slots_df_rows:
+                METRICS["TOTAL_CPUS"].labels(
+                    glidein_entry_name=row.GLIDEIN_Entry_Name,
+                    glidein_master_name=row.GLIDEIN_MASTER_NAME,
+                    glidein_site=row.GLIDEIN_Site,
+                ).set(row.TotalCpus)
+                METRICS["TOTAL_SLOTS"].labels(
+                    glidein_entry_name=row.GLIDEIN_Entry_Name,
+                    glidein_master_name=row.GLIDEIN_MASTER_NAME,
+                    glidein_site=row.GLIDEIN_Site,
+                ).set(row.TotalSlots)
+                METRICS["TOTAL_SLOT_CPUS"].labels(
+                    glidein_entry_name=row.GLIDEIN_Entry_Name,
+                    glidein_master_name=row.GLIDEIN_MASTER_NAME,
+                    glidein_site=row.GLIDEIN_Site,
+                ).set(row.TotalSlotCpus)
+
+            # METRICS["NEW_TOTAL_SLOTS"]
+            # METRICS["NEW_TOTAL_SLOTS_CPUS"]
+            # METRICS["MEMORY"]
+            # METRICS["STATE"]
+            # METRICS["ACTIVITY"]
+            # METRICS["GLIDEIN_RESOURCE_SLOTS"]
 
             # self.logger.info(job_clusters_df)
             for _index, row in job_clusters_df.iterrows():
@@ -176,22 +202,14 @@ class GlideinRequestManifests(Transform.Transform):
                 ]
                 req_idle_glideins_per_ce = {ce: count for ce, count in zip(entry_ces, req_idle_glideins)}
                 for ce, count in req_idle_glideins_per_ce.items():
-<<<<<<< HEAD
                     METRICS["REQ_IDLE_GLIDEINS"].labels(ce).set(count)
-=======
-                    REQ_IDLE_GLIDEINS.labels(ce).set(count)
->>>>>>> Started moving metrics into global dict
 
                 req_max_glideins = [
                     ce_row.ReqMaxGlideins for ce_row in group_manifests["glideclient_manifests"].itertuples()
                 ]
                 req_max_glideins_per_ce = {ce: count for ce, count in zip(entry_ces, req_max_glideins)}
                 for ce, count in req_max_glideins_per_ce.items():
-<<<<<<< HEAD
                     METRICS["REQ_MAX_GLIDEINS"].labels(ce).set(count)
-=======
-                    REQ_MAX_GLIDEINS.labels(ce).set(count)
->>>>>>> Started moving metrics into global dict
 
                 manifests = self.merge_requests(manifests, group_manifests)
         except Exception:
