@@ -75,6 +75,7 @@ class FrontendConfiguration:
                     "frontend_descript_signature": self.group_sign_descript[g].frontend_descript_signature,
                     "group_descript_signature": self.group_sign_descript[g].group_descript_signature,
                 },
+                "attrs_descript": self.group_attrs_descript[g].data,
             }
             self.get_proxy_descript_data(g)
 
