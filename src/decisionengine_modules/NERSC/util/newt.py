@@ -82,24 +82,24 @@ class Newt:
         self._login()
         iris_url = f"{self.newt_base_url}/account/iris"
         query = (
-            'accounts(username: \\"{}\\") {{ '
-            "   projectId, "
-            "   repoName, "
-            "   repoType, "
-            "   currentAlloc, "
-            "   usedAlloc, "
-            "   users {{ "
-            "       uid, "
-            "       name, "
-            "       firstname, "
-            "       lastname, "
-            "       middlename, "
-            "       userAlloc, "
-            "       userAllocPct, "
-            "       usedAlloc "
-            "   }} "
-            "}}"
-        ).format(username)
+            f'accounts(username: "{username}") {{ '
+            f"   projectId, "
+            f"   repoName, "
+            f"   repoType, "
+            f"   currentAlloc, "
+            f"   usedAlloc, "
+            f"   users {{ "
+            f"       uid, "
+            f"       name, "
+            f"       firstname, "
+            f"       lastname, "
+            f"       middlename, "
+            f"       userAlloc, "
+            f"       userAllocPct, "
+            f"       usedAlloc "
+            f"   }} "
+            f"}}"
+        )
         # Remove whitespace to make more readable
         query = query.replace(" ", "").replace(",", ", ")
         r = self.session.post(url=iris_url, data={"query": query})
