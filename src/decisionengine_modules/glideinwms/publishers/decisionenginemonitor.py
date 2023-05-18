@@ -14,7 +14,8 @@ class DecisionEngineMonitorManifests(publisher.HTCondorManifests):
     def create_invalidate_constraint(self, requests_df):
         self.logger.debug("in DecisionEngineMonitorManifests create_invalidate_constraint")
         if not requests_df.empty:
-            for collector_host, request_group in requests_df.groupby(["CollectorHost"]):
+            # grouper has to be a string instead of a list with the string
+            for collector_host, request_group in requests_df.groupby("CollectorHost"):
                 client_names = list(set(request_group["GlideClientName"]))
                 client_names.sort()
                 if client_names:

@@ -36,7 +36,7 @@ runtime_require = [
     "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
     "pandas == 1.1.5; python_version <= '3.6'",
-    "pandas >= 1.1.5; python_version >= '3.7'",
+    "pandas >= 1.5.3; python_version >= '3.7'",
     "qcs-api-client >= 0.20.17; python_version <= '3.6'",
     "qcs-api-client >= 0.21.1; python_version >= '3.7'",
 ]

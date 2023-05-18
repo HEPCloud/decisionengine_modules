@@ -24,8 +24,8 @@ def order_resources(resources, logger=None):
             df = fom_df[["EntryName", column_name]]
             # Rename the entry type specific FOM columns to just 'fom'
             df = df.rename(columns={column_name: "FOM"})
-            # Append the results
-            rss_foms = rss_foms.append(df)
+            # Conacatenate the results
+            rss_foms = pd.concat([rss_foms, df])
         elif logger is not None:
             logger.info(f"{rss} does not have any entries to order")
     try:
