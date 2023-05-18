@@ -41,7 +41,8 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
         if requests_df.empty:
             return
 
-        for collector_host, request_group in requests_df.groupby(["CollectorHost"]):
+        # grouper has to be a string instead of a list with the string
+        for collector_host, request_group in requests_df.groupby("CollectorHost"):
             client_names = list(set(request_group["ClientName"]))
             client_names.sort()
             if client_names:

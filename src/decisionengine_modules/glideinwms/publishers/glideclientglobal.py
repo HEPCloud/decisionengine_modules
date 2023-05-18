@@ -14,7 +14,8 @@ class GlideClientGlobalManifests(publisher.HTCondorManifests):
     def create_invalidate_constraint(self, dataframe):
         self.logger.debug("in GlideClientGlobalManifests create_invalidate_constraint")
         if not dataframe.empty:
-            for collector_host, group in dataframe.groupby(["CollectorHost"]):
+            # grouper has to be a string instead of a list with the string
+            for collector_host, group in dataframe.groupby("CollectorHost"):
                 client_names = list(set(group["ClientName"]))
                 client_names.sort()
                 if client_names:

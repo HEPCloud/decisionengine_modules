@@ -62,7 +62,7 @@ class JobClustering(Transform.Transform):
         except ValueError:
             self.logger.exception("Unable to retrieve job manifests data block")
             return {"job_clusters": self.EMPTY_JOB_CLUSTER}
-        except pd.core.computation.ops.UndefinedVariableError:
+        except pd.errors.UndefinedVariableError:
             self.logger.exception("Unable to retrieve job manifests data block")
             return {"job_clusters": self.EMPTY_JOB_CLUSTER}
 
@@ -112,7 +112,7 @@ class JobClustering(Transform.Transform):
                 "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names"
             )
             return {"job_clusters": self.EMPTY_JOB_CLUSTER}
-        except pd.core.computation.ops.UndefinedVariableError:
+        except pd.errors.UndefinedVariableError:
             self.logger.exception(
                 "Unable to calculate totals from job manifests, may have missing classads or incorrect classad names"
             )
