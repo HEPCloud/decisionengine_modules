@@ -41,7 +41,7 @@ class GlideinWMSManifests(publisher.HTCondorManifests):
         if requests_df.empty:
             return
 
-        # grouper has to be a string instead of a list with the string
+        # Starting pandas 1.5.0, groupby instruction, when iterating, returns a single element only when the grouper is a string (not a list)
         for collector_host, request_group in requests_df.groupby("CollectorHost"):
             client_names = list(set(request_group["ClientName"]))
             client_names.sort()
