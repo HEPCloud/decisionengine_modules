@@ -14,7 +14,7 @@ class GlideClientGlobalManifests(publisher.HTCondorManifests):
     def create_invalidate_constraint(self, dataframe):
         self.logger.debug("in GlideClientGlobalManifests create_invalidate_constraint")
         if not dataframe.empty:
-            # grouper has to be a string instead of a list with the string
+            # Starting pandas 1.5.0, groupby instruction, when iterating, returns a single element only when the grouper is a string (not a list)
             for collector_host, group in dataframe.groupby("CollectorHost"):
                 client_names = list(set(group["ClientName"]))
                 client_names.sort()

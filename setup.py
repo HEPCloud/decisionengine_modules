@@ -33,11 +33,8 @@ runtime_require = [
     "requests >= 2.14.2",
     "urllib3 >= 1.26.2",
     "bill-calculator-hep >= 0.1.4",
-    "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
-    "pandas == 1.1.5; python_version <= '3.6'",
     "pandas >= 1.5.3; python_version >= '3.7'",
-    "qcs-api-client >= 0.20.17; python_version <= '3.6'",
     "qcs-api-client >= 0.21.1; python_version >= '3.7'",
 ]
 
@@ -80,6 +77,7 @@ rpm_require.extend(__base_pip_requires)
 # Much of it comes out of decisionengine_modules.about.py
 setup(
     setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm >= 6.3.1"],
+    python_requires=">3.7.0",
     name=about.__title__,
     long_description=long_description,
     long_description_content_type="text/markdown",
