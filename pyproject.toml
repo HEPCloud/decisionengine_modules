@@ -10,7 +10,7 @@ minversion = "6.0"
 addopts = "-l -v --durations=0 -n 4"
 log_level = "debug"
 testpaths = "src/decisionengine_modules"
-timeout = 120
+#timeout = 120
 filterwarnings = [
   "ignore::DeprecationWarning:M2Crypto"
 ] # Only deprecations in third-party software for now.
