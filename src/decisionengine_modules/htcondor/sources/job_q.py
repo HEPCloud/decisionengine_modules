@@ -59,7 +59,7 @@ class JobQ(Source.Source):
                     # Add schedd name and collector host to job records
                     df["ScheddName"] = pandas.Series([schedd] * len(condor_q.stored_data))
                     df["CollectorHost"] = pandas.Series([collector_host] * len(condor_q.stored_data))
-                    dataframe = dataframe.append(df, ignore_index=True)
+                    dataframe = pandas.concat([dataframe, df], ignore_index=True)
             except htcondor_query.QueryError:
                 self.logger.warning(
                     f'Query error fetching job classads from schedd "{schedd}" in collector host(s) "{collector_host}".'
