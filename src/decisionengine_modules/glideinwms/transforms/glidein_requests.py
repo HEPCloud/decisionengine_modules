@@ -243,7 +243,7 @@ class GlideinRequestManifests(Transform.Transform):
                 self.logger.exception(f"Mismatch in manifest keys: {m_keys}, {g_keys}")
                 raise RuntimeError()
             for key in m_keys:
-                merged_manifests[key] = manifests[key].append(group_manifests[key], ignore_index=True)
+                merged_manifests[key] = pandas.concat([manifests[key], group_manifests[key]], ignore_index=True)
         else:
             merged_manifests = group_manifests
         return merged_manifests
