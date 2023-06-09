@@ -1823,7 +1823,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         # Default glidein_cpus to 1 if not defined
                         glidein_cpus = this_entry.get("GLIDEIN_CPUS", 1)
                         prop_match_cpu[key] = math.ceil(
-                            (prop_match_cpu.get(key, 0) + float(req_cpus * job_count)) / glidein_cpus
+                            (prop_match_cpu.get(key, 0) + float(req_cpus * job_count)) / float(glidein_cpus.iloc[0])
                         )
                         # Append FOM for all matches that are not in downtime
                         fom_matches = self.matches_with_fom(matches, entries_with_cpus)
