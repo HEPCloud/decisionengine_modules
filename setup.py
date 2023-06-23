@@ -25,7 +25,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 # pull in runtime requirements
 runtime_require = [
     "boto3 >= 1.17.10",
-    "google_auth >= 1.16.0, < 2dev",
+    "google_auth >= 1.16.0",
     "google-api-python-client >= 1.12.8",
     "gcs-oauth2-boto-plugin >= 2.7",
     "htcondor >= 9.0.0",
