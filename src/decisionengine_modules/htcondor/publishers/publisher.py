@@ -29,8 +29,10 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
         super().__init__(config)
         self.condor_config = config.get("condor_config")
         self.x509_user_proxy = config.get("x509_user_proxy")
-        self.max_retries = config.get("max_retries")
-        self.retry_interval = config.get("retry_interval")
+        # self.max_retries = config.get("max_retries")
+        self.max_retries = 10
+        # self.retry_interval = config.get("retry_interval")
+        self.retry_interval = 1
         self.update_ad_command = DEFAULT_UPDATE_AD_COMMAND
         self.invalidate_ad_command = DEFAULT_INVALIDATE_AD_COMMAND
         self.classad_type = "generic"
