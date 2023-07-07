@@ -52,8 +52,8 @@ class GlideFrontendElement:
         # Default parameters for glidein request
         self.default_glidein_params = {
             # TODO: Remove this classad once token/proxy hybrid configurations are no longer supported
-            # Keeping the default value to be False; overridden when it is True from glideinwms.libsonnet
-            "CONTINUE_IF_NO_PROXY": "False"
+            # Set the default value to be True to default to token only; overridden when it is False from glideinwms.libsonnet
+            "CONTINUE_IF_NO_PROXY": "True"
         }
 
     def generate_glidein_requests(self, jobs_df, slots_df, entries, factory_globals, job_filter="ClusterId > 0"):
