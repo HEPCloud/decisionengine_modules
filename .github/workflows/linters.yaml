@@ -19,30 +19,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout DE Modules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: decisionengine_modules
 
       - name: checkout DE Framework
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           ref: branch_v3_9
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -99,30 +99,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout DE Modules
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: decisionengine_modules
 
       - name: checkout DE Framework
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           ref: branch_v3_9
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -178,5 +178,5 @@ jobs:
     name: Run REUSE to check license compliance
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: fsfe/reuse-action@v1
