@@ -2,30 +2,13 @@ import pandas as pd
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
 from decisionengine_modules.NERSC.util import newt
-
-######## SF API imports:requests_nersc
-import requests
-import json
-from pprint import pprint
-
-from authlib.integrations.requests_client import OAuth2Session
-from authlib.oauth2.rfc7523               import PrivateKeyJWT
-import pem
-
-#import check_and_get
-
-######## SF API imports : check_and_get
-
-import requests
-import json
-
-from authlib.integrations.requests_client import OAuth2Session
-from authlib.oauth2.rfc7523               import PrivateKeyJWT
-import pem
-
 from datetime import datetime
+from authlib.integrations.requests_client import OAuth2Session
+from authlib.oauth2.rfc7523               import PrivateKeyJWT
+import pem
 import jwt
-from pprint import pprint
+import requests
+import json
 import time, os
 
 @Source.supports_config(Parameter('constraints', type=dict, comment="""Supports the layout:"""))
@@ -64,7 +47,6 @@ class NerscSFApi(Source.Source):
         client_id_ucms = self.constraints.get('ucms_client_id')
         client_id_fife = self.constraints.get('fife_client_id')
 
-
         rawfile = None
         pemfile = None
         client_id = None
@@ -81,39 +63,35 @@ class NerscSFApi(Source.Source):
                 client_id = ifile.read( )
                 client_id = client_id.rstrip()
         else:
-            print( "Unknown user, exiting" )
+            self.logger.error("Unknown user, exiting" )
             return None
 
-#        with open( '/tmp/hkclientid_'+nersc_user , 'w' ) as myfile:
-#            myfile.write( client_id )
-
         if not os.path.exists( rawfile ):
-            print(f"{rawfile} does not exist. Need to generate")
+            self.logger.debug(f"{rawfile} does not exist. Need to generate")
             renew_bool = True
         else:
             atoken = None
             with open( rawfile, 'r' ) as afile:
                 atoken = afile.read( )
-                atoken = atoken.rstrip()#        print( atoken )
+                atoken = atoken.rstrip()
+#HK> If the access token is expired, the flow goes directly to except jwt.ExpiredSignatureError
             try:
-                result = jwt.decode(atoken, options={"verify_signature": False}) #         pprint( result )
-    #HK> If the access token is expired, the flow goes directly to except jwt.ExpiredSignatureError
-                print( "Not expired. Returning without generating a new access token" )
+                result = jwt.decode(atoken, options={"verify_signature": False})
+                self.logger.debug("Not expired. Returning without generating a new access token" )
                 return atoken # This means the existing access token is not expired.
 
             except jwt.ExpiredSignatureError:
-                print( "expired" )
+                self.logger.debug("Access Token expired" )
                 renew_bool = True
 
         if renew_bool:
-            print( "renew_bool is true???" )
             certs = pem.parse_file( pemfile )
             private_key = str( certs[0] )
             client = OAuth2Session(client_id=client_id,client_secret=private_key,token_endpoint_auth_method="private_key_jwt")
             client.register_client_auth_method(  PrivateKeyJWT( token_url )  )
             resp = client.fetch_token( token_url, grant_type="client_credentials" )
 
-            newtoken = resp[ "access_token" ] # print( newtoken )
+            newtoken = resp[ "access_token" ]
 
             with open( rawfile, 'w' ) as myfile:
                 myfile.write( newtoken)
@@ -129,9 +107,8 @@ class NerscSFApi(Source.Source):
         my_access_token = self.check_accesstoken( username )
         my_header = self.get_headers2( my_access_token )
         p_url = 'https://api.nersc.gov/api/v1.2/account/projects'
-        r = requests.request(method = 'GET', url=p_url, headers=my_header) #print( r )
+        r = requests.request(method = 'GET', url=p_url, headers=my_header)
         returndict = json.loads(r.text)
-        #pprint( returndict )
         return returndict
 
     def send_query(self):
@@ -146,7 +123,7 @@ class NerscSFApi(Source.Source):
         return results
 
     def acquire(self):
-        self.logger.debug("in NerscSuperFacilityTest acquire")
+        self.logger.debug("in NerscSFApi acquire")
         return {'Nersc_Allocation_SFAPI': pd.DataFrame(self.send_query())}
 
 
