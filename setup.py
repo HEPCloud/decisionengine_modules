@@ -33,18 +33,17 @@ runtime_require = [
     "requests >= 2.14.2",
     "urllib3 >= 1.26.2",
     "bill-calculator-hep >= 0.1.4",
-    "numpy >= 1.19.5; python_version >= '3.7'",
-    "pandas >= 1.5.3; python_version >= '3.7'",
+    "numpy >= 1.19.5, < 2.0.0; python_version >= '3.7'",
+    "pandas >= 1.5.3, < 2.0.0; python_version >= '3.7'",
     "qcs-api-client >= 0.21.1; python_version >= '3.7'",
 ]
 
 # pull in development requirements
 devel_req = [
-    "pytest >= 6.2.2, < 7.0",  # pytest 7 incompatible with pytest-postgres < 4 from DE
+    "pytest >= 7.0.0, < 8.0",
     "pytest-cov >= 2.11.1",
-    "pytest-flake8 >= 1.0.7",
     "pytest-xdist[psutil] >= 2.3.0",
-    "flake8 >= 4.0.0, < 5.0.0",  # https://github.com/tholo/pytest-flake8/issues/87
+    "flake8 >= 6.0.0, < 7.0.0",
     "coverage >= 6.1.2",
     "tabulate >= 0.8.8",
     "toml >= 0.10.2",
@@ -54,7 +53,7 @@ devel_req = [
     "packaging >= 20.9",
     "wheel >= 0.36.2",
     "pylint >= 2.7.4",
-    "reuse",
+    "reuse >= 1.1.2",
     "importlib_resources >= 5.1.2; python_version <= '3.8'",
 ]
 
