@@ -36,6 +36,10 @@ runtime_require = [
     "numpy >= 1.19.5, < 2.0.0; python_version >= '3.7'",
     "pandas >= 1.5.3, < 2.0.0; python_version >= '3.7'",
     "qcs-api-client >= 0.21.1; python_version >= '3.7'",
+    "authlib >= 1.2.1",
+    "cryptography >= 40.0.2",
+    "pem >= 21.2.0",
+    "python36-jwt >= 1.6.4",
 ]
 
 # pull in development requirements
