@@ -39,7 +39,7 @@ runtime_require = [
     "authlib >= 1.2.1",
     "cryptography >= 40.0.2",
     "pem >= 21.2.0",
-    "python36-jwt >= 1.6.4",
+    "jwt",
 ]
 
 # pull in development requirements
