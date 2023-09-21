@@ -33,7 +33,11 @@ runtime_require = [
     "numpy == 1.19.5; python_version <= '3.6'",
     "numpy >= 1.19.5; python_version >= '3.7'",
     "pandas == 1.1.5; python_version <= '3.6'",
-    "pandas >= 1.1.5; python_version >= '3.7'"
+    "pandas >= 1.1.5; python_version >= '3.7'",
+    "authlib >= 1.2.1",
+    "cryptography >= 40.0.2",
+    "pem >= 21.2.0",
+    "jwt"
 ]
 
 # pull in development requirements
