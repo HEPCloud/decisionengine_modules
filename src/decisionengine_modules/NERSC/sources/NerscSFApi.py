@@ -40,9 +40,12 @@ class NerscSFApi(Source.Source):
         self.keys_list = ["hours_given", "hours_used", "id", "project_hours_given", "project_hours_used", "repo_name"]
 
     def check_accesstoken(self, nersc_user):
-        token_url = "https://oidc.nersc.gov/c2id/token"
-        #        currenttime = time.time()
-        renew_bool = False
+        # token_url = "https://oidc.nersc.gov/c2id/token"
+        # /etc/decisionengine/config.d/Nersc.jsonnet needs to also have
+        # "token_url": "https://oidc.nersc.gov/c2id/token",
+        token_url = self.constraints.get("token_url")
+
+        #        renew_bool = False
 
         rawfile_ucms = "/tmp/ucms_access.token"
         rawfile_fife = "/tmp/fife_access.token"
@@ -81,7 +84,7 @@ class NerscSFApi(Source.Source):
 
         if not os.path.exists(rawfile):
             self.logger.debug(f"{rawfile} does not exist. Need to generate")
-            renew_bool = True
+        #            renew_bool = True
         else:
             atoken = None
             with open(rawfile) as afile:
@@ -89,16 +92,15 @@ class NerscSFApi(Source.Source):
                 atoken = atoken.rstrip()
             # HK> If the access token is expired, the flow goes directly to except jwt.ExpiredSignatureError
             try:
-                #                result = jwt.decode(atoken, options={"verify_signature": False})
                 jwt.decode(atoken, options={"verify_signature": False})
-                self.logger.debug("Not expired. Returning without generating a new access token")
+                self.logger.debug("Access Token not expired. Returning without generating a new access token")
                 return atoken  # This means the existing access token is not expired.
 
             except jwt.ExpiredSignatureError:
                 self.logger.debug("Access Token expired")
-                renew_bool = True
+        #                renew_bool = True
 
-        if renew_bool:
+        if True:  # if renew_bool:
             certs = pem.parse_file(pemfile)
             private_key = str(certs[0])
             client = OAuth2Session(
