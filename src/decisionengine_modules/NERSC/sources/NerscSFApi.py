@@ -40,51 +40,36 @@ class NerscSFApi(Source.Source):
         self.keys_list = ["hours_given", "hours_used", "id", "project_hours_given", "project_hours_used", "repo_name"]
 
     def check_accesstoken(self, nersc_user):
-        # token_url = "https://oidc.nersc.gov/c2id/token"
         # /etc/decisionengine/config.d/Nersc.jsonnet needs to also have
         # "token_url": "https://oidc.nersc.gov/c2id/token",
         token_url = self.constraints.get("token_url")
 
-        #        renew_bool = False
+        # "NerscSFApi"in Nersc.jsonnet must contain constraints that has the following 2 dictionaries
+        # "uscms": {
+        #     "private_key":"/etc/decisionengine/modules.data/ucms_privkey.pem",
+        #     "client_id_file":"/etc/decisionengine/modules.data/ucms_clientid.txt",
+        #     "rawfile":"/tmp/ucms_access.token"
+        # },
+        # "fife": {
+        #     "private_key":"/etc/decisionengine/modules.data/fife_privkey.pem",
+        #     "client_id_file":"/etc/decisionengine/modules.data/fife_clientid.txt",
+        #     "rawfile":"/tmp/fife_access.token"
+        # }
 
-        rawfile_ucms = "/tmp/ucms_access.token"
-        rawfile_fife = "/tmp/fife_access.token"
-
-        # These 4 variables are defined in /etc/decisionengine/config.d/Nersc.jsonnet
-        #          "ucms_private_key": "/etc/decisionengine/modules.data/ucms_privkey.pem",
-        #          "fife_private_key": "/etc/decisionengine/modules.data/fife_privkey.pem",
-        #          "ucms_client_id":   "/etc/decisionengine/modules.data/ucms_clientid.txt",
-        #          "fife_client_id":   "/etc/decisionengine/modules.data/fife_clientid.txt"
-        # And the actual key files and id files reside in /etc/decisionengine/modules.data/
-        # So, puppet should copy these 4 files from
-        # ssiadmin4:/srv/secrets/per_host/hepcsvc03.fnal.gov/credentials/
-        pemfile_ucms = self.constraints.get("ucms_private_key")
-        pemfile_fife = self.constraints.get("fife_private_key")
-        client_id_ucms = self.constraints.get("ucms_client_id")
-        client_id_fife = self.constraints.get("fife_client_id")
-
-        rawfile = None
-        pemfile = None
-        client_id = None
-        if nersc_user == "uscms":
-            rawfile = rawfile_ucms
-            pemfile = pemfile_ucms
-            with open(client_id_ucms) as ifile:
-                client_id = ifile.read()
-                client_id = client_id.rstrip()
-        elif nersc_user == "fife":
-            rawfile = rawfile_fife
-            pemfile = pemfile_fife
-            with open(client_id_fife) as ifile:
-                client_id = ifile.read()
-                client_id = client_id.rstrip()
-        else:
+        if nersc_user not in ("uscms", "fife"):
             self.logger.error("Unknown user, exiting")
             return None
+        # nersc_user should be either "uscms" or "fife"
+        params_dict = self.constraints.get(nersc_user)
+        rawfile = params_dict["rawfile"]
+        pemfile = params_dict["private_key"]
+        clientidfile = params_dict["client_id_file"]
+        with open(clientidfile) as cifile:
+            client_id = cifile.read()
+            client_id = client_id.rstrip()
 
         if not os.path.exists(rawfile):
             self.logger.debug(f"{rawfile} does not exist. Need to generate")
-        #            renew_bool = True
         else:
             atoken = None
             with open(rawfile) as afile:
@@ -98,22 +83,20 @@ class NerscSFApi(Source.Source):
 
             except jwt.ExpiredSignatureError:
                 self.logger.debug("Access Token expired")
-        #                renew_bool = True
 
-        if True:  # if renew_bool:
-            certs = pem.parse_file(pemfile)
-            private_key = str(certs[0])
-            client = OAuth2Session(
-                client_id=client_id, client_secret=private_key, token_endpoint_auth_method="private_key_jwt"
-            )
-            client.register_client_auth_method(PrivateKeyJWT(token_url))
-            resp = client.fetch_token(token_url, grant_type="client_credentials")
+        certs = pem.parse_file(pemfile)
+        private_key = str(certs[0])
+        client = OAuth2Session(
+            client_id=client_id, client_secret=private_key, token_endpoint_auth_method="private_key_jwt"
+        )
+        client.register_client_auth_method(PrivateKeyJWT(token_url))
+        resp = client.fetch_token(token_url, grant_type="client_credentials")
 
-            newtoken = resp["access_token"]
+        newtoken = resp["access_token"]
 
-            with open(rawfile, "w") as myfile:
-                myfile.write(newtoken)
-            return newtoken
+        with open(rawfile, "w") as myfile:
+            myfile.write(newtoken)
+        return newtoken
 
     def get_headers2(self, access_token):
         headers = {}
@@ -122,9 +105,11 @@ class NerscSFApi(Source.Source):
         return headers
 
     def requests_nersc(self, username):
+        # /etc/decisionengine/config.d/Nersc.jsonnet needs to also have
+        # "query_url": "https://api.nersc.gov/api/v1.2/account/projects",
+        p_url = self.constraints.get("query_url")
         my_access_token = self.check_accesstoken(username)
         my_header = self.get_headers2(my_access_token)
-        p_url = "https://api.nersc.gov/api/v1.2/account/projects"
         r = requests.request(method="GET", url=p_url, headers=my_header)
         returndict = json.loads(r.text)
         return returndict
