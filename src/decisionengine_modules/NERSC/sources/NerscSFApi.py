@@ -56,11 +56,13 @@ class NerscSFApi(Source.Source):
         #     "rawfile":"/tmp/fife_access.token"
         # }
 
-        if nersc_user not in ("uscms", "fife"):
-            self.logger.error("Unknown user, exiting")
-            return None
         # nersc_user should be either "uscms" or "fife"
-        params_dict = self.constraints.get(nersc_user)
+        try:
+            params_dict = self.constraints[nersc_user]
+        except KeyError:
+            self.logger.error(f"Unknown user '{nersc_user}', exiting")
+            return None
+
         rawfile = params_dict["rawfile"]
         pemfile = params_dict["private_key"]
         clientidfile = params_dict["client_id_file"]
