@@ -1,3 +1,23 @@
+Release 1.7.5
+-------------
+
+Added support for NERSC SuperFacility API.
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`234 <https://github.com/HEPCloud/decisionengine_modules/issues/234>`_ : Prepare code for new NERSC "superfacility" api 
+
+Full list of commits since version 1.7.4
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`a85098a <https://github.com/HEPCloud/decisionengine_modules/commit/a85098abced97945f364ec729695d7ae319e9a90>`_:   Last update to add KeyError
+
+`defb011 <https://github.com/HEPCloud/decisionengine_modules/commit/defb0116eb968fc4875bcf2991f4af154e0e0d6c>`_:   New Nersc SuperFacility code in the branch 1.7
+
+`83e6b88 <https://github.com/HEPCloud/decisionengine_modules/commit/83e6b88db6012e9fd60f3115f8db2b4db5fc79ea>`_:   Updated release notes for 1.7.4
+
+
 Release 1.7.4
 -------------
 
