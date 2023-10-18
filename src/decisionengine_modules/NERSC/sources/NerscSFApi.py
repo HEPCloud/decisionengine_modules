@@ -124,6 +124,7 @@ class NerscSFApi(Source.Source):
                 # HK> This if condition will choose only m3249 for fife and discard m3990
                 if each_dict["repo_name"] == self.localmap[username]:
                     local_dict = {each_key: each_dict[each_key] for each_key in self.keys_list}
+                    local_dict["real_name"] = username
                     results.append(local_dict)
         return results
 
