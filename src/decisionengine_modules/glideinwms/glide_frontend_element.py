@@ -1340,7 +1340,7 @@ class GlideFrontendElement:
                 self.logger.debug("identity= %s" % identity)
                 tkn_str = token_util.create_and_sign_token(pwd_file, scope=scope, duration=duration, identity=identity)
                 self.logger.debug("tkn_str= %s" % tkn_str)
-                with tempfile.NamedTemporaryFile(mode="wb", delete=False, dir=tkn_dir) as fd:
+                with tempfile.NamedTemporaryFile(mode="w", delete=False, dir=tkn_dir) as fd:
                     os.chmod(fd.name, 0o600)
                     fd.write(tkn_str)
                     fd.flush()
