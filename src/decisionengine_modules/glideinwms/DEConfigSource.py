@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
+import os
 
 from glideinwms.lib.xmlParse import OrderedDict
 
-from decisionengine.framework.engine import de_client
+from decisionengine.framework.config.policies import global_config_dir, GLOBAL_CONFIG_FILENAME
+from decisionengine.framework.config.ValidConfig import ValidConfig
 from decisionengine_modules.glideinwms.ConfigSource import ConfigError, ConfigSource
 
 
@@ -14,15 +16,12 @@ class DEConfigSource(ConfigSource):
     Handles HEPCloud Decision Engine configuration source.
     """
 
-    def __init__(self, host="localhost", port="8888"):
-        self.host = host
-        self.port = port
+    def __init__(self, config_file=GLOBAL_CONFIG_FILENAME):
+        self.config_file = os.path.join(global_config_dir(), config_file)
         super().__init__()
 
     def load_config(self):
         try:
-            de_config = de_client.main(["--port", self.port, "--host", self.host, "--show-de-config"], logger_name=None)
-            de_config = json.loads(de_config, object_hook=OrderedDict)["glideinwms"]
-            return de_config
-        except Exception as e:
-            raise ConfigError(f"Failed to load HEPCloud Decision Engine configuration: {e}")
+            return json.loads(json.dumps(ValidConfig(self.config_file)["glideinwms"]), object_hook=OrderedDict)
+        except KeyError as e:
+            raise ConfigError(f"Could not find the required configuration key '{e}' in the Decision Engine configuration ({self.config_file}).")
