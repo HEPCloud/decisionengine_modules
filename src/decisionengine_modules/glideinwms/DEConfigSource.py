@@ -24,4 +24,6 @@ class DEConfigSource(ConfigSource):
         try:
             return json.loads(json.dumps(ValidConfig(self.config_file)["glideinwms"]), object_hook=OrderedDict)
         except KeyError as e:
-            raise ConfigError(f"Could not find the required configuration key '{e}' in the Decision Engine configuration ({self.config_file}).")
+            raise ConfigError(
+                f"Could not find the required configuration key '{e}' in the Decision Engine configuration ({self.config_file})."
+            )
