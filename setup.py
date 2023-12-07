@@ -72,7 +72,6 @@ __base_pip_requires = [
 rpm_require.extend(__base_pip_requires)
 
 
-
 # This metadata can be read out with:
 #    import importlib.metadata
 #    dir(importlib.metadata.metadata('decisionengine_modules'))
@@ -83,15 +82,15 @@ rpm_require.extend(__base_pip_requires)
 
 # for decisionengine dev we have version in the form X.Y.Z.devN
 # while for tag we have version in the form X.Y.Z
-verarr=about.__version__.split(".")[:4]
-if len(verarr)>3:
+verarr = about.__version__.split(".")[:4]
+if len(verarr) > 3:
     # this is a dev version
-    ver='.'.join(verarr[:3]+[verarr[3][:3]])
+    ver = ".".join(verarr[:3] + [verarr[3][:3]])
 else:
     # this is a tag
-    ver='.'.join(verarr[:3])
+    ver = ".".join(verarr[:3])
 # string to add decisionengine as decisionengine_modules requirement
-de_req=[f"decisionengine>="+ver]
+de_req = [f"decisionengine>=" + ver]
 
 setup(
     setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm >= 6.3.1"],
@@ -104,7 +103,7 @@ setup(
     license=about.__license__,
     package_dir={"": "src"},
     packages=find_packages(where="src", exclude=("tests", "*.tests", "*.tests.*", "build.*", "doc.*")),
-    install_requires=runtime_require+de_req,
+    install_requires=runtime_require + de_req,
     extras_require={
         "develop": devel_req,
     },
