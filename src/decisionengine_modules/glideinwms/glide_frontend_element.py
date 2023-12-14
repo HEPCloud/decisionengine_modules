@@ -155,7 +155,12 @@ class GlideFrontendElement:
         ########################################################################
 
         # List of glideids that have idle jobs
-        glideids_with_idle_jobs = job_types["Idle"]["count"].keys()
+        glideids_to_advertise = set(job_types["Idle"]["count"].keys())
+
+        # List of glideids that have active slots
+        for glideid in self.glideid_list:
+            if self.count_entry_slots[glideid[1]]["Total"] > 0:
+                glideids_to_advertise.add(glideid)
 
         # For faster lookup
         self.processed_glideid_strs = []
@@ -166,7 +171,7 @@ class GlideFrontendElement:
 
         # Get the FOM info and generate requests based on the FOM
 
-        for glideid in glideids_with_idle_jobs:
+        for glideid in glideids_to_advertise:
             if glideid == (None, None):
                 # Ignore the unmatched entries
                 continue
@@ -1500,7 +1505,12 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         ########################################################################
 
         # List of glideids that have idle jobs
-        glideids_with_idle_jobs = job_types["Idle"]["count"].keys()
+        glideids_to_advertise = set(job_types["Idle"]["count"].keys())
+
+        # List of glideids that have active slots
+        for glideid in self.glideid_list:
+            if self.count_entry_slots[glideid[1]]["Total"] > 0:
+                glideids_to_advertise.add(glideid)
 
         # For faster lookup
         self.processed_glideid_strs = []
@@ -1509,7 +1519,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         total_up_stats_arr = init_factory_stats_arr()
         total_down_stats_arr = init_factory_stats_arr()
 
-        for glideid in glideids_with_idle_jobs:
+        for glideid in glideids_to_advertize:
             if glideid == (None, None):
                 # Ignore the unmatched entries
                 continue
