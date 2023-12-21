@@ -1519,7 +1519,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         total_up_stats_arr = init_factory_stats_arr()
         total_down_stats_arr = init_factory_stats_arr()
 
-        for glideid in glideids_to_advertize:
+        for glideid in glideids_to_advertise:
             if glideid == (None, None):
                 # Ignore the unmatched entries
                 continue
