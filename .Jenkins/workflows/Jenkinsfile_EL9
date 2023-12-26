@@ -50,7 +50,7 @@ pipeline {
                         echo "prepare docker image ${flake8StageDockerImage}"
                         sh "docker build --pull --tag ${flake8StageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${flake8StageDockerImage} \"-m pytest -m flake8 --flake8\" \"flake8.log\" \"${BRANCH}\""
+                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${flake8StageDockerImage} \"-m flake8\" \"flake8.log\" \"${BRANCH}\""
                     }
                     post {
                         always {
