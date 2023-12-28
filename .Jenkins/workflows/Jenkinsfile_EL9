@@ -104,7 +104,7 @@ pipeline {
                             }
                     }
                 }
-                stage('rpmbuild') {
+                stage('build_whl') {
                     agent {
                         node {
                             label 'docker'
@@ -117,7 +117,7 @@ pipeline {
                     steps {
                         script {
                             // DOCKER_IMAGE is defined through Jenkins project
-                            rpmbuildStageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
+                            buildwhlStageDockerImage="${DOCKER_IMAGE}_${BUILD_NUMBER}_${STAGE_NAME}"
                         }
                         echo "cleanup workspace"
                         sh 'for f in $(ls -A); do rm -rf ${f}; done'
@@ -135,16 +135,16 @@ pipeline {
                             fi
                             cd ..
                         '''
-                        echo "prepare docker image ${rpmbuildStageDockerImage}"
-                        sh "docker build --pull --tag ${rpmbuildStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
+                        echo "prepare docker image ${buildwhlStageDockerImage}"
+                        sh "docker build --pull --tag ${buildwhlStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${rpmbuildStageDockerImage} \"setup.py bdist_rpm\" \"rpmbuild.log\" \"${BRANCH}\""
+                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${buildwhlStageDockerImage} \"setup.py bdist_wheel\" \"build_whl.log\" \"${BRANCH}\""
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: "decisionengine_modules/rpmbuild.log,decisionengine_modules/dist/*.rpm"
-                            echo "cleanup docker image ${rpmbuildStageDockerImage}"
-                            sh "docker rmi ${rpmbuildStageDockerImage}"
+                            archiveArtifacts artifacts: "decisionengine_modules/build_whl.log,decisionengine_modules/dist/*.whl"
+                            echo "cleanup docker image ${buildwhlStageDockerImage}"
+                            sh "docker rmi ${buildwhlStageDockerImage}"
                         }
                     }
                 }
