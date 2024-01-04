@@ -27,7 +27,7 @@ git clone -b ${DE_BRANCH} https://github.com/HEPCloud/decisionengine.git
 
 # checkout GlideinWMS for python3
 rm -rf glideinwms
-git clone -b branch_v3_9 https://github.com/glideinWMS/glideinwms.git
+git clone -b master https://github.com/glideinWMS/glideinwms.git
 
 # Install dependencies for GlideinWMS
 python3 -m pip install --upgrade pip
