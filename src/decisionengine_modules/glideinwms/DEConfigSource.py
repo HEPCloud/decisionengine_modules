@@ -27,3 +27,7 @@ class DEConfigSource(ConfigSource):
             raise ConfigError(
                 f"Could not find the required configuration key '{e}' in the Decision Engine configuration ({self.config_file})."
             )
+        except RuntimeError as e:
+            raise ConfigError(f"Could not load the Decision Engine configuration ({self.config_file}): {e}") from e
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"Could not find the Decision Engine configuration ({self.config_file}).") from e
