@@ -3,8 +3,6 @@
 
 import json
 
-from unittest import mock
-
 import pytest
 
 from glideinwms.lib.xmlParse import OrderedDict
@@ -46,20 +44,3 @@ def gwms_module_invalid_config():
     }"""
 
     return json.loads(MODULE_INVALID_CONFIG, object_hook=OrderedDict)
-
-
-@pytest.fixture(scope="module")
-def de_client_config():
-    GWMS_MOCK_CONFIG = """{
-        "glideinwms": {
-            "value": "foo",
-            "list": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            "dict": {
-                "a": 1,
-                "b": 2,
-                "c": 3
-            }
-        }
-    }"""
-
-    return mock.patch("decisionengine.framework.engine.de_client.main", return_value=GWMS_MOCK_CONFIG)

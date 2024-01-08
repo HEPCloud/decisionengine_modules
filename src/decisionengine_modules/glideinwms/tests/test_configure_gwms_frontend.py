@@ -5,8 +5,6 @@ import warnings
 
 from argparse import ArgumentParser
 
-from decisionengine_modules.glideinwms.tests.fixtures import de_client_config  # noqa: F401
-
 # If using HTCondor without a configuration becomes important, we can
 # put this warning filter in the pyproject.toml file.
 with warnings.catch_warnings():
@@ -20,9 +18,56 @@ def test_get_arg_parser():
 
 
 # TODO: This test requires the new GlideinWMS RPMs to be installed.
-# def test_main():
-#     args = Namespace()
+
+# import os
+# from types import SimpleNamespace
+# from decisionengine.framework.config.policies import GLOBAL_CONFIG_FILENAME
+
+# MOCK_CONFIG = """{
+#     "glideinwms": {
+#         "frontend_name": "mock_frontend",
+#         "collectors": [
+#             {
+#                 "DN": "/DC=org/DC=incommon/C=US/ST=Illinois/L=Batavia/O=Fermi Research Alliance/OU=Fermilab/CN=mock_collector.fnal.gov",
+#                 "group": "default",
+#                 "node": "localhost:9618",
+#                 "secondary": "False"
+#             }
+#         ],
+#         "groups": {
+#             "main": {}
+#         },
+#         work: {
+#             base_dir: '/var/lib/gwms-frontend/vofrontend',
+#             base_log_dir: '/var/log/gwms-frontend',
+#         },
+#         stage: {
+#             base_dir: '/var/lib/gwms-frontend/web-area/stage',
+#             use_symlink: 'True',
+#             web_base_url: 'http://fermicloud711.fnal.gov/vofrontend/stage',
+#         },
+#         monitor: {
+#             base_dir: '/var/lib/gwms-frontend/web-area/monitor',
+#             flot_dir: '/usr/share/javascriptrrd/flot',
+#             javascriptRRD_dir: '/usr/share/javascriptrrd/js',
+#             jquery_dir: '/usr/share/javascriptrrd/flot',
+#         }
+#     }
+# }"""
+
+# def test_main(tmp_path):
+#     de_frontend_config = tmp_path / "de_frontend_config"
+#     config_file = tmp_path / GLOBAL_CONFIG_FILENAME
+#     config_file.write_text(MOCK_CONFIG)
+
+#     os.environ["CONFIG_PATH"] = str(tmp_path)
+
+#     args = SimpleNamespace()
 #     args.web_base_dir = "/var/lib/gwms-frontend/web-base"
 #     args.update_scripts = False
-#     args.de_frontend_config = "/var/lib/gwms-frontend/vofrontend/de_frontend_config"
+#     args.de_frontend_config = de_frontend_config
 #     configure_gwms_frontend.main(args)
+
+#     assert de_frontend_config.exists()
+#     config = eval(de_frontend_config.read_text())
+#     assert type(config) == dict
