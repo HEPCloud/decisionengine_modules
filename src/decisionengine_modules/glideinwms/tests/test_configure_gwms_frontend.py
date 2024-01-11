@@ -28,7 +28,7 @@ def test_get_arg_parser():
 #         "frontend_name": "mock_frontend",
 #         "collectors": [
 #             {
-#                 "DN": "/DC=org/DC=incommon/C=US/ST=Illinois/L=Batavia/O=Fermi Research Alliance/OU=Fermilab/CN=mock_collector.fnal.gov",
+#                 "DN": "/DC=org/OU=HEPCloud/CN=mock_collector.hepcloud.org",
 #                 "group": "default",
 #                 "node": "localhost:9618",
 #                 "secondary": "False"
@@ -44,7 +44,7 @@ def test_get_arg_parser():
 #         stage: {
 #             base_dir: '/var/lib/gwms-frontend/web-area/stage',
 #             use_symlink: 'True',
-#             web_base_url: 'http://fermicloud711.fnal.gov/vofrontend/stage',
+#             web_base_url: 'http://localhost/vofrontend/stage',
 #         },
 #         monitor: {
 #             base_dir: '/var/lib/gwms-frontend/web-area/monitor',
