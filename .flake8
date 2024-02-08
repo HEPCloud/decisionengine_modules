@@ -3,7 +3,7 @@
 [flake8]
   max-line-length = 120
   # Do not test external dependencies
-  extend-exclude = ./glideinwms,./decisionengine
+  extend-exclude = ./glideinwms,./decisionengine,./build
   # Errors and warnings to ignore
   extend-ignore =
      # line too long (90 > 79 characters)
