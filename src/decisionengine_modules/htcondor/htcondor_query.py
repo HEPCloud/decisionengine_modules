@@ -109,13 +109,11 @@ class CondorQ(CondorQuery):
                 collector = htcondor.Collector(str(self.pool_name))
             else:
                 collector = htcondor.Collector()
-
             if self.schedd_name is None:
                 schedd = htcondor.Schedd()
             else:
                 schedd = htcondor.Schedd(collector.locate(htcondor.DaemonTypes.Schedd, self.schedd_name))
             classads = schedd.query(constraint, attrs)
-            # results_dict = list2dict(results, self.group_attr)
             results = eval_classad_expr(classads, format_list=format_list)
         except Exception as ex:
             s = "default"
@@ -159,7 +157,6 @@ class CondorStatus(CondorQuery):
         constraint = bindings_friendly_constraint(constraint)
         attrs = bindings_friendly_attrs(format_list)
         adtype = resource_str_to_py_adtype(self.resource_str)
-
         old_condor_config_env = os.environ.get("CONDOR_CONFIG")
         try:
             if condor_config and os.path.exists(condor_config):
@@ -169,7 +166,6 @@ class CondorStatus(CondorQuery):
                 collector = htcondor.Collector(str(self.pool_name))
             else:
                 collector = htcondor.Collector()
-
             classads = collector.query(adtype, constraint, attrs)
             results = eval_classad_expr(classads, format_list=format_list)
         except Exception as ex:
