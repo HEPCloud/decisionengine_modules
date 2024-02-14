@@ -15,8 +15,6 @@ from decisionengine_modules.htcondor import htcondor_query
 DEM_HTCONDOR_SLOTS_STATUS_COUNT = Gauge(
     "dem_htcondor_slots_status_count", "Number of glideins available for the client based on status.", ["source_status"]
 )
-DEM_HTCONDOR_CORES_COUNT = Gauge("dem_htcondor_cores_count", "Number of active cores", ["state"])
-DEM_HTCONDOR_CORES_HISTOGRAM = Histogram("dem_htcondor_cores_histogram", "Histogram of active cores", ["state"])
 
 
 @Source.supports_config(
