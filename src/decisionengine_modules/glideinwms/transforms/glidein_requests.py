@@ -139,9 +139,7 @@ class GlideinRequestManifests(Transform.Transform):
 
             # StartD Manifest Metrics
             slots_df_rows = slots_df.itertuples()
-            self.logger.debug(f"MyDebug: slots_df_rows: {len(list(slots_df_rows))}")
             for row in slots_df_rows:
-                self.logger.debug(f"MyDebug: row: {row}")
                 METRICS["TOTAL_CPUS"].labels(
                     glidein_entry_name=row.GLIDEIN_Entry_Name,
                     glidein_master_name=row.GLIDEIN_MASTER_NAME,
