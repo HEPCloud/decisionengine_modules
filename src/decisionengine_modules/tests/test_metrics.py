@@ -44,12 +44,7 @@ def setup_metrics_dir_for_test(monkeypatch, tmp_path):
 
 @pytest.mark.unit
 def test_count_slots(setup_metrics_dir_for_test, expected_values):
-    with open(FIXTURE_FILE) as file:
-        condor_data = file.read()
-    with mock.patch(
-        "htcondor.htcondor_query.CondorStatus",
-        return_value=mock.Mock(return_value=htcondor_query.CondorStatus.from_xml_string(condor_data)),
-    ):
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Slots"].items():
             metric_value = DEM_HTCONDOR_SLOTS_STATUS_COUNT.labels(label)._value.get()
@@ -58,12 +53,7 @@ def test_count_slots(setup_metrics_dir_for_test, expected_values):
 
 @pytest.mark.unit
 def test_count_cores(setup_metrics_dir_for_test, expected_values):
-    with open(FIXTURE_FILE) as file:
-        condor_data = file.read()
-    with mock.patch(
-        "htcondor.htcondor_query.CondorStatus",
-        return_value=mock.Mock(return_value=htcondor_query.CondorStatus.from_xml_string(condor_data)),
-    ):
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Cores"].items():
             metric_value = DEM_HTCONDOR_CORES_COUNT.labels(label)._value.get()
@@ -72,12 +62,7 @@ def test_count_cores(setup_metrics_dir_for_test, expected_values):
 
 @pytest.mark.unit
 def test_count_memory(setup_metrics_dir_for_test, expected_values):
-    with open(FIXTURE_FILE) as file:
-        condor_data = file.read()
-    with mock.patch(
-        "htcondor.htcondor_query.CondorStatus",
-        return_value=mock.Mock(return_value=htcondor_query.CondorStatus.from_xml_string(condor_data)),
-    ):
+    with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Memory"].items():
             metric_value = DEM_HTCONDOR_MEMORY_COUNT.labels(label)._value.get()
