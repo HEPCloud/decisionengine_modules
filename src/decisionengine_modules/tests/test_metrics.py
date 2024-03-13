@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import pprint
 
 from unittest import mock
 
@@ -43,7 +42,7 @@ def setup_metrics_dir_for_test(monkeypatch, tmp_path):
 
 
 @pytest.mark.unit
-def test_count_slots(setup_metrics_dir_for_test, expected_values):
+def test_count_slots(source_instance, setup_metrics_dir_for_test, expected_values):
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Slots"].items():
@@ -52,7 +51,7 @@ def test_count_slots(setup_metrics_dir_for_test, expected_values):
 
 
 @pytest.mark.unit
-def test_count_cores(setup_metrics_dir_for_test, expected_values):
+def test_count_cores(source_instance, setup_metrics_dir_for_test, expected_values):
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Cores"].items():
@@ -61,7 +60,7 @@ def test_count_cores(setup_metrics_dir_for_test, expected_values):
 
 
 @pytest.mark.unit
-def test_count_memory(setup_metrics_dir_for_test, expected_values):
+def test_count_memory(source_instance, setup_metrics_dir_for_test, expected_values):
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Memory"].items():
