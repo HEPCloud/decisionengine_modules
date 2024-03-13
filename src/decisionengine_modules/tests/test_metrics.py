@@ -27,7 +27,6 @@ def source_instance():
         "channel_name": "test",
         "condor_config": "condor_config",
         "collector_host": "fermicloud122.fnal.gov",
-        "schedds": ["fermicloud122.fnal.gov"],
         "classad_attrs": ["ClusterId", "ProcId", "JobStatus"],
         "group_attr": ["Name"],
         "subsystem_name": "subsystem_name",
