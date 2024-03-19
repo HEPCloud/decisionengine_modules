@@ -17,6 +17,29 @@ DEM_HTCONDOR_SLOTS_STATUS_COUNT = Gauge(
 )
 DEM_HTCONDOR_CORES_COUNT = Gauge("dem_htcondor_cores_count", "Number of active cores", ["state"])
 DEM_HTCONDOR_CORES_HISTOGRAM = Histogram("dem_htcondor_cores_histogram", "Histogram of active cores", ["state"])
+DEM_HTCONDOR_MEMORY_COUNT = Gauge("dem_htcondor_memory_count", "Amount of memory used", ["state"])
+DEM_HTCONDOR_MEMORY_HISTOGRAM = Histogram(
+    "dem_htcondor_memory_histogram",
+    "Histogram of memory used",
+    ["state"],
+    buckets=(
+        1.0,
+        10.0,
+        100.0,
+        1000.0,
+        2500.0,
+        5000.0,
+        10000.0,
+        15000.0,
+        20000.0,
+        30000.0,
+        50000.0,
+        75000.0,
+        100000.0,
+        250000.0,
+        500000.0,
+    ),
+)
 
 
 @Source.supports_config(
@@ -79,6 +102,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
 
             condor_status.load(self.constraint, self.classad_attrs, self.condor_config)
             source_statuses = defaultdict(int)
+            source_statuses = defaultdict(int)
             for eachDict in condor_status.stored_data:
                 for key, value in self.correction_map.items():
                     if eachDict.get(key) is None:
@@ -87,15 +111,24 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
 
             for key, value in source_statuses.items():
                 DEM_HTCONDOR_SLOTS_STATUS_COUNT.labels(source_status=key).set(value)
+                source_statuses[eachDict["Activity"]] += 1
+
+            for key, value in source_statuses.items():
+                DEM_HTCONDOR_SLOTS_STATUS_COUNT.labels(source_status=key).set(value)
 
             dataframe = pandas.DataFrame(condor_status.stored_data)
             if not dataframe.empty:
                 cpus_dict = defaultdict(int)
+                memory_dict = defaultdict(int)
                 for i in range(len(dataframe["Cpus"])):
                     cpus_dict[dataframe["State"][i]] += dataframe["Cpus"][i]
+                    memory_dict[dataframe["State"][i]] += dataframe["Memory"][i]
                 for key, value in cpus_dict.items():
                     DEM_HTCONDOR_CORES_COUNT.labels(state=key).set(value)
                     DEM_HTCONDOR_CORES_HISTOGRAM.labels(state=key).observe(value)
+                for key, value in memory_dict.items():
+                    DEM_HTCONDOR_MEMORY_COUNT.labels(state=key).set(value)
+                    DEM_HTCONDOR_MEMORY_HISTOGRAM.labels(state=key).observe(value)
                 (collector_host, secondary_collectors) = htcondor_query.split_collector_host(self.collector_host)
                 dataframe["CollectorHost"] = [collector_host] * len(dataframe)
                 if secondary_collectors != "":
