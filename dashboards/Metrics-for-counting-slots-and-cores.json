@@ -1,0 +1,706 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 825,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "description": "Histogram of number of cores classified by State.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Claimed\"}",
+          "legendFormat": "Claimed",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Unclaimed\"}",
+          "hide": false,
+          "legendFormat": "Unclaimed",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Owner\"}",
+          "hide": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Matched\"}",
+          "hide": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Preempting\"}",
+          "hide": false,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Backfill\"}",
+          "hide": false,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "expr": "dem_htcondor_cores_histogram_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Drained\"}",
+          "hide": false,
+          "refId": "G"
+        }
+      ],
+      "title": "DEM_HTCONDOR_CORES_HISTOGRAM",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "description": "Number of cores classified by State.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Claimed\"})",
+          "legendFormat": "Claimed",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Unclaimed\"})",
+          "hide": false,
+          "legendFormat": "Unclaimed",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Owner\"})",
+          "hide": false,
+          "legendFormat": "Owner",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Matched\"})",
+          "hide": false,
+          "legendFormat": "Matched",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Preempting\"})",
+          "hide": false,
+          "legendFormat": "Preempting",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Backfill\"})",
+          "hide": false,
+          "legendFormat": "Backfill",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum by (instance, job) (dem_htcondor_cores_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", state=\"Drained\"})",
+          "hide": false,
+          "legendFormat": "Drained",
+          "range": true,
+          "refId": "G"
+        }
+      ],
+      "title": "DEM_HTCONDOR_CORES_COUNT",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "description": "Number of jobs classified per status (idle,running, removed, completed, held, transferring_output, suspended)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"1\"})",
+          "legendFormat": "Idle",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"2\"})",
+          "hide": false,
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"3\"})",
+          "hide": false,
+          "legendFormat": "Removed",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"4\"})",
+          "hide": false,
+          "legendFormat": "Completed",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"5\"})",
+          "hide": false,
+          "legendFormat": "Held",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"6\"})",
+          "hide": false,
+          "legendFormat": "Transferring_Output\t",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"7\"})",
+          "hide": false,
+          "legendFormat": "Suspended",
+          "range": true,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_jobs_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", job_status=\"0\"})",
+          "hide": false,
+          "legendFormat": "Unexpected",
+          "range": true,
+          "refId": "H"
+        }
+      ],
+      "title": "DEM HTCONDOR JOBS STATUS COUNT",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "description": "Number of glideins available for the client based on status.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Idle\"})",
+          "legendFormat": "Idle",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Busy\"})",
+          "hide": false,
+          "legendFormat": "Busy",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Retiring\"})",
+          "hide": false,
+          "legendFormat": "Retiring",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Vacating\"})",
+          "hide": false,
+          "legendFormat": "Vacating",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (de_m_source_status_gauge{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Suspended\"})",
+          "hide": false,
+          "legendFormat": "Suspended",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Benchmarking\"})",
+          "hide": false,
+          "legendFormat": "Benchmarking",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"Killing\"})",
+          "hide": false,
+          "legendFormat": "Killing",
+          "range": true,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "\r\nsum by (instance, job) (dem_htcondor_slots_status_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_status=\"None\"})",
+          "hide": false,
+          "legendFormat": "None",
+          "range": true,
+          "refId": "H"
+        }
+      ],
+      "title": "DEM HTCONDOR SLOTS STATUS COUNT",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Metrics for counting slots and cores",
+  "uid": "qYuqlVTIk",
+  "version": 1,
+  "weekStart": ""
+}
