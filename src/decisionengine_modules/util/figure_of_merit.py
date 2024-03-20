@@ -6,9 +6,15 @@ Calculate figure of merit
 """
 
 import sys
+from decisionengine.framework.util.metrics import Gauge
 
 _INFINITY = sys.float_info.max
 
+FIGURE_OF_MERIT_CALCULATION = Gauge(
+        "figure_of_merit_calculation",
+        "Figure of Merit Calculation",
+        ["performance", "running", "allowed", "idle", "max_idle"]
+)
 
 def figure_of_merit(performance, running, allowed, idle=None, max_idle=None, logger=None):
     try:
@@ -16,7 +22,15 @@ def figure_of_merit(performance, running, allowed, idle=None, max_idle=None, log
             return _INFINITY
         if idle is not None and max_idle is not None and idle >= max_idle:
             return _INFINITY
-        return performance * float(running + 1) / allowed
+        fom_value = performance * float(running + 1) / allowed
+        FIGURE_OF_MERIT_CALCULATION.labels(
+                performance=performance, 
+                running=running, 
+                allowed=allowed, 
+                idle=idle, 
+                max_idle=max_idle
+        ).set(fom_value)
+        return fom_value
     except TypeError:
         if logger is not None:
             logger.exception("TypeError in figure_of_merit")
