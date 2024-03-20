@@ -23,13 +23,6 @@ def figure_of_merit(performance, running, allowed, idle=None, max_idle=None, log
         if idle is not None and max_idle is not None and idle >= max_idle:
             return _INFINITY
         fom_value = performance * float(running + 1) / allowed
-        FIGURE_OF_MERIT_CALCULATION.labels(
-                performance=performance, 
-                running=running, 
-                allowed=allowed, 
-                idle=idle, 
-                max_idle=max_idle
-        ).set(fom_value)
         return fom_value
     except TypeError:
         if logger is not None:
