@@ -10,7 +10,6 @@ from decisionengine_modules.util.figure_of_merit import figure_of_merit, FIGURE_
 ATTR_ENTRYNAME = "EntryName"
 ATTR_FOM = "Grid_Figure_Of_Merit"
 
-
 @Transform.supports_config(Parameter("price_performance", default=1))
 @Transform.consumes(Factory_Entries=pandas.DataFrame)
 @Transform.produces(Grid_Figure_Of_Merit=pandas.DataFrame)
