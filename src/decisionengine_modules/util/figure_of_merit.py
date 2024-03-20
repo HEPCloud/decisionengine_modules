@@ -6,6 +6,7 @@ Calculate figure of merit
 """
 
 import sys
+
 from decisionengine.framework.util.metrics import Gauge
 
 _INFINITY = sys.float_info.max
@@ -16,7 +17,7 @@ FIGURE_OF_MERIT_CALCULATION = Gauge(
     ["performance", "running", "max_allowed", "idle", "max_idle"],
 )
 
-def figure_of_merit(performance, running, max_allowed, idle=None, max_idle=None, logger=None):
+def figure_of_merit(performance, running, allowed, idle=None, max_idle=None, logger=None):
     try:
         if running >= max_allowed or max_allowed == 0:
             return _INFINITY
