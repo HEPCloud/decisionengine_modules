@@ -6,6 +6,7 @@ Calculate figure of merit
 """
 
 import sys
+
 from decisionengine.framework.util.metrics import Gauge
 
 _INFINITY = sys.float_info.max
