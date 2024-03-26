@@ -3,6 +3,7 @@
 
 import json
 import os
+import pdb
 
 from unittest import mock
 
@@ -11,16 +12,21 @@ import pytest
 
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.htcondor.sources import source
-from decisionengine_modules.htcondor.sources.source import (
-    DEM_HTCONDOR_CORES_COUNT,
-    DEM_HTCONDOR_MEMORY_COUNT,
-    DEM_HTCONDOR_SLOTS_STATUS_COUNT,
-)
+
+# from decisionengine_modules.htcondor.sources.source import (
+#    DEM_HTCONDOR_CORES_COUNT,
+#    DEM_HTCONDOR_MEMORY_COUNT,
+#    DEM_HTCONDOR_SLOTS_STATUS_COUNT,
+# )
 from decisionengine_modules.util import testutils as utils
+
+# import sys
+# sys.path.append('/home/decisionengine/decisionengine')
+
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 FIXTURE_FILE = os.path.join(DATA_DIR, "cs.fixture")
-EXPECTED_VALUES_FILE = os.path.join(DATA_DIR, "expected_values.json")
+EXPECTED_VALUES_FILE = os.path.join(DATA_DIR, "expected_metric_values.json")
 
 
 @pytest.fixture
@@ -39,17 +45,21 @@ def source_instance():
 
 @pytest.fixture
 def setup_metrics_dir_for_test(monkeypatch, tmp_path):
+    pdb.set_trace()
     monkeypatch.setenv("PROMETHEUS_MULTIPROC_DIR", tmp_path)
 
 
 def load_expected_values():
+    pdb.set_trace()
     with open(EXPECTED_VALUES_FILE) as f:
         return json.load(f)
 
 
 # @pytest.mark.unit
 def test_count_slots(source_instance, setup_metrics_dir_for_test):
+    pdb.set_trace()
     expected_values = load_expected_values()
+    print(expected_values)
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
         for label, expected_value in expected_values["Slots"].items():
@@ -59,6 +69,7 @@ def test_count_slots(source_instance, setup_metrics_dir_for_test):
 
 # @pytest.mark.unit
 def test_count_cores(source_instance, setup_metrics_dir_for_test):
+    pdb.set_trace()
     expected_values = load_expected_values()
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
