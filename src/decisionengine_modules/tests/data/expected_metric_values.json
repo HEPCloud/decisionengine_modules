@@ -1,0 +1,32 @@
+//SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
+//SPDX-License-Identifier: Apache-2.0
+
+{
+  "Slots": {
+    "Idle": 0,
+    "Busy": 0,
+    "Retiring": 0,
+    "Vacating": 0,
+    "Suspended": 0,
+    "Benchmarking": 0,
+    "Killing": 0
+  },
+  "Cores": {
+    "Claimed": 0,
+    "Unclaimed": 0,
+    "Owner": 0,
+    "Matched": 0,
+    "Preempting": 0,
+    "Backfill": 0,
+    "Drained": 0
+  },
+  "Memory": {
+    "Claimed": 0,
+    "Unclaimed": 0,
+    "Owner": 0,
+    "Matched": 0,
+    "Preempting": 0,
+    "Backfill": 0,
+    "Drained": 0
+  }
+}
