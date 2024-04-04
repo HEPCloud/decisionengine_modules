@@ -102,15 +102,10 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
 
             condor_status.load(self.constraint, self.classad_attrs, self.condor_config)
             source_statuses = defaultdict(int)
-            source_statuses = defaultdict(int)
             for eachDict in condor_status.stored_data:
                 for key, value in self.correction_map.items():
                     if eachDict.get(key) is None:
                         eachDict[key] = value
-                source_statuses[eachDict["Activity"]] += 1
-
-            for key, value in source_statuses.items():
-                DEM_HTCONDOR_SLOTS_STATUS_COUNT.labels(source_status=key).set(value)
                 source_statuses[eachDict["Activity"]] += 1
 
             for key, value in source_statuses.items():
@@ -147,3 +142,25 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
             )
 
         return dataframe
+
+    def get_metric_values(self):
+        metric_map = {"slots_status_count": {}, "cores_count": {}, "memory_count": {}}
+        for sample in DEM_HTCONDOR_SLOTS_STATUS_COUNT.collect():
+            for sample in sample.samples:
+                labels = sample.labels
+                status = labels.get("source_status", "Unknown")
+                count = sample.value
+                metric_map["slots_status_count"][status] = count
+        for sample in DEM_HTCONDOR_CORES_COUNT.collect():
+            for sample in sample.samples:
+                labels = sample.labels
+                status = labels.get("state", "Unknown")
+                count = sample.value
+                metric_map["cores_count"][status] = count
+        for sample in DEM_HTCONDOR_MEMORY_COUNT.collect():
+            for sample in sample.samples:
+                labels = sample.labels
+                status = labels.get("state", "Unknown")
+                count = sample.value
+                metric_map["memory_count"][status] = count
+        return metric_map

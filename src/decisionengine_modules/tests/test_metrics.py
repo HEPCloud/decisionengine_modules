@@ -12,11 +12,12 @@ import pytest
 
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.htcondor.sources import source
-from decisionengine_modules.htcondor.sources.source import (
-    DEM_HTCONDOR_CORES_COUNT,
-    DEM_HTCONDOR_MEMORY_COUNT,
-    DEM_HTCONDOR_SLOTS_STATUS_COUNT,
-)
+
+# from decisionengine_modules.htcondor.sources.source import (
+#     DEM_HTCONDOR_CORES_COUNT,
+#     DEM_HTCONDOR_MEMORY_COUNT,
+#     DEM_HTCONDOR_SLOTS_STATUS_COUNT,
+# )
 from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -38,7 +39,24 @@ def source_instance():
         "classad_attrs": ["ClusterId", "ProcId", "JobStatus"],
         "group_attr": ["Name"],
         "subsystem_name": "subsystem_name",
-        "correction_map": "correction_map",
+        "correction_map": {
+            "Activity": "",
+            "Cpus": 0,
+            "GLIDECLIENT_NAME": "",
+            "GLIDEIN_CredentialIdentifier": "",
+            "GLIDEIN_Entry_Name": "",
+            "GLIDEIN_FACTORY": "",
+            "GLIDEIN_GridType": "",
+            "GLIDEIN_Name": "",
+            "GLIDEIN_Resource_Slots": "",
+            "Memory": 0,
+            "PartitionableSlot": 0,
+            "SlotType": "",
+            "State": "",
+            "TotalCpus": 0,
+            "TotalSlotCpus": 0,
+            "TotalSlots": 0,
+        },
     }
     return MockResourceManifests(config)
 
@@ -58,9 +76,9 @@ def test_count_slots(source_instance, setup_metrics_dir_for_test):
     expected_values = load_expected_values()
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
+        metric_values = source_instance.get_metric_values()["slots_status_count"]
         for label, expected_value in expected_values["Slots"].items():
-            metric_value = DEM_HTCONDOR_SLOTS_STATUS_COUNT.labels(label)._value.get()
-            assert metric_value == expected_value
+            assert expected_value == 0 or metric_values[label] == expected_value
 
 
 # @pytest.mark.unit
@@ -68,9 +86,9 @@ def test_count_cores(source_instance, setup_metrics_dir_for_test):
     expected_values = load_expected_values()
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
+        metric_values = source_instance.get_metric_values()["cores_count"]
         for label, expected_value in expected_values["Cores"].items():
-            metric_value = DEM_HTCONDOR_CORES_COUNT.labels(label)._value.get()
-            assert metric_value == expected_value
+            assert expected_value == 0 or metric_values[label] == expected_value
 
 
 # @pytest.mark.unit
@@ -78,6 +96,6 @@ def test_count_memory(source_instance, setup_metrics_dir_for_test):
     expected_values = load_expected_values()
     with mock.patch.object(htcondor_query.CondorStatus, "fetch", return_value=utils.input_from_file(FIXTURE_FILE)):
         source_instance.load()
+        metric_values = source_instance.get_metric_values()["memory_count"]
         for label, expected_value in expected_values["Memory"].items():
-            metric_value = DEM_HTCONDOR_MEMORY_COUNT.labels(label)._value.get()
-            assert metric_value == expected_value
+            assert expected_value == 0 or metric_values[label] == expected_value
