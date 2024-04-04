@@ -144,23 +144,23 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         return dataframe
 
     def get_metric_values(self):
-        metric_map = {"slots_status_count": {}, "cores_count": {}, "memory_count": {}}
+        metric_values = {"slots_status_count": {}, "cores_count": {}, "memory_count": {}}
         for sample in DEM_HTCONDOR_SLOTS_STATUS_COUNT.collect():
             for sample in sample.samples:
                 labels = sample.labels
                 status = labels.get("source_status", "Unknown")
                 count = sample.value
-                metric_map["slots_status_count"][status] = count
+                metric_values["slots_status_count"][status] = count
         for sample in DEM_HTCONDOR_CORES_COUNT.collect():
             for sample in sample.samples:
                 labels = sample.labels
                 status = labels.get("state", "Unknown")
                 count = sample.value
-                metric_map["cores_count"][status] = count
+                metric_values["cores_count"][status] = count
         for sample in DEM_HTCONDOR_MEMORY_COUNT.collect():
             for sample in sample.samples:
                 labels = sample.labels
                 status = labels.get("state", "Unknown")
                 count = sample.value
-                metric_map["memory_count"][status] = count
-        return metric_map
+                metric_values["memory_count"][status] = count
+        return metric_values
