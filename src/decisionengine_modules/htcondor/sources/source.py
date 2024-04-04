@@ -145,22 +145,19 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
 
     def get_metric_values(self):
         metric_values = {"slots_status_count": {}, "cores_count": {}, "memory_count": {}}
-        for sample in DEM_HTCONDOR_SLOTS_STATUS_COUNT.collect():
-            for sample in sample.samples:
-                labels = sample.labels
-                status = labels.get("source_status", "Unknown")
-                count = sample.value
-                metric_values["slots_status_count"][status] = count
-        for sample in DEM_HTCONDOR_CORES_COUNT.collect():
-            for sample in sample.samples:
-                labels = sample.labels
-                status = labels.get("state", "Unknown")
-                count = sample.value
-                metric_values["cores_count"][status] = count
-        for sample in DEM_HTCONDOR_MEMORY_COUNT.collect():
-            for sample in sample.samples:
-                labels = sample.labels
-                status = labels.get("state", "Unknown")
-                count = sample.value
-                metric_values["memory_count"][status] = count
+
+        metrics = {
+            "slots_status_count": DEM_HTCONDOR_SLOTS_STATUS_COUNT,
+            "cores_count": DEM_HTCONDOR_CORES_COUNT,
+            "memory_count": DEM_HTCONDOR_MEMORY_COUNT,
+        }
+
+        for metric_name, metric in metrics.items():
+            for sample in metric.collect():
+                for sample in sample.samples:
+                    labels = sample.labels
+                    status = labels.get("source_status" if metric_name == "slots_status_count" else "state", "Unknown")
+                    count = sample.value
+                    metric_values[metric_name][status] = count
+
         return metric_values
