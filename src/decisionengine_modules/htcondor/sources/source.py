@@ -144,6 +144,11 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         return dataframe
 
     def get_metric_values(self):
+        """
+        Collect and return the current values of Prometheus metrics.
+        :rtype: dict
+        """
+
         metric_values = {"slots_status_count": {}, "cores_count": {}, "memory_count": {}}
 
         metrics = {

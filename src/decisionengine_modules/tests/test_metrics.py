@@ -12,12 +12,6 @@ import pytest
 
 from decisionengine_modules.htcondor import htcondor_query
 from decisionengine_modules.htcondor.sources import source
-
-# from decisionengine_modules.htcondor.sources.source import (
-#     DEM_HTCONDOR_CORES_COUNT,
-#     DEM_HTCONDOR_MEMORY_COUNT,
-#     DEM_HTCONDOR_SLOTS_STATUS_COUNT,
-# )
 from decisionengine_modules.util import testutils as utils
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
