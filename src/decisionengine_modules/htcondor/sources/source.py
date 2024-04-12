@@ -9,7 +9,7 @@ import pandas
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
-from decisionengine.framework.util.metrics import Gauge
+from decisionengine.framework.util.metrics import Gauge, Histogram
 from decisionengine_modules.htcondor import htcondor_query
 
 DEM_HTCONDOR_SLOTS_STATUS_COUNT = Gauge(
