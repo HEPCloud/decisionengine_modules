@@ -45,11 +45,11 @@ class GridFigureOfMerit(Transform.Transform):
 
                 #FOM Metric
                 FIGURE_OF_MERIT_CALCULATION.labels(
-                        performance=self.price_performance,
-                        running=running,
-                        max_allowed=max_allowed,
-                        idle=idle,
-                        max_idle=max_idle
+                    performance=self.price_performance,
+                    running=running,
+                    max_allowed=max_allowed,
+                    idle=idle,
+                    max_idle=max_idle
                 ).set(fom_value)
 
         return {"Grid_Figure_Of_Merit": pandas.DataFrame(foms)}
