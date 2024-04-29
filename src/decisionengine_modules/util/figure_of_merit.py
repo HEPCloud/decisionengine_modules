@@ -17,6 +17,7 @@ FIGURE_OF_MERIT_CALCULATION = Gauge(
     ["performance", "running", "max_allowed", "idle", "max_idle"],
 )
 
+
 def figure_of_merit(performance, running, max_allowed, idle=None, max_idle=None, logger=None):
     try:
         if running >= max_allowed or max_allowed == 0:

@@ -43,13 +43,13 @@ class GridFigureOfMerit(Transform.Transform):
                 f = {ATTR_ENTRYNAME: entry[ATTR_ENTRYNAME], ATTR_FOM: fom_value}
                 foms.append(f)
 
-                #FOM Metric
+                # FOM Metric
                 FIGURE_OF_MERIT_CALCULATION.labels(
                     performance=self.price_performance,
                     running=running,
                     max_allowed=max_allowed,
                     idle=idle,
-                    max_idle=max_idle
+                    max_idle=max_idle,
                 ).set(fom_value)
 
         return {"Grid_Figure_Of_Merit": pandas.DataFrame(foms)}
