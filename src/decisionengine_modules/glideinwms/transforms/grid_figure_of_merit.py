@@ -5,7 +5,7 @@ import pandas
 
 from decisionengine.framework.modules import Transform
 from decisionengine.framework.modules.Transform import Parameter
-from decisionengine_modules.util.figure_of_merit import figure_of_merit
+from decisionengine_modules.util.figure_of_merit import figure_of_merit, FIGURE_OF_MERIT_CALCULATION
 
 ATTR_ENTRYNAME = "EntryName"
 ATTR_FOM = "Grid_Figure_Of_Merit"
@@ -37,13 +37,20 @@ class GridFigureOfMerit(Transform.Transform):
                 max_allowed = float(entry["GlideinConfigPerEntryMaxGlideins"])
                 max_idle = float(entry["GlideinConfigPerEntryMaxIdle"])
                 idle = float(entry["GlideinMonitorTotalStatusIdle"])
-                f = {
-                    ATTR_ENTRYNAME: entry[ATTR_ENTRYNAME],
-                    ATTR_FOM: figure_of_merit(
-                        self.price_performance, running, max_allowed, idle, max_idle, self.logger
-                    ),
-                }
+
+                # Instrumentation
+                fom_value = figure_of_merit(self.price_performance, running, max_allowed, idle, max_idle, self.logger)
+                f = {ATTR_ENTRYNAME: entry[ATTR_ENTRYNAME], ATTR_FOM: fom_value}
                 foms.append(f)
+
+                # FOM Metric
+                FIGURE_OF_MERIT_CALCULATION.labels(
+                    performance=self.price_performance,
+                    running=running,
+                    max_allowed=max_allowed,
+                    idle=idle,
+                    max_idle=max_idle,
+                ).set(fom_value)
 
         return {"Grid_Figure_Of_Merit": pandas.DataFrame(foms)}
 
