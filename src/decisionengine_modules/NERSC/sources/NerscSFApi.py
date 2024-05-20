@@ -62,7 +62,6 @@ class NerscSFApi(Source.Source):
         except KeyError:
             self.logger.error(f"Unknown user '{nersc_user}', exiting")
             return None
-        print(nersc_user)
         rawfile = params_dict["rawfile"]
         pemfile = params_dict["private_key"]
         clientidfile = params_dict["client_id_file"]
@@ -83,7 +82,6 @@ class NerscSFApi(Source.Source):
             rvalue = jwt.decode(atoken, options={"verify_signature": False})
             ctime = int(time.time())
             diff = ctime - rvalue['exp']
-            print( diff )
         else:
             self.logger.debug("there is no access token file, setting diff high to indicate expired")
             diff=10000000
@@ -126,13 +124,10 @@ class NerscSFApi(Source.Source):
 
     def send_query(self):
         results = []
-        print(self.constraints.get("usernames", []))
         for username in self.constraints.get("usernames", []):
             self.logger.debug("in send_query %s",username)
-            print(username)
             returned_list = self.requests_nersc(username)
             self.logger.debug(returned_list)
-            print(returned_list)
             for each_dict in returned_list:
                 # HK> This if condition will choose only m3249 for fife and discard m3990
                 if each_dict["repo_name"] == self.localmap[username]:
