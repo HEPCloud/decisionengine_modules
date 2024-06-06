@@ -5,9 +5,8 @@
 Get allocation info from Nersc SuperFacilityAPI
 """
 import json
-
-# import time
 import os
+import time
 
 import jwt
 import pandas as pd
@@ -36,7 +35,7 @@ class NerscSFApi(Source.Source):
         self.logger = self.logger.bind(
             class_module=__name__.split(".")[-1],
         )
-        self.localmap = {"uscms": "m2612", "fife": "m3249"}
+        self.localmap = {"uscms": "m2612", "fife": "m4599", "dunepro": "m3249"}
         self.keys_list = ["hours_given", "hours_used", "id", "project_hours_given", "project_hours_used", "repo_name"]
 
     def check_accesstoken(self, nersc_user):
@@ -62,14 +61,14 @@ class NerscSFApi(Source.Source):
         except KeyError:
             self.logger.error(f"Unknown user '{nersc_user}', exiting")
             return None
-
+        print(nersc_user)
         rawfile = params_dict["rawfile"]
         pemfile = params_dict["private_key"]
         clientidfile = params_dict["client_id_file"]
         with open(clientidfile) as cifile:
             client_id = cifile.read()
             client_id = client_id.rstrip()
-
+        atoken = None
         if not os.path.exists(rawfile):
             self.logger.debug(f"{rawfile} does not exist. Need to generate")
         else:
@@ -77,28 +76,36 @@ class NerscSFApi(Source.Source):
             with open(rawfile) as afile:
                 atoken = afile.read()
                 atoken = atoken.rstrip()
-            # HK> If the access token is expired, the flow goes directly to except jwt.ExpiredSignatureError
-            try:
-                jwt.decode(atoken, options={"verify_signature": False})
-                self.logger.debug("Access Token not expired. Returning without generating a new access token")
-                return atoken  # This means the existing access token is not expired.
+            # HK> If the access token is expired, the flow goes directly to except jwt.ExpiredSign
 
-            except jwt.ExpiredSignatureError:
-                self.logger.debug("Access Token expired")
+        if atoken is not None:
+            rvalue = jwt.decode(atoken, options={"verify_signature": False})
+            ctime = int(time.time())
+            diff = ctime - rvalue["exp"]
+            print(diff)
+        else:
+            self.logger.debug("there is no access token file, setting diff high to indicate expired")
+            diff = 10000000
 
-        certs = pem.parse_file(pemfile)
-        private_key = str(certs[0])
-        client = OAuth2Session(
-            client_id=client_id, client_secret=private_key, token_endpoint_auth_method="private_key_jwt"
-        )
-        client.register_client_auth_method(PrivateKeyJWT(token_url))
-        resp = client.fetch_token(token_url, grant_type="client_credentials")
+        if diff < 0:
+            self.logger.debug("Access Token not expired. Returning without generating a new access token")
+            return atoken  # This means the existing access token is not expired.
 
-        newtoken = resp["access_token"]
+        else:
+            self.logger.debug("Access Token expired")
 
-        with open(rawfile, "w") as myfile:
-            myfile.write(newtoken)
-        return newtoken
+            certs = pem.parse_file(pemfile)
+            private_key = str(certs[0])
+            client = OAuth2Session(
+                client_id=client_id, client_secret=private_key, token_endpoint_auth_method="private_key_jwt"
+            )
+            client.register_client_auth_method(PrivateKeyJWT(token_url))
+            resp = client.fetch_token(token_url, grant_type="client_credentials")
+            newtoken = resp["access_token"]
+
+            with open(rawfile, "w") as myfile:
+                myfile.write(newtoken)
+            return newtoken
 
     def get_headers2(self, access_token):
         headers = {}
@@ -118,8 +125,13 @@ class NerscSFApi(Source.Source):
 
     def send_query(self):
         results = []
+        print(self.constraints.get("usernames", []))
         for username in self.constraints.get("usernames", []):
+            self.logger.debug("in send_query %s", username)
+            print(username)
             returned_list = self.requests_nersc(username)
+            self.logger.debug(returned_list)
+            print(returned_list)
             for each_dict in returned_list:
                 # HK> This if condition will choose only m3249 for fife and discard m3990
                 if each_dict["repo_name"] == self.localmap[username]:
@@ -127,6 +139,17 @@ class NerscSFApi(Source.Source):
                     local_dict["real_name"] = username
                     results.append(local_dict)
         return results
+
+    # self.localmap = {"uscms": "m2612", "fife": "m3249"}
+    # self.keys_list = [
+    #        "hours_given",  "hours_used",  "id",  "project_hours_given",  "project_hours_used", "repo_name" ]
+
+    # +----+---------------+--------------+-------+-----------------------+----------------------+-------------+
+    # |    |   hours_given |   hours_used |    id |   project_hours_given |   project_hours_used | repo_name   |
+    # |----+---------------+--------------+-------+-----------------------+----------------------+-------------|
+    # |  0 |      600000   |       473490 | 54807 |              600000   |             473946   | m2612       |
+    # |  1 |       19109.1 |            0 | 63322 |               95545.7 |              24722.7 | m3249       |
+    # +----+---------------+--------------+-------+-----------------------+----------------------+-------------+
 
     def acquire(self):
         self.logger.debug("in NerscSFApi acquire")
