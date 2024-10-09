@@ -176,14 +176,13 @@ class Credential:
         if not os.path.exists(self.filename):
             return 0
 
+        timeleft = -1
         if ("grid_proxy" in self.type) or ("cert_pair" in self.type):
             time_list = condorExe.iexe_cmd(f"openssl x509 -in {self.filename} -noout -enddate")
             if "notAfter=" in time_list[0]:
                 time_str = time_list[0].split("=")[1].strip()
                 timeleft = calendar.timegm(time.strptime(time_str, "%b %d %H:%M:%S %Y %Z")) - int(time.time())
-            return timeleft
-        else:
-            return -1
+        return timeleft
 
     def renew(self):
         """
