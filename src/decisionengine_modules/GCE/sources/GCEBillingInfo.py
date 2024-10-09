@@ -3,8 +3,10 @@
 
 # standard library imports
 import pandas as pd
+
 # related third party imports
 from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
+
 # local application/library specific imports
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
@@ -41,7 +43,7 @@ class GCEBillingInfo(Source.Source):
             "lastKnownBillDate": self.lastKnownBillDate,
             "balanceAtDate": self.balanceAtDate,
             "applyDiscount": self.applyDiscount,
-            "sumToDate": self.sumToDate
+            "sumToDate": self.sumToDate,
         }
         globalConf = {"graphite_host": "dummy", "graphite_context_billing": "dummy"}
         bill_summary = pd.DataFrame()
