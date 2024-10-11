@@ -1,8 +1,9 @@
 # SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-import json
 import os
+
+from typing import Collection, Mapping
 
 from glideinwms.lib.xmlParse import OrderedDict
 
@@ -22,7 +23,7 @@ class DEConfigSource(ConfigSource):
 
     def load_config(self):
         try:
-            return json.loads(json.dumps(ValidConfig(self.config_file)["glideinwms"]), object_hook=OrderedDict)
+            return _mapping_to_ordereddict(ValidConfig(self.config_file)["glideinwms"])
         except KeyError as e:
             raise ConfigError(
                 f"Could not find the required configuration key '{e}' in the Decision Engine configuration ({self.config_file})."
@@ -31,3 +32,14 @@ class DEConfigSource(ConfigSource):
             raise ConfigError(f"Could not load the Decision Engine configuration ({self.config_file}): {e}") from e
         except FileNotFoundError as e:
             raise FileNotFoundError(f"Could not find the Decision Engine configuration ({self.config_file}).") from e
+
+
+def _mapping_to_ordereddict(obj):
+    """
+    Convert nested dictionaries to an OrderedDict.
+    """
+    if isinstance(obj, Collection) and not isinstance(obj, str):
+        if isinstance(obj, Mapping):
+            return OrderedDict((k, _mapping_to_ordereddict(v)) for k, v in obj.items())
+        return type(obj)(_mapping_to_ordereddict(v) for v in obj)  # type: ignore[expected-args]
+    return obj
