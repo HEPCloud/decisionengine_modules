@@ -20,9 +20,16 @@ from authlib.oauth2.rfc7523 import PrivateKeyJWT
 
 from decisionengine.framework.modules import Source
 from decisionengine.framework.modules.Source import Parameter
+from decisionengine_modules.util.retry_function import retry_wrapper
 
+_MAX_RETRIES = 50
+_RETRY_TIMEOUT = 30
 
-@Source.supports_config(Parameter("constraints", type=dict, comment="""Supports the layout:"""))
+@Source.supports_config(
+    Parameter("constraints", type=dict, comment="""Supports the layout:"""),
+    Parameter("max_retries", default=_MAX_RETRIES),
+    Parameter("retry_timeout", default=_RETRY_TIMEOUT),
+)
 @Source.produces(Nersc_Allocation_SFAPI=pd.DataFrame)
 class NerscSFApi(Source.Source):
     def __init__(self, config):
@@ -31,6 +38,8 @@ class NerscSFApi(Source.Source):
         self.constraints = config.get("constraints")
         if not isinstance(self.constraints, dict):
             raise RuntimeError("constraints should be a dict")
+        self.max_retries = config.get("max_retries", _MAX_RETRIES)
+        self.retry_timeout = config.get("retry_timeout", _RETRY_TIMEOUT)
 
         self.logger = self.logger.bind(
             class_module=__name__.split(".")[-1],
@@ -148,6 +157,10 @@ class NerscSFApi(Source.Source):
 
     def acquire(self):
         self.logger.debug("in NerscSFApi acquire")
+        return retry_wrapper(self._acquire, self.max_retries, self.retry_timeout, backoff=False, logger=self.logger)
+
+    def _acquire(self):
+        self.logger.debug("in NerscSFApi _acquire")
         return {"Nersc_Allocation_SFAPI": pd.DataFrame(self.send_query())}
 
 
