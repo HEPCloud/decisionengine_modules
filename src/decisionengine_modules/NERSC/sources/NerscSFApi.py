@@ -25,6 +25,7 @@ from decisionengine_modules.util.retry_function import retry_wrapper
 _MAX_RETRIES = 50
 _RETRY_TIMEOUT = 30
 
+
 @Source.supports_config(
     Parameter("constraints", type=dict, comment="""Supports the layout:"""),
     Parameter("max_retries", default=_MAX_RETRIES),
