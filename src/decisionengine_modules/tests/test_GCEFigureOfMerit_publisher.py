@@ -31,10 +31,6 @@ valid_datablock = pandas.DataFrame(
 # expected output
 valid_output_dict = {
     "FNAL_HEPCLOUD_GOOGLE_us-central1-a_custom-16-32768.fig_of_merit": 0,
-    "FNAL_HEPCLOUD_GOOGLE_us-central1-a_custom-16-32768.fig_of_merit": 0,
-    "FNAL_HEPCLOUD_GOOGLE_us-central1-a_custom-16-32768.fig_of_merit": 0,
-    "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit": 0,
-    "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit": 0,
     "FNAL_HEPCLOUD_GOOGLE_us-central1-a_n1-standard-1.fig_of_merit": 0,
 }
 

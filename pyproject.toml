@@ -1,6 +1,65 @@
 [build-system]
-requires = ["setuptools>=51.2", "wheel", "setuptools_scm[toml]>=6.3.1"]
+requires = ["setuptools>=72.1", "wheel", "setuptools_scm[toml]>=6.3.1"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "decisionengine-modules"
+dynamic = ["version"]
+readme = "README.md"
+license = {text ="Apache-2.0"}
+requires-python = ">=3.9, <3.13"
+authors = [
+    { name = "Fermilab" },
+]
+dependencies = [
+    "authlib",
+    "bill-calculator-hep >= 0.1.4",
+    "boto3 >= 1.17.10",
+    "cryptography",
+    #"decisionengine >= 2.0",
+    "gcs-oauth2-boto-plugin >= 2.7",
+    "google-api-python-client >= 1.12.8",
+    "google_auth >= 1.16.0",
+    "htcondor >= 9.0.0",
+    "numpy >= 1.19.5, < 2.0.0; python_version >= '3.7'",
+    "pandas >= 1.5.3, < 2.0.0; python_version >= '3.7'",
+    "pem",
+    "PyJWT",
+    "qcs-api-client >= 0.21.1; python_version >= '3.7'",
+    "requests >= 2.14.2",
+    "structlog >= 21.1.0",
+    "urllib3 >= 1.26.2",
+]
+
+[project.optional-dependencies]
+develop = [
+    "coverage >= 6.1.2",
+    "flake8 >= 6.0.0, < 7.0.0",
+    "importlib_resources >= 5.1.2; python_version <= '3.8'",
+    "packaging >= 20.9",
+    "pylint >= 2.7.4",
+    "pytest >= 7.0.0, < 8.0",
+    "pytest-cov >= 2.11.1",
+    "pytest-xdist[psutil] >= 2.3.0",
+    "pyyaml >= 5.4.1",
+    "reuse >= 1.1.2",
+    "sphinx >= 3.5.3",
+    "sphinx_rtd_theme >= 0.5.1",
+    "tabulate >= 0.8.8",
+    "toml >= 0.10.2",
+    "wheel >= 0.36.2",
+]
+production = [
+    "decisionengine >= 2.0",
+]
+
+[project.urls]
+# https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-project-urls
+homepage = "http://hepcloud.fnal.gov/"
+source = "https://github.com/HEPCloud/decisionengine_modules"
+documentation = "https://hepcloud.github.io/decisionengine_modules/"
+releasenotes = "https://hepcloud.github.io/decisionengine_modules/release_notes.html"
+issues = "https://github.com/HEPCloud/decisionengine_modules/issues"
 
 [tool.setuptools_scm]
 write_to = "src/decisionengine_modules/version.py"
@@ -35,3 +94,9 @@ dedup_headings = "True"
 known_first_party = ["decisionengine", "decisionengine_modules"]
 lines_between_types = 1
 force_alphabetical_sort_within_sections = "True"
+
+[tool.uv]
+environments = [
+    "sys_platform == 'darwin'",
+    "sys_platform == 'linux'",
+]

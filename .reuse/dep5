@@ -15,7 +15,7 @@ Files: src/*.jsonnet src/*/readme src/*.conf src/*.fixture src/*.csv src/*/AWS/s
 Copyright: 2017 Fermi Research Alliance, LLC
 License: Apache-2.0
 
-Files: .codecov.yml .coveragerc .editorconfig .gitignore .lgtm.yaml .pep8speaks.yml .pre-commit-config.yaml .pylintrc _config.yml pyproject.toml
+Files: .codecov.yml .coveragerc .editorconfig .gitignore .lgtm.yaml .pep8speaks.yml .pre-commit-config.yaml .pylintrc _config.yml pyproject.toml uv.lock
 Copyright: 2017 Fermi Research Alliance, LLC
 License: Apache-2.0
 
