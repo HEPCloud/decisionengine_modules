@@ -1,0 +1,2686 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1507,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(de_transform_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\"}[5m])) ",
+          "interval": "",
+          "legendFormat": "de_transform",
+          "range": true,
+          "refId": "DE_Transform"
+        }
+      ],
+      "title": "Transform",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"TransformNOP\"}"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum\r\n{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"JobClustering\"}/(de_transform_run_seconds_count\r\n{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"JobClustering\"})",
+          "legendFormat": "JobClustering",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"TransformNOP\"}/(de_transform_run_seconds_count{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"TransformNOP\"})",
+          "hide": false,
+          "legendFormat": "TransformNOP",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"GlideinRequestManifests\"}/(de_transform_run_seconds_count{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"GlideinRequestManifests\"})",
+          "hide": false,
+          "legendFormat": "GlideinRequestManifests",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum\r\n{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"GridFigureOfMerit\"}/(de_transform_run_seconds_count\r\n{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"GridFigureOfMerit\"})",
+          "hide": false,
+          "legendFormat": "GridFigureOfMerit",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Transform Average",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["JobClustering"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"JobClustering\"}/(de_transform_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"JobClustering\"})",
+          "legendFormat": "JobClustering",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Transform Average JobClustering",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["GlideinRequestManifests"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",  transform_name=\"GlideinRequestManifests\"}/(de_transform_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",  transform_name=\"GlideinRequestManifests\"})",
+          "legendFormat": "GlideinRequestManifests",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Transform Averge GlideinRequestManifests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["GridFigureOrMerit"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"GridFigureOfMerit\"}/(de_transform_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"GridFigureOfMerit\"})",
+          "legendFormat": "GridFigureOrMerit",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Transform Average GridFigureOrMerit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_transform_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"TransformNOP\"}/(de_transform_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", transform_name=\"TransformNOP\"})",
+          "legendFormat": "TransformNOP",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Transform TransformNOP",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_logicengine_run_seconds_sum{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", logicengine_name=\"LogicEngine\"}/(de_logicengine_run_seconds_count{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", logicengine_name=\"LogicEngine\"})",
+          "legendFormat": "Resource Request",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_logicengine_run_seconds_sum{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", logicengine_name=\"LogicEngine\"}/(de_logicengine_run_seconds_count{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", logicengine_name=\"LogicEngine\"})",
+          "hide": false,
+          "legendFormat": "Test Channel",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Logic Engine Average",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["Logic Engine"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(de_logicengine_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\"}[5m])) ",
+          "legendFormat": "Logic Engine",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Logic Engine",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_logicengine_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",channel_name=\"resource_request\"}/(de_logicengine_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", channel_name=\"resource_request\"})",
+          "legendFormat": "Resource Request",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Logic Engine Average Resource Request",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["Test Channel"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 33
+      },
+      "id": 28,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_logicengine_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",channel_name=\"test_channel\"}/(de_logicengine_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",channel_name=\"test_channel\"})",
+          "legendFormat": "Test Channel",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Logic Engine Average Test Channel",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(de_publisher_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\"}[5m])) ",
+          "legendFormat": "Publisher",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Publisher",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_publisher_run_seconds_sum{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", publisher_name=\"GlideClientGlobalManifests\"}/(de_publisher_run_seconds_count{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", publisher_name=\"GlideClientGlobalManifests\"})",
+          "legendFormat": "GlideClientGlobalManifests",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_publisher_run_seconds_sum\r\n{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", publisher_name=\"GlideinWMSManifests\"}/(de_publisher_run_seconds_count\r\n{channel_name=\"resource_request\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", publisher_name=\"GlideinWMSManifests\"})",
+          "hide": false,
+          "legendFormat": "GlideinWMSManifests",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_publisher_run_seconds_sum\r\n{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", publisher_name=\"PublisherNOP\"}/(de_publisher_run_seconds_count\r\n{channel_name=\"test_channel\", instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", publisher_name=\"PublisherNOP\"})",
+          "hide": false,
+          "legendFormat": "PublisherNOP",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Publisher Average",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 48
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_publisher_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",publisher_name=\"PublisherNOP\"}/(de_publisher_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",publisher_name=\"PublisherNOP\"})",
+          "legendFormat": "PublisherNOP",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Publisher Average PublisherNOP",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 49
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_publisher_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",publisher_name=\"GlideinWMSManifests\"}/(de_publisher_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",publisher_name=\"GlideinWMSManifests\"})",
+          "legendFormat": "GlideinWMSManifests",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Publisher Average GlideinWMSManifests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 56
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_publisher_run_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",publisher_name=\"GlideClientGlobalManifests\"}/(de_publisher_run_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\",publisher_name=\"GlideClientGlobalManifests\"})",
+          "legendFormat": "GlideClientGlobalManifests",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Publisher Average GlideClientGlobalManifests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 57
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\"}[5m])) ",
+          "legendFormat": "Source",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 64
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FactoryEntriesSource\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FactoryEntriesSource\"})",
+          "legendFormat": "FactoryEntriesSource",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"Factory_Entries\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"Factory_Entries\"})",
+          "hide": false,
+          "legendFormat": "Factory Entries",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FigureOfMerit\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FigureOfMerit\"})",
+          "hide": false,
+          "legendFormat": "FigureOfMerit",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"GceFigureOfMerit\"}\r\n/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"GceFigureOfMerit\"}\r\n)",
+          "hide": false,
+          "legendFormat": "GceFigureOfMerit",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"NerscFigureOfMerit\"}\r\n/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"NerscFigureOfMerit\"}\r\n)",
+          "hide": false,
+          "legendFormat": "NerscFigureOfMerit",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"StartdManifestsSource\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"StartdManifestsSource\"})",
+          "hide": false,
+          "legendFormat": "StartdManifestsSource",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"factoryglobal_manifests\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"factoryglobal_manifests\"})",
+          "hide": false,
+          "legendFormat": "factoryglobal_manifests",
+          "range": true,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"jobs_manifests\"}\r\n/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"jobs_manifests\"}\r\n)",
+          "hide": false,
+          "legendFormat": "jobs_manifests",
+          "range": true,
+          "refId": "H"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"source1\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"source1\"})",
+          "hide": false,
+          "legendFormat": "source1",
+          "range": true,
+          "refId": "I"
+        }
+      ],
+      "title": "Source Average",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 65
+      },
+      "id": 48,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"factoryglobal_manifests\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"factoryglobal_manifests\"})",
+          "legendFormat": "factoryglobal_manifests",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average factoryglobal_manifests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": ["FigureOfMerit"],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 72
+      },
+      "id": 40,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FigureOfMerit\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FigureOfMerit\"})",
+          "legendFormat": "FigureOfMerit",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average FigureOfMerit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 73
+      },
+      "id": 52,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"source1\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"source1\"})",
+          "legendFormat": "source1",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average source1",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 80
+      },
+      "id": 44,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"NerscFigureOfMerit\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"NerscFigureOfMerit\"})",
+          "legendFormat": "NerscFigureOfMerit",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average NerscFigureOfMerit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 81
+      },
+      "id": 50,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"jobs_manifests\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"jobs_manifests\"})",
+          "legendFormat": "jobs_manifests",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average jobs_manifests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 88
+      },
+      "id": 38,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"Factory_Entries\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"Factory_Entries\"})",
+          "legendFormat": "Factory Entries",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average Factory Entries",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 89
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FactoryEntriesSource\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"FactoryEntriesSource\"})",
+          "legendFormat": "FactoryEntriesSource",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average FactoryEntriesSource",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 96
+      },
+      "id": 42,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"GceFigureOfMerit\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"GceFigureOfMerit\"})",
+          "legendFormat": "GceFigureOfMerit",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average GceFigureOfMerit",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "000000024"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 97
+      },
+      "id": 46,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "000000024"
+          },
+          "editorMode": "code",
+          "expr": "de_source_acquire_seconds_sum{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"StartdManifestsSource\"}/(de_source_acquire_seconds_count{instance=\"fermicloud857.fnal.gov:8000\", job=\"decisionengine-dev-ilyab\", source_name=\"StartdManifestsSource\"})",
+          "legendFormat": "StartdManifestsSource",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Source Average StartdManifestsSource",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Runtime for Transform, Logic Engine, Publisher, Source",
+  "uid": "NcL7CjZIz",
+  "version": 2,
+  "weekStart": ""
+}

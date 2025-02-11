@@ -13,6 +13,7 @@ import glideinwms.creation.lib.cvWParams
 import glideinwms.creation.lib.cWConsts
 import glideinwms.creation.lib.xslt
 
+from decisionengine.framework.config.policies import GLOBAL_CONFIG_FILENAME
 from decisionengine_modules.glideinwms import glideinwms_config_lib
 from decisionengine_modules.glideinwms.DEConfigSource import DEConfigSource
 from decisionengine_modules.glideinwms.UniversalFrontendParams import UniversalFrontendParams
@@ -58,19 +59,24 @@ def get_arg_parser():
     parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         "--de-frontend-config",
-        action="store",
-        dest="de_frontend_config",
         default="/var/lib/gwms-frontend/vofrontend/de_frontend_config",
+        metavar="<filename>",
         help="Full path to output configuration file for the DE module",
     )
     parser.add_argument(
         "--update-scripts", action="store_true", dest="update_scripts", help="Update the scripts in the working area"
     )
     parser.add_argument(
+        "--config",
+        default=GLOBAL_CONFIG_FILENAME,
+        metavar="<filename>",
+        help="Configuration file for initializing server; default behavior is to choose "
+        + f"'{GLOBAL_CONFIG_FILENAME}' located in the CONFIG_PATH directory.",
+    )
+    parser.add_argument(
         "--web-base-dir",
-        action="store",
-        dest="web_base_dir",
         default="/var/lib/gwms-frontend/web-base",
+        metavar="<dir>",
         help="Location of the web base directory",
     )
 

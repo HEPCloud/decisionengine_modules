@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 pipeline {
-    agent { label 'docker' }
+    agent { label 'podman' }
     stages{
         stage('DE modules tests') {
             parallel {
                 stage('flake8') {
                     agent {
                         node {
-                            label 'docker'
+                            label 'podman'
                             customWorkspace "${WORKSPACE}/${STAGE_NAME}"
                         }
                     }
@@ -47,23 +47,23 @@ pipeline {
                             fi
                             cd ..
                         '''
-                        echo "prepare docker image ${flake8StageDockerImage}"
-                        sh "docker build --pull --tag ${flake8StageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
+                        echo "prepare podman image ${flake8StageDockerImage}"
+                        sh "podman build --pull --tag ${flake8StageDockerImage} --build-arg BASEIMAGE=docker.io/hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${flake8StageDockerImage} \"-m pytest -m flake8 --flake8\" \"flake8.log\" \"${BRANCH}\""
+                        sh "podman run --userns keep-id:uid=\$(id -u),gid=\$(id -g) --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${flake8StageDockerImage} \"-m flake8\" \"flake8.log\" \"${BRANCH}\""
                     }
                     post {
                         always {
                             archiveArtifacts artifacts: "decisionengine_modules/flake8.log"
-                            echo "cleanup docker image ${flake8StageDockerImage}"
-                            sh "docker rmi ${flake8StageDockerImage}"
+                            echo "cleanup podman image ${flake8StageDockerImage}"
+                            sh "podman rmi ${flake8StageDockerImage}"
                         }
                     }
                 }
                 stage('unit_tests') {
                     agent {
                         node {
-                            label 'docker'
+                            label 'podman'
                             customWorkspace "${WORKSPACE}/${STAGE_NAME}"
                         }
                     }
@@ -91,23 +91,23 @@ pipeline {
                             fi
                             cd ..
                         '''
-                        echo "prepare docker image ${unit_testsStageDockerImage}"
-                        sh "docker build --pull --tag ${unit_testsStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
+                        echo "prepare podman image ${unit_testsStageDockerImage}"
+                        sh "podman build --pull --tag ${unit_testsStageDockerImage} --build-arg BASEIMAGE=docker.io/hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${unit_testsStageDockerImage} \"-m pytest --cov-report term --cov=decisionengine_modules --no-cov-on-fail\" \"pytest.log\" \"${BRANCH}\""
+                        sh "podman run --userns keep-id:uid=\$(id -u),gid=\$(id -g) --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${unit_testsStageDockerImage} \"-m pytest --cov-report term --cov=decisionengine_modules --no-cov-on-fail\" \"pytest.log\" \"${BRANCH}\""
                     }
                     post {
                         always {
                             archiveArtifacts artifacts: "decisionengine_modules/pytest.log"
-                            echo "cleanup docker image ${unit_testsStageDockerImage}"
-                            sh "docker rmi ${unit_testsStageDockerImage}"
+                            echo "cleanup podman image ${unit_testsStageDockerImage}"
+                            sh "podman rmi ${unit_testsStageDockerImage}"
                             }
                     }
                 }
                 stage('build_whl') {
                     agent {
                         node {
-                            label 'docker'
+                            label 'podman'
                             customWorkspace "${WORKSPACE}/${STAGE_NAME}"
                         }
                     }
@@ -135,16 +135,16 @@ pipeline {
                             fi
                             cd ..
                         '''
-                        echo "prepare docker image ${buildwhlStageDockerImage}"
-                        sh "docker build --pull --tag ${buildwhlStageDockerImage} --build-arg BASEIMAGE=hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
+                        echo "prepare podman image ${buildwhlStageDockerImage}"
+                        sh "podman build --pull --tag ${buildwhlStageDockerImage} --build-arg BASEIMAGE=docker.io/hepcloud/decision-engine-ci-el9:${BRANCH} --build-arg UID=\$(id -u) --build-arg GID=\$(id -g) -f decisionengine_modules/package/ci/EL9/Dockerfile decisionengine_modules/package/ci/EL9/"
                         echo "Run ${STAGE_NAME} tests"
-                        sh "docker run --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${buildwhlStageDockerImage} \"setup.py bdist_wheel\" \"build_whl.log\" \"${BRANCH}\""
+                        sh "podman run --userns keep-id:uid=\$(id -u),gid=\$(id -g) --rm --env GITHUB_PR_NUMBER=${GITHUB_PR_NUMBER} --env PYTEST_TIMEOUT=${PYTEST_TIMEOUT} -v ${WORKSPACE}/decisionengine_modules:${WORKSPACE}/decisionengine_modules -w ${WORKSPACE}/decisionengine_modules ${buildwhlStageDockerImage} \"setup.py bdist_wheel\" \"build_whl.log\" \"${BRANCH}\""
                     }
                     post {
                         always {
                             archiveArtifacts artifacts: "decisionengine_modules/build_whl.log,decisionengine_modules/dist/*.whl"
-                            echo "cleanup docker image ${buildwhlStageDockerImage}"
-                            sh "docker rmi ${buildwhlStageDockerImage}"
+                            echo "cleanup podman image ${buildwhlStageDockerImage}"
+                            sh "podman rmi ${buildwhlStageDockerImage}"
                         }
                     }
                 }

@@ -11,7 +11,7 @@ Source: https://github.com/HEPCloud/decisionengine_modules
 # SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-Files: src/*.jsonnet src/*/readme src/*.conf src/*.fixture src/*.csv src/*/AWS/scratch src/*/gce_limits_factory_entries.test src/*/data/monitoring.json src/*/data/passwd
+Files: src/*.jsonnet src/*/readme src/*.conf src/*.fixture src/*.csv src/*/AWS/scratch src/*/gce_limits_factory_entries.test src/*/data/monitoring.json src/*/data/passwd src/*/data/expected_metric_values.json
 Copyright: 2017 Fermi Research Alliance, LLC
 License: Apache-2.0
 
@@ -20,5 +20,9 @@ Copyright: 2017 Fermi Research Alliance, LLC
 License: Apache-2.0
 
 Files: package/rpm/* package/systemd/*
+Copyright: 2017 Fermi Research Alliance, LLC
+License: Apache-2.0
+
+Files: dashboards/*.json
 Copyright: 2017 Fermi Research Alliance, LLC
 License: Apache-2.0
