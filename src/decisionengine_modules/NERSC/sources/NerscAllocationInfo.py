@@ -36,7 +36,6 @@ _RETRY_BACKOFF_FACTOR = 1
 )
 @Source.produces(Nersc_Allocation_Info=pd.DataFrame)
 class NerscAllocationInfo(Source.Source):
-
     """
     Information of allocations on NERSC machines
     """
