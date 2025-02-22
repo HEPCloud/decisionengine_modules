@@ -1,4 +1,4 @@
-#!/usr/bin/pyhon
+#!/usr/bin/python
 
 # SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
@@ -310,7 +310,7 @@ def eval_classad_expr(classads, format_list=None):
                 # Requirements and START cannot be evaluated until the
                 # jobs and slots match. This causes issues so better to
                 # bypass.
-                # TODO: If we come accross other user configured attributes
+                # TODO: If we come across other user configured attributes
                 #       then we need to identify how to resolve this issue.
                 continue
             with contextlib.suppress(Exception):
@@ -359,7 +359,7 @@ def split_collector_host(collector_host):
     """
 
     if not isinstance(collector_host, str):
-        raise RuntimeError(f"collector_host should be a comman or space separated string but found {collector_host}")
+        raise RuntimeError(f"collector_host should be a comma or space separated string but found {collector_host}")
 
     hosts = collector_host.replace(",", " ").split()
     primary = hosts[0]

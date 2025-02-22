@@ -41,7 +41,7 @@ class OccupancyData:
 
 class OccupancyForRegion:
     """
-    AWS capacity data and metods
+    AWS capacity data and methods
     """
 
     def __init__(self, region="us-west-2", profile_name=None, instance_types=None):

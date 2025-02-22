@@ -11,7 +11,7 @@ from decisionengine_modules.NERSC.util import newt
 
 _MAX_RETRIES = 10
 _RETRY_BACKOFF_FACTOR = 1
-# TODO this is a default column list and needs to be overriden from configuration
+# TODO this is a default column list and needs to be overridden from configuration
 
 
 @Source.supports_config(

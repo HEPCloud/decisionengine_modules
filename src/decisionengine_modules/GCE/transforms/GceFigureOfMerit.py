@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-Calculates price / preformance and figure of merit and
-saves it into the output file acording to design document.
+Calculates price / performance and figure of merit and
+saves it into the output file according to design document.
 
 """
 import sys
@@ -47,7 +47,7 @@ class GceFigureOfMerit(Transform.Transform):
                 ]
             except AttributeError:
                 occupancy = 0
-                self.logger.debug("GceFigureOfMerit transform: Looks like no VMs runnig in GCE.")
+                self.logger.debug("GceFigureOfMerit transform: Looks like no VMs running in GCE.")
             else:
                 occupancy = float(occupancy_df["Occupancy"].values[0]) if not occupancy_df.empty else 0
 

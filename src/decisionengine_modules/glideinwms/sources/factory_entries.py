@@ -105,7 +105,7 @@ class FactoryEntries(Source.Source):
 
         if dataframe.empty:
             # There were no entry classads in the factory collector or
-            # quering the collector failed
+            # querying the collector failed
             return {"Factory_Entries": pandas.DataFrame()}
 
         dfs = [dataframe.loc[dataframe.GLIDEIN_GridType.isin(value)] for value in ENTRY_TYPES.values()]

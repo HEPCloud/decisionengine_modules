@@ -151,7 +151,7 @@ class AWSSpotPriceForRegion:
         availability zone and instance type
 
         :type spot_price_history: :obj:`list`
-        :arg spot_price_history: list of dictonaries
+        :arg spot_price_history: list of dictionaries
         :rtype: :obj:`list`: list of spot price data (:class:`SpotPriceData`)
         """
 
@@ -205,7 +205,7 @@ class AWSSpotPrice(Source.Source):
         :rtype: pandas frame (:class:`pd.DataFramelist`)
         """
 
-        # Load kown accounts configuration
+        # Load known accounts configuration
         # account configuration is dynamic
         self.logger.debug("in AWSSpotPrice acquire")
         account_dict = load_config.load(self.config_file, 5, 20, self.logger)

@@ -12,7 +12,7 @@ class Credential:
     def __init__(self, proxy_id, proxy_fname, group_descript, logger):
         self.req_idle = 0
         self.req_max_run = 0
-        self.advertize = False
+        self.advertise = False
         self.logger = logger
 
         proxy_security_classes = group_descript["ProxySecurityClasses"]
@@ -102,7 +102,7 @@ class Credential:
                 condorExe.iexe_cmd(self.creation_script)
             except Exception:
                 self.logger.exception(f"Creating credential using {self.creation_script} failed")
-                self.advertize = False
+                self.advertise = False
 
             # Recreating the credential can result in ID change
             self._id = self.file_id(self.get_id_filename())
@@ -135,7 +135,7 @@ class Credential:
                 cred_data = data_fd.read()
         except Exception:
             # This credential should not be advertised
-            self.advertize = False
+            self.advertise = False
             self.logger.exception(f"Failed to read credential {cred_file}: ")
             raise
         return cred_data

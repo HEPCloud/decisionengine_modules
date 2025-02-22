@@ -177,7 +177,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
 
 `9044b64 <https://github.com/HEPCloud/decisionengine_modules/commit/9044b64d3dc813e9eabc36d04c125392f2efecb9>`_:   Add token authentication to the glideinwms module
 
-`97ca32a <https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a>`_:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires pytohn 3.7
+`97ca32a <https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a>`_:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires python 3.7
 
 `95a7d7b <https://github.com/HEPCloud/decisionengine_modules/commit/95a7d7b8835776da4ed16a3a6268da96cabe74e6>`_:   Test the arguments used to call publish_to_htcondor.
 
@@ -219,7 +219,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
 
 `d57ac6e <https://github.com/HEPCloud/decisionengine_modules/commit/d57ac6ee7376191f482fd0bebe14f013b8e16e79>`_:   Set Apache 2.0 license and added REUSE compliance
 
-`cf43119 <https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71>`_:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarly downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.
+`cf43119 <https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71>`_:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarily downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.
 
 `e2707e5 <https://github.com/HEPCloud/decisionengine_modules/commit/e2707e589142d40afdc5716fd4c4d6c9a38bc64e>`_:   Ignoring E203, whitespace after ':', since black is adding the whitespace
 

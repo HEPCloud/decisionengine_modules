@@ -363,7 +363,7 @@ class GlideFrontendElement:
             glidein_site = entry_info.get("GLIDEIN_Site", ["Unknown"]).tolist()[0]
             entry_name = entry_info.get("EntryName", ["Unknown"]).tolist()[0]
 
-            # Only advertize if there is a valid key for encryption
+            # Only advertise if there is a valid key for encryption
             if key_obj is not None:
                 gc_classad = self.create_glideclient_classads(
                     factory_pool_node,
@@ -480,10 +480,10 @@ class GlideFrontendElement:
         gc_classads = []
 
         for cred in credentials_with_request:
-            if not cred.advertize:
+            if not cred.advertise:
                 self.logger.info(
                     f"Ignoring credential with id: {cred.get_id()}, "
-                    f"pilot_proxy: {cred.pilot_fname}, type: {cred.type}, trust_domain: {cred.trust_domain}, security_name: {cred.security_class}, advertise: {cred.advertize}"
+                    f"pilot_proxy: {cred.pilot_fname}, type: {cred.type}, trust_domain: {cred.trust_domain}, security_name: {cred.security_class}, advertise: {cred.advertise}"
                 )
                 # We have already determined that this cred cannot be used
                 continue
@@ -637,7 +637,7 @@ class GlideFrontendElement:
         nr_credentials = len(credentials)
         self.logger.info(f"Number of credentials found: {nr_credentials}")
         for cred in credentials:
-            cred.advertize = True
+            cred.advertise = True
             cred.renew()
             cred.create_if_not_exist()
             cred.loaded_data = []
@@ -650,8 +650,8 @@ class GlideFrontendElement:
                     else:
                         # We encountered error with this credential
                         # Move onto next credential
-                        self.logger.info(f"ERROR loading credential file {cred_file}, setting advertize to False")
-                        cred.advertize = False
+                        self.logger.info(f"ERROR loading credential file {cred_file}, setting advertise to False")
+                        cred.advertise = False
                         break
 
         # Create GlideClientGlobalClassad object
@@ -669,7 +669,7 @@ class GlideFrontendElement:
             "SecurityName": f"{self.security_name}",
         }
         for cred in credentials:
-            if cred.advertize:
+            if cred.advertise:
                 for (fname, data) in cred.loaded_data:
                     classad_attrs_to_encrypt[cred.file_id(fname)] = data
                     if hasattr(cred, "security_class"):
@@ -1177,35 +1177,35 @@ class GlideFrontendElement:
             glidein_min_idle = min(glidein_min_idle, self.entry_max_glideins_idle)
 
             if count_status["Idle"] >= self.entry_curb_slots_idle:
-                glidein_min_idle /= 2  # above first treshold, reduce
+                glidein_min_idle /= 2  # above first threshold, reduce
                 limits_triggered[
                     "CurbIdleGlideinsPerEntry"
                 ] = f"count={count_status['Idle']}, curb={self.entry_curb_slots_idle,}"
             if total_glideins >= self.total_curb_slots:
-                glidein_min_idle /= 2  # above global treshold, reduce further
+                glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered["CurbTotalGlideinsPerGroup"] = f"count={total_glideins}, curb={self.total_curb_slots}"
             if total_idle_glideins >= self.total_curb_slots_idle:
-                glidein_min_idle /= 2  # above global treshold, reduce further
+                glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered[
                     "CurbIdleGlideinsPerGroup"
                 ] = f"count={total_idle_glideins}, curb={self.total_curb_slots_idle}"
             if fe_total_glideins >= self.fe_total_curb_slots:
-                glidein_min_idle /= 2  # above global treshold, reduce further
+                glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered[
                     "CurbTotalGlideinsPerFrontend"
                 ] = f"count={fe_total_glideins}, curb={self.fe_total_curb_slots}"
             if fe_total_idle_glideins >= self.fe_total_curb_slots_idle:
-                glidein_min_idle /= 2  # above global treshold, reduce further
+                glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered[
                     "CurbIdleGlideinsPerFrontend"
                 ] = f"count={fe_total_idle_glideins}, curb={self.fe_total_curb_slots_idle}"
             if global_total_glideins >= self.global_total_curb_slots:
-                glidein_min_idle /= 2  # above global treshold, reduce further
+                glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered[
                     "CurbTotalGlideinsGlobal"
                 ] = f"count={global_total_glideins}, curb={self.global_total_curb_slots}"
             if global_total_idle_glideins >= self.global_total_curb_slots_idle:
-                glidein_min_idle /= 2  # above global treshold, reduce further
+                glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered[
                     "CurbIdleGlideinsGlobal"
                 ] = f"count={global_total_idle_glideins}, curb={self.global_total_curb_slots_idle}"
@@ -1728,7 +1728,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             glidein_site = entry_info.get("GLIDEIN_Site", ["Unknown"]).tolist()[0]
             entry_name = entry_info.get("EntryName", ["Unknown"]).tolist()[0]
 
-            # Only advertize if there is a valid key for encryption
+            # Only advertise if there is a valid key for encryption
             if key_obj is not None:
                 gc_classad = self.create_glideclient_classads(
                     factory_pool_node,
@@ -1979,7 +1979,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                         else:
                             # Consider other FOM groups that also matched
                             # We already matched everything to other FOM groups
-                            # Populate the stats as downtime doesnt mattter
+                            # Populate the stats as downtime doesn't mattter
                             for key in matches:
                                 direct_match[key] = direct_match.get(key, 0)
                                 hereonly_match[key] = hereonly_match.get(key, 0)
@@ -2004,7 +2004,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
         """
 
         # self.logger.info('---------- %s ----------' % 'group_matches_by_fom')
-        # ASSUMTION: Entry names are unique
+        # ASSUMPTION: Entry names are unique
         # Get all the classad names for the entries from the matches
         entry_classad_names = [x[1] for x in matches]
         df1 = pandas.DataFrame({"Name": entry_classad_names})

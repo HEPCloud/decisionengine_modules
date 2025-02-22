@@ -58,7 +58,7 @@ if __name__ == "__main__":
     merged_pd = pd.merge_asof(jobs_pd, resource_spot_pd, left_on="RequestCpus", right_on="ResourceCpus")
     print(merged_pd)
 
-    # create a new column that gives a boolean determining wether or not the row matches memory requirments
+    # create a new column that gives a boolean determining whether or not the row matches memory requirements
     merged_pd = merged_pd.assign(Match=merged_pd.RequestMemory <= merged_pd.ResourceMemory)
     merged_pd = merged_pd.assign(estimatedCost=merged_pd.RequestTime * merged_pd.SpotPrice)
 

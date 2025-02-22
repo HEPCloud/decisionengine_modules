@@ -148,7 +148,7 @@ class AWSSpotPriceForRegion:
         availability zone and instance type
 
         :type spot_price_history: :obj:`list`
-        :arg spot_price_history: list of dictonaries
+        :arg spot_price_history: list of dictionaries
         :rtype: :obj:`list`: list of spot price data (:class:`SpotPriceData`)
         """
 

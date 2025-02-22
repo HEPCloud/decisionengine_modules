@@ -82,8 +82,8 @@ class NerscSFApi(Source.Source):
             self.logger.debug(f"{rawfile} does not exist. Need to generate")
         else:
             atoken = None
-            with open(rawfile) as afile:
-                atoken = afile.read()
+            with open(rawfile) as a_file:
+                atoken = a_file.read()
                 atoken = atoken.rstrip()
             # HK> If the access token is expired, the flow goes directly to except jwt.ExpiredSign
 
