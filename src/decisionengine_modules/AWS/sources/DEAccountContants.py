@@ -4,7 +4,7 @@
 """
 This data is taken from billing and arranged as dictionary of
 AccountConstants instead of separate class for each billing class.
-This way is more covenient to use in programms.
+This way is more convenient to use in programs.
 """
 
 EXPECTED_NAMES = [

@@ -148,7 +148,7 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
             return
 
         try:
-            # TODO: How can we do this pandas way rather than interative?
+            # TODO: How can we do this pandas way rather than iterative?
             # Iterate over sub dataframes with same CollectorHost value
             for collector in pandas.unique(dataframe.CollectorHost.ravel()):
                 # Convert dataframe -> dict -> classads

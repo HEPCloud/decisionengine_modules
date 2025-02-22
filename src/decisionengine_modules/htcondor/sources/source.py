@@ -59,7 +59,7 @@ class ResourceManifests(Source.Source, metaclass=abc.ABCMeta):
         and values that the operators want to be default values for the classad_attrs.
         But here, we make available the option of an empty dictionary
         because some classes that extend this class might not have correction_map
-        avaiable in its config file.
+        available in its config file.
         """
         super().__init__(config)
         self.collector_host = config.get("collector_host")

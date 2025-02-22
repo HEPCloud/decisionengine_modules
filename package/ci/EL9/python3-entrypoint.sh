@@ -5,7 +5,7 @@
 
 CMD=${1:- -m pytest}
 LOGFILE=${2:- pytest.log}
-# set defaul DE_BRANCH to master or eventually set it as entrypoint script argument
+# set default DE_BRANCH to master or eventually set it as entrypoint script argument
 DE_BRANCH=${3:-master}
 
 # check DE modules branch

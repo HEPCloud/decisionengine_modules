@@ -49,7 +49,7 @@ Full list of commits since version 1.7.3
 Release 1.7.3
 -------------
 
-Enable token+proxy hybrid configuration, to send a proxy in a ddition to tokens to support OSG Gratia probes.
+Enable token+proxy hybrid configuration, to send a proxy in addition to tokens to support OSG Gratia probes.
 
 Full list of commits since version 1.7.2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -108,7 +108,7 @@ This release features:
     The RPM package was renamed from decisionengine-standard-library to decisionengine_modules. rpm/yum updates from the old RPM will work correctly.
 
 .. note::
-    The "channel_name" key in the Source Proxy config dictionaries needs to be changed to "source_channel". "channel_name" is now being used to describe the name of the channel itself, not the name of the channel the Source Proxy is gettting information from.
+    The "channel_name" key in the Source Proxy config dictionaries needs to be changed to "source_channel". "channel_name" is now being used to describe the name of the channel itself, not the name of the channel the Source Proxy is getting information from.
 
 
 Issues fixed in this release
@@ -140,7 +140,7 @@ Full list of commits since version 1.6.0
 
 `77a79ad <https://github.com/HEPCloud/decisionengine_modules/commit/77a79adb0c6b6a81441f77cb0d1b62fe1a614a75>`_:   Use latest version of bill calc
 
-`385266c <https://github.com/HEPCloud/decisionengine_modules/commit/385266c417c18eba3c8aedecc6f6a4e6aca6b92f>`_:   Fix requiements to match our usage
+`385266c <https://github.com/HEPCloud/decisionengine_modules/commit/385266c417c18eba3c8aedecc6f6a4e6aca6b92f>`_:   Fix requirements to match our usage
 
 `56e2d9e <https://github.com/HEPCloud/decisionengine_modules/commit/56e2d9e288295a5d6d0987b9250acc644a54b809>`_:   Add config for lgtm
 
@@ -188,7 +188,7 @@ Full list of commits since version 1.6.0
 
 `5435707 <https://github.com/HEPCloud/decisionengine_modules/commit/54357079948adf0e3f68618efe6bb76a3a0af651>`_:   Check for configuration error.
 
-`4f7fc04 <https://github.com/HEPCloud/decisionengine_modules/commit/4f7fc044f1761cbf915d405e235a1d7cc9b9812c>`_:   Accomodate breaking changes introduced by the framework.
+`4f7fc04 <https://github.com/HEPCloud/decisionengine_modules/commit/4f7fc044f1761cbf915d405e235a1d7cc9b9812c>`_:   Accommodate breaking changes introduced by the framework.
 
 `a27f92a <https://github.com/HEPCloud/decisionengine_modules/commit/a27f92afc1f5ef2b3d16c03cc311a49593a168cf>`_:   Added 1.6.2 release notes, from branch 1.6
 

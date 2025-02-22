@@ -1,0 +1,23 @@
+;; SPDX-FileCopyrightText = "2017 Fermi Research Alliance, LLC"
+;; SPDX-License-Identifier = "Apache-2.0"
+;; DE/DEM words
+FOM
+fom
+;; GWMS and HTCondor words
+glidein
+Glidein
+glideinwms
+GlideinWMS
+apptainer
+Apptainer
+HTCondor
+startd
+schedd
+collector
+negotiator
+classad
+classads
+ClassAd
+ClassAdss
+astroid
+;;
