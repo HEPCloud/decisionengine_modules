@@ -6,8 +6,8 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release 2.0.2 &mdash; decisionengine modules 2.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+  <title>Release 2.0.4 &mdash; decisionengine modules 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
@@ -43,18 +43,24 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 2.0.2</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release 2.0.4</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#issues-fixed-in-this-release">Issues fixed in this release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#full-list-of-commits-since-version-2-0-2">Full list of commits since version 2.0.2</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#release-2-0-3">Release 2.0.3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#release-2-0-2">Release 2.0.2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Issues fixed in this release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#full-list-of-commits-since-version-2-0-0">Full list of commits since version 2.0.0</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#release-2-0-1">Release 2.0.1</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id4">Issues fixed in this release</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">Full list of commits since version 2.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">Issues fixed in this release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">Full list of commits since version 2.0.0</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#release-2-0-0">Release 2.0.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id8">Issues fixed in this release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">Issues fixed in this release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#full-list-of-commits-since-version-1-7-0">Full list of commits since version 1.7.0</a></li>
 </ul>
 </li>
@@ -95,7 +101,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Release 2.0.2</li>
+      <li class="breadcrumb-item active">Release 2.0.4</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/release_notes/release_notes_2.0.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -105,15 +111,127 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="release-2-0-2">
+  <section id="release-2-0-4">
+<h1>Release 2.0.4<a class="headerlink" href="#release-2-0-4" title="Link to this heading"></a></h1>
+<p>This release brings a new packaging with RPM packages for dependencies and system files, and a Python wheel for the Python code.
+There are also new Prometheus metrics and a few bug fixes like the superfacility API and AWS and GCE billing.</p>
+<section id="issues-fixed-in-this-release">
+<h2>Issues fixed in this release<a class="headerlink" href="#issues-fixed-in-this-release" title="Link to this heading"></a></h2>
+<p>-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/444">DEM 444</a>: Add CodeQL workflow for GitHub code scanning  (&#64;lgtm-com)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/445">DEM 445</a>: Added CPU Metrics.  (&#64;Redjacket45)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/456">DEM 456</a>: Upgrading isort version to fix pre-config install error w/ poetry  (&#64;mambelli)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/461">DEM 461</a>: Eliminate escaping of double quotation marks to conform with NEWT API’s changed behavior  (&#64;namrathaurs)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/459">DEM 459</a>: Disabling Python 3.6 and Fixing 3.9 Unit Tests in CI Workflow  (&#64;namrathaurs)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/462">DEM 462</a>: Feature/vito pandas2 updates  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/463">DEM 463</a>: Fixed Google dependency to work fine in Python 3.9  (&#64;mambelli)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/457">DEM 457</a>: Making CONTINUE_IF_NO_PROXY attribute configurable  (&#64;namrathaurs)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/465">DEM 465</a>: Update tests  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/472">DEM 472</a>: Adding DE modules EL9 CI container based on AlmaLinux9  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/468">DEM 468</a>: New Nersc Source Module using SuperFacilityApi  (&#64;hyunwoo18)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/474">DEM 474</a>: fix test_refresh_entry_token unit test  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/473">DEM 473</a>: Adding Jenkinsfile for EL9  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/477">DEM 477</a>: Adding one line  (&#64;hyunwoo18)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/481">DEM 481</a>: Refactor DEConfigSource and configure_gwms_frontend  (&#64;BrunoCoimbra)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/482">DEM 482</a>: Components of decisionengine dashboards  (&#64;skylerfoster67)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/484">DEM 484</a>: Change glideclient advertisement logic  (&#64;BrunoCoimbra)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/485">DEM 485</a>: Fix a typo in glideids_to_advertise  (&#64;BrunoCoimbra)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/487">DEM 487</a>: Fix configure_gwms_frontend tests  (&#64;BrunoCoimbra)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/486">DEM 486</a>: Re-enable flak8 linter  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/492">DEM 492</a>: Do not test external dependencies with flake8  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/489">DEM 489</a>: Added new metrics to job_q and source  (&#64;IlyaBaburashvili)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/493">DEM 493</a>: Add dem_htcondor_cores_count and dem_htcondor_cores_histogram metrics to source.py  (&#64;IlyaBaburashvili)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/498">DEM 498</a>: Added unit tests for dem_htcondor_slots_status_count, dem_htcondor_cores_count, dem_htcondor_memory_count. Fixed issues in source.py.  (&#64;IlyaBaburashvili)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/496">DEM 496</a>: New Figure of Merit Metric  (&#64;skylerfoster67)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/499">DEM 499</a>: Two dashboards for cores, slots, and runtimes  (&#64;IlyaBaburashvili)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/503">DEM 503</a>: In Jenkins pipeline config use podman instead of docker  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/502">DEM 502</a>: add new method of determining token expiration instead of relying on jwt.decode error code  (&#64;StevenCTimm)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/507">DEM 507</a>: Refactor time_left in security module  (&#64;BrunoCoimbra)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/505">DEM 505</a>: Migrating GCE Billing to BigQuery based Bill Calculations  (&#64;namrathaurs)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/506">DEM 506</a>: DEConfigSource converts nested dicts to OrderedDicts  (&#64;BrunoCoimbra)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/510">DEM 510</a>: Add retry functionality to NerscSFApi  (&#64;vitodb)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/511">DEM 511</a>: Packaging with uv and pyproject.toml  (&#64;mambelli)
+-<a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/512">DEM 512</a>: Added codespell in pre-commit and fixed files to compliance  (&#64;mambelli)</p>
+</section>
+<section id="full-list-of-commits-since-version-2-0-2">
+<h2>Full list of commits since version 2.0.2<a class="headerlink" href="#full-list-of-commits-since-version-2-0-2" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c481f85a5c6a00a5bebeb94bb46c9d69658c5243">c481f85</a>:   Added codespell in pre-commit and fixed files to compliance</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/3bf56ab88fc81bacdb4b129e5a08f38ee2ea5408">3bf56ab</a>:   Packaging with uv and pyproject.toml</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5577e9e6958f01f32f20c124be20fb57c42473fc">5577e9e</a>:   [pre-commit.ci] auto fixes from pre-commit.com hooks</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/230627f4bf1bf5ebe1ac051f78c0d664613d1069">230627f</a>:   Add retry functionality to NerscSFApi</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b820998100bb925bfe5da231e9d80138834a4d82">b820998</a>:   DEConfigSource converts nested dicts to OrderedDicts</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/8e7890023da02c977be13b11a3a9aa1e0d7b8fd8">8e78900</a>:   [pre-commit.ci] auto fixes from pre-commit.com hooks</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a85edeb7b2f622eaf32915613200558eb15c41fa">a85edeb</a>:   migrating to using bigquery for GCE billing</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c4d0bc195e4da960f745b84c379388f2232224a2">c4d0bc1</a>:   Refactor time_left in security module</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a42d3bd37468bd0a103b32fff5e2061fb069431e">a42d3bd</a>:   [pre-commit.ci] auto fixes from pre-commit.com hooks</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5305f59739ddc8ad6c4ffc06b72c664539f5c7ae">5305f59</a>:   remove the extraneous print statements</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b57507bcae4e69eda7841ce4760dd538d79553ce">b57507b</a>:    changing the way that the NERSC SFApi access token expiration is calculated to not rely on jwt.decode() exit value</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c500a73c38189ae14e0d2a127463a91f09e8c4ea">c500a73</a>:   In Jenkins pipeline config use podman instead of docker</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/aa975b8f7751867636e0402dc0aaa25d0096515a">aa975b8</a>:   Added dashboards  for cores, slots, and runtimes</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/af1003b7eda33e0950770c7b28741d1948eacc60">af1003b</a>:   New Figure of Merit Metric (#496)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/fb4c3f9033d48670b7e5129c2478ccfc0d28fd69">fb4c3f9</a>:   Remove extra line from dep5</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/63adb86a218c027e3385988d584094392ed17d4e">63adb86</a>:   Add unit tests for metrics, fix issue in source.py</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/4f590a6c0f06b6afb264891d4d0e16de89ce968b">4f590a6</a>:   Fixed commit history</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/21ac8c4c8983a36184e3b8b4a52781da1ae78b0e">21ac8c4</a>:   Remove include Histogram</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/aae8638b709f0572036239b7e4ed4fe6396a0fe6">aae8638</a>:   Remove debugging statements</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b673c4ae1e91bb62883071e9133fc37ee0b9e441">b673c4a</a>:   Fix PR 489</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7601451fa3788240f0208fbbfac4ad801ba520ec">7601451</a>:   For flake8 skip build folder</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/9980e3a6974d2339c8412c83868596ab17a5ec1c">9980e3a</a>:   Make the test flake8 compliant</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/85e6487b9232c93305478d05b366e084dc5de087">85e6487</a>:   Do not test external dependencies</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/8a07b0e52a2a3acf21846fc3e08d8b98c8e95894">8a07b0e</a>:   Add licence info to flake8 config file</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/97f6f63d1ad8d816d66abacab3b43902c8ac6a0b">97f6f63</a>:   Re-enable flak8 linter</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a28c97d50f13e3cb8019f7389442860fc93de71c">a28c97d</a>:   Update test_configure_gwms_frontend.py</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/01c9c40dad52856d009c95ece1531a0652e8ba19">01c9c40</a>:   Fix configure_gwms_frontend tests</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5eb2f2b6a6a7d8b9aa0dd4588914cf036aa43208">5eb2f2b</a>:   Fix a typo in glideids_to_advertise</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cb19a5b7ea7edc8ea7bfdccad63f61a4658bf04b">cb19a5b</a>:   Fix glideclient advertisement logic</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/9c1f8e5bc038d7990f77fe3eda9c2f0f25676e22">9c1f8e5</a>:   Added json files on Channel and Source Data dashboards with specific naming</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/ea00e39904a53e57d5a4e8506cadbe7b583385c1">ea00e39</a>:   Adding license information for dashboard files because JSON does not allow comments</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/c11a7e247d5678cd7c438a40e1f44f1c36b71f4b">c11a7e2</a>:   [pre-commit.ci] auto fixes from pre-commit.com hooks</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/92b72b6cb88d95e79f9f6dd84fea5e010553bbc5">92b72b6</a>:   Refactor config source for configure_gwms_frontend</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/02ab367c1e2484114b07c2e7bf59752edbfa6333">02ab367</a>:   Adding one line</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/32d6114e1aa277022316e2eeec63530716548f23">32d6114</a>:   Added directory for Grafana dashboards</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5a5fb8b80b866ef563f4b9ac38a685f8f36bf6c5">5a5fb8b</a>:   Adding Jenkinsfile for EL9</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/aa59c4979036c35a52c7a922445fc746ae62c017">aa59c49</a>:   required jwt functionalities are provided by PyJWT</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2df1fc5565c78642e0ce68430d30dc3508049ab4">2df1fc5</a>:   Updated documentation for 1.7.5 release</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cf81d562a25fa93eff66cd45b4e594b28017f6c8">cf81d56</a>:   Last update to setup.py</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/8bc6d24aad1775966fc9e262e4b96b051a4f6e16">8bc6d24</a>:   Last update to add KeyError</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/85604ef8ce2f3ac30911050dde2cd8c7a656cfd2">85604ef</a>:   Removed remaining hardcoded strings from the code</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/811765255d057f51142b0f5349b3641f4529d952">8117652</a>:   Implementing Marco requests in the review</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/1d59d49a4169791189dd1a7e334cd3a46c30b328">1d59d49</a>:   Fixed pre-commit issues and jwt package</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b107c06e2ac4e95c8a04b3beb04c22b450090ea9">b107c06</a>:   New Nersc Source Module using SuperFacilityApi</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e9178383a118d193377615c0cda7d0bb05057068">e917838</a>:   Adding DE modules EL9 CI container based on AlmaLinux9</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a5a2bae93473227283f9c69bec7f1fa81a560bb0">a5a2bae</a>:   Update GH actions</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/bdb70b061826998a9a6d47424100655c7932a3a3">bdb70b0</a>:   Enable some GH actions only on DE 1.7 branch</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/6a22f44f2627301771822a83970a983642b9c3fa">6a22f44</a>:   Update runtime and devel python module versions in setup.py</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/842fdc91a31879084906d71a7d0c317e5035a925">842fdc9</a>:   CONTINUE_IF_NO_PROXY True by default</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/8906538884a2e49dd867ce2ebca28e5e7ebb95c9">8906538</a>:   added changes to make CONTINUE_IF_NO_PROXY configurable</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5a7bc0dc61909ac97ea90d96de3304f05a8e8f9c">5a7bc0d</a>:   Fixed Google dependency to work fine in Python 3.9. Install via PIP succeeds</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d3157368ff21df34ae012794bccbb0caa3dded41">d315736</a>:   With pandas 2.x DataFrame.append() has been deprecated, use pandas.concat() instead</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/0484401ef61ced5f1a8b37a1200c9e84b60aad7a">0484401</a>:   Address a pandas deprecation warning: FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(set.iloc[0]) instead. The warning is due to glidein_cpus that is a single element series.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/07292a4ffd8f48e75685bd3d957b0ff9c8bc7b79">07292a4</a>:   updated as per second round of review comments</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/947e9b8f3590244fd29185b109fb4ddc1711012c">947e9b8</a>:   updated as per PR review comments</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e3608a0ad648157df43097b8e8fe6eaab227cd6e">e3608a0</a>:   fixes for python 3.6 and 3.9 unit tests failing in the CI workflow</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d8de2dadaa8dfc8662cd8d4c44d6ab91378f0a34">d8de2da</a>:   updated as per PR#461 comment</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e6044f7603dcbdfa3c6c3ea82d05ce29329b39e3">e6044f7</a>:   removed escaping of quotes to conform with new API behavior</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/4a59accdd405e1c93c23e097318913e8f12a4a26">4a59acc</a>:   Upgrading isort version to fix install error w/ poetry</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7b96d46023ef714642441889701d2aa0c4221873">7b96d46</a>:   Started to add startd_manifests (glidein) metrics (TotalCpus, TotalSlotCpus, TotalSlots)</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/2ab707f1634bd9d1ee1c4299cb5f555aad7e7408">2ab707f</a>:   Started moving metrics into global dict</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/58e62a4e9bd52d7a72cde8efefd93ded9defe796">58e62a4</a>:   Added Number_of_jobs metric.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/5a8a64117ab10b0fe6cb6b69c918edc2775c7284">5a8a641</a>:   Added license info</p>
+</section>
+</section>
+<section id="release-2-0-3">
+<h1>Release 2.0.3<a class="headerlink" href="#release-2-0-3" title="Link to this heading"></a></h1>
+<p>Release tag skipped</p>
+</section>
+<section id="release-2-0-2">
 <h1>Release 2.0.2<a class="headerlink" href="#release-2-0-2" title="Link to this heading"></a></h1>
 <p>This is mainly a bug fix release.</p>
 <p>Some features were added:
 - Monotoring of the glideinwms module via Prometheus
 - Initial version of a Rigetti source
 - More flexible LogicEngine: Fsctory Entries categories are now configurable</p>
-<section id="issues-fixed-in-this-release">
-<h2>Issues fixed in this release<a class="headerlink" href="#issues-fixed-in-this-release" title="Link to this heading"></a></h2>
+<section id="id5">
+<h2>Issues fixed in this release<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/428">428</a> : Decision engine 1.7.3 bug too many open file descriptors in glide_frontend_element.py</p></li>
 <li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/pull/427">427</a> : Set CONTINUE_IF_NO_PROXY to False to allow hybrid configuration</p></li>
@@ -147,11 +265,11 @@
 <section id="release-2-0-1">
 <h1>Release 2.0.1<a class="headerlink" href="#release-2-0-1" title="Link to this heading"></a></h1>
 <p>Patch level (bug fix) release.</p>
-<section id="id4">
-<h2>Issues fixed in this release<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<section id="id9">
+<h2>Issues fixed in this release<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
 </section>
-<section id="id5">
-<h2>Full list of commits since version 2.0.0<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<section id="id10">
+<h2>Full list of commits since version 2.0.0<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/6f2db85ffc13470ff2a83b081cd85902ed7c781b">6f2db85</a>:   Fix coverage reporting.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/a76456276c7737a33fe51dba2645ee4f3c7518c9">a764562</a>:   Silence warnings that are beyond our control or are irrelevant.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine/commit/cc481e9affb01d16cba9d87031c2e54ec632f69e">cc481e9</a>:   Test that duplicate column names and empty dataframes are properly handled.</p>
@@ -204,8 +322,8 @@ We introduced integration tests and we are proud of our over 95% unit test cover
 decisionengine_modules now depends from the GlideinWMS vofrontend-lib.
 Check the new instructions for the changed configuration of the glideinwms module.</p>
 </div>
-<section id="id8">
-<h2>Issues fixed in this release<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<section id="id13">
+<h2>Issues fixed in this release<a class="headerlink" href="#id13" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/353">353</a> : yum update decisionengine-standard-library doesn’t detect and pull in decisionengine_modules</p></li>
 <li><p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/issues/282">282</a> : Decision Engine classad encoding problems make multiple exceptions in the factory</p></li>
@@ -225,7 +343,7 @@ Check the new instructions for the changed configuration of the glideinwms modul
 chanism. This allows to trigger this action through a GitHub API or directly through the action dashboard, This PR also customize the RPM artifact file name.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cd52b394b6fb3b837508934ef2fd6c7301d3037e">cd52b39</a>:   Catch exceptions when no VMs running in GCE</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/9044b64d3dc813e9eabc36d04c125392f2efecb9">9044b64</a>:   Add token authentication to the glideinwms module</p>
-<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a">97ca32a</a>:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires pytohn 3.7</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a">97ca32a</a>:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires python 3.7</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/95a7d7b8835776da4ed16a3a6268da96cabe74e6">95a7d7b</a>:   Test the arguments used to call publish_to_htcondor.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/27f0f4b2be069f2e9d5f2449e123e131f21b0c29">27f0f4b</a>:   Adjust code-coverage configuration to display code in browser.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/3addf20c66d21c6d2868fd49b335dbbe82b36ad3">3addf20</a>:   Make sure variables are defined before they’re used.</p>
@@ -246,7 +364,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/a0889aab61229c50937626c86835f13a5ca13ccc">a0889aa</a>:   Update pre-commit hook versions and accommodate python-debian issue.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/7fd1c9c3615fc8fa73fc1f929311baff7c189f9f">7fd1c9c</a>:   Change gwmw module to read cfg from DE framework</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/d57ac6ee7376191f482fd0bebe14f013b8e16e79">d57ac6e</a>:   Set Apache 2.0 license and added REUSE compliance</p>
-<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71">cf43119</a>:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarly downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.</p>
+<p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71">cf43119</a>:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarily downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/e2707e589142d40afdc5716fd4c4d6c9a38bc64e">e2707e5</a>:   Ignoring E203, whitespace after ‘:’, since black is adding the whitespace</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/b0e3526e5d050094a63474798fd9dec993a64b67">b0e3526</a>:   Remove modules that inherit from SourceProxy. Inheritance from SourceProxy has been forbidden by PR#526. In this commit it has been removed the SourceProxy module GCEResourceLimits that is not used.</p>
 <p><a class="reference external" href="https://github.com/HEPCloud/decisionengine_modules/commit/208a660d356df9fd74aad1a646555d83455e5b10">208a660</a>:   Revert “Add jsonnetfmt hook”</p>
@@ -279,7 +397,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Fermi Research Alliance, LLC..</p>
+    <p>&#169; Copyright 2025, Fermi Research Alliance, LLC..</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,6 +1,185 @@
 .. SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 .. SPDX-License-Identifier: Apache-2.0
 
+Release 2.0.4
+-------------
+
+This release brings a new packaging with RPM packages for dependencies and system files, and a Python wheel for the Python code.
+There are also new Prometheus metrics and a few bug fixes like the superfacility API and AWS and GCE billing.
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-`DEM 444 <https://github.com/HEPCloud/decisionengine_modules/pull/444>`_: Add CodeQL workflow for GitHub code scanning  (@lgtm-com)
+-`DEM 445 <https://github.com/HEPCloud/decisionengine_modules/pull/445>`_: Added CPU Metrics.  (@Redjacket45)
+-`DEM 456 <https://github.com/HEPCloud/decisionengine_modules/pull/456>`_: Upgrading isort version to fix pre-config install error w/ poetry  (@mambelli)
+-`DEM 461 <https://github.com/HEPCloud/decisionengine_modules/pull/461>`_: Eliminate escaping of double quotation marks to conform with NEWT API's changed behavior  (@namrathaurs)
+-`DEM 459 <https://github.com/HEPCloud/decisionengine_modules/pull/459>`_: Disabling Python 3.6 and Fixing 3.9 Unit Tests in CI Workflow  (@namrathaurs)
+-`DEM 462 <https://github.com/HEPCloud/decisionengine_modules/pull/462>`_: Feature/vito pandas2 updates  (@vitodb)
+-`DEM 463 <https://github.com/HEPCloud/decisionengine_modules/pull/463>`_: Fixed Google dependency to work fine in Python 3.9  (@mambelli)
+-`DEM 457 <https://github.com/HEPCloud/decisionengine_modules/pull/457>`_: Making CONTINUE_IF_NO_PROXY attribute configurable  (@namrathaurs)
+-`DEM 465 <https://github.com/HEPCloud/decisionengine_modules/pull/465>`_: Update tests  (@vitodb)
+-`DEM 472 <https://github.com/HEPCloud/decisionengine_modules/pull/472>`_: Adding DE modules EL9 CI container based on AlmaLinux9  (@vitodb)
+-`DEM 468 <https://github.com/HEPCloud/decisionengine_modules/pull/468>`_: New Nersc Source Module using SuperFacilityApi  (@hyunwoo18)
+-`DEM 474 <https://github.com/HEPCloud/decisionengine_modules/pull/474>`_: fix test_refresh_entry_token unit test  (@vitodb)
+-`DEM 473 <https://github.com/HEPCloud/decisionengine_modules/pull/473>`_: Adding Jenkinsfile for EL9  (@vitodb)
+-`DEM 477 <https://github.com/HEPCloud/decisionengine_modules/pull/477>`_: Adding one line  (@hyunwoo18)
+-`DEM 481 <https://github.com/HEPCloud/decisionengine_modules/pull/481>`_: Refactor DEConfigSource and configure_gwms_frontend  (@BrunoCoimbra)
+-`DEM 482 <https://github.com/HEPCloud/decisionengine_modules/pull/482>`_: Components of decisionengine dashboards  (@skylerfoster67)
+-`DEM 484 <https://github.com/HEPCloud/decisionengine_modules/pull/484>`_: Change glideclient advertisement logic  (@BrunoCoimbra)
+-`DEM 485 <https://github.com/HEPCloud/decisionengine_modules/pull/485>`_: Fix a typo in glideids_to_advertise  (@BrunoCoimbra)
+-`DEM 487 <https://github.com/HEPCloud/decisionengine_modules/pull/487>`_: Fix configure_gwms_frontend tests  (@BrunoCoimbra)
+-`DEM 486 <https://github.com/HEPCloud/decisionengine_modules/pull/486>`_: Re-enable flak8 linter  (@vitodb)
+-`DEM 492 <https://github.com/HEPCloud/decisionengine_modules/pull/492>`_: Do not test external dependencies with flake8  (@vitodb)
+-`DEM 489 <https://github.com/HEPCloud/decisionengine_modules/pull/489>`_: Added new metrics to job_q and source  (@IlyaBaburashvili)
+-`DEM 493 <https://github.com/HEPCloud/decisionengine_modules/pull/493>`_: Add dem_htcondor_cores_count and dem_htcondor_cores_histogram metrics to source.py  (@IlyaBaburashvili)
+-`DEM 498 <https://github.com/HEPCloud/decisionengine_modules/pull/498>`_: Added unit tests for dem_htcondor_slots_status_count, dem_htcondor_cores_count, dem_htcondor_memory_count. Fixed issues in source.py.  (@IlyaBaburashvili)
+-`DEM 496 <https://github.com/HEPCloud/decisionengine_modules/pull/496>`_: New Figure of Merit Metric  (@skylerfoster67)
+-`DEM 499 <https://github.com/HEPCloud/decisionengine_modules/pull/499>`_: Two dashboards for cores, slots, and runtimes  (@IlyaBaburashvili)
+-`DEM 503 <https://github.com/HEPCloud/decisionengine_modules/pull/503>`_: In Jenkins pipeline config use podman instead of docker  (@vitodb)
+-`DEM 502 <https://github.com/HEPCloud/decisionengine_modules/pull/502>`_: add new method of determining token expiration instead of relying on jwt.decode error code  (@StevenCTimm)
+-`DEM 507 <https://github.com/HEPCloud/decisionengine_modules/pull/507>`_: Refactor time_left in security module  (@BrunoCoimbra)
+-`DEM 505 <https://github.com/HEPCloud/decisionengine_modules/pull/505>`_: Migrating GCE Billing to BigQuery based Bill Calculations  (@namrathaurs)
+-`DEM 506 <https://github.com/HEPCloud/decisionengine_modules/pull/506>`_: DEConfigSource converts nested dicts to OrderedDicts  (@BrunoCoimbra)
+-`DEM 510 <https://github.com/HEPCloud/decisionengine_modules/pull/510>`_: Add retry functionality to NerscSFApi  (@vitodb)
+-`DEM 511 <https://github.com/HEPCloud/decisionengine_modules/pull/511>`_: Packaging with uv and pyproject.toml  (@mambelli)
+-`DEM 512 <https://github.com/HEPCloud/decisionengine_modules/pull/512>`_: Added codespell in pre-commit and fixed files to compliance  (@mambelli)
+
+Full list of commits since version 2.0.2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`c481f85 <https://github.com/HEPCloud/decisionengine_modules/commit/c481f85a5c6a00a5bebeb94bb46c9d69658c5243>`_:   Added codespell in pre-commit and fixed files to compliance
+
+`3bf56ab <https://github.com/HEPCloud/decisionengine_modules/commit/3bf56ab88fc81bacdb4b129e5a08f38ee2ea5408>`_:   Packaging with uv and pyproject.toml
+
+`5577e9e <https://github.com/HEPCloud/decisionengine_modules/commit/5577e9e6958f01f32f20c124be20fb57c42473fc>`_:   [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+`230627f <https://github.com/HEPCloud/decisionengine_modules/commit/230627f4bf1bf5ebe1ac051f78c0d664613d1069>`_:   Add retry functionality to NerscSFApi
+
+`b820998 <https://github.com/HEPCloud/decisionengine_modules/commit/b820998100bb925bfe5da231e9d80138834a4d82>`_:   DEConfigSource converts nested dicts to OrderedDicts
+
+`8e78900 <https://github.com/HEPCloud/decisionengine_modules/commit/8e7890023da02c977be13b11a3a9aa1e0d7b8fd8>`_:   [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+`a85edeb <https://github.com/HEPCloud/decisionengine_modules/commit/a85edeb7b2f622eaf32915613200558eb15c41fa>`_:   migrating to using bigquery for GCE billing
+
+`c4d0bc1 <https://github.com/HEPCloud/decisionengine_modules/commit/c4d0bc195e4da960f745b84c379388f2232224a2>`_:   Refactor time_left in security module
+
+`a42d3bd <https://github.com/HEPCloud/decisionengine_modules/commit/a42d3bd37468bd0a103b32fff5e2061fb069431e>`_:   [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+`5305f59 <https://github.com/HEPCloud/decisionengine_modules/commit/5305f59739ddc8ad6c4ffc06b72c664539f5c7ae>`_:   remove the extraneous print statements
+
+`b57507b <https://github.com/HEPCloud/decisionengine_modules/commit/b57507bcae4e69eda7841ce4760dd538d79553ce>`_:    changing the way that the NERSC SFApi access token expiration is calculated to not rely on jwt.decode() exit value
+
+`c500a73 <https://github.com/HEPCloud/decisionengine_modules/commit/c500a73c38189ae14e0d2a127463a91f09e8c4ea>`_:   In Jenkins pipeline config use podman instead of docker
+
+`aa975b8 <https://github.com/HEPCloud/decisionengine_modules/commit/aa975b8f7751867636e0402dc0aaa25d0096515a>`_:   Added dashboards  for cores, slots, and runtimes
+
+`af1003b <https://github.com/HEPCloud/decisionengine_modules/commit/af1003b7eda33e0950770c7b28741d1948eacc60>`_:   New Figure of Merit Metric (#496)
+
+`fb4c3f9 <https://github.com/HEPCloud/decisionengine_modules/commit/fb4c3f9033d48670b7e5129c2478ccfc0d28fd69>`_:   Remove extra line from dep5
+
+`63adb86 <https://github.com/HEPCloud/decisionengine_modules/commit/63adb86a218c027e3385988d584094392ed17d4e>`_:   Add unit tests for metrics, fix issue in source.py
+
+`4f590a6 <https://github.com/HEPCloud/decisionengine_modules/commit/4f590a6c0f06b6afb264891d4d0e16de89ce968b>`_:   Fixed commit history
+
+`21ac8c4 <https://github.com/HEPCloud/decisionengine_modules/commit/21ac8c4c8983a36184e3b8b4a52781da1ae78b0e>`_:   Remove include Histogram
+
+`aae8638 <https://github.com/HEPCloud/decisionengine_modules/commit/aae8638b709f0572036239b7e4ed4fe6396a0fe6>`_:   Remove debugging statements
+
+`b673c4a <https://github.com/HEPCloud/decisionengine_modules/commit/b673c4ae1e91bb62883071e9133fc37ee0b9e441>`_:   Fix PR 489
+
+`7601451 <https://github.com/HEPCloud/decisionengine_modules/commit/7601451fa3788240f0208fbbfac4ad801ba520ec>`_:   For flake8 skip build folder
+
+`9980e3a <https://github.com/HEPCloud/decisionengine_modules/commit/9980e3a6974d2339c8412c83868596ab17a5ec1c>`_:   Make the test flake8 compliant
+
+`85e6487 <https://github.com/HEPCloud/decisionengine_modules/commit/85e6487b9232c93305478d05b366e084dc5de087>`_:   Do not test external dependencies
+
+`8a07b0e <https://github.com/HEPCloud/decisionengine_modules/commit/8a07b0e52a2a3acf21846fc3e08d8b98c8e95894>`_:   Add licence info to flake8 config file
+
+`97f6f63 <https://github.com/HEPCloud/decisionengine_modules/commit/97f6f63d1ad8d816d66abacab3b43902c8ac6a0b>`_:   Re-enable flak8 linter
+
+`a28c97d <https://github.com/HEPCloud/decisionengine_modules/commit/a28c97d50f13e3cb8019f7389442860fc93de71c>`_:   Update test_configure_gwms_frontend.py
+
+`01c9c40 <https://github.com/HEPCloud/decisionengine_modules/commit/01c9c40dad52856d009c95ece1531a0652e8ba19>`_:   Fix configure_gwms_frontend tests
+
+`5eb2f2b <https://github.com/HEPCloud/decisionengine_modules/commit/5eb2f2b6a6a7d8b9aa0dd4588914cf036aa43208>`_:   Fix a typo in glideids_to_advertise
+
+`cb19a5b <https://github.com/HEPCloud/decisionengine_modules/commit/cb19a5b7ea7edc8ea7bfdccad63f61a4658bf04b>`_:   Fix glideclient advertisement logic
+
+`9c1f8e5 <https://github.com/HEPCloud/decisionengine_modules/commit/9c1f8e5bc038d7990f77fe3eda9c2f0f25676e22>`_:   Added json files on Channel and Source Data dashboards with specific naming
+
+`ea00e39 <https://github.com/HEPCloud/decisionengine_modules/commit/ea00e39904a53e57d5a4e8506cadbe7b583385c1>`_:   Adding license information for dashboard files because JSON does not allow comments
+
+`c11a7e2 <https://github.com/HEPCloud/decisionengine_modules/commit/c11a7e247d5678cd7c438a40e1f44f1c36b71f4b>`_:   [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+`92b72b6 <https://github.com/HEPCloud/decisionengine_modules/commit/92b72b6cb88d95e79f9f6dd84fea5e010553bbc5>`_:   Refactor config source for configure_gwms_frontend
+
+`02ab367 <https://github.com/HEPCloud/decisionengine_modules/commit/02ab367c1e2484114b07c2e7bf59752edbfa6333>`_:   Adding one line
+
+`32d6114 <https://github.com/HEPCloud/decisionengine_modules/commit/32d6114e1aa277022316e2eeec63530716548f23>`_:   Added directory for Grafana dashboards
+
+`5a5fb8b <https://github.com/HEPCloud/decisionengine_modules/commit/5a5fb8b80b866ef563f4b9ac38a685f8f36bf6c5>`_:   Adding Jenkinsfile for EL9
+
+`aa59c49 <https://github.com/HEPCloud/decisionengine_modules/commit/aa59c4979036c35a52c7a922445fc746ae62c017>`_:   required jwt functionalities are provided by PyJWT
+
+`2df1fc5 <https://github.com/HEPCloud/decisionengine_modules/commit/2df1fc5565c78642e0ce68430d30dc3508049ab4>`_:   Updated documentation for 1.7.5 release
+
+`cf81d56 <https://github.com/HEPCloud/decisionengine_modules/commit/cf81d562a25fa93eff66cd45b4e594b28017f6c8>`_:   Last update to setup.py
+
+`8bc6d24 <https://github.com/HEPCloud/decisionengine_modules/commit/8bc6d24aad1775966fc9e262e4b96b051a4f6e16>`_:   Last update to add KeyError
+
+`85604ef <https://github.com/HEPCloud/decisionengine_modules/commit/85604ef8ce2f3ac30911050dde2cd8c7a656cfd2>`_:   Removed remaining hardcoded strings from the code
+
+`8117652 <https://github.com/HEPCloud/decisionengine_modules/commit/811765255d057f51142b0f5349b3641f4529d952>`_:   Implementing Marco requests in the review
+
+`1d59d49 <https://github.com/HEPCloud/decisionengine_modules/commit/1d59d49a4169791189dd1a7e334cd3a46c30b328>`_:   Fixed pre-commit issues and jwt package
+
+`b107c06 <https://github.com/HEPCloud/decisionengine_modules/commit/b107c06e2ac4e95c8a04b3beb04c22b450090ea9>`_:   New Nersc Source Module using SuperFacilityApi
+
+`e917838 <https://github.com/HEPCloud/decisionengine_modules/commit/e9178383a118d193377615c0cda7d0bb05057068>`_:   Adding DE modules EL9 CI container based on AlmaLinux9
+
+`a5a2bae <https://github.com/HEPCloud/decisionengine_modules/commit/a5a2bae93473227283f9c69bec7f1fa81a560bb0>`_:   Update GH actions
+
+`bdb70b0 <https://github.com/HEPCloud/decisionengine_modules/commit/bdb70b061826998a9a6d47424100655c7932a3a3>`_:   Enable some GH actions only on DE 1.7 branch
+
+`6a22f44 <https://github.com/HEPCloud/decisionengine_modules/commit/6a22f44f2627301771822a83970a983642b9c3fa>`_:   Update runtime and devel python module versions in setup.py
+
+`842fdc9 <https://github.com/HEPCloud/decisionengine_modules/commit/842fdc91a31879084906d71a7d0c317e5035a925>`_:   CONTINUE_IF_NO_PROXY True by default
+
+`8906538 <https://github.com/HEPCloud/decisionengine_modules/commit/8906538884a2e49dd867ce2ebca28e5e7ebb95c9>`_:   added changes to make CONTINUE_IF_NO_PROXY configurable
+
+`5a7bc0d <https://github.com/HEPCloud/decisionengine_modules/commit/5a7bc0dc61909ac97ea90d96de3304f05a8e8f9c>`_:   Fixed Google dependency to work fine in Python 3.9. Install via PIP succeeds
+
+`d315736 <https://github.com/HEPCloud/decisionengine_modules/commit/d3157368ff21df34ae012794bccbb0caa3dded41>`_:   With pandas 2.x DataFrame.append() has been deprecated, use pandas.concat() instead
+
+`0484401 <https://github.com/HEPCloud/decisionengine_modules/commit/0484401ef61ced5f1a8b37a1200c9e84b60aad7a>`_:   Address a pandas deprecation warning: FutureWarning: Calling float on a single element Series is deprecated and will raise a TypeError in the future. Use float(set.iloc[0]) instead. The warning is due to glidein_cpus that is a single element series.
+
+`07292a4 <https://github.com/HEPCloud/decisionengine_modules/commit/07292a4ffd8f48e75685bd3d957b0ff9c8bc7b79>`_:   updated as per second round of review comments
+
+`947e9b8 <https://github.com/HEPCloud/decisionengine_modules/commit/947e9b8f3590244fd29185b109fb4ddc1711012c>`_:   updated as per PR review comments
+
+`e3608a0 <https://github.com/HEPCloud/decisionengine_modules/commit/e3608a0ad648157df43097b8e8fe6eaab227cd6e>`_:   fixes for python 3.6 and 3.9 unit tests failing in the CI workflow
+
+`d8de2da <https://github.com/HEPCloud/decisionengine_modules/commit/d8de2dadaa8dfc8662cd8d4c44d6ab91378f0a34>`_:   updated as per PR#461 comment
+
+`e6044f7 <https://github.com/HEPCloud/decisionengine_modules/commit/e6044f7603dcbdfa3c6c3ea82d05ce29329b39e3>`_:   removed escaping of quotes to conform with new API behavior
+
+`4a59acc <https://github.com/HEPCloud/decisionengine_modules/commit/4a59accdd405e1c93c23e097318913e8f12a4a26>`_:   Upgrading isort version to fix install error w/ poetry
+
+`7b96d46 <https://github.com/HEPCloud/decisionengine_modules/commit/7b96d46023ef714642441889701d2aa0c4221873>`_:   Started to add startd_manifests (glidein) metrics (TotalCpus, TotalSlotCpus, TotalSlots)
+
+`2ab707f <https://github.com/HEPCloud/decisionengine_modules/commit/2ab707f1634bd9d1ee1c4299cb5f555aad7e7408>`_:   Started moving metrics into global dict
+
+`58e62a4 <https://github.com/HEPCloud/decisionengine_modules/commit/58e62a4e9bd52d7a72cde8efefd93ded9defe796>`_:   Added Number_of_jobs metric.
+
+`5a8a641 <https://github.com/HEPCloud/decisionengine_modules/commit/5a8a64117ab10b0fe6cb6b69c918edc2775c7284>`_:   Added license info
+
+
+Release 2.0.3
+-------------
+
+Release tag skipped
+
 Release 2.0.2
 -------------
 
@@ -177,7 +356,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
 
 `9044b64 <https://github.com/HEPCloud/decisionengine_modules/commit/9044b64d3dc813e9eabc36d04c125392f2efecb9>`_:   Add token authentication to the glideinwms module
 
-`97ca32a <https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a>`_:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires pytohn 3.7
+`97ca32a <https://github.com/HEPCloud/decisionengine_modules/commit/97ca32ad84d26b9059f6eda8988c8ddd80a0466a>`_:   Modified pre-commit bot suggestions. Avoid pyupgrade that requires python 3.7
 
 `95a7d7b <https://github.com/HEPCloud/decisionengine_modules/commit/95a7d7b8835776da4ed16a3a6268da96cabe74e6>`_:   Test the arguments used to call publish_to_htcondor.
 
@@ -219,7 +398,7 @@ chanism. This allows to trigger this action through a GitHub API or directly thr
 
 `d57ac6e <https://github.com/HEPCloud/decisionengine_modules/commit/d57ac6ee7376191f482fd0bebe14f013b8e16e79>`_:   Set Apache 2.0 license and added REUSE compliance
 
-`cf43119 <https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71>`_:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarly downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.
+`cf43119 <https://github.com/HEPCloud/decisionengine_modules/commit/cf4311949d3c5fd991d1c5c4a6a190ba53a2eb71>`_:   Set fail-fast to false to allow py3.6 tests to complete also when higher version fail. Temporarily downgraded from py3.10 to py3.9 because the condor dependency is not available yet for py3.10.
 
 `e2707e5 <https://github.com/HEPCloud/decisionengine_modules/commit/e2707e589142d40afdc5716fd4c4d6c9a38bc64e>`_:   Ignoring E203, whitespace after ':', since black is adding the whitespace
 
