@@ -16,17 +16,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code tree
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.9"
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -53,8 +53,9 @@ jobs:
         run: |
           sudo apt-get update || true
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
-          sudo python3 -m pip install -U pip
-          sudo python3 -m pip install sphinx
+          # Installing sphinx as user, not root. Protecting from pip upgrade failure.
+          python3 -m pip install -U pip || true
+          python3 -m pip install sphinx
 
       - name: Install required modules for AST to parse the codebase
         run: |
