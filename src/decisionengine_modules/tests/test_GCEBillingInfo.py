@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pandas
-import structlog
-
-from bill_calculator_hep.GCEBillAnalysis import GCEBillCalculator
 
 from decisionengine_modules.GCE.sources import GCEBillingInfo
 
