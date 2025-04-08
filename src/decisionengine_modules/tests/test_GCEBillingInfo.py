@@ -168,7 +168,7 @@ def test_unable_to_auth_to_bqclient(
         )
 
         with pytest.raises(DefaultCredentialsError) as e_msg:
-            _ = calculator.calculateBill()
+            _ = calculator.calculate_bill()
         # since DefaultCredentialsError leads to ValueError (as part of exception chaining); `__cause__` attribute holds the chained exception
         err = e_msg.value
         assert err.__cause__ is not None
@@ -187,13 +187,13 @@ def test_unable_to_auth_to_bqclient(
         )
 
         with pytest.raises(RefreshError) as e_msg:
-            _ = calculator.calculateBill()
+            _ = calculator.calculate_bill()
         assert e_msg.value.args[1]["error"] == "invalid_grant"
         assert e_msg.value.args[1]["error_description"] == "Invalid grant: account not found"
 
 
 def test_cost_subtotals(example_constants, example_global_config, expected_cost_subtotals, monkeypatch):
-    def mock_costQueryData(self, bqc, tst_query, cost_query=True):
+    def mock_cost_query_data(self, bqc, tst_query, cost_query=True):
         mock_data = {
             "service1": {
                 "sku1": {"rawCost": 11.344769, "rawCredits": -2.0000},
@@ -208,7 +208,7 @@ def test_cost_subtotals(example_constants, example_global_config, expected_cost_
         return mock_data, "rawCost"
 
     monkeypatch.setattr(
-        bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator, "queryCloudBillingData", mock_costQueryData
+        bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator, "query_cloud_billing_data", mock_cost_query_data
     )
 
     tst_calculator = bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator(
@@ -218,12 +218,12 @@ def test_cost_subtotals(example_constants, example_global_config, expected_cost_
     mock_bqclient = MagicMock()
     monkeypatch.setattr("google.cloud.bigquery.client.Client", mock_bqclient)
     dummy_query = "SELECT * FROM TABLE"
-    cost_subtotals = tst_calculator.calculateSubTotals(mock_bqclient, dummy_query, cost_query=True)
+    cost_subtotals = tst_calculator.calculate_sub_totals(mock_bqclient, dummy_query, cost_query=True)
     assert cost_subtotals == expected_cost_subtotals
 
 
 def test_adjustments_subtotals(example_constants, example_global_config, expected_adjustments_subtotals, monkeypatch):
-    def mock_adjQueryData(self, bqc, tst_query):
+    def mock_adj_query_data(self, bqc, tst_query):
         mock_data = {
             "service1": {"sku2": {"rawAdjustments": 0.0, "rawCredits": 0.0}},
             "service2": {
@@ -234,7 +234,7 @@ def test_adjustments_subtotals(example_constants, example_global_config, expecte
         return mock_data, "rawAdjustments"
 
     monkeypatch.setattr(
-        bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator, "queryCloudBillingData", mock_adjQueryData
+        bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator, "query_cloud_billing_data", mock_adj_query_data
     )
 
     tst_calculator = bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator(
@@ -244,7 +244,7 @@ def test_adjustments_subtotals(example_constants, example_global_config, expecte
     mock_bqclient = MagicMock()
     monkeypatch.setattr("google.cloud.bigquery.client.Client", mock_bqclient)
     dummy_query = "SELECT * FROM TABLE"
-    adjustments_subtotals = tst_calculator.calculateSubTotals(mock_bqclient, dummy_query)
+    adjustments_subtotals = tst_calculator.calculate_sub_totals(mock_bqclient, dummy_query)
     assert adjustments_subtotals == expected_adjustments_subtotals
 
 
@@ -267,8 +267,8 @@ def test_bill_calculation(
     # the same method is called twice in the actual execution flow and returns different results depending on whether the cost_query flag is set. the mocked behavior is achieved using side effect as shown below.
     with patch.object(
         bill_calculator_hep.GCEBillAnalysis.GCEBillCalculator,
-        "calculateSubTotals",
+        "calculate_sub_totals",
         side_effect=[expected_cost_subtotals, expected_adjustments_subtotals],
     ) as _:
-        tst_bill_summary = tst_calculator.calculateBill()
+        tst_bill_summary = tst_calculator.calculate_bill()
         assert_frame_equal(tst_bill_summary, expected_bill_summary)

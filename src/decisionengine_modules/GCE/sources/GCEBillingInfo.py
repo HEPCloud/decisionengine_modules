@@ -50,7 +50,7 @@ class GCEBillingInfo(Source.Source):
         try:
             calculator = GCEBillCalculator(None, globalConf, constantsDict, self.logger)
 
-            bill_summary = calculator.calculateBill()
+            bill_summary = calculator.calculate_bill()
 
             self.logger.info("Calculated corrected bill summary for Google (using BigQuery)")
             self.logger.debug(bill_summary)
