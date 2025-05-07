@@ -32,7 +32,7 @@ runtime_require = [
     "structlog >= 21.1.0",
     "requests >= 2.14.2",
     "urllib3 >= 1.26.2",
-    "bill-calculator-hep >= 0.2.2",
+    "bill-calculator-hep >= 0.2.3",
     "numpy >= 1.19.5, < 2.0.0; python_version >= '3.7'",
     "pandas >= 1.5.3, < 2.0.0; python_version >= '3.7'",
     "qcs-api-client >= 0.21.1; python_version >= '3.7'",
