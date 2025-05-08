@@ -1,6 +1,28 @@
 .. SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 .. SPDX-License-Identifier: Apache-2.0
 
+Release 2.0.6
+-------------
+
+Improved separation and compatibility with GlideinWMS Frontend package.
+Improved GCE billing and set hep-bill-calculator to 0.2.3.
+
+Issues fixed in this release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-`DEM 513 <https://github.com/HEPCloud/decisionengine_modules/pull/513>`_: Updated documentation for release 2.0.4
+-`DEM 516 <https://github.com/HEPCloud/decisionengine_modules/pull/516>`_: Refactor Existing Test Script and Add New Unit Tests for GCE Billing
+
+Full list of commits since version 2.0.4
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`46bfc52 <https://github.com/HEPCloud/decisionengine_modules/commit/46bfc52e160342e32a203a274a5d156b7dd40f40>`_:   Refactor Existing Test Script and Add New Unit Tests for GCE Billing (#516)
+
+`b7accf0 <https://github.com/HEPCloud/decisionengine_modules/commit/b7accf04ed6e29338662d6f70b9a414cff2e1acf>`_:   Updated setuptools in  gh-pages workflow
+
+`993e380 <https://github.com/HEPCloud/decisionengine_modules/commit/993e380a7f3860481878769d2f93c8c3e13ec763>`_:   Update gh-pages workflow and install sphinx as user, not as root
+
+
 Release 2.0.4
 -------------
 
