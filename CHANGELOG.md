@@ -3,16 +3,15 @@ SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 SPDX-License-Identifier: Apache-2.0
 -->
 
-# GlideinWMS Changelog
+# Decision Engine Modules v2.0.6 \[2025-05-07\]
 
-Developers updated changelog. For curated release notes see doc/source/release_notes
+Fixed GCE billing.
 
 ## Changes Since Last Release
 
 ### New features / functionalities
 
-- item one of the list
-- item N
+- Improved compatibility and separation with GlideinWMS Frontend
 
 ### Changed defaults / behaviours
 
@@ -21,6 +20,8 @@ Developers updated changelog. For curated release notes see doc/source/release_n
 ### Security Related Fixes
 
 ### Bug Fixes
+
+- Improved GCE Billing and added unit tests (PR #516)
 
 ### Testing / Development
 
