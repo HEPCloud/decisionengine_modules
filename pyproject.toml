@@ -3,7 +3,7 @@ requires = ["setuptools>=72.1", "wheel", "setuptools_scm[toml]>=6.3.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "decisionengine-modules"
+name = "hepcloud-de-modules"
 dynamic = ["version"]
 readme = "README.md"
 license = {text ="Apache-2.0"}
@@ -16,7 +16,7 @@ dependencies = [
     "bill-calculator-hep >= 0.2.3",
     "boto3 >= 1.17.10",
     "cryptography",
-    #"decisionengine >= 2.0",
+    #"hepcloud-de >= 2.0",
     "gcs-oauth2-boto-plugin >= 2.7",
     "google-api-python-client >= 1.12.8",
     "google_auth >= 1.16.0",
@@ -50,7 +50,7 @@ develop = [
     "wheel >= 0.36.2",
 ]
 production = [
-    "decisionengine >= 2.0",
+    "hepcloud-de >= 2.0.0",
 ]
 
 [project.urls]
