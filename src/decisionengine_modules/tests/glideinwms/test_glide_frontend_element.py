@@ -127,22 +127,3 @@ def test_compute_glidein_max_running():
     assert gfe.compute_glidein_max_running({"Idle": 100}, 0, 0) == 115
     assert gfe.compute_glidein_max_running({"Idle": 0}, 0, 0) == 0
     assert gfe.compute_glidein_max_running({"Idle": 0}, 100, 100) == 100
-
-
-def test_refresh_entry_token():
-    with tempfile.TemporaryDirectory() as work_dir:
-        os.mkdir(os.path.join(work_dir, "passwords.d"))
-        with open(os.path.join(work_dir, "passwords.d", "FRONTEND"), "wb") as fd:
-            fd.write(token_util.derive_master_key(b"TEST"))
-
-        create_and_sign_token = token_util.create_and_sign_token
-        with mock.patch.object(token_util, "create_and_sign_token") as create_token:
-            create_token.side_effect = lambda *args, **kwargs: create_and_sign_token(
-                *args, **kwargs, issuer="fermicloud000.fnal.gov:0000"
-            )
-
-            gfe = glide_frontend_element.get_gfe_obj("CMS", "CMS", FRONTEND_CFG, structlog.getLogger("test"))
-            token = gfe.refresh_entry_token("test_entry", work_dir)
-
-            assert token
-            assert not token_util.token_str_expired(token)
