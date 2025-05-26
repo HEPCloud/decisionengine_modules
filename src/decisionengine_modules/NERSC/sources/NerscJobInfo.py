@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: 2017 Fermi Research Alliance, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-""" Get job info from Nersc
-"""
+"""Get job info from Nersc"""
 import pandas as pd
 
 from decisionengine.framework.modules import Source

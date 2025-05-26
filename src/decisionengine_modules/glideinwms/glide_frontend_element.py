@@ -520,9 +520,9 @@ class GlideFrontendElement:
             my_name = f"{self.frontend_name}.{self.fe_group}"
             gc_classad = classads.GlideClientClassad(glidein_name, my_name)
             # Make the classad name unique by adding credential id to it
-            gc_classad.adParams[
-                "Name"
-            ] = f"{self.file_id_cache.file_id(cred, cred.filename)}_{gc_classad.adParams['Name']}"
+            gc_classad.adParams["Name"] = (
+                f"{self.file_id_cache.file_id(cred, cred.filename)}_{gc_classad.adParams['Name']}"
+            )
             gc_classad.adParams["CollectorHost"] = factory_pool
             gc_classad.adParams["FrontendName"] = self.frontend_name
             gc_classad.adParams["GroupName"] = self.fe_group
@@ -670,7 +670,7 @@ class GlideFrontendElement:
         }
         for cred in credentials:
             if cred.advertise:
-                for (fname, data) in cred.loaded_data:
+                for fname, data in cred.loaded_data:
                     classad_attrs_to_encrypt[cred.file_id(fname)] = data
                     if hasattr(cred, "security_class"):
                         # Convert security_class to string for factory
@@ -946,7 +946,7 @@ class GlideFrontendElement:
             # Get group of jobs based on request cpus
             job_groups = jobs.groupby("RequestCpus")
 
-            for (req_cpus, group) in job_groups:
+            for req_cpus, group in job_groups:
                 # Group jobs by matching criteria: RequestCpus for now
                 # We care about job counts for each group
                 job_count = len(group)
@@ -1073,13 +1073,13 @@ class GlideFrontendElement:
 
         # Identify the limits triggered for advertising in glideresource
         if count_status["Total"] >= self.entry_max_glideins:  # max_running
-            limits_triggered[
-                "TotalGlideinsPerEntry"
-            ] = f"count={count_status['Total']}, limit={self.entry_max_glideins,}"
+            limits_triggered["TotalGlideinsPerEntry"] = (
+                f"count={count_status['Total']}, limit={self.entry_max_glideins,}"
+            )
         if count_status["Idle"] >= self.entry_max_slots_idle:  # max_vms_idle
-            limits_triggered[
-                "IdleGlideinsPerEntry"
-            ] = f"count={count_status['Idle']}, limit={self.entry_max_slots_idle}"
+            limits_triggered["IdleGlideinsPerEntry"] = (
+                f"count={count_status['Idle']}, limit={self.entry_max_slots_idle}"
+            )
         if total_glideins >= self.total_max_slots:  # was total_max_glideins
             limits_triggered["TotalGlideinsPerGroup"] = f"count={total_glideins}, limit={self.total_max_slots}"
         if total_idle_glideins >= self.total_max_slots_idle:  # was total_max_vms_idle
@@ -1087,17 +1087,17 @@ class GlideFrontendElement:
         if fe_total_glideins >= self.fe_total_max_slots:  # fe_total_max_glideins
             limits_triggered["TotalGlideinsPerFrontend"] = f"count={fe_total_glideins}, limit={self.fe_total_max_slots}"
         if fe_total_idle_glideins >= self.fe_total_max_slots_idle:  # fe_total_max_vms_idle
-            limits_triggered[
-                "IdleGlideinsPerFrontend"
-            ] = f"count={fe_total_idle_glideins}, limit={self.fe_total_max_slots_idle}"
+            limits_triggered["IdleGlideinsPerFrontend"] = (
+                f"count={fe_total_idle_glideins}, limit={self.fe_total_max_slots_idle}"
+            )
         if global_total_glideins >= self.global_total_max_slots:  # global_total_max_glideins
-            limits_triggered[
-                "TotalGlideinsGlobal"
-            ] = f"count={global_total_glideins}, limit={self.global_total_max_slots}"
+            limits_triggered["TotalGlideinsGlobal"] = (
+                f"count={global_total_glideins}, limit={self.global_total_max_slots}"
+            )
         if global_total_idle_glideins >= self.global_total_max_slots_idle:  # global_total_max_vms_idle
-            limits_triggered[
-                "IdleGlideinsGlobal"
-            ] = f"count={global_total_idle_glideins}, limit={self.global_total_max_slots_idle}"
+            limits_triggered["IdleGlideinsGlobal"] = (
+                f"count={global_total_idle_glideins}, limit={self.global_total_max_slots_idle}"
+            )
 
     def compute_glidein_min_idle(
         self,
@@ -1178,37 +1178,37 @@ class GlideFrontendElement:
 
             if count_status["Idle"] >= self.entry_curb_slots_idle:
                 glidein_min_idle /= 2  # above first threshold, reduce
-                limits_triggered[
-                    "CurbIdleGlideinsPerEntry"
-                ] = f"count={count_status['Idle']}, curb={self.entry_curb_slots_idle,}"
+                limits_triggered["CurbIdleGlideinsPerEntry"] = (
+                    f"count={count_status['Idle']}, curb={self.entry_curb_slots_idle,}"
+                )
             if total_glideins >= self.total_curb_slots:
                 glidein_min_idle /= 2  # above global threshold, reduce further
                 limits_triggered["CurbTotalGlideinsPerGroup"] = f"count={total_glideins}, curb={self.total_curb_slots}"
             if total_idle_glideins >= self.total_curb_slots_idle:
                 glidein_min_idle /= 2  # above global threshold, reduce further
-                limits_triggered[
-                    "CurbIdleGlideinsPerGroup"
-                ] = f"count={total_idle_glideins}, curb={self.total_curb_slots_idle}"
+                limits_triggered["CurbIdleGlideinsPerGroup"] = (
+                    f"count={total_idle_glideins}, curb={self.total_curb_slots_idle}"
+                )
             if fe_total_glideins >= self.fe_total_curb_slots:
                 glidein_min_idle /= 2  # above global threshold, reduce further
-                limits_triggered[
-                    "CurbTotalGlideinsPerFrontend"
-                ] = f"count={fe_total_glideins}, curb={self.fe_total_curb_slots}"
+                limits_triggered["CurbTotalGlideinsPerFrontend"] = (
+                    f"count={fe_total_glideins}, curb={self.fe_total_curb_slots}"
+                )
             if fe_total_idle_glideins >= self.fe_total_curb_slots_idle:
                 glidein_min_idle /= 2  # above global threshold, reduce further
-                limits_triggered[
-                    "CurbIdleGlideinsPerFrontend"
-                ] = f"count={fe_total_idle_glideins}, curb={self.fe_total_curb_slots_idle}"
+                limits_triggered["CurbIdleGlideinsPerFrontend"] = (
+                    f"count={fe_total_idle_glideins}, curb={self.fe_total_curb_slots_idle}"
+                )
             if global_total_glideins >= self.global_total_curb_slots:
                 glidein_min_idle /= 2  # above global threshold, reduce further
-                limits_triggered[
-                    "CurbTotalGlideinsGlobal"
-                ] = f"count={global_total_glideins}, curb={self.global_total_curb_slots}"
+                limits_triggered["CurbTotalGlideinsGlobal"] = (
+                    f"count={global_total_glideins}, curb={self.global_total_curb_slots}"
+                )
             if global_total_idle_glideins >= self.global_total_curb_slots_idle:
                 glidein_min_idle /= 2  # above global threshold, reduce further
-                limits_triggered[
-                    "CurbIdleGlideinsGlobal"
-                ] = f"count={global_total_idle_glideins}, curb={self.global_total_curb_slots_idle}"
+                limits_triggered["CurbIdleGlideinsGlobal"] = (
+                    f"count={global_total_idle_glideins}, curb={self.global_total_curb_slots_idle}"
+                )
 
             if glidein_min_idle < 1:
                 glidein_min_idle = 1
@@ -1809,7 +1809,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
 
             dbg_info.append(f"{len(job_groups)} job groups")
 
-            for (req_cpus, job_group) in job_groups:
+            for req_cpus, job_group in job_groups:
                 # Group jobs by matching criteria: RequestCpus for now
                 # We only care about job counts for each group
                 job_count = len(job_group)
@@ -1913,7 +1913,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
             # Get group of jobs based on request cpus
             job_groups = jobs.groupby("RequestCpus")
 
-            for (req_cpus, job_group) in job_groups:
+            for req_cpus, job_group in job_groups:
                 # Group jobs by matching criteria: RequestCpus for now
                 # We care about job counts for each group
                 job_count = len(job_group)
@@ -1950,7 +1950,7 @@ class GlideFrontendElementFOM(GlideFrontendElement):
                     # Start with entries with lowest FOM and fill them first
                     job_count_matched = 0
 
-                    for (_fom, fom_group_entries) in fom_matches:
+                    for _fom, fom_group_entries in fom_matches:
                         job_count_unmatched = job_count - job_count_matched
                         if job_count_unmatched > 0:
                             # Distribute the jobs equally among this entry group
