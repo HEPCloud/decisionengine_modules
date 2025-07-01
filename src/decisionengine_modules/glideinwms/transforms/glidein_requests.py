@@ -32,15 +32,9 @@ METRICS = {
     "NAME_OF_GROUP": Gauge("de_group_manifests_groupname", "Name of grouup manifest"),
     "REQ_IDLE_GLIDEINS": Gauge("de_req_idle_glideins_total", "Requested minimum idle glideins", ["ce"]),
     "REQ_MAX_GLIDEINS": Gauge("de_req_max_glideins_total", "Requested max glideins", ["ce"]),
-    "TOTAL_SLOTS": Gauge(
-        "de_total_slots", "Total slots available", ["glidein_entry_name", "glidein_site"]
-    ),
-    "TOTAL_SLOT_CPUS": Gauge(
-        "de_total_slot_cpus", "Total cpu slots available", ["glidein_entry_name", "glidein_site"]
-    ),
-    "TOTAL_CPUS": Gauge(
-        "de_total_cpu", "Total CPU available", ["glidein_entry_name", "glidein_site"]
-    ),
+    "TOTAL_SLOTS": Gauge("de_total_slots", "Total slots available", ["glidein_entry_name", "glidein_site"]),
+    "TOTAL_SLOT_CPUS": Gauge("de_total_slot_cpus", "Total cpu slots available", ["glidein_entry_name", "glidein_site"]),
+    "TOTAL_CPUS": Gauge("de_total_cpu", "Total CPU available", ["glidein_entry_name", "glidein_site"]),
     # "MEMORY": Gauge("de_total_memory", "Allocated Memory"),
     # "STATE": Gauge("de_state_slot","State of Slot" ),
     # "ACTIVITY": Gauge("de_stard_manifest_activity", "activity of jobs"),
