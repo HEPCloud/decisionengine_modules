@@ -33,13 +33,13 @@ METRICS = {
     "REQ_IDLE_GLIDEINS": Gauge("de_req_idle_glideins_total", "Requested minimum idle glideins", ["ce"]),
     "REQ_MAX_GLIDEINS": Gauge("de_req_max_glideins_total", "Requested max glideins", ["ce"]),
     "TOTAL_SLOTS": Gauge(
-        "de_total_slots", "Total slots available", ["glidein_entry_name", "glidein_master_name", "glidein_site"]
+        "de_total_slots", "Total slots available", ["glidein_entry_name", "glidein_site"]
     ),
     "TOTAL_SLOT_CPUS": Gauge(
-        "de_total_slot_cpus", "Total cpu slots available", ["glidein_entry_name", "glidein_master_name", "glidein_site"]
+        "de_total_slot_cpus", "Total cpu slots available", ["glidein_entry_name", "glidein_site"]
     ),
     "TOTAL_CPUS": Gauge(
-        "de_total_cpu", "Total CPU available", ["glidein_entry_name", "glidein_master_name", "glidein_site"]
+        "de_total_cpu", "Total CPU available", ["glidein_entry_name", "glidein_site"]
     ),
     # "MEMORY": Gauge("de_total_memory", "Allocated Memory"),
     # "STATE": Gauge("de_state_slot","State of Slot" ),
@@ -142,17 +142,14 @@ class GlideinRequestManifests(Transform.Transform):
             for row in slots_df_rows:
                 METRICS["TOTAL_CPUS"].labels(
                     glidein_entry_name=row.GLIDEIN_Entry_Name,
-                    glidein_master_name=row.GLIDEIN_MASTER_NAME,
                     glidein_site=row.GLIDEIN_Site,
                 ).set(row.TotalCpus)
                 METRICS["TOTAL_SLOTS"].labels(
                     glidein_entry_name=row.GLIDEIN_Entry_Name,
-                    glidein_master_name=row.GLIDEIN_MASTER_NAME,
                     glidein_site=row.GLIDEIN_Site,
                 ).set(row.TotalSlots)
                 METRICS["TOTAL_SLOT_CPUS"].labels(
                     glidein_entry_name=row.GLIDEIN_Entry_Name,
-                    glidein_master_name=row.GLIDEIN_MASTER_NAME,
                     glidein_site=row.GLIDEIN_Site,
                 ).set(row.TotalSlotCpus)
 
