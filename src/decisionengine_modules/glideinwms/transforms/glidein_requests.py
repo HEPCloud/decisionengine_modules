@@ -203,8 +203,8 @@ class GlideinRequestManifests(Transform.Transform):
                     METRICS["REQ_MAX_GLIDEINS"].labels(ce).set(count)
 
                 manifests = self.merge_requests(manifests, group_manifests)
-        except Exception:
-            self.logger.exception("Error generating glidein requests")
+        except Exception as e:
+            self.logger.exception(f"Error generating glidein requests: {e}")
             raise
 
         return manifests
