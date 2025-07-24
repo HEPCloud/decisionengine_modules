@@ -15,7 +15,7 @@ from decisionengine.framework.modules.Publisher import Parameter
 from decisionengine_modules.util.retry_function import retry_wrapper
 
 DEFAULT_UPDATE_AD_COMMAND = "UPDATE_AD_GENERIC"
-DEFAULT_INVALIDATE_AD_COMMAND = "INVALIDATE_AD_GENERIC"
+DEFAULT_INVALIDATE_AD_COMMAND = "INVALIDATE_ADS_GENERIC"
 
 
 @Publisher.supports_config(
@@ -46,7 +46,11 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
         for collector_host in self.invalidate_ads_constraint:
             constraint = self.invalidate_ads_constraint[collector_host]
             if constraint:
-                ads = [{"MyType": "Query", "TargetType": self.classad_type, "Requirements": constraint}]
+                ad = classad.ClassAd()
+                ad.update(
+                    {"MyType": "Query", "TargetType": self.classad_type, "Requirements": classad.ExprTree(constraint)}
+                )
+                ads = [ad]
                 try:
                     self.logger.info(
                         f"Invalidating {self.classad_type} classads from collector_host {collector_host} with constraint {constraint}"
@@ -93,7 +97,7 @@ class HTCondorManifests(Publisher.Publisher, metaclass=abc.ABCMeta):
                 collector = htcondor.Collector()
             self.logger.info(f"Advertising {self.classad_type} classads to collector_host {collector_host}")
             collector.advertise(ads, update_ad_command, True)
-        except Exception:
+        except Exception as e:
             # TODO: We need to be more specific about the errors/exception
             #       For now just raise to get more info logged
             col = "default"
