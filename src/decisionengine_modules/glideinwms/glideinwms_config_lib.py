@@ -62,7 +62,7 @@ class FrontendConfiguration:
                 "global_total_max_vms_idle": int(self.group_descript[g].frontend_data["MaxIdleVMsTotalGlobal"]),
                 "global_total_curb_vms_idle": int(self.group_descript[g].frontend_data["CurbIdleVMsTotalGlobal"]),
                 "max_matchmakers": int(self.group_descript[g].element_data["MaxMatchmakers"]),
-                "proxies": self.group_descript[g].merged_data["Proxies"],
+                "Proxies": self.group_descript[g].merged_data["Proxies"],
                 "proxy_selection_plugin": self.group_descript[g].merged_data["ProxySelectionPlugin"],
                 "condor_config": self.group_descript[g].frontend_data["CondorConfig"],
                 "condor_mapfile": self.group_descript[g].element_data["MapFile"],
@@ -95,6 +95,11 @@ class FrontendConfiguration:
             "ProxyUpdateFrequency",
             "ProxyRemoteUsernames",
             "ProxyProjectIds",
+            "CredentialPurposes",
+            "CredentialContexts",
+            "CredentialCreationScripts",
+            "CredentialMinimumLifetime",
+            "Parameters",
         ]
 
         for attr in proxy_descript_attrs:
