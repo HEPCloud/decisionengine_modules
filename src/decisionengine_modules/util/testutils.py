@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 """
-    Utils to simplify testing
+Utils to simplify testing
 """
 import datetime  # noqa: F401
 
