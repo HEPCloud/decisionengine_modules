@@ -20,11 +20,11 @@ _CONSUMES = [
     "startd_manifests",
     "Grid_Figure_Of_Merit",
     "GCE_Figure_Of_Merit",
-#    "AWS_Figure_Of_Merit",
+    #    "AWS_Figure_Of_Merit",
     "Nersc_Figure_Of_Merit",
 ]
 
-#_SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
+# _SUPPORTED_ENTRY_TYPES = ["LCF", "AWS", "Grid", "GCE"]
 _SUPPORTED_ENTRY_TYPES = ["LCF", "Grid", "GCE"]
 
 METRICS = {
@@ -118,7 +118,7 @@ class GlideinRequestManifests(Transform.Transform):
             foms = {
                 "Grid_Figure_Of_Merit": self.Grid_Figure_Of_Merit(datablock),
                 "GCE_Figure_Of_Merit": self.GCE_Figure_Of_Merit(datablock),
-#                "AWS_Figure_Of_Merit": self.AWS_Figure_Of_Merit(datablock),
+                #                "AWS_Figure_Of_Merit": self.AWS_Figure_Of_Merit(datablock),
                 "Nersc_Figure_Of_Merit": self.Nersc_Figure_Of_Merit(datablock),
             }
             fom_entries = fom_eligible_resources(
