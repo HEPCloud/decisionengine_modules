@@ -1302,7 +1302,7 @@ class GlideFrontendElement:
             if tkn_age > one_hr and os.path.exists(pwd_file):
                 # TODO: scope, duration, identity  should be configurable
                 scope = "condor:/READ condor:/ADVERTISE_STARTD condor:/ADVERTISE_MASTER"
-                duration = 24 * one_hr
+                duration = 30 * 24 * one_hr  # Increased to 30 days per HEPCloud Ops request
                 identity = f"{glidein_site}@{socket.gethostname()}"
                 self.logger.debug("creating  token %s" % tkn_file)
                 self.logger.debug("pwd_flie= %s" % pwd_file)
