@@ -70,7 +70,7 @@ repos:
         additional_dependencies:
           - tomli
   - repo: "https://github.com/fsfe/reuse-tool"
-    rev: v0.14.0
+    rev: v5.0.2
     hooks:
       - id: reuse
         additional_dependencies:

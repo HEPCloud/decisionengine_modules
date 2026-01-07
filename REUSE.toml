@@ -1,0 +1,54 @@
+version = 1
+SPDX-PackageName = "decisionengine_modules"
+SPDX-PackageSupplier = "HEPCloud team <>"
+SPDX-PackageDownloadLocation = "https://github.com/HEPCloud/decisionengine_modules"
+
+[[annotations]]
+path = [
+  "src/**.jsonnet",
+  "src/**/readme",
+  "src/**.conf",
+  "src/**.fixture",
+  "src/**.fixture.json",
+  "src/**.csv",
+  "src/**/AWS/scratch",
+  "src/**/gce_limits_factory_entries.test",
+  "src/**/data/monitoring.json",
+  "src/**/data/passwd",
+  "src/**/data/expected_metric_values.json"
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Fermi Research Alliance, LLC"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+  ".codecov.yml",
+  ".codespell/ignore_lines.txt",
+  ".codespell/ignore_words.txt",
+  ".coveragerc",
+  ".editorconfig",
+  ".gitignore",
+  ".lgtm.yaml",
+  ".pep8speaks.yml",
+  ".pre-commit-config.yaml",
+  ".pylintrc",
+  "_config.yml",
+  "pyproject.toml",
+  "uv.lock"
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Fermi Research Alliance, LLC"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["package/rpm/**", "package/systemd/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Fermi Research Alliance, LLC"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "dashboards/**.json"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Fermi Research Alliance, LLC"
+SPDX-License-Identifier = "Apache-2.0"
