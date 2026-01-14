@@ -20,7 +20,7 @@ dependencies = [
     "gcs-oauth2-boto-plugin >= 2.7",
     "google-api-python-client >= 1.12.8",
     "google_auth >= 1.16.0",
-    "htcondor >= 9.0.0",
+    "htcondor >= 9.0.0, < 25.0.0",
     "numpy >= 1.19.5, < 2.0.0; python_version >= '3.7'",
     "pandas >= 1.5.3, < 2.0.0; python_version >= '3.7'",
     "pem",
