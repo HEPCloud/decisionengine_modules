@@ -12,6 +12,7 @@ Fixed GCE billing.
 ### New features / functionalities
 
 - Improved compatibility and separation with GlideinWMS Frontend
+- Added HTCondor v2 Python binding support (PR #526)
 
 ### Changed defaults / behaviours
 

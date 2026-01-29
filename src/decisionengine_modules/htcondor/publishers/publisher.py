@@ -6,13 +6,19 @@ import os
 
 from functools import partial
 
-import classad
-import htcondor
 import pandas
 
 from decisionengine.framework.modules import Publisher
 from decisionengine.framework.modules.Publisher import Parameter
 from decisionengine_modules.util.retry_function import retry_wrapper
+
+try:
+    import classad  # pylint: disable=import-error
+    import htcondor  # pylint: disable=import-error
+except ImportError:
+    import classad2 as classad  # pylint: disable=import-error
+    import htcondor2 as htcondor  # pylint: disable=import-error
+
 
 DEFAULT_UPDATE_AD_COMMAND = "UPDATE_AD_GENERIC"
 DEFAULT_INVALIDATE_AD_COMMAND = "INVALIDATE_ADS_GENERIC"
