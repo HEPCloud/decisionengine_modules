@@ -87,7 +87,7 @@ jobs:
           python3 -m pip install --upgrade pytest
           python3 -m pip install --user Cython
           python3 setup.py bdist_wheel
-          python3 -m pip install --user dist/decisionengine*.whl
+          python3 -m pip install --user dist/hepcloud_de*.whl
 
       - name: Install DE Modules dependencies (runtime)
         run: |

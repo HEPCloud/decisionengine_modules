@@ -80,7 +80,7 @@ jobs:
           python3 -m pip install --user Cython
           python3 -m pip install --user numpy
           python3 setup.py bdist_wheel
-          python3 -m pip install --user dist/decisionengine*.whl
+          python3 -m pip install --user dist/hepcloud_de*.whl
 
       - name: Install DE Modules dependencies
         run: |
@@ -166,7 +166,7 @@ jobs:
           python3 -m pip install --user Cython
           python3 -m pip install --user numpy
           python3 setup.py bdist_wheel
-          python3 -m pip install --user dist/decisionengine*.whl
+          python3 -m pip install --user dist/hepcloud_de*.whl
 
       - name: Install DE Modules dependencies
         run: |
