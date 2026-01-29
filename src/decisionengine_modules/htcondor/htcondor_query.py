@@ -8,7 +8,10 @@ import contextlib
 import os
 import sys
 
-import htcondor
+try:
+    import htcondor  # pylint: disable=import-error
+except ImportError:
+    import htcondor2 as htcondor  # pylint: disable=import-error
 
 
 class QueryError(RuntimeError):
