@@ -18,25 +18,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout DE Modules
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: decisionengine_modules
 
       - name: checkout DE Framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           # ref: master
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        # requiring hash, no version uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        uses: astral-sh/setup-uv
         with:
           enable-cache: true
 
@@ -46,7 +47,7 @@ jobs:
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -103,35 +104,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout DE Modules
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: decisionengine_modules
 
       - name: checkout DE Framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           # ref: master
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv
         with:
           enable-cache: true
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.9"
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -189,24 +190,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout DE Modules
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: decisionengine_modules
 
       - name: checkout DE Framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           # ref: master
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.9"
           architecture: "x64"
@@ -218,5 +219,5 @@ jobs:
     name: Run REUSE to check license compliance
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: fsfe/reuse-action@v5

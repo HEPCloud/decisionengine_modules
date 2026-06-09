@@ -79,8 +79,8 @@ rpm_require.extend(__base_pip_requires)
 #
 # Much of it comes out of decisionengine_modules.about.py
 setup(
-    setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm >= 6.3.1"],
-    python_requires=">3.7.0",
+    # setup_requires=["setuptools >= 51.2", "wheel >= 0.36.2", "setuptools_scm >= 6.3.1"],
+    python_requires=">3.9.0",
     name=about.__title__,
     long_description=long_description,
     long_description_content_type="text/markdown",
