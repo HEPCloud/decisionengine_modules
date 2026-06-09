@@ -20,7 +20,7 @@ dependencies = [
   "google_auth >= 1.16.0",
   "htcondor >= 9.0.0",
   "numpy >= 1.19.5, < 2.0.0; python_version >= '3.7'",
-  "pandas >= 1.5.3, < 2.0.0; python_version >= '3.7'",
+  "pandas >= 1.5.3, < 3.0.0; python_version >= '3.7'",
   "pem",
   "PyJWT",
   "qcs-api-client >= 0.21.1; python_version >= '3.7'",

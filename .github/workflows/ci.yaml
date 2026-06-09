@@ -20,12 +20,12 @@ jobs:
       matrix:
         python-version:
           - "3.9"
-          - "3.11"
+          - "3.12"
 
     name: Python ${{ matrix.python-version }} unit tests
     steps:
       - name: Setup python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
@@ -38,27 +38,27 @@ jobs:
           python3 -m pip cache dir
 
       - name: checkout DE Modules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           path: decisionengine_modules
           fetch-depth: 0
 
       - name: checkout DE Framework
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           path: decisionengine
           repository: HEPCloud/decisionengine
           fetch-depth: 0
 
       - name: checkout GlideinWMS for python3
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           path: glideinwms
           repository: glideinWMS/glideinwms
           ref: master
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
@@ -120,7 +120,7 @@ jobs:
           pytest --cov-report term --cov-report xml --no-cov-on-fail --cov=./
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v7
         with:
           working-directory: decisionengine_modules
           flags: python-${{ matrix.python-version }}
@@ -131,17 +131,17 @@ jobs:
     needs: pytest
     steps:
       - name: checkout code tree
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.9"
           architecture: "x64"
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           # This path is specific to Ubuntu
           path: ~/.cache/pip
