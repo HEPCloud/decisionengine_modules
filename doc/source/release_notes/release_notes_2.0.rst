@@ -5,22 +5,58 @@ Release 2.0.6
 -------------
 
 Improved separation and compatibility with GlideinWMS Frontend package.
-Improved GCE billing and set hep-bill-calculator to 0.2.3.
+Improved monitoring and GCE billing and set hep-bill-calculator to 0.2.3.
 
 Issues fixed in this release
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--`DEM 513 <https://github.com/HEPCloud/decisionengine_modules/pull/513>`_: Updated documentation for release 2.0.4
--`DEM 516 <https://github.com/HEPCloud/decisionengine_modules/pull/516>`_: Refactor Existing Test Script and Add New Unit Tests for GCE Billing
+- `DEM 529 <https://github.com/HEPCloud/decisionengine_modules/pull/529>`_: Update 260609 (@mambelli)
+- `DEM 526 <https://github.com/HEPCloud/decisionengine_modules/pull/526>`_: Added support for HTCondor v2 Python bindings (@mambelli)
+- `DEM 523 <https://github.com/HEPCloud/decisionengine_modules/pull/523>`_: Update ci.yaml to fix decisionengine whl to hepcloud_de (@vitodb)
+- `DEM 522 <https://github.com/HEPCloud/decisionengine_modules/pull/522>`_: Extended token duration to 30 days (@mambelli)
+- `DEM 521 <https://github.com/HEPCloud/decisionengine_modules/pull/521>`_: Remove AWS mentions in glidein_requests.py (@mambelli)
+- `DEM 519 <https://github.com/HEPCloud/decisionengine_modules/pull/519>`_: Fix glideclient deadvertising (@BrunoCoimbra)
+- `DEM 518 <https://github.com/HEPCloud/decisionengine_modules/pull/518>`_: Remove "glidein_master_name" from metrics labels (@shreyb )
+- `DEM 517 <https://github.com/HEPCloud/decisionengine_modules/pull/517>`_: Update test setup for DE modules (@mambelli)
+- `DEM 516 <https://github.com/HEPCloud/decisionengine_modules/pull/516>`_: Refactor Existing Test Script and Add New Unit Tests for GCE Billing (@namrathaurs)
+- `DEM 513 <https://github.com/HEPCloud/decisionengine_modules/pull/513>`_: Updated documentation for release 2.0.4 (@mambelli)
 
 Full list of commits since version 2.0.4
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`6c0c8d5 <https://github.com/HEPCloud/decisionengine_modules/commit/6c0c8d5127d9b796e3b9aebeb2723c1f54107677>`_:   Updating workflows and htcondor v2 api
+
+`5b42f83 <https://github.com/HEPCloud/decisionengine_modules/commit/5b42f83eaa514fa439561df2362dbce9befff395>`_:   Added support for HTCondor v2 Python bindings
+
+`5c35cd2 <https://github.com/HEPCloud/decisionengine_modules/commit/5c35cd205527dfe4e11caefbdb9195580f5edb80>`_:   Update ci.yaml to fix decisionengine whl to hepcloud_de (#523)
+
+`fb629d6 <https://github.com/HEPCloud/decisionengine_modules/commit/fb629d60ee9c4ceed015aa04aa98d7b2e29f57d2>`_:   Extended token duration to 30 days per HEPCloud Ops request to support HPC requests
+
+`b468791 <https://github.com/HEPCloud/decisionengine_modules/commit/b4687916c85fd4fd09b0dc4861dbaafdedb1f2e9>`_:   Updated REUSE and fixed missing licensing issue
+
+`e99af8f <https://github.com/HEPCloud/decisionengine_modules/commit/e99af8f1fe31d610766a5d7c738011aaba54a0d8>`_:   remove AWS mentions in glidein_requests.py
+
+`aeb59e7 <https://github.com/HEPCloud/decisionengine_modules/commit/aeb59e7a27a90cf94fb5936e42049bc3419a5fd5>`_:   Fix invalidate glideclient command
+
+`08212b6 <https://github.com/HEPCloud/decisionengine_modules/commit/08212b6e5c6943f85b97f52c7873bb2540ac4474>`_:   [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+`7c6cd71 <https://github.com/HEPCloud/decisionengine_modules/commit/7c6cd71d5c3eb79886ed3719a878665aea9a6254>`_:   Remove "glidein_master_name" from metrics labels
+
+`b8f015c <https://github.com/HEPCloud/decisionengine_modules/commit/b8f015ca19bd04858261587ad082d553f0c4b1cc>`_:   In Jenkins pipeline for de_modules we don't need to build RPMs anymore
+
+`b40daf3 <https://github.com/HEPCloud/decisionengine_modules/commit/b40daf3eaa63b6f5cf97f8df4aeceaddbf6b1e70>`_:   To run unit tests use master branch of glideinwms
+
+`cbfc7ab <https://github.com/HEPCloud/decisionengine_modules/commit/cbfc7abfb9bb437e4d912af4d029c0965df773aa>`_:   Project renamed hepcloud-de-modules
+
+`5ad2b91 <https://github.com/HEPCloud/decisionengine_modules/commit/5ad2b91fa75708d4045eccf4763a90918ce4ac74>`_:   Doc updates for 2.0.6
 
 `46bfc52 <https://github.com/HEPCloud/decisionengine_modules/commit/46bfc52e160342e32a203a274a5d156b7dd40f40>`_:   Refactor Existing Test Script and Add New Unit Tests for GCE Billing (#516)
 
 `b7accf0 <https://github.com/HEPCloud/decisionengine_modules/commit/b7accf04ed6e29338662d6f70b9a414cff2e1acf>`_:   Updated setuptools in  gh-pages workflow
 
 `993e380 <https://github.com/HEPCloud/decisionengine_modules/commit/993e380a7f3860481878769d2f93c8c3e13ec763>`_:   Update gh-pages workflow and install sphinx as user, not as root
+
+`ba6e1b2 <https://github.com/HEPCloud/decisionengine_modules/commit/ba6e1b290bd0830abd27667fa6ff0aa6879a5544>`_:   Merge pull request #513 from mambelli/release_2_0_4
 
 
 Release 2.0.4
